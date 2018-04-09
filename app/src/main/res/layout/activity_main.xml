@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ypx.imagepicker.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_multiSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="多选图片"
+            tools:ignore="ButtonStyle" />
+
+        <Button
+            android:id="@+id/btn_singleSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="单选图片"
+            tools:ignore="ButtonStyle" />
+
+        <Button
+            android:id="@+id/btn_cropSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="单张剪裁"
+            tools:ignore="ButtonStyle" />
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/iv_single"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="matrix"/>
+
+    <GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
+
+</LinearLayout>

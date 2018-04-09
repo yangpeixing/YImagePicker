@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="main_color">#EA508F</color>
+    <color name="main_black">#333333</color>
+    <color name="divideline">#e8e8e8</color>
+    <color name="common_bg">#F4F4F4</color>
+    <color name="black">#FF000000</color>
+    <color name="theme_body">#cc22292c</color>
+    <color name="dividecolor">#f4f4f4</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>
