@@ -1,0 +1,10 @@
+<resources>
+    <dimen name="normal_textsize10">10sp</dimen>
+    <dimen name="normal_textsize12">12sp</dimen>
+    <dimen name="normal_textsize13">13sp</dimen>
+    <dimen name="normal_textsize14">14sp</dimen>
+    <dimen name="normal_textsize15">15sp</dimen>
+    <dimen name="normal_textsize16">16sp</dimen>
+    <dimen name="normal_textsize18">18sp</dimen>
+    <dimen name="normal_marginline">0.5dp</dimen>
+</resources>
