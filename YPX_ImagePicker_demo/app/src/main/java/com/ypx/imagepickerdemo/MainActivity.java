@@ -2,9 +2,11 @@ package com.ypx.imagepickerdemo;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +17,14 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.YPXImagePicker;
+import com.ypx.imagepicker.YPXImagePickerUiBuilder;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.imp.OnImageCropCompleteListener;
-import com.ypx.imagepicker.imp.OnImagePickCompleteListener;
+import com.ypx.imagepicker.interf.OnImageCropCompleteListener;
+import com.ypx.imagepicker.interf.OnImagePickCompleteListener;
+import com.ypx.imagepicker.utils.ProcessUtil;
+import com.ypx.imagepicker.widget.browseimage.PicBrowseImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,29 +32,77 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     Button btn_multiSelect, btn_singleSelect, btn_cropSelect, btn_takePhoto;
     GridLayout gridLayout;
-    ImageView iv_single;
+    PicBrowseImageView iv_single;
     List<String> picList = new ArrayList<>();
 
     int maxNum = 16;
+    YPXImagePickerUiBuilder uiBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        YPXImagePicker.create(new GlideImgLoader());
+        uiBuilder = new YPXImagePickerUiBuilder(this)
+                //.withTitleBar(new CustomTitleBar(this))
+                .withRowCount(4)
+                .withSelectIcon(getResources().getDrawable(R.mipmap.ic_launcher))
+                .withThemeColor(Color.BLUE)
+                .withCameraIcon(getResources().getDrawable(R.mipmap.ic_launcher));
+        YPXImagePicker.getInstance().withUiBuilder(uiBuilder);
         btn_multiSelect = findViewById(R.id.btn_multiSelect);
         btn_singleSelect = findViewById(R.id.btn_singleSelect);
         btn_cropSelect = findViewById(R.id.btn_cropSelect);
         gridLayout = findViewById(R.id.gridLayout);
         iv_single = findViewById(R.id.iv_single);
+        iv_single.setMaxScale(5.0f);
+        iv_single.enable();
         btn_takePhoto = findViewById(R.id.btn_takePhoto);
         btn_multiSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //  YPXImagePicker.getInstance().withSelectLimit(9 - picList.size()).pickWithActivityResult();
-                YPXImagePicker.getInstance().withShowCamera(true).withSelectLimit(9 - picList.size()).pick(MainActivity.this, new OnImagePickCompleteListener() {
+                pick(9 - picList.size());
+            }
+        });
+        btn_singleSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                picList.clear();
+                pick(1);
+            }
+        });
+        btn_cropSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                crop();
+            }
+        });
+        btn_takePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                takePhoto();
+            }
+        });
+        Log.e("process", "MainActivity: " + ProcessUtil.getAppName(this));
+    }
+
+    public void pick(final int selectCount) {
+        //  startActivity(new Intent(this, SecondActivity.class));
+        ImagePicker.withImageLoader(new GlideImgLoader())
+                .themeColor(Color.GREEN)
+                .showCamera(false)
+                .selectLimit(selectCount)
+                .columnCount(4)
+                .immersionBar(true)
+                // .unSelectIcon(R.mipmap.ic_launcher)
+                .pick(MainActivity.this, new OnImagePickCompleteListener() {
                     @Override
                     public void onImagePickComplete(List<ImageItem> items) {
+                        if (selectCount == 1) {
+                            iv_single.setVisibility(View.VISIBLE);
+                            gridLayout.setVisibility(View.GONE);
+                            new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
+                            return;
+                        }
                         iv_single.setVisibility(View.GONE);
                         if (items != null && items.size() > 0) {
                             for (ImageItem item : items) {
@@ -58,28 +112,13 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-            }
-        });
-        btn_singleSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // YPXImagePicker.getInstance().withShowCamera(true).withSelectLimit(1).pickWithActivityResult(MainActivity.this);
-                YPXImagePicker.getInstance().withSelectLimit(1).pick(MainActivity.this, new OnImagePickCompleteListener() {
-                    @Override
-                    public void onImagePickComplete(List<ImageItem> items) {
-                        iv_single.setVisibility(View.VISIBLE);
-                        gridLayout.setVisibility(View.GONE);
-                        // iv_single.setImageURI(Uri.parse(items.get(0).path));
-                        new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
-                    }
-                });
-            }
-        });
+    }
 
-        btn_cropSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                YPXImagePicker.getInstance().withShowCamera(false).crop(MainActivity.this, new OnImageCropCompleteListener() {
+    public void crop() {
+        YPXImagePicker.getInstance()
+                .withImgLoader(new GlideImgLoader())
+                .withShowCamera(true)
+                .crop(MainActivity.this, new OnImageCropCompleteListener() {
                     @Override
                     public void onImageCropComplete(String url, Bitmap bmp, float ratio) {
                         iv_single.setVisibility(View.VISIBLE);
@@ -87,20 +126,11 @@ public class MainActivity extends AppCompatActivity {
                         iv_single.setImageBitmap(bmp);
                     }
                 });
-//                YPXImagePicker.getInstance().withImgLoader(new GlideImgLoader()).pickAndCrop(MainActivity.this, true, 30, new OnImageCropCompleteListener() {
-//                    @Override
-//                    public void onImageCropComplete(String url, Bitmap bmp, float ratio) {
-//                        iv_single.setVisibility(View.VISIBLE);
-//                        gridLayout.setVisibility(View.GONE);
-//                        iv_single.setImageBitmap(bmp);
-//                    }
-//                });
-            }
-        });
-        btn_takePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                YPXImagePicker.getInstance().takePhoto(MainActivity.this, new OnImagePickCompleteListener() {
+    }
+
+    public void takePhoto() {
+        YPXImagePicker.getInstance()
+                .takePhoto(MainActivity.this, new OnImagePickCompleteListener() {
                     @Override
                     public void onImagePickComplete(List<ImageItem> items) {
                         iv_single.setVisibility(View.VISIBLE);
@@ -108,8 +138,6 @@ public class MainActivity extends AppCompatActivity {
                         new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
                     }
                 });
-            }
-        });
     }
 
 
@@ -211,4 +239,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 }

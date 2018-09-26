@@ -7,9 +7,9 @@
 
     <!--  这个是加入的代码 -->
     <style name="popupwindow_anim_style">
-        <item name="android:windowEnterAnimation">@anim/show_from_bottom</item>
+        <item name="android:windowEnterAnimation">@anim/ypx_show_from_bottom</item>
         <!-- 指定显示的动画xml -->
-        <item name="android:windowExitAnimation">@anim/hide2bottom</item>
+        <item name="android:windowExitAnimation">@anim/ypx_hide2bottom</item>
         <!-- 指定消失的动画xml -->
     </style>
 

@@ -16,17 +16,31 @@
         android:supportsRtl="true">
 
         <activity
-            android:name="com.ypx.imagepicker.ui.activity.ImageCropActivity"
+            android:name="com.ypx.imagepicker.ui.activity.YPXImageCropActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.NoTitleBar" />
 
         <activity
-            android:name="com.ypx.imagepicker.ui.activity.ImagePreviewActivity"
+            android:name="com.ypx.imagepicker.ui.activity.YPXImagePreviewActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.NoTitleBar" />
 
         <activity
-            android:name="com.ypx.imagepicker.ui.activity.ImagesGridActivity"
+            android:name="com.ypx.imagepicker.ui.activity.YPXImagePreviewActivity2"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar" />
+
+        <activity
+            android:name="com.ypx.imagepicker.ui.activity.YPXImagesGridActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar" />
+
+        <activity
+            android:name="com.ypx.imagepicker.ui.activity.YPXImageGridActivity2"
+            android:multiprocess="true"
+            android:theme="@android:style/Theme.NoTitleBar" />
+        <activity
+            android:name=".ui.activity.YPXImagePickActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.NoTitleBar" />
 

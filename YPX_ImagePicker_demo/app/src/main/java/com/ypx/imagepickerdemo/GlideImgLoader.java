@@ -21,7 +21,7 @@ package com.ypx.imagepickerdemo;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.ypx.imagepicker.imp.ImgLoader;
+import com.ypx.imagepicker.interf.ImgLoader;
 
 
 /**
@@ -33,9 +33,14 @@ public class GlideImgLoader implements ImgLoader {
     @Override
     public void onPresentImage(ImageView imageView, String imageUri, int size) {
         if (size == 0) {
-            Glide.with(imageView.getContext()).load(imageUri).centerCrop().into(imageView);
+            Glide.with(imageView.getContext()).load(imageUri).asBitmap().into(imageView);
         } else {
-            Glide.with(imageView.getContext()).load(imageUri).override(size, size).centerCrop().into(imageView);
+            Glide.with(imageView.getContext()).load(imageUri).asBitmap().override(size, size).into(imageView);
         }
+    }
+
+    @Override
+    public void onPresentImageDetail(ImageView imageView, String imageUri) {
+        Glide.with(imageView.getContext()).load(imageUri).into(imageView);
     }
 }

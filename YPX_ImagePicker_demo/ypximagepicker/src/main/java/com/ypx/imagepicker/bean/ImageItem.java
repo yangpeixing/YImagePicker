@@ -7,11 +7,25 @@ import java.io.Serializable;
  * contact：easonline7@gmail.com
  */
 public class ImageItem implements Serializable {
+    private static final long serialVersionUID = 1L;
     public String path;
     public String name;
     public int width;
     public int height;
     public long time;
+    public String timeFormat;
+
+    public ImageItem(){
+
+    }
+
+    public String getTimeFormat() {
+        return timeFormat;
+    }
+
+    public void setTimeFormat(String timeFormat) {
+        this.timeFormat = timeFormat;
+    }
 
     public ImageItem(String path, String name, long time) {
         this.path = path;

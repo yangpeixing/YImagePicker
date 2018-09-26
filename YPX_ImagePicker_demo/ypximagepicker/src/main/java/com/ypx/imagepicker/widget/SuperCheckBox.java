@@ -1,6 +1,8 @@
 package com.ypx.imagepicker.widget;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.util.AttributeSet;
 import android.view.SoundEffectConstants;
 import android.widget.CheckBox;
@@ -42,7 +44,7 @@ public class SuperCheckBox extends CompoundButton {
 
     @Override
     public void toggle() {
-        if(canChecked){
+        if (canChecked) {
             super.toggle();
         }
     }
@@ -58,6 +60,22 @@ public class SuperCheckBox extends CompoundButton {
         }
 
         return handled;
+    }
+
+    public void setRightDrawable(Drawable selectedDrawable, Drawable unSelectedDrawable) {
+        StateListDrawable checkBoxDrawable = new StateListDrawable();
+        checkBoxDrawable.addState(new int[]{android.R.attr.state_selected}, selectedDrawable);
+        checkBoxDrawable.addState(new int[]{android.R.attr.state_checked}, selectedDrawable);
+        checkBoxDrawable.addState(new int[]{}, unSelectedDrawable);
+        setCompoundDrawablesWithIntrinsicBounds(null, null, checkBoxDrawable, null);
+    }
+
+    public void setLeftDrawable(Drawable selectedDrawable, Drawable unSelectedDrawable) {
+        StateListDrawable checkBoxDrawable = new StateListDrawable();
+        checkBoxDrawable.addState(new int[]{android.R.attr.state_selected}, selectedDrawable);
+        checkBoxDrawable.addState(new int[]{android.R.attr.state_checked}, selectedDrawable);
+        checkBoxDrawable.addState(new int[]{}, unSelectedDrawable);
+        setCompoundDrawablesWithIntrinsicBounds(checkBoxDrawable, null, null, null);
     }
 
 

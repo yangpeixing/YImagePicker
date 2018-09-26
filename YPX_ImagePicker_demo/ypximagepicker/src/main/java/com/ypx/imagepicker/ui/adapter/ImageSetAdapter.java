@@ -13,8 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.YPXImagePicker;
 import com.ypx.imagepicker.bean.ImageSet;
+import com.ypx.imagepicker.config.ImagePickerConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,11 @@ public class ImageSetAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private List<ImageSet> mImageSets = new ArrayList<>();
+    private ImagePickerConfig pickerConfig;
 
-    public ImageSetAdapter(Context context) {
-        mContext = context;
+    public ImageSetAdapter(Context context, ImagePickerConfig pickerConfig) {
+        this.mContext = context;
+        this.pickerConfig = pickerConfig;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -63,7 +65,7 @@ public class ImageSetAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         ViewHolder holder;
         if (view == null) {
-            view = mInflater.inflate(R.layout.ipk_list_item_folder, viewGroup, false);
+            view = mInflater.inflate(R.layout.ypx_list_item_folder, viewGroup, false);
             holder = new ViewHolder(view);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -76,6 +78,8 @@ public class ImageSetAdapter extends BaseAdapter {
         } else {
             holder.indicator.setVisibility(View.INVISIBLE);
         }
+
+        holder.indicator.setColorFilter(pickerConfig.getThemeColor());
 
         return view;
     }
@@ -124,7 +128,9 @@ public class ImageSetAdapter extends BaseAdapter {
         void bindData(ImageSet data) {
             name.setText(data.name);
             size.setText(String.format("%d%s", data.imageItems.size(), mContext.getResources().getString(R.string.piece)));
-            YPXImagePicker.getInstance().getImgLoader().onPresentImage(cover, data.cover.path, (getScreenWidth() - dp(2) * 2) / 3);
+            if (pickerConfig != null && pickerConfig.getImgLoader() != null) {
+                pickerConfig.getImgLoader().onPresentImage(cover, data.cover.path, (getScreenWidth() - dp(2) * 2) / 3);
+            }
         }
     }
 }

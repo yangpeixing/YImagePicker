@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/YPX_ImagePicker.iml" filepath="$PROJECT_DIR$/YPX_ImagePicker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ypximagepicker/ypximagepicker.iml" filepath="$PROJECT_DIR$/ypximagepicker/ypximagepicker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/YPX_ImagePicker.iml" filepath="$PROJECT_DIR$/.idea/modules/YPX_ImagePicker.iml" />
+      <module fileurl="file://F:\MyProject\YPX_ImagePicker\YPX_ImagePicker.iml" filepath="F:\MyProject\YPX_ImagePicker\YPX_ImagePicker.iml" />
+      <module fileurl="file://F:\MyProject\YPX_ImagePicker\ypximagepicker\ypximagepicker.iml" filepath="F:\MyProject\YPX_ImagePicker\ypximagepicker\ypximagepicker.iml" />
     </modules>
   </component>
 </project>

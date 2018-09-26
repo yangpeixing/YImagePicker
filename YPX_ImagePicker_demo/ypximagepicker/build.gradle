@@ -22,11 +22,16 @@ android {
         }
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
 }
 
 dependencies {
     compile'com.android.support:appcompat-v7:22.2.1'
     compile 'com.oginotihiro:cropview:1.0.0'
+    testImplementation 'junit:junit:4.12'
 }
 
 
@@ -42,7 +47,7 @@ apply plugin: 'com.jfrog.bintray'
 
 //更新代码：gradlew clean build bintrayUpload -PbintrayUser=BINTRAY_USERNAME -PbintrayKey=BINTRAY_KEY -PdryRun=false
 group = "com.ypx.imagepicker"            // Maven Group ID for the artifact，
-version = "1.0"
+version = "1.7"
 
 def siteUrl = 'https://github.com/yangpeixing/YPXImagePicker'   // 项目的主页
 def gitUrl = 'https://github.com/yangpeixing/YPXImagePicker.git'   // Git仓库的url

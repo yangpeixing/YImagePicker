@@ -15,6 +15,7 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.data.DataSource;
 import com.ypx.imagepicker.data.OnImagesLoadedListener;
+import com.ypx.imagepicker.utils.DateUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -94,6 +95,7 @@ public class LocalDataSource implements DataSource, LoaderManager.LoaderCallback
                 long imageAddedTime = data.getLong(data.getColumnIndexOrThrow(IMAGE_PROJECTION[2]));
 
                 ImageItem item = new ImageItem(imagePath, imageName, imageWidth,imageHeight, imageAddedTime);
+                item.setTimeFormat(DateUtil.getStrTime(imageAddedTime));
                 allImages.add(item);
 
                 File imageFile = new File(imagePath);
