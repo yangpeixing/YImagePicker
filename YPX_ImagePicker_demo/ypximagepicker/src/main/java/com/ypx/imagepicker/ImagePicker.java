@@ -1,9 +1,8 @@
 package com.ypx.imagepicker;
 
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.config.ImagePickerConfig;
 import com.ypx.imagepicker.data.ImagePickerData;
-import com.ypx.imagepicker.interf.ImgLoader;
+import com.ypx.imagepicker.config.IImgPickerUIConfig;
 
 import java.util.List;
 
@@ -15,8 +14,8 @@ import java.util.List;
 public class ImagePicker {
 
 
-    public static ImagePickerConfig withImageLoader(ImgLoader imageLoader) {
-        return new ImagePickerConfig(imageLoader);
+    public static ImagePickerPresenter with(IImgPickerUIConfig iImgPickerUIConfig) {
+        return new ImagePickerPresenter(iImgPickerUIConfig);
     }
 
     public static void notifyOnImagePickComplete(List<ImageItem> items) {
@@ -24,6 +23,7 @@ public class ImagePicker {
             ImagePickerData.onImagePickCompleteListener.onImagePickComplete(items);
         }
     }
+
 
     public static void clear() {
         if (ImagePickerData.selectImgs != null) {

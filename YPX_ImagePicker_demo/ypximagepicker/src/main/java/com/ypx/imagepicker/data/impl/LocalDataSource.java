@@ -10,7 +10,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.YPXImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.data.DataSource;
@@ -129,8 +128,6 @@ public class LocalDataSource implements DataSource, LoaderManager.LoaderCallback
             mImageSetList.add(0, imageSetAll);
 
             imagesLoadedListener.onImagesLoaded(mImageSetList);//notify the data changed
-
-            YPXImagePicker.getInstance().setImageSets(mImageSetList);
 
         }
 

@@ -14,7 +14,8 @@ import android.widget.TextView;
 
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.config.ImagePickerConfig;
+import com.ypx.imagepicker.config.IImgPickerUIConfig;
+import com.ypx.imagepicker.config.ImgPickerSelectConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +30,13 @@ public class ImageSetAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private List<ImageSet> mImageSets = new ArrayList<>();
-    private ImagePickerConfig pickerConfig;
+    private ImgPickerSelectConfig selectConfig;
+    private IImgPickerUIConfig uiConfig;
 
-    public ImageSetAdapter(Context context, ImagePickerConfig pickerConfig) {
+    public ImageSetAdapter(Context context, ImgPickerSelectConfig selectConfig, IImgPickerUIConfig uiConfig) {
         this.mContext = context;
-        this.pickerConfig = pickerConfig;
+        this.selectConfig = selectConfig;
+        this.uiConfig = uiConfig;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -79,7 +82,7 @@ public class ImageSetAdapter extends BaseAdapter {
             holder.indicator.setVisibility(View.INVISIBLE);
         }
 
-        holder.indicator.setColorFilter(pickerConfig.getThemeColor());
+        holder.indicator.setColorFilter(uiConfig.getThemeColor());
 
         return view;
     }
@@ -128,8 +131,8 @@ public class ImageSetAdapter extends BaseAdapter {
         void bindData(ImageSet data) {
             name.setText(data.name);
             size.setText(String.format("%d%s", data.imageItems.size(), mContext.getResources().getString(R.string.piece)));
-            if (pickerConfig != null && pickerConfig.getImgLoader() != null) {
-                pickerConfig.getImgLoader().onPresentImage(cover, data.cover.path, (getScreenWidth() - dp(2) * 2) / 3);
+            if (uiConfig != null) {
+                uiConfig.displayListImage(cover, data.cover.path, (getScreenWidth() - dp(2) * 2) / 3);
             }
         }
     }

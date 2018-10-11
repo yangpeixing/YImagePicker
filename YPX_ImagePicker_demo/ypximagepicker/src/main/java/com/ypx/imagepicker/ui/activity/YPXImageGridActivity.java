@@ -2,9 +2,12 @@ package com.ypx.imagepicker.ui.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
@@ -15,13 +18,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.config.ImagePickerConfig;
+import com.ypx.imagepicker.config.IImgPickerUIConfig;
+import com.ypx.imagepicker.config.ImgPickerSelectConfig;
 import com.ypx.imagepicker.data.DataSource;
 import com.ypx.imagepicker.data.ImagePickerData;
 import com.ypx.imagepicker.data.OnImagesLoadedListener;
@@ -30,7 +33,9 @@ import com.ypx.imagepicker.interf.ImageSelectMode;
 import com.ypx.imagepicker.ui.adapter.ImageGridAdapter;
 import com.ypx.imagepicker.ui.adapter.ImageSetAdapter;
 import com.ypx.imagepicker.utils.StatusBarUtils;
+import com.ypx.imagepicker.utils.TakePhotoUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,39 +44,60 @@ import java.util.List;
  * 功能：
  * 产权：南京婚尚信息技术
  */
-public class YPXImageGridActivity2 extends FragmentActivity implements OnImagesLoadedListener, View.OnClickListener {
+public class YPXImageGridActivity extends FragmentActivity implements OnImagesLoadedListener, View.OnClickListener {
     public static final int REQ_CAMERA = 1431;
     public static final int REQ_PREVIEW = 2347;
+    public static final int REQ_CROP = 1432;
     private List<ImageSet> imageSets;
     private List<ImageItem> imageItems;
     private GridView gridView;
-    private TextView tv_title_count, tv_time;
-    private ImagePickerConfig pickerConfig;
-    private TextView btn_ok;
-    private ImageView btn_backpress;
+
     private View v_masker;
     private Button btnDir;
+    private TextView tv_time;
     private ImageSetAdapter mImageSetAdapter;
     private ListView lv_imageSets;
     private ImageGridAdapter mAdapter;
     private int currentSetIndex = 0;
+
+    private RelativeLayout top_bar, footer_panel;
+    private TextView tv_title;
+    private TextView tv_rightBtn;
+    private ImageView iv_back;
+
+    // private ImagePickerPresenter pickerConfig;
+
+    private ImgPickerSelectConfig selectConfig;
+    private IImgPickerUIConfig uiConfig;
+    private String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ypx_activity_images_grid);
         dealIntentData();
-        findView();
-        setListener();
-        initAdapters();
-        loadPicData();
+        if (selectConfig.getSelectMode() == ImageSelectMode.MODE_TAKEPHOTO) {
+            takePhoto();
+        } else {
+            findView();
+            setListener();
+            initAdapters();
+            loadPicData();
+        }
     }
+
+    public void takePhoto() {
+        TakePhotoUtil.takePhoto(this, REQ_CAMERA);
+        mCurrentPhotoPath = TakePhotoUtil.mCurrentPhotoPath;
+    }
+
 
     /**
      * 接收传参
      */
     private void dealIntentData() {
-        pickerConfig = (ImagePickerConfig) getIntent().getSerializableExtra("ImagePickerConfig");
+        selectConfig = (ImgPickerSelectConfig) getIntent().getSerializableExtra("ImgPickerSelectConfig");
+        uiConfig = (IImgPickerUIConfig) getIntent().getSerializableExtra("IImgPickerUIConfig");
     }
 
     /**
@@ -82,17 +108,9 @@ public class YPXImageGridActivity2 extends FragmentActivity implements OnImagesL
         btnDir = (Button) findViewById(R.id.btn_dir);
         gridView = (GridView) findViewById(R.id.gridview);
         lv_imageSets = (ListView) findViewById(R.id.lv_imagesets);
-        btn_ok = (TextView) findViewById(R.id.btn_ok);
-        btn_backpress = (ImageView) findViewById(R.id.btn_backpress);
-        tv_title_count = (TextView) findViewById(R.id.tv_title_count);
         tv_time = (TextView) findViewById(R.id.tv_time);
         tv_time.setVisibility(View.GONE);
-        btn_backpress.setColorFilter(Color.WHITE);
-        if (pickerConfig.isImmersionBar()) {
-            StatusBarUtils.setWindowStatusBarColor(this, Color.parseColor("#303030"));
-        }
-        btn_ok.setTextColor(pickerConfig.getThemeColor());
-        resetBtnOKstate();
+        setTitleBar();
     }
 
     @Override
@@ -104,14 +122,53 @@ public class YPXImageGridActivity2 extends FragmentActivity implements OnImagesL
         }
     }
 
+    private void setTitleBar() {
+        top_bar = (RelativeLayout) findViewById(R.id.top_bar);
+        footer_panel = (RelativeLayout) findViewById(R.id.footer_panel);
+        tv_title = (TextView) findViewById(R.id.tv_title);
+        tv_rightBtn = (TextView) findViewById(R.id.tv_rightBtn);
+        iv_back = (ImageView) findViewById(R.id.iv_back);
+        if (uiConfig.isImmersionBar() && uiConfig.getTopBarBackgroundColor() != 0) {
+            StatusBarUtils.setWindowStatusBarColor(this, uiConfig.getTopBarBackgroundColor());
+        }
+        if (uiConfig.getBackIconID() != 0) {
+            iv_back.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
+            iv_back.setColorFilter(Color.WHITE);
+        }
+
+        if (uiConfig.getTopBarBackgroundColor() != 0) {
+            top_bar.setBackgroundColor(uiConfig.getTopBarBackgroundColor());
+        }
+
+        if (uiConfig.getGridViewBackgroundColor() != 0) {
+            gridView.setBackgroundColor(uiConfig.getGridViewBackgroundColor());
+        }
+
+        if (uiConfig.getBottomBarBackgroundColor() != 0) {
+            footer_panel.setBackgroundColor(uiConfig.getBottomBarBackgroundColor());
+        }
+
+        if (uiConfig.getRightBtnBackground() != null) {
+            tv_rightBtn.setBackground(uiConfig.getRightBtnBackground());
+        }
+
+        if (uiConfig.getTitleColor() != 0) {
+            tv_title.setTextColor(uiConfig.getTitleColor());
+        }
+
+        tv_title.setGravity(Gravity.CENTER | uiConfig.getTopBarTitleGravity());
+        tv_rightBtn.setTextColor(uiConfig.getThemeColor());
+        resetBtnOKstate();
+    }
+
     /**
      * 初始化监听
      */
     private void setListener() {
         btnDir.setOnClickListener(this);
         v_masker.setOnClickListener(this);
-        btn_ok.setOnClickListener(this);
-        btn_backpress.setOnClickListener(this);
+        tv_rightBtn.setOnClickListener(this);
+        iv_back.setOnClickListener(this);
         lv_imageSets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -123,7 +180,7 @@ public class YPXImageGridActivity2 extends FragmentActivity implements OnImagesL
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
                     tv_time.setVisibility(View.GONE);
-                    tv_time.setAnimation(AnimationUtils.loadAnimation(YPXImageGridActivity2.this, R.anim.abc_fade_out));
+                    tv_time.setAnimation(AnimationUtils.loadAnimation(YPXImageGridActivity.this, R.anim.abc_fade_out));
                 } else {
                     tv_time.setVisibility(View.VISIBLE);
                 }
@@ -146,13 +203,13 @@ public class YPXImageGridActivity2 extends FragmentActivity implements OnImagesL
      * 初始化相关adapter
      */
     private void initAdapters() {
-        mImageSetAdapter = new ImageSetAdapter(this, pickerConfig);
+        mImageSetAdapter = new ImageSetAdapter(this, selectConfig, uiConfig);
         mImageSetAdapter.refreshData(imageSets);
         lv_imageSets.setAdapter(mImageSetAdapter);
 
-        mAdapter = new ImageGridAdapter(this, new ArrayList<ImageItem>(), pickerConfig);
+        mAdapter = new ImageGridAdapter(this, new ArrayList<ImageItem>(), selectConfig, uiConfig);
         gridView.setAdapter(mAdapter);
-        gridView.setNumColumns(pickerConfig.getColumnCount());
+        gridView.setNumColumns(selectConfig.getColumnCount());
     }
 
     /**
@@ -195,7 +252,7 @@ public class YPXImageGridActivity2 extends FragmentActivity implements OnImagesL
         if (lv_imageSets.getVisibility() == View.GONE) {
             v_masker.setVisibility(View.VISIBLE);
             lv_imageSets.setVisibility(View.VISIBLE);
-            lv_imageSets.setAnimation(AnimationUtils.loadAnimation(YPXImageGridActivity2.this, R.anim.ypx_show_from_bottom));
+            lv_imageSets.setAnimation(AnimationUtils.loadAnimation(YPXImageGridActivity.this, R.anim.ypx_show_from_bottom));
             int index = mImageSetAdapter.getSelectIndex();
             index = index == 0 ? index : index - 1;
             lv_imageSets.setSelection(index);
@@ -212,7 +269,7 @@ public class YPXImageGridActivity2 extends FragmentActivity implements OnImagesL
         } else {
             v_masker.setVisibility(View.GONE);
             lv_imageSets.setVisibility(View.GONE);
-            lv_imageSets.setAnimation(AnimationUtils.loadAnimation(YPXImageGridActivity2.this, R.anim.ypx_hide2bottom));
+            lv_imageSets.setAnimation(AnimationUtils.loadAnimation(YPXImageGridActivity.this, R.anim.ypx_hide2bottom));
         }
     }
 
@@ -236,15 +293,15 @@ public class YPXImageGridActivity2 extends FragmentActivity implements OnImagesL
     public void onClick(View v) {
         if (v == btnDir || v == v_masker) {
             showOrHideImageSetList();
-        } else if (v == btn_ok) {
+        } else if (v == tv_rightBtn) {
             if (ImagePickerData.getSelectImgs().size() == 0) {
-                Toast.makeText(this, "请至少选择一张图片", Toast.LENGTH_SHORT).show();
+                uiConfig.tip(this, "请至少选择一张图片");
                 return;
             }
 
             ImagePicker.notifyOnImagePickComplete(ImagePickerData.getSelectImgs());
             finish();
-        } else if (v == btn_backpress) {
+        } else if (v == iv_back) {
             finish();
         }
     }
@@ -253,8 +310,30 @@ public class YPXImageGridActivity2 extends FragmentActivity implements OnImagesL
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQ_PREVIEW) {
-            btn_ok.performClick();
+            tv_rightBtn.performClick();
+        } else if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {//拍照返回
+            if (!TextUtils.isEmpty(mCurrentPhotoPath)) {
+                refreshGalleryAddPic();
+                ImageItem item = new ImageItem(mCurrentPhotoPath, "", -1);
+                List<ImageItem> list = new ArrayList<>();
+                list.add(item);
+                ImagePicker.notifyOnImagePickComplete(list);
+                finish();
+            }
+        } else if (resultCode == RESULT_OK && requestCode == REQ_CROP) {//拍照返回
+            finish();
         }
+    }
+
+    /**
+     * 刷新相册
+     */
+    public void refreshGalleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
     }
 
     /**
@@ -266,26 +345,47 @@ public class YPXImageGridActivity2 extends FragmentActivity implements OnImagesL
     public void onImageClickListener(ImageItem item, int position) {
         gridView.setTag(item);
         Intent intent;
-        switch (pickerConfig.getSelectMode()) {
+        switch (selectConfig.getSelectMode()) {
             //多选情况下，点击跳转预览
             case ImageSelectMode.MODE_MULTI:
-                intent = new Intent(this, YPXImagePreviewActivity2.class);
-                intent.putExtra("ImagePickerConfig", pickerConfig);
+                ImageSet imageSet = imageSets.get(currentSetIndex);
+//                List<ImageItem> list=new ArrayList<>();
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                list.addAll(imageSet.imageItems);
+//                imageSet.imageItems.addAll(list);
+                ImagePickerData.setCurrentImageSet(imageSet);
+                intent = new Intent(this, YPXImagePreviewActivity.class);
+                intent.putExtra("ImgPickerSelectConfig", selectConfig);
+                intent.putExtra("IImgPickerUIConfig", uiConfig);
                 intent.putExtra("selectIndex", position);
+                intent.putExtra("ImageSet", imageSet);
                 startActivityForResult(intent, REQ_PREVIEW);
                 break;
             //单选情况下，点击直接返回
             case ImageSelectMode.MODE_SINGLE:
-                List<ImageItem> list = new ArrayList<>();
-                list.add(item);
-                ImagePicker.notifyOnImagePickComplete(list);
+                List<ImageItem> list2 = new ArrayList<>();
+                list2.add(item);
+                ImagePicker.notifyOnImagePickComplete(list2);
                 finish();
                 break;
             //剪裁情况下，点击跳转剪裁
             case ImageSelectMode.MODE_CROP:
                 intent = new Intent(this, YPXImageCropActivity.class);
-                intent.putExtra("key_pic_path", item);
-                startActivity(intent);
+                intent.putExtra("IImgPickerUIConfig", uiConfig);
+                intent.putExtra("imagePath", item.path);
+                startActivityForResult(intent,REQ_CROP);
                 break;
         }
     }
@@ -301,16 +401,16 @@ public class YPXImageGridActivity2 extends FragmentActivity implements OnImagesL
 
     private void resetBtnOKstate() {
         if (ImagePickerData.getSelectImgs().size() > 0) {
-            btn_ok.setClickable(true);
-            btn_ok.setEnabled(true);
-            btn_ok.setAlpha(0.6f);
-            btn_ok.setText(getResources().getString(R.string.select_complete,
-                    new Object[]{ImagePickerData.getSelectImgs().size(), pickerConfig.getSelectLimit()}));
+            tv_rightBtn.setClickable(true);
+            tv_rightBtn.setEnabled(true);
+            tv_rightBtn.setAlpha(1f);
+            tv_rightBtn.setText(getResources().getString(R.string.select_complete,
+                    new Object[]{ImagePickerData.getSelectImgs().size(), selectConfig.getSelectLimit()}));
         } else {
-            btn_ok.setAlpha(0.4f);
-            btn_ok.setText(getResources().getString(R.string.complete));
-            btn_ok.setClickable(false);
-            btn_ok.setEnabled(false);
+            tv_rightBtn.setAlpha(0.6f);
+            tv_rightBtn.setText(getResources().getString(R.string.complete));
+            tv_rightBtn.setClickable(false);
+            tv_rightBtn.setEnabled(false);
         }
     }
 }

@@ -27,18 +27,19 @@
         android:background="#303030">
 
         <TextView
-            android:id="@+id/tv_title_count"
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/btn_backpress"
-            android:gravity="center"
+            android:layout_toLeftOf="@+id/tv_rightBtn"
+            android:layout_toRightOf="@+id/iv_back"
+            android:gravity="center|left"
             android:text="图片选择"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/btn_ok"
+            android:id="@+id/tv_rightBtn"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
@@ -52,7 +53,7 @@
             android:textSize="14sp" />
 
         <ImageView
-            android:id="@+id/btn_backpress"
+            android:id="@+id/iv_back"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -64,8 +65,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/top_bar"
-        android:background="@color/black">
+        android:layout_below="@id/top_bar">
 
         <GridView
             android:id="@+id/gridview"
@@ -75,6 +75,7 @@
             android:horizontalSpacing="2dp"
             android:listSelector="@android:color/transparent"
             android:numColumns="3"
+            android:overScrollMode="never"
             android:paddingBottom="50dp"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
@@ -82,7 +83,7 @@
             android:stretchMode="columnWidth"
             android:verticalSpacing="2dp"
             android:visibility="visible"
-            android:overScrollMode="never"/>
+            android:background="@color/black"/>
 
         <TextView
             android:id="@+id/tv_time"

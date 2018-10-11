@@ -24,8 +24,8 @@ public class ImagePickerData {
         return currentImageSet;
     }
 
-    public static void setCurrentImageSet(ImageSet currentImageSet) {
-        ImagePickerData.currentImageSet = currentImageSet;
+    public static void setCurrentImageSet(ImageSet mcurrentImageSet) {
+        currentImageSet = mcurrentImageSet;
     }
 
     public static void addImageItem(ImageItem imageItem) {

@@ -63,31 +63,31 @@ public class ShowTypeImageView extends ImageView {
         int height = getHeight();
         Paint mCirclePaint = new Paint();
         mCirclePaint.setAntiAlias(true);
-        mCirclePaint.setColor(Color.parseColor("#000000"));
+        mCirclePaint.setColor(Color.parseColor("#ffffff"));
 
 
         Paint mTextPaint = new Paint();
         mTextPaint.setAntiAlias(true);
-        mTextPaint.setColor(Color.WHITE);
+        mTextPaint.setColor(Color.parseColor("#90000000"));
         mTextPaint.setTextSize(getResources().getDimension(R.dimen.normal_textsize12));
         mTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
 
         switch (imageType) {
             case TYPE_GIF:
-                mCirclePaint.setAlpha(80);
+                mCirclePaint.setAlpha(200);
                 canvas.drawCircle(width / 2, height / 2, width * 0.18f, mCirclePaint);
                 canvas.drawText("GIF", width / 2 - dp(10), height / 2 + dp(5), mTextPaint);
                 break;
 
             case TYPE_LONG:
-                mCirclePaint.setAlpha(80);
+                mCirclePaint.setAlpha(200);
                 RectF rectF = new RectF(width - dp(30), height - dp(20), width + dp(3), height);
                 canvas.drawRoundRect(rectF, dp(3), dp(3), mCirclePaint);
                 canvas.drawText("长图", width - dp(27), height - dp(6), mTextPaint);
                 break;
 
             case TYPE_IMAGECOUNT:
-                mCirclePaint.setAlpha(100);
+                mCirclePaint.setAlpha(200);
                 RectF rectF2 = new RectF(width - dp(30), height - dp(20), width + dp(3), height);
                 canvas.drawRoundRect(rectF2, dp(3), dp(3), mCirclePaint);
                 canvas.drawText(imageCountTip, width - dp(27), height - dp(6), mTextPaint);

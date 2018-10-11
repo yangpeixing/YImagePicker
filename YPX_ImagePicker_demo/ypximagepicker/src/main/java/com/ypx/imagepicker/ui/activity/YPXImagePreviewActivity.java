@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,64 +19,57 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.YPXImagePicker;
-import com.ypx.imagepicker.YPXImagePickerUiBuilder;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.interf.ImageSelectMode;
-import com.ypx.imagepicker.interf.ImgLoader;
-import com.ypx.imagepicker.interf.OnImageSelectedChangeListener;
-import com.ypx.imagepicker.ui.view.DefaultTitleBar;
-import com.ypx.imagepicker.utils.CornerUtils;
+import com.ypx.imagepicker.bean.ImageSet;
+import com.ypx.imagepicker.config.IImgPickerUIConfig;
+import com.ypx.imagepicker.config.ImgPickerSelectConfig;
+import com.ypx.imagepicker.data.ImagePickerData;
+import com.ypx.imagepicker.utils.StatusBarUtils;
 import com.ypx.imagepicker.widget.SuperCheckBox;
 import com.ypx.imagepicker.widget.browseimage.PicBrowseImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressLint("DefaultLocale")
-public class YPXImagePreviewActivity extends FragmentActivity implements
-        OnImageSelectedChangeListener {
-    private static final String TAG = YPXImagePreviewActivity.class.getSimpleName();
-    public ImgLoader imgLoader;
+public class YPXImagePreviewActivity extends FragmentActivity {
     ViewPager mViewPager;
-    TextView tv_title;
     SuperCheckBox mCbSelected;
-    TextView tv_complete;
     List<ImageItem> mImageList;
-    YPXImagePicker androidImagePicker;
     private int mCurrentItemPosition = 0;
-    private YPXImagePickerUiBuilder uiBuilder;
+
+    private RelativeLayout top_bar, footer_panel;
+    private TextView tv_title;
+    private TextView tv_rightBtn;
+    private ImageView iv_back;
+
+
+    private ImgPickerSelectConfig selectConfig;
+    private IImgPickerUIConfig uiConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ypx_activity_image_pre);
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        androidImagePicker = YPXImagePicker.getInstance();
-        androidImagePicker.addOnImageSelectedChangeListener(this);
-        imgLoader = androidImagePicker.getImgLoader();
-        uiBuilder = androidImagePicker.getUiBuilder();
-        if (uiBuilder == null) {
-            uiBuilder = new YPXImagePickerUiBuilder(this);
+        dealIntentData();
+        initView();
+        if (mImageList == null || mImageList.size() == 0) {
+            finish();
+            return;
         }
-        mImageList = YPXImagePicker.getInstance().getImageItemsOfCurrentImageSet();
-        mCurrentItemPosition = getIntent().getIntExtra("key_pic_selected", 0);
-        mCbSelected = (SuperCheckBox) findViewById(R.id.btn_check);
-        mCbSelected.setLeftDrawable(uiBuilder.getSelectIcon(), uiBuilder.getUnSelectIcon());
-
         initTitleBar();
         initViewPager();
+        setListener();
+    }
 
-        int selectedCount = androidImagePicker.getSelectImageCount();
-        onImageSelectChange(0, null, selectedCount, androidImagePicker.getSelectLimit());
+    private void setListener() {
         mCbSelected.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (androidImagePicker.getSelectImageCount() > androidImagePicker.getSelectLimit()) {
+                if (ImagePickerData.isOverLimit(selectConfig.getSelectLimit())) {
                     if (mCbSelected.isChecked()) {
-                        //holder.cbSelected.setCanChecked(false);
                         mCbSelected.toggle();
-                        @SuppressLint("StringFormatMatches")
-                        String toast = getResources().getString(R.string.you_have_a_select_limit, androidImagePicker.getSelectLimit());
+                        String toast = getResources().getString(R.string.you_have_a_select_limit, selectConfig.getSelectLimit() + "");
                         Toast.makeText(YPXImagePreviewActivity.this, toast, Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -91,40 +85,65 @@ public class YPXImagePreviewActivity extends FragmentActivity implements
 
     }
 
+    private void initView() {
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        mCbSelected = (SuperCheckBox) findViewById(R.id.btn_check);
+        mCbSelected.setLeftDrawable(getResources().getDrawable(uiConfig.getSelectedIconID()),
+                getResources().getDrawable(uiConfig.getUnSelectIconID()));
+    }
+
+    /**
+     * 接收传参
+     */
+    private void dealIntentData() {
+        selectConfig = (ImgPickerSelectConfig) getIntent().getSerializableExtra("ImgPickerSelectConfig");
+        uiConfig = (IImgPickerUIConfig) getIntent().getSerializableExtra("IImgPickerUIConfig");
+        mCurrentItemPosition = getIntent().getIntExtra("selectIndex", 0);
+        // mImageList = ImagePickerData.getCurrentImageSet().imageItems;
+        mImageList = ((ImageSet) (getIntent().getSerializableExtra("ImageSet"))).imageItems;
+    }
+
+
     /**
      * 初始化标题栏
      */
     private void initTitleBar() {
-        RelativeLayout top_bar = (RelativeLayout) findViewById(R.id.top_bar);
-        top_bar.removeAllViews();
-        DefaultTitleBar titleBar = new DefaultTitleBar(this);
-        top_bar.addView(titleBar);
-        tv_complete = titleBar.getCompleteTextView();
-        ImageView iv_back = titleBar.getLeftIconImageView();
-        tv_title = titleBar.getTitleTextView();
-        tv_complete.setBackground(CornerUtils.halfAlphaSelector(titleBar.dp(3), uiBuilder.getThemeColor()));
-        iv_back.setColorFilter(uiBuilder.getThemeColor());
-        tv_complete.setText("完成");
-        tv_title.setText(String.format("1/%d", mImageList.size()));
-        tv_complete.setAlpha(0.5f);
-        tv_complete.setClickable(false);
-        tv_complete.setEnabled(false);
-        if (androidImagePicker.getSelectMode() == ImageSelectMode.MODE_SINGLE
-                || androidImagePicker.getSelectMode() == ImageSelectMode.MODE_CROP) {
-            tv_complete.setVisibility(View.GONE);
-        } else {
-            tv_complete.setVisibility(View.VISIBLE);
+        top_bar = (RelativeLayout) findViewById(R.id.top_bar);
+        footer_panel = (RelativeLayout) findViewById(R.id.bottom_bar);
+        tv_title = (TextView) findViewById(R.id.tv_title);
+        tv_rightBtn = (TextView) findViewById(R.id.tv_rightBtn);
+        iv_back = (ImageView) findViewById(R.id.iv_back);
+        if (uiConfig.isImmersionBar() && uiConfig.getTopBarBackgroundColor() != 0) {
+            StatusBarUtils.setWindowStatusBarColor(this, uiConfig.getTopBarBackgroundColor());
         }
-        tv_complete.setOnClickListener(new View.OnClickListener() {
+        if (uiConfig.getBackIconID() != 0) {
+            iv_back.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
+            // iv_back.setColorFilter(Color.WHITE);
+        }
+
+        if (uiConfig.getTopBarBackgroundColor() != 0) {
+            top_bar.setBackgroundColor(uiConfig.getTopBarBackgroundColor());
+        }
+
+        if (uiConfig.getBottomBarBackgroundColor() != 0) {
+            footer_panel.setBackgroundColor(uiConfig.getBottomBarBackgroundColor());
+        }
+
+        if (uiConfig.getRightBtnBackground() != null) {
+            tv_rightBtn.setBackground(uiConfig.getRightBtnBackground());
+        }
+
+        if (uiConfig.getTitleColor() != 0) {
+            tv_title.setTextColor(uiConfig.getTitleColor());
+        }
+
+        tv_title.setGravity(Gravity.CENTER | uiConfig.getTopBarTitleGravity());
+        tv_rightBtn.setTextColor(uiConfig.getThemeColor());
+        resetBtnOKstate();
+        tv_rightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setResult(RESULT_OK);
-                finish();
-            }
-        });
-        iv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 finish();
             }
         });
@@ -135,11 +154,7 @@ public class YPXImagePreviewActivity extends FragmentActivity implements
         mViewPager.setAdapter(mAdapter);
         mViewPager.setCurrentItem(mCurrentItemPosition, false);
         ImageItem item = mImageList.get(mCurrentItemPosition);
-
-        boolean isSelected = false;
-        if (androidImagePicker.isSelect(mCurrentItemPosition, item)) {
-            isSelected = true;
-        }
+        boolean isSelected = ImagePickerData.hasItem(item);
         onImagePageSelected(mCurrentItemPosition, mImageList.get(mCurrentItemPosition), isSelected);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -150,12 +165,8 @@ public class YPXImagePreviewActivity extends FragmentActivity implements
             @Override
             public void onPageSelected(int position) {
                 mCurrentItemPosition = position;
-                boolean isSelected = false;
                 ImageItem item = mImageList.get(mCurrentItemPosition);
-                if (androidImagePicker.isSelect(position, item)) {
-                    isSelected = true;
-                }
-                onImagePageSelected(mCurrentItemPosition, item, isSelected);
+                onImagePageSelected(mCurrentItemPosition, item, ImagePickerData.hasItem(item));
             }
 
             @Override
@@ -171,16 +182,18 @@ public class YPXImagePreviewActivity extends FragmentActivity implements
      */
     public void selectCurrent(boolean isCheck) {
         ImageItem item = mImageList.get(mCurrentItemPosition);
-        boolean isSelect = androidImagePicker.isSelect(mCurrentItemPosition, item);
+        boolean isSelect = ImagePickerData.hasItem(item);
         if (isCheck) {
             if (!isSelect) {
-                androidImagePicker.addSelectedImageItem(mCurrentItemPosition, item);
+                ImagePickerData.addImageItem(item);
             }
         } else {
             if (isSelect) {
-                androidImagePicker.deleteSelectedImageItem(mCurrentItemPosition, item);
+                ImagePickerData.removeImageItem(item);
             }
         }
+
+        resetBtnOKstate();
 
     }
 
@@ -207,28 +220,29 @@ public class YPXImagePreviewActivity extends FragmentActivity implements
         mCbSelected.setChecked(isSelected);
     }
 
-    @SuppressLint("StringFormatMatches")
-    @Override
-    public void onImageSelectChange(int position, ImageItem item, int selectedItemsCount, int maxSelectLimit) {
-        if (selectedItemsCount > 0) {
-            tv_complete.setEnabled(true);
-            tv_complete.setAlpha(1f);
-            tv_complete.setClickable(true);
-            tv_complete.setText(getResources().getString(R.string.select_complete, selectedItemsCount, maxSelectLimit));
+    private void resetBtnOKstate() {
+        if (ImagePickerData.getSelectImgs().size() > 0) {
+            tv_rightBtn.setClickable(true);
+            tv_rightBtn.setEnabled(true);
+            tv_rightBtn.setAlpha(1f);
+            tv_rightBtn.setText(getResources().getString(R.string.select_complete,
+                    new Object[]{ImagePickerData.getSelectImgs().size(), selectConfig.getSelectLimit()}));
         } else {
-            tv_complete.setAlpha(0.5f);
-            tv_complete.setClickable(false);
-            tv_complete.setText(getResources().getString(R.string.complete));
-            tv_complete.setEnabled(false);
+            tv_rightBtn.setAlpha(0.6f);
+            tv_rightBtn.setText(getResources().getString(R.string.complete));
+            tv_rightBtn.setClickable(false);
+            tv_rightBtn.setEnabled(false);
         }
     }
 
     @Override
     protected void onDestroy() {
-        androidImagePicker.removeOnImageItemSelectedChangeListener(this);
         super.onDestroy();
     }
 
+    public IImgPickerUIConfig getImgLoader() {
+        return uiConfig;
+    }
 
     @SuppressLint("ValidFragment")
     public static class SinglePreviewFragment extends Fragment {
@@ -250,7 +264,7 @@ public class YPXImagePreviewActivity extends FragmentActivity implements
             imageView.setBackgroundColor(0xff000000);
             // 启用图片缩放功能
             imageView.enable();
-            imageView.setMaxScale(5.0f);
+            imageView.setMaxScale(7.0f);
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             imageView.setLayoutParams(params);
             imageView.setOnClickListener(new View.OnClickListener() {
@@ -259,7 +273,9 @@ public class YPXImagePreviewActivity extends FragmentActivity implements
                     ((YPXImagePreviewActivity) getActivity()).onImageSingleTap();
                 }
             });
-          //  YPXImagePicker.getInstance().getImgLoader().onPresentImage(imageView, url, 0);
+            if (getActivity() instanceof YPXImagePreviewActivity) {
+                ((YPXImagePreviewActivity) getActivity()).getImgLoader().displayPerViewImage(imageView, url);
+            }
         }
 
         @Override
@@ -272,6 +288,9 @@ public class YPXImagePreviewActivity extends FragmentActivity implements
     class TouchImageAdapter extends FragmentStatePagerAdapter {
         TouchImageAdapter(FragmentManager fm) {
             super(fm);
+            if (mImageList == null) {
+                mImageList = new ArrayList<>();
+            }
         }
 
         @Override

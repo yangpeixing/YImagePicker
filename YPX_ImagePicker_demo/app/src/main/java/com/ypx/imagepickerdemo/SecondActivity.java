@@ -27,13 +27,13 @@ public class SecondActivity extends AppCompatActivity {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ImagePicker.withImageLoader(new GlideImgLoader())
-                        .pick(SecondActivity.this, new OnImagePickCompleteListener() {
-                            @Override
-                            public void onImagePickComplete(List<ImageItem> items) {
-                                Toast.makeText(SecondActivity.this, "调用了" + items.size(), 0).show();
-                            }
-                        });
+//                ImagePicker.withImageLoader(new GlideImgLoader())
+//                        .pick(SecondActivity.this, new OnImagePickCompleteListener() {
+//                            @Override
+//                            public void onImagePickComplete(List<ImageItem> items) {
+//                                Toast.makeText(SecondActivity.this, "调用了" + items.size(), 0).show();
+//                            }
+//                        });
             }
         });
         Log.e("process", "SecondActivity: " + ProcessUtil.getAppName(this));

@@ -16,9 +16,10 @@
   ~  */
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
@@ -30,22 +31,23 @@
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#303030"
-        android:clickable="true">
+        android:layout_alignParentTop="true"
+        android:background="#303030">
 
         <TextView
-            android:id="@+id/tv_title_count"
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/btn_backpress"
-            android:gravity="center"
+            android:layout_toLeftOf="@+id/tv_rightBtn"
+            android:layout_toRightOf="@+id/iv_back"
+            android:gravity="center|left"
             android:text="图片选择"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/btn_ok"
+            android:id="@+id/tv_rightBtn"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
@@ -59,7 +61,7 @@
             android:textSize="14sp" />
 
         <ImageView
-            android:id="@+id/btn_backpress"
+            android:id="@+id/iv_back"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -68,11 +70,24 @@
 
     </RelativeLayout>
 
+    <!--<HorizontalScrollView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content">-->
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="100dp"-->
+    <!--android:orientation="horizontal">-->
+    <!---->
+    <!--</LinearLayout>-->
+    <!--</HorizontalScrollView>-->
+
 
     <RelativeLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:background="#f0303030"
         android:clickable="true">
@@ -99,4 +114,4 @@
 
     </RelativeLayout>
 
-</FrameLayout>
+</RelativeLayout>
