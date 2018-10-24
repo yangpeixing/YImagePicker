@@ -42,10 +42,10 @@
         android:layout_height="36dp"
         android:layout_alignParentRight="true">
 
-        <com.ypx.imagepicker.widget.SuperCheckBox
+        <com.ypx.imagepicker.widget.CheckImageView
             android:id="@+id/iv_thumb_check"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="center"
             android:button="@null"
             android:visibility="visible" />

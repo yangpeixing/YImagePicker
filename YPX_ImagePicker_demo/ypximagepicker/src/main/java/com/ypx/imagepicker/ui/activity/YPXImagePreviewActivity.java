@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
+import com.ypx.imagepicker.bean.UiConfig;
 import com.ypx.imagepicker.config.IImgPickerUIConfig;
 import com.ypx.imagepicker.config.ImgPickerSelectConfig;
 import com.ypx.imagepicker.data.ImagePickerData;
@@ -45,7 +46,8 @@ public class YPXImagePreviewActivity extends FragmentActivity {
 
 
     private ImgPickerSelectConfig selectConfig;
-    private IImgPickerUIConfig uiConfig;
+    private IImgPickerUIConfig iImgPickerUIConfig;
+    private UiConfig uiConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,10 +99,15 @@ public class YPXImagePreviewActivity extends FragmentActivity {
      */
     private void dealIntentData() {
         selectConfig = (ImgPickerSelectConfig) getIntent().getSerializableExtra("ImgPickerSelectConfig");
-        uiConfig = (IImgPickerUIConfig) getIntent().getSerializableExtra("IImgPickerUIConfig");
+        iImgPickerUIConfig = (IImgPickerUIConfig) getIntent().getSerializableExtra("IImgPickerUIConfig");
         mCurrentItemPosition = getIntent().getIntExtra("selectIndex", 0);
         // mImageList = ImagePickerData.getCurrentImageSet().imageItems;
         mImageList = ((ImageSet) (getIntent().getSerializableExtra("ImageSet"))).imageItems;
+        if (iImgPickerUIConfig != null) {
+            uiConfig = iImgPickerUIConfig.getUiConfig(this);
+        } else {
+            uiConfig = new UiConfig();
+        }
     }
 
 
@@ -118,7 +125,10 @@ public class YPXImagePreviewActivity extends FragmentActivity {
         }
         if (uiConfig.getBackIconID() != 0) {
             iv_back.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
-            // iv_back.setColorFilter(Color.WHITE);
+        }
+
+        if (uiConfig.getLeftBackIconColor() != 0) {
+            iv_back.setColorFilter(uiConfig.getLeftBackIconColor());
         }
 
         if (uiConfig.getTopBarBackgroundColor() != 0) {
@@ -129,16 +139,25 @@ public class YPXImagePreviewActivity extends FragmentActivity {
             footer_panel.setBackgroundColor(uiConfig.getBottomBarBackgroundColor());
         }
 
-        if (uiConfig.getRightBtnBackground() != null) {
-            tv_rightBtn.setBackground(uiConfig.getRightBtnBackground());
+        if (uiConfig.getRightBtnBackground() != 0) {
+            tv_rightBtn.setBackground(getResources().getDrawable(uiConfig.getRightBtnBackground()));
         }
 
         if (uiConfig.getTitleColor() != 0) {
             tv_title.setTextColor(uiConfig.getTitleColor());
         }
 
+        if (uiConfig.getRightBtnTextColor() != 0) {
+            tv_rightBtn.setTextColor(uiConfig.getRightBtnTextColor());
+        }
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         tv_title.setGravity(Gravity.CENTER | uiConfig.getTopBarTitleGravity());
-        tv_rightBtn.setTextColor(uiConfig.getThemeColor());
+       // tv_rightBtn.setTextColor(uiConfig.getThemeColor());
         resetBtnOKstate();
         tv_rightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -241,7 +260,7 @@ public class YPXImagePreviewActivity extends FragmentActivity {
     }
 
     public IImgPickerUIConfig getImgLoader() {
-        return uiConfig;
+        return iImgPickerUIConfig;
     }
 
     @SuppressLint("ValidFragment")

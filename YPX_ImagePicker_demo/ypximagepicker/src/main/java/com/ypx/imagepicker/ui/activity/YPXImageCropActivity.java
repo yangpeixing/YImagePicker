@@ -1,7 +1,6 @@
 package com.ypx.imagepicker.ui.activity;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -14,9 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oginotihiro.cropview.CropView;
-import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.YPXImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.UiConfig;
 import com.ypx.imagepicker.config.IImgPickerUIConfig;
 import com.ypx.imagepicker.utils.StatusBarUtils;
 import com.ypx.imagepicker.utils.TakePhotoUtil;
@@ -33,7 +33,8 @@ public class YPXImageCropActivity extends FragmentActivity {
     private String imagePath;
     private Bitmap bmp = null;
 
-    private IImgPickerUIConfig uiConfig;
+    private IImgPickerUIConfig iImgPickerUIConfig;
+    private UiConfig uiConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,8 @@ public class YPXImageCropActivity extends FragmentActivity {
      * 接收传参
      */
     private void dealIntentData() {
-        uiConfig = (IImgPickerUIConfig) getIntent().getSerializableExtra("IImgPickerUIConfig");
+        iImgPickerUIConfig = (IImgPickerUIConfig) getIntent().getSerializableExtra("IImgPickerUIConfig");
+        uiConfig = iImgPickerUIConfig.getUiConfig(this);
         imagePath = "file://" + getIntent().getStringExtra("imagePath");
     }
 
@@ -70,24 +72,30 @@ public class YPXImageCropActivity extends FragmentActivity {
         }
         if (uiConfig.getBackIconID() != 0) {
             iv_back.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
-            iv_back.setColorFilter(Color.WHITE);
         }
 
         if (uiConfig.getTopBarBackgroundColor() != 0) {
             top_bar.setBackgroundColor(uiConfig.getTopBarBackgroundColor());
         }
 
+        if (uiConfig.getLeftBackIconColor() != 0) {
+            iv_back.setColorFilter(uiConfig.getLeftBackIconColor());
+        }
 
-        if (uiConfig.getRightBtnBackground() != null) {
-            tv_rightBtn.setBackground(uiConfig.getRightBtnBackground());
+        if (uiConfig.getRightBtnBackground() != 0) {
+            tv_rightBtn.setBackground(getResources().getDrawable(uiConfig.getRightBtnBackground()));
         }
 
         if (uiConfig.getTitleColor() != 0) {
             tv_title.setTextColor(uiConfig.getTitleColor());
         }
 
+        if (uiConfig.getRightBtnTextColor() != 0) {
+            tv_rightBtn.setTextColor(uiConfig.getRightBtnTextColor());
+        }
+
         tv_title.setGravity(Gravity.CENTER | uiConfig.getTopBarTitleGravity());
-        tv_rightBtn.setTextColor(uiConfig.getThemeColor());
+       // tv_rightBtn.setTextColor(uiConfig.getThemeColor());
         tv_rightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,10 +109,10 @@ public class YPXImageCropActivity extends FragmentActivity {
                                     Toast.makeText(YPXImageCropActivity.this, "剪裁图片失败!", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                                ImageItem item = new ImageItem( TakePhotoUtil.saveBitmapToPic(bmp), "", -1);
+                                ImageItem item = new ImageItem(TakePhotoUtil.saveBitmapToPic(bmp), "", -1);
                                 List<ImageItem> list = new ArrayList<>();
                                 list.add(item);
-                                ImagePicker.notifyOnImagePickComplete(list);
+                                YPXImagePicker.notifyOnImagePickComplete(list);
                                 setResult(RESULT_OK);
                                 finish();
                             }
@@ -121,7 +129,6 @@ public class YPXImageCropActivity extends FragmentActivity {
             }
         });
     }
-
 
 
 }

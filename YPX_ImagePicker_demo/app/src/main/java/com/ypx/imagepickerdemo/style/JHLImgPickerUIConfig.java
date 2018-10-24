@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.ypx.imagepicker.bean.UiConfig;
 import com.ypx.imagepicker.config.IImgPickerUIConfig;
 import com.ypx.imagepickerdemo.R;
 
@@ -33,75 +34,23 @@ public class JHLImgPickerUIConfig implements IImgPickerUIConfig {
     }
 
     @Override
-    public boolean isImmersionBar() {
-        return false;
-    }
-
-    @Override
-    public int getThemeColor() {
-        return Color.parseColor("#EA508F");
-    }
-
-    @Override
-    public int getSelectedIconID() {
-        return R.mipmap.ypx_pic_selected;
-    }
-
-    @Override
-    public int getUnSelectIconID() {
-        return R.mipmap.ypx_pic_unselected;
-    }
-
-    @Override
-    public int getBackIconID() {
-        return R.mipmap.ypx_icon_back_black;
-    }
-
-    @Override
-    public int getCameraIconID() {
-        return R.mipmap.ypx_ic_camera;
-    }
-
-    @Override
-    public String getOKBtnText() {
-        return "完成";
-    }
-
-    @Override
-    public int getTitleColor() {
-        return Color.BLACK;
-    }
-
-    @Override
-    public int getTopBarTitleGravity() {
-        return Gravity.CENTER;
-    }
-
-    @Override
-    public Drawable getRightBtnBackground() {
-        return null;
-    }
-
-    @Override
-    public int getTopBarBackgroundColor() {
-        return Color.parseColor("#ffffff");
-    }
-
-    @Override
-    public int getBottomBarBackgroundColor() {
-        return Color.parseColor("#303030");
-    }
-
-    @Override
-    public int getGridViewBackgroundColor() {
-        return Color.WHITE;
-    }
-
-    @Override
-    public int getImageItemBackgroundColor() {
-        //return Color.parseColor("#404040");
-
-        return Color.TRANSPARENT;
+    public UiConfig getUiConfig(Context context) {
+        UiConfig config = new UiConfig();
+        config.setImmersionBar(true);
+        config.setThemeColor(Color.parseColor("#ffffff"));
+        config.setSelectedIconID(R.mipmap.ypx_pic_selected);
+        config.setUnSelectIconID(R.mipmap.ypx_pic_unselected);
+        config.setBackIconID(R.mipmap.ypx_icon_back_black);
+        config.setCameraIconID(R.mipmap.ypx_ic_camera);
+        config.setoKBtnText("完成");
+        config.setTitleColor(Color.WHITE);
+        config.setTopBarTitleGravity(Gravity.START);
+        config.setRightBtnBackground(R.drawable.selector_bt_selectpic);
+        config.setTopBarBackgroundColor(Color.parseColor("#FF4081"));
+        config.setBottomBarBackgroundColor(Color.parseColor("#FF4081"));
+        config.setGridViewBackgroundColor(Color.WHITE);
+        config.setImageItemBackgroundColor(Color.parseColor("#50000000"));
+        return config;
     }
 
     @Override

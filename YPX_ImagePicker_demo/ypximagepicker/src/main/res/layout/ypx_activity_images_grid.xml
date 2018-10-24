@@ -71,6 +71,7 @@
             android:id="@+id/gridview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/black"
             android:clipToPadding="false"
             android:horizontalSpacing="2dp"
             android:listSelector="@android:color/transparent"
@@ -82,8 +83,7 @@
             android:paddingTop="2dp"
             android:stretchMode="columnWidth"
             android:verticalSpacing="2dp"
-            android:visibility="visible"
-            android:background="@color/black"/>
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/tv_time"
@@ -138,7 +138,19 @@
                 android:singleLine="true"
                 android:text="全部图片"
                 android:textColor="#ffffff"
-                android:textSize="16dp" />
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_preview"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:paddingEnd="15dp"
+                android:paddingStart="15dp"
+                android:text="预览"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
         </RelativeLayout>
 

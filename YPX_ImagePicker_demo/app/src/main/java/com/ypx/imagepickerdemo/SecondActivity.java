@@ -7,12 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.ypx.imagepicker.ImagePicker;
-import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.interf.OnImagePickCompleteListener;
 import com.ypx.imagepicker.utils.ProcessUtil;
-
-import java.util.List;
 
 /**
  * 作者：yangpeixing on 2018/6/21 14:10

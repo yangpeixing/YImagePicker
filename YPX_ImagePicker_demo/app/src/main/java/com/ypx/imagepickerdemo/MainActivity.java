@@ -11,15 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.ypx.imagepicker.ImagePicker;
+import com.ypx.imagepicker.YPXImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.interf.OnImagePickCompleteListener;
 import com.ypx.imagepicker.utils.ProcessUtil;
 import com.ypx.imagepicker.widget.browseimage.PicBrowseImageView;
+import com.ypx.imagepickerdemo.style.JHLImgPickerUIConfig;
 import com.ypx.imagepickerdemo.style.WXImgPickerUIConfig;
 
 import java.util.ArrayList;
@@ -29,9 +32,12 @@ public class MainActivity extends AppCompatActivity {
     Button btn_multiSelect, btn_singleSelect, btn_cropSelect, btn_takePhoto;
     GridLayout gridLayout;
     PicBrowseImageView iv_single;
+    CheckBox cb_jhl, cb_wx, cb_showCamera;
     List<String> picList = new ArrayList<>();
 
     int maxNum = 16;
+    WXImgPickerUIConfig wxImgPickerUIConfig;
+    JHLImgPickerUIConfig jhlImgPickerUIConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,11 @@ public class MainActivity extends AppCompatActivity {
         btn_cropSelect = findViewById(R.id.btn_cropSelect);
         gridLayout = findViewById(R.id.gridLayout);
         iv_single = findViewById(R.id.iv_single);
+        cb_jhl = findViewById(R.id.cb_jhl);
+        cb_wx = findViewById(R.id.cb_wx);
+        cb_showCamera = findViewById(R.id.cb_showCamera);
+        wxImgPickerUIConfig = new WXImgPickerUIConfig();
+        jhlImgPickerUIConfig = new JHLImgPickerUIConfig();
         iv_single.setMaxScale(5.0f);
         iv_single.enable();
         btn_takePhoto = findViewById(R.id.btn_takePhoto);
@@ -61,23 +72,41 @@ public class MainActivity extends AppCompatActivity {
         btn_cropSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                picList.clear();
                 crop();
             }
         });
         btn_takePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                picList.clear();
                 takePhoto();
             }
         });
         Log.e("process", "MainActivity: " + ProcessUtil.getAppName(this));
+
+        cb_wx.setChecked(true);
+        cb_jhl.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                cb_wx.setChecked(!cb_jhl.isChecked());
+            }
+        });
+
+        cb_wx.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                cb_jhl.setChecked(!cb_wx.isChecked());
+            }
+        });
     }
 
+
     public void pick(final int selectCount) {
-        ImagePicker.with(new WXImgPickerUIConfig())
-                .showCamera(true)
+        YPXImagePicker.with(cb_jhl.isChecked() ? jhlImgPickerUIConfig : wxImgPickerUIConfig)
+                .showCamera(cb_showCamera.isChecked())
                 .selectLimit(selectCount)
-                .columnCount(3)
+                .columnCount(4)
                 .canEditPic(true)
                 .showOriginalCheckBox(true)
                 .pick(MainActivity.this, new OnImagePickCompleteListener() {
@@ -90,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
                             return;
                         }
                         iv_single.setVisibility(View.GONE);
+                        gridLayout.setVisibility(View.VISIBLE);
                         if (items != null && items.size() > 0) {
                             for (ImageItem item : items) {
                                 picList.add(item.path);
@@ -101,9 +131,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void crop() {
-        ImagePicker.with(new WXImgPickerUIConfig())
-                .showCamera(true)
-                .columnCount(3)
+        YPXImagePicker.with(cb_jhl.isChecked() ? jhlImgPickerUIConfig : wxImgPickerUIConfig)
+                .showCamera(cb_showCamera.isChecked())
+                .columnCount(4)
                 .canEditPic(true)
                 .showOriginalCheckBox(true)
                 .crop(MainActivity.this, new OnImagePickCompleteListener() {
@@ -117,9 +147,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void takePhoto() {
-        ImagePicker.with(new WXImgPickerUIConfig())
+        YPXImagePicker.with(cb_jhl.isChecked() ? jhlImgPickerUIConfig : wxImgPickerUIConfig)
                 .showCamera(false)
-                .columnCount(3)
+                .columnCount(4)
                 .canEditPic(true)
                 .showOriginalCheckBox(true)
                 .takePhoto(this, new OnImagePickCompleteListener() {

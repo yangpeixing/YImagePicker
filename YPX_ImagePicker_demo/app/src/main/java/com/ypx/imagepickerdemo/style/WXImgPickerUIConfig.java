@@ -2,12 +2,12 @@ package com.ypx.imagepickerdemo.style;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.ypx.imagepicker.bean.UiConfig;
 import com.ypx.imagepicker.config.IImgPickerUIConfig;
 import com.ypx.imagepickerdemo.R;
 
@@ -33,73 +33,24 @@ public class WXImgPickerUIConfig implements IImgPickerUIConfig {
     }
 
     @Override
-    public boolean isImmersionBar() {
-        return true;
-    }
-
-    @Override
-    public int getThemeColor() {
-        return Color.parseColor("#C000FF00");
-    }
-
-    @Override
-    public int getSelectedIconID() {
-        return R.mipmap.ypx_pic_selected;
-    }
-
-    @Override
-    public int getUnSelectIconID() {
-        return R.mipmap.ypx_pic_unselected;
-    }
-
-    @Override
-    public int getBackIconID() {
-        return R.mipmap.ypx_icon_back_black;
-    }
-
-    @Override
-    public int getCameraIconID() {
-        return R.mipmap.ypx_ic_camera;
-    }
-
-    @Override
-    public String getOKBtnText() {
-        return "完成";
-    }
-
-    @Override
-    public int getTitleColor() {
-        return Color.WHITE;
-    }
-
-    @Override
-    public int getTopBarTitleGravity() {
-        return Gravity.LEFT;
-    }
-
-    @Override
-    public Drawable getRightBtnBackground() {
-        return null;
-    }
-
-    @Override
-    public int getTopBarBackgroundColor() {
-        return Color.parseColor("#303030");
-    }
-
-    @Override
-    public int getBottomBarBackgroundColor() {
-        return Color.parseColor("#303030");
-    }
-
-    @Override
-    public int getGridViewBackgroundColor() {
-        return Color.BLACK;
-    }
-
-    @Override
-    public int getImageItemBackgroundColor() {
-        return Color.parseColor("#404040");
+    public UiConfig getUiConfig(Context context) {
+        UiConfig config = new UiConfig();
+        config.setImmersionBar(true);
+        config.setThemeColor(Color.parseColor("#C000FF00"));
+        config.setSelectedIconID(R.mipmap.wechat_select);
+        config.setUnSelectIconID(R.mipmap.wechat_unselect);
+        config.setBackIconID(com.ypx.imagepickerdemo.R.mipmap.ypx_icon_back_black);
+        config.setCameraIconID(R.mipmap.ypx_ic_camera);
+        config.setoKBtnText("完成");
+        config.setTitleColor(Color.WHITE);
+        config.setTopBarTitleGravity(Gravity.START);
+        config.setRightBtnBackground(0);
+        config.setTopBarBackgroundColor(Color.parseColor("#303030"));
+        config.setBottomBarBackgroundColor(Color.parseColor("#303030"));
+        config.setGridViewBackgroundColor(Color.BLACK);
+        config.setImageItemBackgroundColor(Color.parseColor("#404040"));
+        config.setLeftBackIconColor(Color.WHITE);
+        return config;
     }
 
     @Override

@@ -9,18 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.UiConfig;
 import com.ypx.imagepicker.config.IImgPickerUIConfig;
 import com.ypx.imagepicker.config.ImgPickerSelectConfig;
 import com.ypx.imagepicker.data.ImagePickerData;
 import com.ypx.imagepicker.interf.ImageSelectMode;
 import com.ypx.imagepicker.ui.activity.YPXImageGridActivity;
+import com.ypx.imagepicker.widget.CheckImageView;
 import com.ypx.imagepicker.widget.ShowTypeImageView;
-import com.ypx.imagepicker.widget.SuperCheckBox;
 
 import java.util.List;
 
@@ -35,13 +35,15 @@ public class ImageGridAdapter extends BaseAdapter {
     private List<ImageItem> images;
     private Context mContext;
     private ImgPickerSelectConfig selectConfig;
-    private IImgPickerUIConfig uiConfig;
+    private IImgPickerUIConfig iImgPickerUIConfig;
+    private UiConfig uiConfig;
 
-    public ImageGridAdapter(Context ctx, List<ImageItem> images, ImgPickerSelectConfig selectConfig, IImgPickerUIConfig uiConfig) {
+    public ImageGridAdapter(Context ctx, List<ImageItem> images, ImgPickerSelectConfig selectConfig, IImgPickerUIConfig iImgPickerUIConfig) {
         this.images = images;
         this.mContext = ctx;
         this.selectConfig = selectConfig;
-        this.uiConfig = uiConfig;
+        this.iImgPickerUIConfig = iImgPickerUIConfig;
+        uiConfig = iImgPickerUIConfig.getUiConfig(ctx);
     }
 
     @Override
@@ -104,7 +106,7 @@ public class ImageGridAdapter extends BaseAdapter {
                 convertView = LayoutInflater.from(mContext).inflate(R.layout.ypx_image_grid_item, null);
                 holder = new ViewHolder();
                 holder.ivPic = (ShowTypeImageView) convertView.findViewById(R.id.iv_thumb);
-                holder.cbSelected = (SuperCheckBox) convertView.findViewById(R.id.iv_thumb_check);
+                holder.cbSelected = (CheckImageView) convertView.findViewById(R.id.iv_thumb_check);
                 holder.cbPanel = convertView.findViewById(R.id.thumb_check_panel);
                 holder.v_masker = convertView.findViewById(R.id.v_masker);
                 convertView.setTag(holder);
@@ -121,27 +123,27 @@ public class ImageGridAdapter extends BaseAdapter {
             if (uiConfig.getImageItemBackgroundColor() != 0) {
                 holder.ivPic.setBackgroundColor(uiConfig.getImageItemBackgroundColor());
             }
-            holder.cbSelected.setRightDrawable(mContext.getResources().getDrawable(uiConfig.getSelectedIconID())
-                    , mContext.getResources().getDrawable(uiConfig.getUnSelectIconID()));
-            //  int index = selectConfig.isShowCamera() ? position + 1 : position;
+            holder.cbSelected.setSelectIconId(uiConfig.getSelectedIconID());
+            holder.cbSelected.setUnSelectIconId(uiConfig.getUnSelectIconID());
             final ImageItem item = getItem(position);
             holder.cbSelected.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (ImagePickerData.isOverLimit(selectConfig.getSelectLimit())) {
-                        if (holder.cbSelected.isChecked()) {
-                            holder.cbSelected.toggle();
-                            String toast = mContext.getResources().getString(R.string.you_have_a_select_limit, selectConfig.getSelectLimit() + "");
-                            uiConfig.tip(mContext, toast);
-                        }
+                    if (ImagePickerData.isOverLimit(selectConfig.getSelectLimit() - 1) && !holder.cbSelected.isChecked()) {
+                        String toast = mContext.getResources().getString(R.string.you_have_a_select_limit, selectConfig.getSelectLimit() + "");
+                        iImgPickerUIConfig.tip(mContext, toast);
+                        return;
+                    }
+                    holder.cbSelected.toggle();
+                    if (mContext instanceof YPXImageGridActivity) {
+                        ((YPXImageGridActivity) mContext).imageSelectChange(item, holder.cbSelected.isChecked());
+                        notifyDataSetChanged();
                     }
                 }
             });
 
-            holder.cbSelected.setOnCheckedChangeListener(null);
             if (ImagePickerData.getSelectImgs().contains(item)) {
                 holder.cbSelected.setChecked(true);
-                holder.ivPic.setSelected(true);
                 holder.v_masker.setVisibility(View.VISIBLE);
             } else {
                 holder.cbSelected.setChecked(false);
@@ -160,19 +162,9 @@ public class ImageGridAdapter extends BaseAdapter {
                 }
             });
 
-            holder.cbSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (mContext instanceof YPXImageGridActivity) {
-                        ((YPXImageGridActivity) mContext).imageSelectChange(item, isChecked);
-                        notifyDataSetChanged();
-                    }
-                }
-
-            });
             holder.ivPic.setTypeWithUrlAndSize(item.path, item.width, item.height);
-            if (uiConfig != null) {
-                uiConfig.displayListImage(holder.ivPic, item.path, params.width);
+            if (iImgPickerUIConfig != null) {
+                iImgPickerUIConfig.displayListImage(holder.ivPic, item.path, params.width);
             }
         }
         return convertView;
@@ -201,7 +193,7 @@ public class ImageGridAdapter extends BaseAdapter {
 
     class ViewHolder {
         ShowTypeImageView ivPic;
-        SuperCheckBox cbSelected;
+        CheckImageView cbSelected;
         View cbPanel, v_masker;
     }
 }

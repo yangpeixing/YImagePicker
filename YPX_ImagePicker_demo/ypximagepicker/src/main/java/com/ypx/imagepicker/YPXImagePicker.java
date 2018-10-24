@@ -11,7 +11,7 @@ import java.util.List;
  * 功能：
  * 产权：南京婚尚信息技术
  */
-public class ImagePicker {
+public class YPXImagePicker {
 
 
     public static ImagePickerPresenter with(IImgPickerUIConfig iImgPickerUIConfig) {

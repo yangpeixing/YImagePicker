@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.config.IImgPickerUIConfig;
-import com.ypx.imagepicker.config.ImgPickerSelectConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +29,10 @@ public class ImageSetAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private List<ImageSet> mImageSets = new ArrayList<>();
-    private ImgPickerSelectConfig selectConfig;
     private IImgPickerUIConfig uiConfig;
 
-    public ImageSetAdapter(Context context, ImgPickerSelectConfig selectConfig, IImgPickerUIConfig uiConfig) {
+    public ImageSetAdapter(Context context, IImgPickerUIConfig uiConfig) {
         this.mContext = context;
-        this.selectConfig = selectConfig;
         this.uiConfig = uiConfig;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -82,7 +79,7 @@ public class ImageSetAdapter extends BaseAdapter {
             holder.indicator.setVisibility(View.INVISIBLE);
         }
 
-        holder.indicator.setColorFilter(uiConfig.getThemeColor());
+        holder.indicator.setColorFilter(uiConfig.getUiConfig(mContext).getThemeColor());
 
         return view;
     }
