@@ -45,6 +45,7 @@ public class WXImgPickerUIConfig implements IImgPickerUIConfig {
         config.setTitleColor(Color.WHITE);
         config.setTopBarTitleGravity(Gravity.START);
         config.setRightBtnBackground(0);
+        config.setRightBtnTextColor(Color.GREEN);
         config.setTopBarBackgroundColor(Color.parseColor("#303030"));
         config.setBottomBarBackgroundColor(Color.parseColor("#303030"));
         config.setGridViewBackgroundColor(Color.BLACK);

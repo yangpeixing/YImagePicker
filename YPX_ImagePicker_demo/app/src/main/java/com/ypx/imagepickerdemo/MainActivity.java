@@ -147,19 +147,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void takePhoto() {
-        YPXImagePicker.with(cb_jhl.isChecked() ? jhlImgPickerUIConfig : wxImgPickerUIConfig)
-                .showCamera(false)
-                .columnCount(4)
-                .canEditPic(true)
-                .showOriginalCheckBox(true)
-                .takePhoto(this, new OnImagePickCompleteListener() {
-                    @Override
-                    public void onImagePickComplete(List<ImageItem> items) {
-                        iv_single.setVisibility(View.VISIBLE);
-                        gridLayout.setVisibility(View.GONE);
-                        new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
-                    }
-                });
+//        YPXImagePicker.with(cb_jhl.isChecked() ? jhlImgPickerUIConfig : wxImgPickerUIConfig)
+//                .showCamera(false)
+//                .columnCount(4)
+//                .canEditPic(true)
+//                .showOriginalCheckBox(true)
+//                .takePhoto(this, new OnImagePickCompleteListener() {
+//                    @Override
+//                    public void onImagePickComplete(List<ImageItem> items) {
+//                        iv_single.setVisibility(View.VISIBLE);
+//                        gridLayout.setVisibility(View.GONE);
+//                        new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
+//                    }
+//                });
+
+
+        YPXImagePicker.with(wxImgPickerUIConfig).takePhoto(this, new OnImagePickCompleteListener() {
+            @Override
+            public void onImagePickComplete(List<ImageItem> items) {
+                iv_single.setVisibility(View.VISIBLE);
+                gridLayout.setVisibility(View.GONE);
+                new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
+            }
+        });
     }
 
 

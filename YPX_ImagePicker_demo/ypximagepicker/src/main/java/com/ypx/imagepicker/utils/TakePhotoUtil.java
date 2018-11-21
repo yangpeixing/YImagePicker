@@ -1,7 +1,7 @@
 package com.ypx.imagepicker.utils;
 
 import android.app.Activity;
-import android.content.Context;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -23,26 +23,44 @@ import java.util.Locale;
  */
 public class TakePhotoUtil {
     public static String mCurrentPhotoPath;
+
+    /*
+    * 判断sdcard是否被挂载
+    */
+    public static boolean hasSdcard() {
+        return Environment.getExternalStorageState().equals(
+                Environment.MEDIA_MOUNTED);
+    }
+
+
     /**
      * 调用系统相机拍照
      */
-    public static void takePhoto(Activity activity,int REQ) {
-        File photoFile;
-        try {
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            // Ensure that there's a camera activity to handle the intent
-            if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
-                // Create the File where the photo should go
-                photoFile = createImageSaveFile();
-                if (photoFile != null) {
-                    mCurrentPhotoPath=photoFile.getAbsolutePath();
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+    public static void takePhoto(Activity activity, int REQ) {
+        // 激活相机
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // 判断存储卡是否可以用，可用进行存储
+        if (hasSdcard()) {
+            Uri imageUri;
+            File photoFile = createImageSaveFile();
+            if (photoFile != null) {
+                mCurrentPhotoPath = photoFile.getAbsolutePath();
+                if (android.os.Build.VERSION.SDK_INT < 24) {
+                    // 从文件中创建uri
+                    imageUri = Uri.fromFile(photoFile);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                } else {
+                    //兼容android7.0 使用共享文件的形式
+                    ContentValues contentValues = new ContentValues(1);
+                    contentValues.put(MediaStore.Images.Media.DATA, mCurrentPhotoPath);
+                    imageUri = activity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                 }
             }
-            activity.startActivityForResult(takePictureIntent, REQ);
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
+
         }
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_CAREMA
+        activity.startActivityForResult(intent, REQ);
     }
 
     /**
@@ -69,8 +87,8 @@ public class TakePhotoUtil {
 
     public static String saveBitmapToPic(Bitmap bitmap) {
         File f = createImageSaveFile();
-        String localPath=f.getAbsolutePath();
-        if (bitmap == null ||  localPath.length() == 0) {
+        String localPath = f.getAbsolutePath();
+        if (bitmap == null || localPath.length() == 0) {
             return "";
         }
         FileOutputStream b = null;
@@ -95,15 +113,15 @@ public class TakePhotoUtil {
     }
 
     public static File createFile(String fileName) {
-        if(fileName != null && fileName.length() > 0) {
+        if (fileName != null && fileName.length() > 0) {
             File file = new File(fileName);
             File folderFile = file.getParentFile();
-            if(!folderFile.exists()) {
+            if (!folderFile.exists()) {
                 folderFile.mkdirs();
             }
 
             try {
-                if(!file.exists()) {
+                if (!file.exists()) {
                     file.createNewFile();
                 }
             } catch (IOException var4) {
