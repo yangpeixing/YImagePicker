@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.example.ypxredbookpicker.widget.ScrollableRecyclerView
+        android:id="@+id/mRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingStart="1dp"
+        android:paddingEnd="1dp" />
+
+    <LinearLayout
+        android:id="@+id/topView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/titleBar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#F6F6F6"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="15dp"
+                android:scaleType="centerInside"
+                android:src="@mipmap/ypx_icon_back_black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="所有照片"
+                android:textColor="#1A1A1A"
+                android:textSize="16sp"
+                android:id="@+id/mTvSetName"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="15dp"
+                android:gravity="center"
+                android:onClick="next"
+                android:text="下一步"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/mCropLayout"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:background="#FFFFFF"
+            android:paddingBottom="2dp">
+
+            <com.example.ypxredbookpicker.widget.browseimage.PicBrowseImageView
+                android:id="@+id/mCropView"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_centerInParent="true" />
+
+            <ImageButton
+                android:id="@+id/stateBtn"
+                android:layout_width="27dp"
+                android:layout_height="27dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="15dp"
+                android:background="@null"
+                android:scaleType="fitXY"
+                android:src="@mipmap/icon_fit" />
+
+            <View
+                android:id="@+id/v_mask"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#80000000" />
+        </RelativeLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>

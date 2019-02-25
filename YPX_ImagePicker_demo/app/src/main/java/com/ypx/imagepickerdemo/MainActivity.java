@@ -17,12 +17,14 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.example.ypxredbookpicker.SelectPicAndCropActivity;
 import com.ypx.imagepicker.YPXImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.interf.OnImagePickCompleteListener;
 import com.ypx.imagepicker.utils.ProcessUtil;
 import com.ypx.imagepicker.widget.browseimage.PicBrowseImageView;
 import com.ypx.imagepickerdemo.style.JHLImgPickerUIConfig;
+import com.ypx.imagepickerdemo.style.RedBookImageLoader;
 import com.ypx.imagepickerdemo.style.WXImgPickerUIConfig;
 
 import java.util.ArrayList;
@@ -244,6 +246,13 @@ public class MainActivity extends AppCompatActivity {
         assert wm != null;
         wm.getDefaultDisplay().getMetrics(outMetrics);
         return outMetrics.widthPixels;
+    }
+
+    public void redBook(View view) {
+        RedBookImageLoader imageLoader = new RedBookImageLoader();
+        Intent intent = new Intent(this, SelectPicAndCropActivity.class);
+        intent.putExtra(SelectPicAndCropActivity.INTENT_KEY, imageLoader);
+        startActivity(intent);
     }
 
     @Override
