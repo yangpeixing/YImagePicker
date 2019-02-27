@@ -91,10 +91,13 @@ public class LocalDataSource implements DataSource, LoaderManager.LoaderCallback
                 String imagePath = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[0]));
                 String imageName = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[1]));
                 int imageWidth = data.getInt(data.getColumnIndexOrThrow(IMAGE_PROJECTION[3]));
-                int imageHeight=data.getInt(data.getColumnIndexOrThrow(IMAGE_PROJECTION[4]));
+                int imageHeight = data.getInt(data.getColumnIndexOrThrow(IMAGE_PROJECTION[4]));
                 long imageAddedTime = data.getLong(data.getColumnIndexOrThrow(IMAGE_PROJECTION[2]));
+                if (imageWidth == 0 || imageHeight == 0) {
+                    continue;
+                }
 
-                ImageItem item = new ImageItem(imagePath, imageName, imageWidth,imageHeight, imageAddedTime);
+                ImageItem item = new ImageItem(imagePath, imageName, imageWidth, imageHeight, imageAddedTime);
                 item.setTimeFormat(DateUtil.getStrTime(imageAddedTime));
                 allImages.add(item);
 

@@ -14,10 +14,28 @@ public class ImageItem implements Serializable {
     public int height;
     public long time;
     public String timeFormat;
-    private boolean isSelect=false;
+    private boolean isSelect = false;
+    private boolean isPress = false;
+    private int selectIndex = -1;
 
-    public ImageItem(){
+    public ImageItem() {
 
+    }
+
+    public int getSelectIndex() {
+        return selectIndex;
+    }
+
+    public void setSelectIndex(int selectIndex) {
+        this.selectIndex = selectIndex;
+    }
+
+    public boolean isPress() {
+        return isPress;
+    }
+
+    public void setPress(boolean press) {
+        isPress = press;
     }
 
     public boolean isSelect() {
@@ -48,6 +66,25 @@ public class ImageItem implements Serializable {
         this.time = time;
         this.width = width;
         this.height = height;
+    }
+
+    public float getWidthHeightRatio() {
+        if (height == 0) {
+            return 1;
+        }
+        return width * 1.00f / (height * 1.00f);
+    }
+
+    public int getWidthHeightType() {
+        if (getWidthHeightRatio() > 1.1f) {
+            return 1;
+        }
+
+        if (getWidthHeightRatio() < 0.99f) {
+            return -1;
+        }
+
+        return 0;
     }
 
     @Override

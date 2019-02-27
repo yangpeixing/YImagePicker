@@ -14,16 +14,16 @@ import android.view.MotionEvent;
  * Author: peixing.yang
  * Date: 2019/2/22
  */
-public class ScrollableRecyclerView extends RecyclerView {
-    public ScrollableRecyclerView(@NonNull Context context) {
+public class TouchRecyclerView extends RecyclerView {
+    public TouchRecyclerView(@NonNull Context context) {
         super(context);
     }
 
-    public ScrollableRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public TouchRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ScrollableRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyle) {
+    public TouchRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

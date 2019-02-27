@@ -24,13 +24,13 @@
         android:id="@+id/mTvIndex"
         android:layout_width="22dp"
         android:layout_height="22dp"
-        android:background="#859D7B"
+        android:background="@mipmap/icon_unselect"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
-        android:text="1"
+        android:text=""
         android:gravity="center"
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF" />
 
 
 </RelativeLayout>

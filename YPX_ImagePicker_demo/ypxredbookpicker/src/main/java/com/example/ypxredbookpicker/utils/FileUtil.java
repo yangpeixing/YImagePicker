@@ -11,9 +11,14 @@ package com.example.ypxredbookpicker.utils;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.text.TextUtils;
+import android.view.View;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -240,4 +245,43 @@ public final class FileUtil {
         }  
         return resultData;  
     }
+
+
+	/**
+	 * 保存一张图片到本地
+	 *
+	 * @param bmp
+	 * @param localPath
+	 */
+	public static String saveBitmapToLocalWithJPEG(Bitmap bmp, String localPath) {
+		if (bmp == null || localPath == null || localPath.length() == 0) {
+			return "";
+		}
+		FileOutputStream b = null;
+		FileUtil.createFile(localPath);
+		try {
+			b = new FileOutputStream(localPath);
+			bmp.compress(Bitmap.CompressFormat.JPEG, 100, b);// 把数据写入文件
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (b != null) {
+					b.flush();
+				}
+				if (b != null) {
+					b.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return localPath;
+	}
+
+	public static Bitmap getViewBitmap(View view) {
+		Bitmap bkg = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+		view.draw(new Canvas(bkg));
+		return bkg;
+	}
 }

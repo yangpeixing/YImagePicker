@@ -78,6 +78,24 @@ public class ViewSizeUtils {
         }
     }
 
+
+    public static void setViewMargin(View view,int margin) {
+        WeakReference<View> viewWeakReference = new WeakReference<>(view);
+        if (viewWeakReference.get() != null) {
+            if (viewWeakReference.get().getLayoutParams() != null &&
+                    (viewWeakReference.get().getLayoutParams() instanceof ViewGroup.MarginLayoutParams)) {
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+                if (margin != -1) {
+                    params.leftMargin = margin;
+                    params.rightMargin = margin;
+                    params.topMargin = margin;
+                    params.bottomMargin = margin;
+                }
+                viewWeakReference.get().setLayoutParams(params);
+            }
+        }
+    }
+
     /**
      * 获取View的高度
      *
@@ -124,6 +142,18 @@ public class ViewSizeUtils {
             if (params != null) {
                 params.leftMargin = marginStart;
                 params.rightMargin = marginEnd;
+                viewWeakReference.get().setLayoutParams(params);
+            }
+        }
+    }
+
+    public static void setMarginTopAndBottom(View view, int marginTop, int marginBottom) {
+        WeakReference<View> viewWeakReference = new WeakReference<>(view);
+        if (viewWeakReference.get() != null) {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            if (params != null) {
+                params.topMargin = marginTop;
+                params.bottomMargin = marginBottom;
                 viewWeakReference.get().setLayoutParams(params);
             }
         }

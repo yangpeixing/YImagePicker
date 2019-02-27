@@ -887,6 +887,7 @@ public class PicBrowseImageView extends ImageView {
             return super.onFling(e1, e2, velocityX, velocityY);
         }
 
+
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (mTranslate.isRuning) {

@@ -1,34 +1,37 @@
 package com.example.ypxredbookpicker;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.ypxredbookpicker.adapter.SelectPicAdapter;
+import com.example.ypxredbookpicker.adapter.ImageGridAdapter;
+import com.example.ypxredbookpicker.adapter.ImageSetAdapter;
 import com.example.ypxredbookpicker.bean.ImageItem;
 import com.example.ypxredbookpicker.bean.ImageSet;
+import com.example.ypxredbookpicker.helper.RecyclerViewTouchHelper;
+import com.example.ypxredbookpicker.utils.CornerUtils;
 import com.example.ypxredbookpicker.utils.FileUtil;
-import com.example.ypxredbookpicker.widget.ScrollableRecyclerView;
+import com.example.ypxredbookpicker.utils.TakePhotoUtil;
+import com.example.ypxredbookpicker.widget.TouchRecyclerView;
 import com.example.ypxredbookpicker.widget.browseimage.PicBrowseImageView;
 import com.example.ypxredbookpicker.data.DataSource;
 import com.example.ypxredbookpicker.data.OnImagesLoadedListener;
@@ -36,9 +39,6 @@ import com.example.ypxredbookpicker.data.impl.LocalDataSource;
 import com.example.ypxredbookpicker.utils.ViewSizeUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,243 +48,333 @@ import java.util.List;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class SelectPicAndCropActivity extends FragmentActivity implements OnImagesLoadedListener {
-    public static String INTENT_KEY = "ImageLoaderProvider";
-    private ScrollableRecyclerView mRecyclerView;
-    private LinearLayout topView;
+public class SelectPicAndCropActivity extends FragmentActivity implements OnImagesLoadedListener, View.OnClickListener {
+    public static final String INTENT_KEY = "ImageLoaderProvider";
+    public static final int REQ_CAMERA = 1431;
+    private TouchRecyclerView mGridImageRecyclerView;
+    private RecyclerView mImageSetRecyclerView;
     private TextView mTvSetName;
-    private RelativeLayout mCropLayout;
-    private RelativeLayout titleBar;
+    private TextView mTvSetName2;
+    private TextView mTvFullOrFit;
+    private TextView mTvNext;
+    private ImageView mArrowImg;
     private ImageLoaderProvider imageLoader;
-    private SelectPicAdapter adapter;
+    private ImageGridAdapter imageGridAdapter;
+    private ImageSetAdapter imageSetAdapter;
     private List<ImageSet> imageSets = new ArrayList<>();
     private List<ImageItem> imageItems = new ArrayList<>();
     private PicBrowseImageView mCropView;
     private ImageButton stateBtn;
     private int mCropSize;
     private View maskView;
-    private GridLayoutManager gridLayoutManager;
-
     private int cropMode = ImageCropMode.FILL;
+    private int picIndex = 0;
+    private int setIndex = 0;
+    private RecyclerViewTouchHelper touchHelper;
+    private List<ImageItem> selectList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_selectpicandcrop);
         if (getIntent().hasExtra(INTENT_KEY)) {
             imageLoader = (ImageLoaderProvider) getIntent().getSerializableExtra(INTENT_KEY);
         }
+        setContentView(R.layout.activity_selectpicandcrop);
         initView();
+        initGridImages();
+        initImageSets();
         loadPicData();
     }
 
-    private boolean isTopViewStick = false;
-
-    private void initView() {
-        mTvSetName = findViewById(R.id.mTvSetName);
-        maskView = findViewById(R.id.v_mask);
-        topView = findViewById(R.id.topView);
-        titleBar = findViewById(R.id.titleBar);
-        mCropLayout = findViewById(R.id.mCropLayout);
-        stateBtn = findViewById(R.id.stateBtn);
-        mCropView = findViewById(R.id.mCropView);
-        mRecyclerView = findViewById(R.id.mRecyclerView);
-        maskView.setAlpha(0f);
-        gridLayoutManager = new GridLayoutManager(this, 4);
-        mRecyclerView.setLayoutManager(gridLayoutManager);
-        adapter = new SelectPicAdapter(this, imageItems, imageLoader);
-        mRecyclerView.setAdapter(adapter);
-        mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        // 启用图片缩放功能
-        mCropView.enable();
-        mCropView.setMaxScale(7.0f);
-        mCropSize = ViewSizeUtils.getScreenWidth(this);
-        ViewSizeUtils.setViewSize(mCropLayout, mCropSize, 1.0f);
-        ViewSizeUtils.setViewSize(mCropView, mCropSize, 1.0f);
-        stateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fullOrFit(stateBtn);
-            }
-        });
-        mRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                mRecyclerView.setPadding(0, topView.getHeight(), 0, 0);
-            }
-        });
-
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (isRecovery()) {
-                    isTopViewStick = false;
-                }
-
-                if (isTopViewStick) {
-                    topView.setTranslationY(-getScollYDistance() - topView.getHeight());
-                    float ratio = topView.getTranslationY() * 1.00f / (-topView.getHeight() * 1.00f);
-                    setMaskAlpha(ratio);
-                }
-            }
-        });
-
-        mRecyclerView.setDragScrollListener(new ScrollableRecyclerView.onDragScrollListener() {
-            @Override
-            public void onScrollOverTop(int distance) {
-                isTouchToCropView = true;
-                if (distance > mCropSize) {
-                    maskView.setAlpha(1.0f);
-                    topView.setTranslationY(-mCropSize);
-                    mRecyclerView.setPadding(0, titleBar.getHeight(), 0, 0);
-                } else {
-                    if (topView.getTranslationY() != -mCropSize) {
-                        float ratio = -distance * 1.00f / (-mCropSize * 1.00f);
-                        setMaskAlpha(ratio);
-                        topView.setTranslationY(-distance);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onScrollDown(int distance) {
-                if (!mRecyclerView.canScrollVertically(-1)) {
-                    mRecyclerView.setPadding(0, topView.getHeight(), 0, 0);
-                    isTopViewStick = true;
-                }
-            }
-
-
-            @Override
-            public void onScrollUp() {
-                if (isTouchToCropView && !isTopViewStick) {
-                    animToTop(false, -1);
-                }
-                if (isTopViewStick && !isRecovery() && !isTouchToCropView) {
-                    mRecyclerView.smoothScrollToPosition(0);
-                }
-                isTouchToCropView = false;
-            }
-        });
-
-        mTvSetName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-    }
-
-    private void setMaskAlpha(float ratio) {
-        if (ratio < 0) {
-            ratio = 0;
-        } else if (ratio > 1) {
-            ratio = 1;
-        }
-        maskView.setAlpha(ratio);
-    }
-
-    private boolean isRecovery() {
-        return (topView.getTranslationY() < dp(3) && topView.getTranslationY() > -dp(3));
-    }
-
-    private int getScollYDistance() {
-        int position = gridLayoutManager.findFirstVisibleItemPosition();
-        View firstVisiableChildView = gridLayoutManager.findViewByPosition(position);
-        int itemHeight = firstVisiableChildView.getHeight();
-        return (position / 4) * itemHeight - firstVisiableChildView.getTop();
-    }
-
-    public int endTop;
-
-    @SuppressLint("ObjectAnimatorBinding")
-    public void animToTop(boolean isShow, final int scrollToPosition) {
-        final int startTop = (int) topView.getTranslationY();
-        if (isShow || (startTop > -titleBar.getHeight())) {
-            endTop = 0;
-            setMaskAlpha(0);
-        } else {
-            setMaskAlpha(1);
-            endTop = -mCropLayout.getHeight();
-        }
-        ObjectAnimator anim = ObjectAnimator.ofFloat(this, "ypx", 0.0f, 1.0f);
-        anim.setDuration(200);
-        anim.setInterpolator(new DecelerateInterpolator());
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float ratio = (Float) animation.getAnimatedValue();
-                int dis = (int) ((endTop - startTop) * ratio + startTop);
-                topView.setTranslationY(dis);
-            }
-        });
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                mRecyclerView.setPadding(0, (int) (endTop == 0 ? topView.getHeight() : titleBar.getHeight()), 0, 0);
-                if (scrollToPosition == 0) {
-                    mRecyclerView.scrollToPosition(0);
-                }
-                if (scrollToPosition != -1) {
-                    mRecyclerView.smoothScrollToPosition(scrollToPosition);
-                }
-            }
-        });
-        anim.start();
-    }
-
-    private boolean isTouchToCropView = false;
-
-    private int picIndex = 0;
-
-
     /**
      * 异步加载图片数据
-     * select all images from local database
      */
     public void loadPicData() {
         DataSource dataSource = new LocalDataSource(this);
         dataSource.provideMediaItems(this);
     }
 
-    public void selectImage(final int position) {
-        this.picIndex = position - 1;
-        imageItems.get(picIndex).setSelect(!imageItems.get(picIndex).isSelect());
-        adapter.notifyDataSetChanged();
-        resetCropViewSize();
-        loadImage();
-        setMaskAlpha(0);
-        if (isTopViewScrolled()) {
-            animToTop(true, position);
-        }
+    private void initView() {
+        mTvSetName = findViewById(R.id.mTvSetName);
+        mTvSetName2 = findViewById(R.id.mTvSetName2);
+        mTvFullOrFit = findViewById(R.id.mTvFullOrFit);
+        mTvNext = findViewById(R.id.mTvNext);
+        mArrowImg = findViewById(R.id.mArrowImg);
+        maskView = findViewById(R.id.v_mask);
+        RelativeLayout topView = findViewById(R.id.topView);
+        RelativeLayout titleBar = findViewById(R.id.titleBar);
+        RelativeLayout mCropLayout = findViewById(R.id.mCropLayout);
+        stateBtn = findViewById(R.id.stateBtn);
+        mCropView = findViewById(R.id.mCropView);
+        mGridImageRecyclerView = findViewById(R.id.mRecyclerView);
+        mImageSetRecyclerView = findViewById(R.id.mImageSetRecyclerView);
+        mTvFullOrFit.setBackground(CornerUtils.cornerDrawable(Color.parseColor("#80000000"), dp(15)));
+        //初始化监听
+        stateBtn.setOnClickListener(this);
+        mTvSetName.setOnClickListener(this);
+        mTvSetName2.setOnClickListener(this);
+        maskView.setOnClickListener(this);
+        mTvNext.setOnClickListener(this);
+        mTvFullOrFit.setOnClickListener(this);
+        //防止点击穿透
+        mCropLayout.setClickable(true);
+        titleBar.setClickable(true);
+        //蒙层隐藏
+        maskView.setAlpha(0f);
+        maskView.setVisibility(View.GONE);
+        //设置剪裁view的属性
+        mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        mCropView.enable(); // 启用图片缩放功能
+        mCropView.setMaxScale(7.0f);
+        //初始化相关尺寸信息
+        mCropSize = ViewSizeUtils.getScreenWidth(this);
+        ViewSizeUtils.setViewSize(mCropLayout, mCropSize, 1.0f);
+        ViewSizeUtils.setViewSize(mCropView, mCropSize, 1.0f);
+        touchHelper = RecyclerViewTouchHelper.create(mGridImageRecyclerView)
+                .setTopView(topView)
+                .setMaskView(maskView)
+                .setCanScrollHeight(mCropSize)
+                .setStickHeight(dp(50))
+                .build();
     }
 
-    private boolean isTopViewScrolled() {
-        return ViewSizeUtils.getMarginTop(topView) != 0 || topView.getTranslationY() != 0;
+    /**
+     * 初始化图片列表
+     */
+    private void initGridImages() {
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
+        mGridImageRecyclerView.setLayoutManager(gridLayoutManager);
+        imageGridAdapter = new ImageGridAdapter(this, imageItems, selectList, imageLoader);
+        mGridImageRecyclerView.setAdapter(imageGridAdapter);
+    }
+
+    /**
+     * 初始化文件夹列表
+     */
+    private void initImageSets() {
+        mImageSetRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        imageSetAdapter = new ImageSetAdapter(this, imageSets, imageLoader);
+        mImageSetRecyclerView.setAdapter(imageSetAdapter);
+        mImageSetRecyclerView.setVisibility(View.GONE);
+    }
+
+
+    /**
+     * 图片信息加载回调
+     *
+     * @param imageSetList 图片文件夹列表
+     */
+    @Override
+    public void onImagesLoaded(List<ImageSet> imageSetList) {
+        if (this.imageSets.size() > 0) {
+            return;
+        }
+        this.imageSets.clear();
+        this.imageSets.addAll(imageSetList);
+        imageSetAdapter.notifyDataSetChanged();
+
+        imageItems.clear();
+        imageItems.addAll(imageSetList.get(setIndex).imageItems);
+        imageGridAdapter.notifyDataSetChanged();
+        loadImage();
     }
 
     @Override
-    public void onImagesLoaded(List<ImageSet> imageSetList) {
-        this.imageSets = imageSetList;
-        imageItems.clear();
-        imageItems.addAll(imageSetList.get(0).imageItems);
-        adapter.notifyDataSetChanged();
-        loadImage();
+    public void onClick(View view) {
+        if (view == stateBtn) {
+            fullOrFit();
+        } else if (view == mTvSetName || view == mTvSetName2) {
+            toggleImageSet();
+        } else if (view == maskView) {
+            touchHelper.transitTopWithAnim(true, picIndex);
+        } else if (view == mTvNext) {
+            next();
+        } else if (view == mTvFullOrFit) {
+            fullOrWhiteSpace();
+        }
     }
 
+
+    /**
+     * 点击图片
+     *
+     * @param position 图片位置
+     */
+    public void pressImage(final int position) {
+        if (position == 0) {
+            takePhoto();
+            return;
+        }
+        this.picIndex = position - 1;
+        ImageItem imageItem = imageItems.get(picIndex);
+        if (imageItem == null) {
+            return;
+        }
+
+        if (imageItem.getSelectIndex() == 1) {
+            mTvFullOrFit.setVisibility(View.GONE);
+            stateBtn.setVisibility(View.VISIBLE);
+        } else {
+            if (selectList.size() > 0) {
+                mTvFullOrFit.setVisibility(View.VISIBLE);
+                stateBtn.setVisibility(View.GONE);
+            } else {
+                mTvFullOrFit.setVisibility(View.GONE);
+                stateBtn.setVisibility(View.VISIBLE);
+            }
+        }
+
+        for (ImageItem imageItem1 : imageItems) {
+            if (imageItem1 == imageItem) {
+                imageItem1.setPress(true);
+            } else {
+                imageItem1.setPress(false);
+            }
+        }
+        imageGridAdapter.notifyDataSetChanged();
+        resetCropViewSize(false);
+        checkStateBtn(imageItem);
+        loadImage();
+        touchHelper.transitTopWithAnim(true, position);
+    }
+
+    private void checkStateBtn(ImageItem imageItem) {
+        //方形图，什么都不显示
+        if (imageItem.getWidthHeightRatio() > 0.99f && imageItem.getWidthHeightRatio() < 1.1f) {
+            stateBtn.setVisibility(View.GONE);
+            mTvFullOrFit.setVisibility(View.GONE);
+            return;
+        }
+        //当选中图片数量大于0 时
+        if (selectList.size() > 0) {
+            //如果当前选中item就是第一个图片，显示stateBtn
+            if (imageItem.path.equals(selectList.get(0).path)) {
+                stateBtn.setVisibility(View.VISIBLE);
+                mTvFullOrFit.setVisibility(View.GONE);
+            } else {
+                //如果当前选中item不是第一张图片，显示mTvFullOrFit
+                stateBtn.setVisibility(View.GONE);
+                mTvFullOrFit.setVisibility(View.VISIBLE);
+                //TODO 以下是控制充满和留白逻辑
+                ImageItem firstImageItem = selectList.get(0);
+                //如果当前模式为自适应模式
+                if (cropMode == ImageCropMode.FIT) {
+                    //如果当前图片和第一张选中图片的宽高类型一样，则不显示留白和充满
+                    if (firstImageItem.getWidthHeightType() == imageItem.getWidthHeightType()) {
+                        mTvFullOrFit.setVisibility(View.GONE);
+                    } else {
+                        //TODO 处理充满和留白显示类型
+                        mTvFullOrFit.setVisibility(View.VISIBLE);
+                    }
+                } else {//如果第一张图为充满模式，则不论宽高比（除正方形外），都显示留白和充满
+                    mTvFullOrFit.setVisibility(View.VISIBLE);
+                }
+            }
+        } else {//没有选中图片
+            stateBtn.setVisibility(View.VISIBLE);
+            mTvFullOrFit.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 选中图片
+     *
+     * @param position 图片索引
+     */
+    public void selectImage(final int position) {
+        ImageItem imageItem = imageItems.get(position - 1);
+        if (imageItem.isSelect()) {
+            imageItem.setSelect(false);
+            selectList.remove(imageItem);
+        } else {
+            selectList.add(imageItem);
+            imageItem.setSelect(true);
+            pressImage(position);
+        }
+        imageGridAdapter.notifyDataSetChanged();
+        checkStateBtn(imageItem);
+    }
+
+    /**
+     * 点击选中相册
+     *
+     * @param position 相册position
+     */
+    public void selectImageSet(int position) {
+        setIndex = position;
+        ImageSet imageSet = imageSets.get(position);
+        if (imageSet == null) {
+            return;
+        }
+        mTvSetName2.setText(imageSet.name);
+        mTvSetName.setText(imageSet.name);
+        imageItems.clear();
+        imageItems.addAll(imageSet.imageItems);
+        imageGridAdapter.notifyDataSetChanged();
+        mGridImageRecyclerView.smoothScrollToPosition(0);
+        toggleImageSet();
+    }
+
+
+    private String mCurrentPhotoPath;
+
+    public void takePhoto() {
+        TakePhotoUtil.mCurrentPhotoPath = "";
+        TakePhotoUtil.takePhoto(this, REQ_CAMERA);
+        mCurrentPhotoPath = TakePhotoUtil.mCurrentPhotoPath;
+    }
+
+    /**
+     * 加载图片
+     */
     private void loadImage() {
         if (imageItems.size() != 0) {
             imageLoader.displayListImage(mCropView, imageItems.get(picIndex).path, 0);
         }
     }
 
-    public void next(View view) {
+
+    /**
+     * 切换文件夹选择
+     */
+    private void toggleImageSet() {
+        if (mImageSetRecyclerView.getVisibility() == View.VISIBLE) {
+            mImageSetRecyclerView.setVisibility(View.GONE);
+            mArrowImg.setRotation(180);
+            Animation animation = AnimationUtils.loadAnimation(this, R.anim.dd_menu_out);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    ((ViewGroup) mTvSetName2.getParent()).setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            mImageSetRecyclerView.setAnimation(animation);
+        } else {
+            mArrowImg.setRotation(0);
+            mImageSetRecyclerView.setVisibility(View.VISIBLE);
+            ((ViewGroup) mTvSetName2.getParent()).setVisibility(View.VISIBLE);
+            mImageSetRecyclerView.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_menu_in));
+        }
+    }
+
+
+    /**
+     * 点击下一步
+     */
+    public void next() {
         String path = Environment.getExternalStorageDirectory().toString() + File.separator + "Crop" + File.separator;
         File f = new File(path, "crop_" + System.currentTimeMillis() + ".jpg");
-        String cropUrl = saveBitmapToLocalWithJPEG(getViewBitmap(mCropView), f.getAbsolutePath());
+        String cropUrl = FileUtil.saveBitmapToLocalWithJPEG(FileUtil.getViewBitmap(mCropView), f.getAbsolutePath());
 
         Intent intent = new Intent(this, ImageEditActivity.class);
         intent.putExtra(ImageEditActivity.INTENT_KEY_URL, cropUrl);
@@ -292,84 +382,102 @@ public class SelectPicAndCropActivity extends FragmentActivity implements OnImag
         startActivity(intent);
     }
 
-    private void resetCropViewSize() {
-        ImageItem imageItem = imageItems.get(picIndex);
-        if (imageItem.width > imageItem.height + 10) {//宽图
-            stateBtn.setVisibility(View.VISIBLE);
-            if (cropMode == ImageCropMode.FIT) {
-                ViewSizeUtils.setViewSize(mCropView, mCropSize, (mCropSize * 3) / 4);
-            } else {
-                ViewSizeUtils.setViewSize(mCropView, mCropSize, mCropSize);
-            }
-        } else if (imageItem.height > imageItem.width + 10) {//高图
-            stateBtn.setVisibility(View.VISIBLE);
-            if (cropMode == ImageCropMode.FIT) {
-                ViewSizeUtils.setViewSize(mCropView, (mCropSize * 3) / 4, mCropSize);
-            } else {
-                ViewSizeUtils.setViewSize(mCropView, mCropSize, mCropSize);
-            }
-        } else {
-            stateBtn.setVisibility(View.GONE);
-            ViewSizeUtils.setViewSize(mCropView, mCropSize, mCropSize);
+    private void animCropView(boolean isShowAnim, final int width, final int height) {
+        if (!isShowAnim) {
+            ViewSizeUtils.setViewSize(mCropView, width, height);
+            //mCropView.setImageDrawable(mCropView.getDrawable());
+            return;
         }
-    }
-
-    public void fullOrFit(ImageButton button) {
-        if (cropMode == ImageCropMode.FIT) {
-            cropMode = ImageCropMode.FILL;
-            button.setImageDrawable(getResources().getDrawable(R.mipmap.icon_fit));
-        } else {
-            cropMode = ImageCropMode.FIT;
-            button.setImageDrawable(getResources().getDrawable(R.mipmap.icon_fill));
-        }
-        mCropView.setVisibility(View.INVISIBLE);
-        resetCropViewSize();
-        button.post(new Runnable() {
+        final int startWidth = ViewSizeUtils.getViewWidth(this.mCropView);
+        final int startHeight = ViewSizeUtils.getViewHeight(this.mCropView);
+        ObjectAnimator anim = ObjectAnimator.ofFloat(this, "ypx", 0.0f, 1.0f);
+        anim.setDuration(200);
+        anim.setInterpolator(new DecelerateInterpolator());
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            public void run() {
-                loadImage();
-                mCropView.setVisibility(View.VISIBLE);
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float ratio = (Float) animation.getAnimatedValue();
+                ViewSizeUtils.setViewSize(mCropView, (int) ((width - startWidth) * ratio + startWidth),
+                        ((int) ((height - startHeight) * ratio + startHeight)));
+                mCropView.setImageDrawable(mCropView.getDrawable());
             }
         });
+        anim.start();
     }
-
 
     /**
-     * 保存一张图片到本地
-     *
-     * @param bmp
-     * @param localPath
+     * 重置剪裁宽高大小
      */
-    public static String saveBitmapToLocalWithJPEG(Bitmap bmp, String localPath) {
-        if (bmp == null || localPath == null || localPath.length() == 0) {
-            return "";
-        }
-        FileOutputStream b = null;
-        FileUtil.createFile(localPath);
-        try {
-            b = new FileOutputStream(localPath);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, b);// 把数据写入文件
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (b != null) {
-                    b.flush();
-                }
-                if (b != null) {
-                    b.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+    private void resetCropViewSize(boolean isShowAnim) {
+        ImageItem imageItem = imageItems.get(picIndex);
+        if (cropMode == ImageCropMode.FILL) {
+            animCropView(isShowAnim, mCropSize, mCropSize);
+        } else {
+            if (imageItem.getWidthHeightRatio() > 1.1f) {//宽图
+                animCropView(isShowAnim, mCropSize, (mCropSize * 3) / 4);
+            } else if (imageItem.getWidthHeightRatio() < 0.99f) {//高图
+                animCropView(isShowAnim, (mCropSize * 3) / 4, mCropSize);
+            } else {
+                animCropView(isShowAnim, mCropSize, mCropSize);
             }
         }
-        return localPath;
     }
 
-    public static Bitmap getViewBitmap(View view) {
-        Bitmap bkg = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        view.draw(new Canvas(bkg));
-        return bkg;
+    /**
+     * 第一张图片剪裁区域充满或者自适应（是剪裁区域，不是图片填充和留白）
+     */
+    public void fullOrFit() {
+        if (cropMode == ImageCropMode.FIT) {
+            cropMode = ImageCropMode.FILL;
+            stateBtn.setImageDrawable(getResources().getDrawable(R.mipmap.icon_fit));
+        } else {
+            cropMode = ImageCropMode.FIT;
+            stateBtn.setImageDrawable(getResources().getDrawable(R.mipmap.icon_fill));
+        }
+        mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        resetCropViewSize(true);
+    }
+
+    /**
+     * 充满或者留白
+     */
+    public void fullOrWhiteSpace() {
+        if (mTvFullOrFit.getText().equals("充满")) {
+            //留白
+            mTvFullOrFit.setText("留白");
+            mTvFullOrFit.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.mipmap.icon_full), null, null, null);
+            mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        } else {
+            //充满
+            mTvFullOrFit.setText("充满");
+            mTvFullOrFit.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.mipmap.icon_haswhite), null, null, null);
+            mCropView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        }
+        resetCropViewSize(true);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {//拍照返回
+            if (!TextUtils.isEmpty(mCurrentPhotoPath)) {
+                refreshGalleryAddPic();
+                ImageItem item = new ImageItem(mCurrentPhotoPath, "", -1);
+                imageItems.add(0, item);
+                imageGridAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    /**
+     * 刷新相册
+     */
+    public void refreshGalleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
     }
 
     public int dp(int dp) {
