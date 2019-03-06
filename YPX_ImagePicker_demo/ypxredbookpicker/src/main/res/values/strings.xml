@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">ypxredbookpicker</string>
     <string name="all_images">所有照片</string>
+    <string name="picker_str_camerapermisson">您拒绝了拍照权限，如拒绝设置会导致该功能无法使用!是否前去设置？</string>
+    <string name="picker_str_storagepermisson">您拒绝了存储权限，如拒绝设置会导致该功能无法使用!是否前去设置？</string>
+    <string name="picker_str_selectmaxcount">最多选择%d张图片</string>
+    <string name="picker_str_isee">我知道了</string>
+    <string name="picker_str_full">充满</string>
+    <string name="picker_str_haswhite">留白</string>
 </resources>

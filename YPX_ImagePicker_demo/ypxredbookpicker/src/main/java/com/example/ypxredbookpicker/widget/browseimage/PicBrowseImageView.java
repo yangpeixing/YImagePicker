@@ -11,6 +11,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -25,10 +26,12 @@ import android.widget.Scroller;
 
 import com.example.ypxredbookpicker.utils.ViewSizeUtils;
 
+
 /**
- * Created by liuheng on 2015/6/21.
- * <p></p>
- * 如有任何意见和建议可邮件  bmme@vip.qq.com
+ * Description: 可放大缩小的自定义ImageView
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
  */
 @SuppressLint("AppCompatCustomView")
 public class PicBrowseImageView extends ImageView {
@@ -412,47 +415,59 @@ public class PicBrowseImageView extends ImageView {
         }
     }
 
-    private void initCenterInside() {
-        if (mImgRect.width() > mWidgetRect.width() || mImgRect.height() > mWidgetRect.height()) {
-            float scaleX = mWidgetRect.width() / mImgRect.width();
-            float scaleY = mWidgetRect.height() / mImgRect.height();
-
-            mScale = scaleX < scaleY ? scaleX : scaleY;
-
-            mAnimaMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
-
-            executeTranslate();
-            resetBase();
+    public void initCenterInside() {
+        if ((mImgRect.width() * 1.00f) / (mImgRect.height() * 1.00f) > 1.1f) {//宽图
+            widthScale();
+        } else if ((mImgRect.width() * 1.00f) / (mImgRect.height() * 1.00f) < 0.99f) {//高图
+            heightScale();
+        } else {
+            if (mWidgetRect.width() > mWidgetRect.height()) {//当前容器是宽图
+                widthScale();
+            } else {
+                heightScale();
+            }
         }
-    }
-
-    private void initFitCenter() {
-        if (mImgRect.width() > mImgRect.height() + 10) {//宽图
-            mScale = mWidgetRect.height() / mImgRect.height();
-            mAnimaMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
-
-            executeTranslate();
-            resetBase();
-        }else{
-            mScale = mWidgetRect.width() / mImgRect.width();
-            mAnimaMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
-
-            executeTranslate();
-            resetBase();
-        }
-//        if (mImgRect.width() < mWidgetRect.width()) {
-//            mScale = mWidgetRect.width() / mImgRect.width();
-//            mAnimaMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
+//        if (mImgRect.width() > mWidgetRect.width() || mImgRect.height() > mWidgetRect.height()) {
+//            float scaleX = mWidgetRect.width() / mImgRect.width();
+//            float scaleY = mWidgetRect.height() / mImgRect.height();
 //
-//            executeTranslate();
-//            resetBase();
-//        } else {
-//            mScale = mWidgetRect.height() / mImgRect.height();
+//            mScale = scaleX < scaleY ? scaleX : scaleY;
+//
 //            mAnimaMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
 //
 //            executeTranslate();
 //            resetBase();
 //        }
+    }
+
+    public void initFitCenter() {
+        if ((mImgRect.width() * 1.00f) / (mImgRect.height() * 1.00f) > 1.1f) {//宽图
+            heightScale();
+        } else if ((mImgRect.width() * 1.00f) / (mImgRect.height() * 1.00f) < 0.99f) {//高图
+            widthScale();
+        } else {
+            if (mWidgetRect.width() > mWidgetRect.height()) {//当前容器是宽图
+                widthScale();
+            } else {
+                heightScale();
+            }
+        }
+    }
+
+    private void widthScale() {
+        mScale = mWidgetRect.width() / mImgRect.width();
+        mAnimaMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
+
+        executeTranslate();
+        resetBase();
+    }
+
+    private void heightScale() {
+        mScale = mWidgetRect.height() / mImgRect.height();
+        mAnimaMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
+
+        executeTranslate();
+        resetBase();
     }
 
     private void initFitStart() {
@@ -507,8 +522,8 @@ public class PicBrowseImageView extends ImageView {
 
         mAnimaMatrix.mapRect(mImgRect, mBaseRect);
 
-        imgLargeWidth = mImgRect.width() > mWidgetRect.width();
-        imgLargeHeight = mImgRect.height() > mWidgetRect.height();
+        imgLargeWidth = mImgRect.width() >= mWidgetRect.width();
+        imgLargeHeight = mImgRect.height() >= mWidgetRect.height();
     }
 
 //    @Override
@@ -599,6 +614,13 @@ public class PicBrowseImageView extends ImageView {
             isKnowSize = true;
             initBase();
         }
+
+        post(new Runnable() {
+            @Override
+            public void run() {
+                setImageDrawable(getDrawable());
+            }
+        });
     }
 
     private boolean isShowLine = false;
@@ -613,6 +635,10 @@ public class PicBrowseImageView extends ImageView {
             canvas.drawLine(0, getHeight() / 3, getWidth(), getHeight() / 3, linePaint);
             canvas.drawLine(0, getHeight() * 2 / 3, getWidth(), getHeight() * 2 / 3, linePaint);
         }
+    }
+
+    public boolean isShowLine() {
+        return isShowLine;
     }
 
     @Override
@@ -893,7 +919,7 @@ public class PicBrowseImageView extends ImageView {
             if (mTranslate.isRuning) {
                 mTranslate.stop();
             }
-
+            Log.e("OnGestureListener", "onScroll: " + canScrollHorizontallySelf(distanceX) + "  " + canScrollVerticallySelf(distanceY));
             if (canScrollHorizontallySelf(distanceX)) {
                 if (distanceX < 0 && mImgRect.left - distanceX > mWidgetRect.left)
                     distanceX = mImgRect.left;

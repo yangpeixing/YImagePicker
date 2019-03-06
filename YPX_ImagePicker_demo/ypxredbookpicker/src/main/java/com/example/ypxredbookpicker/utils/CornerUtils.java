@@ -1,6 +1,5 @@
 package com.example.ypxredbookpicker.utils;
 
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -14,7 +13,20 @@ public class CornerUtils {
         final GradientDrawable bg = new GradientDrawable();
         bg.setCornerRadius(cornerradius);
         bg.setColor(bgColor);
+        return bg;
+    }
 
+    public static Drawable cornerDrawableAndStroke(final int bgColor, float cornerradius, int strokeWidth, int strokeColor) {
+        final GradientDrawable bg = new GradientDrawable();
+        bg.setCornerRadius(cornerradius);
+        bg.setColor(bgColor);
+        bg.setStroke(strokeWidth, strokeColor);
+        return bg;
+    }
+
+    public static Drawable cornerDrawable(float cornerradius) {
+        final GradientDrawable bg = new GradientDrawable();
+        bg.setCornerRadius(cornerradius);
         return bg;
     }
 
@@ -38,15 +50,11 @@ public class CornerUtils {
     /**
      * set btn selector with corner drawable for special position
      */
-    public static StateListDrawable halfAlphaSelector(float radius, int normalColor) {
-        return btnSelector(radius, normalColor, halfAlpha(normalColor), -3);
-    }
-
-    public static int halfAlpha(int color1) {
-        float r = Color.red(color1);
-        float g = Color.green(color1);
-        float b = Color.blue(color1);
-        return Color.argb(127, (int) r, (int) g, (int) b);
+    public static StateListDrawable btnSelector(Drawable normal, Drawable pressed) {
+        StateListDrawable bg = new StateListDrawable();
+        bg.addState(new int[]{-android.R.attr.state_pressed}, normal);
+        bg.addState(new int[]{android.R.attr.state_pressed}, pressed);
+        return bg;
     }
 
     /**
@@ -69,9 +77,6 @@ public class CornerUtils {
         } else if (postion == -2) {// for material dialog
             normal = cornerDrawable(normalColor, radius);
             pressed = cornerDrawable(pressColor, radius);
-        } else if (postion == -3) {// for material dialog
-            normal = cornerDrawable(normalColor, new float[]{radius, radius, radius, radius, radius, radius, radius, radius});
-            pressed = cornerDrawable(pressColor, new float[]{radius, radius, radius, radius, radius, radius, radius, radius});
         }
 
         bg.addState(new int[]{-android.R.attr.state_pressed}, normal);

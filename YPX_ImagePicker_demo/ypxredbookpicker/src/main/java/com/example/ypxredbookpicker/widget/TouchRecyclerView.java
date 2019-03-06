@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
 /**
  * Description: TODO
@@ -38,17 +39,18 @@ public class TouchRecyclerView extends RecyclerView {
                 break;
             case MotionEvent.ACTION_MOVE:
                 float y = ev.getY();
-                if (y < getPaddingTop() && y < lastY) {
-                    if (dragScrollListener != null) {
-                        int distance = (int) ((y - lastY));
-                        int defaultDis = (int) (lastY - getPaddingTop());
-                        dragScrollListener.onScrollOverTop(Math.abs(distance + defaultDis));
+
+                if (y < lastY) {
+                    if (isTouchPointInView(touchView, ev.getX(), ev.getY())) {
+                        if (dragScrollListener != null) {
+                            int distance = (int) ((y - lastY));
+                            int defaultDis = (int) (lastY - getPaddingTop());
+                            dragScrollListener.onScrollOverTop(Math.abs(distance + defaultDis));
+                        }
                     }
                 } else {
-                    if (y - lastY > 0) {
-                        if (dragScrollListener != null) {
-                            dragScrollListener.onScrollDown((int) (y - lastY));
-                        }
+                    if (dragScrollListener != null) {
+                        dragScrollListener.onScrollDown((int) (y - lastY));
                     }
                 }
                 break;
@@ -61,6 +63,31 @@ public class TouchRecyclerView extends RecyclerView {
                 break;
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    private View touchView;
+
+    public void setTouchView(View view) {
+        this.touchView = view;
+    }
+
+    //(x,y)是否在view的区域内
+    private boolean isTouchPointInView(View view, float x, float y) {
+        if (view == null) {
+            return false;
+        }
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        int left = location[0];
+        int top = location[1];
+        int right = left + view.getMeasuredWidth();
+        int bottom = top + view.getMeasuredHeight();
+        //view.isClickable() &&
+        if (y >= top && y <= bottom && x >= left
+                && x <= right) {
+            return true;
+        }
+        return false;
     }
 
     private onDragScrollListener dragScrollListener;

@@ -30,8 +30,9 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="15dp"
+                android:onClick="back"
                 android:scaleType="centerInside"
-                android:src="@mipmap/ypx_icon_back_black" />
+                android:src="@mipmap/picker_icon_close_black" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -58,8 +59,19 @@
                     android:layout_height="5dp"
                     android:layout_marginStart="5dp"
                     android:rotation="180"
-                    android:src="@mipmap/icon_imageset_arrow" />
+                    android:src="@mipmap/picker_icon_imageset_arrow" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/mTvSelectNum"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:text="1"
+                android:gravity="center"
+                android:layout_marginEnd="5dp"
+                android:textColor="#FFFFFF"
+                android:layout_toStartOf="@+id/mTvNext"
+                android:layout_centerVertical="true"/>
 
             <TextView
                 android:id="@+id/mTvNext"
@@ -82,12 +94,23 @@
             android:background="#FFFFFF"
             android:paddingBottom="2dp">
 
-            <com.example.ypxredbookpicker.widget.browseimage.PicBrowseImageView
-                android:id="@+id/mCropView"
+            <LinearLayout
+                android:id="@+id/mInvisibleContainer"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:layout_centerInParent="true"
-                android:background="#ffffff"/>
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="invisible"/>
+
+            <LinearLayout
+                android:id="@+id/mCroupContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical" />
+
 
             <ImageButton
                 android:id="@+id/stateBtn"
@@ -98,7 +121,7 @@
                 android:layout_marginBottom="15dp"
                 android:background="@null"
                 android:scaleType="fitXY"
-                android:src="@mipmap/icon_fit" />
+                android:src="@mipmap/picker_icon_fit" />
 
             <TextView
                 android:id="@+id/mTvFullOrFit"
@@ -108,7 +131,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginBottom="15dp"
                 android:background="#50000000"
-                android:drawableStart="@mipmap/icon_full"
+                android:drawableStart="@mipmap/picker_icon_full"
                 android:drawablePadding="5dp"
                 android:gravity="center"
                 android:paddingStart="10dp"
@@ -126,6 +149,13 @@
                 android:visibility="gone" />
         </RelativeLayout>
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/mBottomViewLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/mImageSetRecyclerView"
@@ -164,7 +194,7 @@
             android:layout_width="6dp"
             android:layout_height="5dp"
             android:layout_marginStart="5dp"
-            android:src="@mipmap/icon_imageset_arrow" />
+            android:src="@mipmap/picker_icon_imageset_arrow" />
 
     </LinearLayout>
 

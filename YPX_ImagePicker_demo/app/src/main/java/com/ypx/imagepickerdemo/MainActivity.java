@@ -2,6 +2,7 @@ package com.ypx.imagepickerdemo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -17,7 +18,7 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.example.ypxredbookpicker.SelectPicAndCropActivity;
+import com.example.ypxredbookpicker.MarsImagePicker;
 import com.ypx.imagepicker.YPXImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.interf.OnImagePickCompleteListener;
@@ -27,6 +28,7 @@ import com.ypx.imagepickerdemo.style.JHLImgPickerUIConfig;
 import com.ypx.imagepickerdemo.style.RedBookImageLoader;
 import com.ypx.imagepickerdemo.style.WXImgPickerUIConfig;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -225,6 +227,12 @@ public class MainActivity extends AppCompatActivity {
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                for (com.example.ypxredbookpicker.bean.ImageItem imageItem : mList) {
+                    if (imageItem.getCropUrl().equals(picList.get(pos))) {
+                        mList.remove(imageItem);
+                        break;
+                    }
+                }
                 picList.remove(pos);
                 refreshGridLayout();
             }
@@ -248,11 +256,31 @@ public class MainActivity extends AppCompatActivity {
         return outMetrics.widthPixels;
     }
 
+
+    List<com.example.ypxredbookpicker.bean.ImageItem> mList = new ArrayList<>();
+
     public void redBook(View view) {
-        RedBookImageLoader imageLoader = new RedBookImageLoader();
-        Intent intent = new Intent(this, SelectPicAndCropActivity.class);
-        intent.putExtra(SelectPicAndCropActivity.INTENT_KEY, imageLoader);
-        startActivity(intent);
+        MarsImagePicker.create(new RedBookImageLoader())
+                //.setFirstImageItem(mList.size() > 0 ? mList.get(0) : null)
+                .setFirstImageUrl(picList.size() > 0 ? picList.get(0) : null)
+                .setMaxCount(9 - mList.size())
+                .showBottomView(true)
+                .setCropPicSaveFilePath(Environment.getExternalStorageDirectory().toString() +
+                        File.separator + "MarsCrop" + File.separator)
+                .pick(this, new com.example.ypxredbookpicker.data.OnImagePickCompleteListener() {
+                    @Override
+                    public void onImagePickComplete(List<com.example.ypxredbookpicker.bean.ImageItem> items) {
+                        iv_single.setVisibility(View.GONE);
+                        gridLayout.setVisibility(View.VISIBLE);
+                        if (items != null && items.size() > 0) {
+                            for (com.example.ypxredbookpicker.bean.ImageItem item : items) {
+                                mList.add(item);
+                                picList.add(item.getCropUrl());
+                                refreshGridLayout();
+                            }
+                        }
+                    }
+                });
     }
 
     @Override
@@ -262,4 +290,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MarsImagePicker.clearCropFiles();
+    }
 }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="1dp"
-    android:background="@drawable/ypx_selector_list_item_bg"
+    android:background="@drawable/picker_selector_list_item_bg"
     android:clickable="true"
     android:orientation="vertical">
 

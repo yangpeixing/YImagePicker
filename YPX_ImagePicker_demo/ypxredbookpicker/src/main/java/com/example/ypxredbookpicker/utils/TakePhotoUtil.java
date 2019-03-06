@@ -25,8 +25,8 @@ public class TakePhotoUtil {
     public static String mCurrentPhotoPath;
 
     /*
-    * 判断sdcard是否被挂载
-    */
+     * 判断sdcard是否被挂载
+     */
     public static boolean hasSdcard() {
         return Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED);
@@ -37,6 +37,7 @@ public class TakePhotoUtil {
      * 调用系统相机拍照
      */
     public static void takePhoto(Activity activity, int REQ) {
+        mCurrentPhotoPath = "";
         // 激活相机
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // 判断存储卡是否可以用，可用进行存储

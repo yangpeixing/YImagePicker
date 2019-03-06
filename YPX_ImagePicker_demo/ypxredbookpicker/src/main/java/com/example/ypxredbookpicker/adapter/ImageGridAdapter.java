@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.example.ypxredbookpicker.ImageLoaderProvider;
 import com.example.ypxredbookpicker.R;
-import com.example.ypxredbookpicker.SelectPicAndCropActivity;
+import com.example.ypxredbookpicker.activity.ImagePickAndCropActivity;
 import com.example.ypxredbookpicker.bean.ImageItem;
 import com.example.ypxredbookpicker.utils.CornerUtils;
 import com.example.ypxredbookpicker.utils.ViewSizeUtils;
@@ -22,7 +22,7 @@ import com.example.ypxredbookpicker.utils.ViewSizeUtils;
 import java.util.List;
 
 /**
- * Description: TODO
+ * Description: 图片适配器
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/21
@@ -40,26 +40,35 @@ public class ImageGridAdapter extends RecyclerView.Adapter<ImageGridAdapter.View
         this.imageLoader = imageLoader;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_imagegrid, viewGroup, false));
+        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.picker_item_imagegrid, viewGroup, false));
     }
 
     @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
         if (i == 0) {
-            viewHolder.imageView.setImageDrawable(context.getResources().getDrawable(R.mipmap.icon_item_photo));
-            viewHolder.imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            viewHolder.iv_camera.setVisibility(View.VISIBLE);
+            viewHolder.imageView.setVisibility(View.GONE);
             viewHolder.v_mask.setVisibility(View.GONE);
             viewHolder.mTvIndex.setVisibility(View.GONE);
             viewHolder.rootView.setBackgroundColor(Color.parseColor("#F0F0F0"));
+            viewHolder.itemView.setTag(null);
         } else {
+            viewHolder.mTvIndex.setVisibility(View.VISIBLE);
+            viewHolder.iv_camera.setVisibility(View.GONE);
+            viewHolder.imageView.setVisibility(View.VISIBLE);
             final ImageItem imageItem = datas.get(i - 1);
             if (imageItem.isPress()) {
                 ViewSizeUtils.setViewMargin(viewHolder.imageView, dp(2));
-                viewHolder.rootView.setBackgroundColor(Color.parseColor("#859D7B"));
+                viewHolder.rootView.setBackgroundColor(context.getResources().getColor(R.color.picker_theme_color));
                 viewHolder.v_mask.setVisibility(View.VISIBLE);
             } else {
                 ViewSizeUtils.setViewMargin(viewHolder.imageView, dp(1));
@@ -68,7 +77,8 @@ public class ImageGridAdapter extends RecyclerView.Adapter<ImageGridAdapter.View
             }
 
             if (imageItem.isSelect()) {
-                viewHolder.mTvIndex.setBackground(CornerUtils.cornerDrawable(Color.parseColor("#859D7B"), dp(12)));
+                viewHolder.mTvIndex.setBackground(CornerUtils.cornerDrawableAndStroke(
+                        context.getResources().getColor(R.color.picker_theme_color), dp(12), dp(1), Color.WHITE));
                 for (int t = 0; t < selectList.size(); t++) {
                     if (imageItem.path.equals(selectList.get(t).path)) {
                         imageItem.setSelectIndex(t + 1);
@@ -77,18 +87,25 @@ public class ImageGridAdapter extends RecyclerView.Adapter<ImageGridAdapter.View
                 viewHolder.mTvIndex.setText(String.format("%d", imageItem.getSelectIndex()));
             } else {
                 viewHolder.mTvIndex.setText("");
-                viewHolder.mTvIndex.setBackground(context.getResources().getDrawable(R.mipmap.icon_unselect));
+                viewHolder.mTvIndex.setBackground(context.getResources().getDrawable(R.mipmap.picker_icon_unselect));
             }
             viewHolder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             if (null != imageLoader) {
-                imageLoader.displayListImage(viewHolder.imageView, imageItem.path, 0);
+                if (viewHolder.itemView.getTag() instanceof String) {
+                    if (!viewHolder.itemView.getTag().equals(imageItem.path)) {
+                        imageLoader.displayListImage(viewHolder.imageView, imageItem.path);
+                    }
+                } else {
+                    imageLoader.displayListImage(viewHolder.imageView, imageItem.path);
+                }
+                viewHolder.itemView.setTag(imageItem.path);
             }
 
-            viewHolder.mTvIndex.setOnClickListener(new View.OnClickListener() {
+            viewHolder.v_select.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (context instanceof SelectPicAndCropActivity) {
-                        ((SelectPicAndCropActivity) context).selectImage(viewHolder.getAdapterPosition());
+                    if (context instanceof ImagePickAndCropActivity) {
+                        ((ImagePickAndCropActivity) context).selectImage(viewHolder.getAdapterPosition());
                     }
                 }
             });
@@ -96,8 +113,8 @@ public class ImageGridAdapter extends RecyclerView.Adapter<ImageGridAdapter.View
         viewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (context instanceof SelectPicAndCropActivity) {
-                    ((SelectPicAndCropActivity) context).pressImage(viewHolder.getAdapterPosition());
+                if (context instanceof ImagePickAndCropActivity) {
+                    ((ImagePickAndCropActivity) context).pressImage(viewHolder.getAdapterPosition());
                 }
             }
         });
@@ -112,18 +129,21 @@ public class ImageGridAdapter extends RecyclerView.Adapter<ImageGridAdapter.View
         return ViewSizeUtils.dp(context, dp);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         private Context context;
         private ImageView imageView;
+        private ImageView iv_camera;
         private RelativeLayout rootView;
-        private View v_mask;
+        private View v_mask,v_select;
         private TextView mTvIndex;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             mTvIndex = itemView.findViewById(R.id.mTvIndex);
             v_mask = itemView.findViewById(R.id.v_mask);
+            v_select = itemView.findViewById(R.id.v_select);
             imageView = itemView.findViewById(R.id.iv_image);
+            iv_camera = itemView.findViewById(R.id.iv_camera);
             rootView = itemView.findViewById(R.id.rootView);
             context = imageView.getContext();
             ViewSizeUtils.setViewSize(rootView, (ViewSizeUtils.getScreenWidth(context) - ViewSizeUtils.dp(context, 10)) / 4, 1.0f);

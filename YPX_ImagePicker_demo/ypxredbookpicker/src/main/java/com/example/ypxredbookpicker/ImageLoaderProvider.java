@@ -1,5 +1,7 @@
 package com.example.ypxredbookpicker;
 
+import android.content.Context;
+import android.view.View;
 import android.widget.ImageView;
 
 import java.io.Serializable;
@@ -12,6 +14,10 @@ import java.io.Serializable;
  */
 public interface ImageLoaderProvider extends Serializable {
 
-    void displayListImage(ImageView imageView, String url, int size);
+    void displayListImage(ImageView imageView, String url);
+
+    void displayCropImage(ImageView imageView, String url);
+
+    View getBottomView(Context context);
 
 }

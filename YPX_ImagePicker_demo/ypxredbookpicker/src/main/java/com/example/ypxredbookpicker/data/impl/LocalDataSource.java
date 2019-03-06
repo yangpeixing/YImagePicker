@@ -16,6 +16,7 @@ import com.example.ypxredbookpicker.bean.ImageSet;
 import com.example.ypxredbookpicker.data.DataSource;
 import com.example.ypxredbookpicker.data.OnImagesLoadedListener;
 import com.example.ypxredbookpicker.utils.DateUtil;
+import com.example.ypxredbookpicker.utils.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,15 +34,17 @@ public class LocalDataSource implements DataSource, LoaderManager.LoaderCallback
             MediaStore.Images.Media.DISPLAY_NAME,
             MediaStore.Images.Media.DATE_ADDED,
             MediaStore.Images.Media.WIDTH,
-            MediaStore.Images.Media.HEIGHT};
+            MediaStore.Images.Media.HEIGHT,
+            MediaStore.Images.Media.SIZE,
+            MediaStore.Images.Media.MIME_TYPE,
+            MediaStore.Images.Media._ID};
 
     // different loader define
     public static final int LOADER_ALL = 0;
     public static final int LOADER_CATEGORY = 1;
 
-    OnImagesLoadedListener imagesLoadedListener;
-    Context mContext;
-    // ImageSet data
+    private OnImagesLoadedListener imagesLoadedListener;
+    private Context mContext;
     private ArrayList<ImageSet> mImageSetList = new ArrayList<>();
 
     @Override
@@ -60,16 +63,24 @@ public class LocalDataSource implements DataSource, LoaderManager.LoaderCallback
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        //String[] selectionArgs = new String[]{"image/jpeg", "image/png", "image/gif"};
-        if (id == LOADER_ALL) {//scan all
+        String[] selectionArgs = new String[]{"image/jpeg", "image/png"};
+        if (id == LOADER_ALL) {
+            //scan all
             CursorLoader cursorLoader = new CursorLoader(mContext,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
-                    null, null, IMAGE_PROJECTION[2] + " DESC");
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    IMAGE_PROJECTION,
+                    IMAGE_PROJECTION[5] + ">0 AND  " + IMAGE_PROJECTION[6] + "=? OR " + IMAGE_PROJECTION[6] + "=?  ",
+                    selectionArgs,
+                    IMAGE_PROJECTION[2] + " DESC");
             return cursorLoader;
-        } else if (id == LOADER_CATEGORY) {//scan one dir
+        } else if (id == LOADER_CATEGORY) {
+            //scan one dir
             CursorLoader cursorLoader = new CursorLoader(mContext,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
-                    IMAGE_PROJECTION[0] + " like '%" + args.getString("path") + "%'", null, IMAGE_PROJECTION[2] + " DESC");
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    IMAGE_PROJECTION,
+                    IMAGE_PROJECTION[5] + ">0 AND " + IMAGE_PROJECTION[0] + " like '%" + args.getString("path") + "%'",
+                    null,
+                    IMAGE_PROJECTION[2] + " DESC");
             return cursorLoader;
         }
 
@@ -92,9 +103,20 @@ public class LocalDataSource implements DataSource, LoaderManager.LoaderCallback
                 String imageName = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[1]));
                 int imageWidth = data.getInt(data.getColumnIndexOrThrow(IMAGE_PROJECTION[3]));
                 int imageHeight = data.getInt(data.getColumnIndexOrThrow(IMAGE_PROJECTION[4]));
+                int size = data.getInt(data.getColumnIndexOrThrow(IMAGE_PROJECTION[5]));
                 long imageAddedTime = data.getLong(data.getColumnIndexOrThrow(IMAGE_PROJECTION[2]));
-                if (imageWidth == 0 || imageHeight == 0) {
+                if (size == 0) {
                     continue;
+                }
+
+                if (imageWidth == 0 || imageHeight == 0) {
+                    int[] imageSize =FileUtil.getImageWidthHeight(imagePath);
+                    if (imageSize[0] == 0 || imageSize[1] == 0) {
+                        continue;
+                    } else {
+                        imageWidth = imageSize[0];
+                        imageHeight = imageSize[1];
+                    }
                 }
 
                 ImageItem item = new ImageItem(imagePath, imageName, imageWidth, imageHeight, imageAddedTime);
@@ -127,19 +149,14 @@ public class LocalDataSource implements DataSource, LoaderManager.LoaderCallback
             imageSetAll.path = "/";
 
             if (mImageSetList.contains(imageSetAll)) {
-                mImageSetList.remove(imageSetAll);//the first item is "all images"
+                mImageSetList.remove(imageSetAll);
             }
             mImageSetList.add(0, imageSetAll);
-
-            imagesLoadedListener.onImagesLoaded(mImageSetList);//notify the data changed
-
+            imagesLoadedListener.onImagesLoaded(mImageSetList);
         }
-
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
     }
-
-
 }

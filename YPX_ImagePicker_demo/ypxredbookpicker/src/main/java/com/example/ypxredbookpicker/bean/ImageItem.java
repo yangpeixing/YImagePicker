@@ -1,5 +1,7 @@
 package com.example.ypxredbookpicker.bean;
 
+import com.example.ypxredbookpicker.ImageCropMode;
+
 import java.io.Serializable;
 
 /**
@@ -18,8 +20,27 @@ public class ImageItem implements Serializable {
     private boolean isPress = false;
     private int selectIndex = -1;
 
+    private int cropMode = ImageCropMode.ImageScale_FILL;
+    private String cropUrl;
+
     public ImageItem() {
 
+    }
+
+    public int getCropMode() {
+        return cropMode;
+    }
+
+    public void setCropMode(int cropMode) {
+        this.cropMode = cropMode;
+    }
+
+    public String getCropUrl() {
+        return cropUrl;
+    }
+
+    public void setCropUrl(String cropUrl) {
+        this.cropUrl = cropUrl;
     }
 
     public int getSelectIndex() {
@@ -75,6 +96,11 @@ public class ImageItem implements Serializable {
         return width * 1.00f / (height * 1.00f);
     }
 
+    /**
+     * 获取图片宽高类型，误差0.1
+     *
+     * @return 1：宽图  -1：高图  0：方图
+     */
     public int getWidthHeightType() {
         if (getWidthHeightRatio() > 1.1f) {
             return 1;

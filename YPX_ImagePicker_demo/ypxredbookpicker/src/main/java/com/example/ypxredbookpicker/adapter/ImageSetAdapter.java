@@ -8,15 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.ypxredbookpicker.ImageLoaderProvider;
 import com.example.ypxredbookpicker.R;
-import com.example.ypxredbookpicker.SelectPicAndCropActivity;
-import com.example.ypxredbookpicker.bean.ImageItem;
+import com.example.ypxredbookpicker.activity.ImagePickAndCropActivity;
 import com.example.ypxredbookpicker.bean.ImageSet;
-import com.example.ypxredbookpicker.utils.ViewSizeUtils;
 
 import java.util.List;
 
@@ -40,7 +37,7 @@ public class ImageSetAdapter extends RecyclerView.Adapter<ImageSetAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_iamgeset, viewGroup, false));
+        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.picker_item_iamgeset, viewGroup, false));
     }
 
     @SuppressLint("SetTextI18n")
@@ -50,13 +47,13 @@ public class ImageSetAdapter extends RecyclerView.Adapter<ImageSetAdapter.ViewHo
         viewHolder.mTvCount.setText(imageSet.imageItems.size() + "");
         viewHolder.mTvSetName.setText(imageSet.name);
         if (imageLoader != null) {
-            imageLoader.displayListImage(viewHolder.imageView, imageSet.imageItems.get(0).path, 0);
+            imageLoader.displayListImage(viewHolder.imageView, imageSet.imageItems.get(0).path);
         }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (context instanceof SelectPicAndCropActivity) {
-                    ((SelectPicAndCropActivity) context).selectImageSet(i);
+                if (context instanceof ImagePickAndCropActivity) {
+                    ((ImagePickAndCropActivity) context).selectImageSet(i);
                 }
             }
         });
