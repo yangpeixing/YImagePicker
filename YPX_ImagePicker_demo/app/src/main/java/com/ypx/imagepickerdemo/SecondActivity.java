@@ -7,7 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.ypx.imagepicker.utils.ProcessUtil;
+import com.ypx.wximagepicker.utils.ProcessUtil;
 
 /**
  * 作者：yangpeixing on 2018/6/21 14:10
@@ -25,7 +25,7 @@ public class SecondActivity extends AppCompatActivity {
 //                ImagePicker.withImageLoader(new GlideImgLoader())
 //                        .pick(SecondActivity.this, new OnImagePickCompleteListener() {
 //                            @Override
-//                            public void onImagePickComplete(List<ImageItem> items) {
+//                            public void onImagePickComplete(List<SimpleImageItem> items) {
 //                                Toast.makeText(SecondActivity.this, "调用了" + items.size(), 0).show();
 //                            }
 //                        });

@@ -97,7 +97,7 @@
             android:layout_height="1dp"
             android:background="#cc22292f" />
 
-        <com.ypx.imagepicker.widget.SuperCheckBox
+        <com.ypx.wximagepicker.widget.SuperCheckBox
             android:id="@+id/btn_check"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

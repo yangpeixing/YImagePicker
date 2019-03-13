@@ -31,5 +31,5 @@ dependencies {
     //compile 'com.ypx.imagepicker:ypximagepicker:1.1'
     compile 'com.github.bumptech.glide:glide:3.8.0'
     implementation project(':ypximagepicker')
-    implementation project(':ypxredbookpicker')
+    implementation project(':redbookimagepicker')
 }

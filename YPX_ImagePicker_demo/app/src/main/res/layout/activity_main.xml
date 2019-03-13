@@ -76,7 +76,7 @@
         android:onClick="redBook"
         android:text="小红书" />
 
-    <com.ypx.imagepicker.widget.browseimage.PicBrowseImageView
+    <com.ypx.wximagepicker.widget.browseimage.PicBrowseImageView
         android:id="@+id/iv_single"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

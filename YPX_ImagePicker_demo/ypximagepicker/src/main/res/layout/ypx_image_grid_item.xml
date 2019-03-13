@@ -16,12 +16,12 @@
   ~  */
   -->
 
-<com.ypx.imagepicker.widget.SquareLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.ypx.wximagepicker.widget.SquareLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/squ"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <com.ypx.imagepicker.widget.ShowTypeImageView
+    <com.ypx.wximagepicker.widget.ShowTypeImageView
         android:id="@+id/iv_thumb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -42,7 +42,7 @@
         android:layout_height="36dp"
         android:layout_alignParentRight="true">
 
-        <com.ypx.imagepicker.widget.CheckImageView
+        <com.ypx.wximagepicker.widget.CheckImageView
             android:id="@+id/iv_thumb_check"
             android:layout_width="20dp"
             android:layout_height="20dp"
@@ -53,4 +53,4 @@
     </FrameLayout>
 
 
-</com.ypx.imagepicker.widget.SquareLayout>
+</com.ypx.wximagepicker.widget.SquareLayout>

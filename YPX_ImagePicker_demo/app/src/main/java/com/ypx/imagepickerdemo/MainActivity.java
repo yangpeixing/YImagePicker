@@ -18,12 +18,13 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.example.ypxredbookpicker.MarsImagePicker;
-import com.ypx.imagepicker.YPXImagePicker;
+import com.ypx.imagepicker.MarsImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.interf.OnImagePickCompleteListener;
-import com.ypx.imagepicker.utils.ProcessUtil;
-import com.ypx.imagepicker.widget.browseimage.PicBrowseImageView;
+import com.ypx.wximagepicker.YPXImagePicker;
+import com.ypx.wximagepicker.bean.SimpleImageItem;
+import com.ypx.wximagepicker.interf.OnImagePickCompleteListener;
+import com.ypx.wximagepicker.utils.ProcessUtil;
+import com.ypx.wximagepicker.widget.browseimage.PicBrowseImageView;
 import com.ypx.imagepickerdemo.style.JHLImgPickerUIConfig;
 import com.ypx.imagepickerdemo.style.RedBookImageLoader;
 import com.ypx.imagepickerdemo.style.WXImgPickerUIConfig;
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 .showOriginalCheckBox(true)
                 .pick(MainActivity.this, new OnImagePickCompleteListener() {
                     @Override
-                    public void onImagePickComplete(List<ImageItem> items) {
+                    public void onImagePickComplete(List<SimpleImageItem> items) {
                         if (selectCount == 1) {
                             iv_single.setVisibility(View.VISIBLE);
                             gridLayout.setVisibility(View.GONE);
@@ -125,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                         iv_single.setVisibility(View.GONE);
                         gridLayout.setVisibility(View.VISIBLE);
                         if (items != null && items.size() > 0) {
-                            for (ImageItem item : items) {
+                            for (SimpleImageItem item : items) {
                                 picList.add(item.path);
                                 refreshGridLayout();
                             }
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 .showOriginalCheckBox(true)
                 .crop(MainActivity.this, new OnImagePickCompleteListener() {
                     @Override
-                    public void onImagePickComplete(List<ImageItem> items) {
+                    public void onImagePickComplete(List<SimpleImageItem> items) {
                         iv_single.setVisibility(View.VISIBLE);
                         gridLayout.setVisibility(View.GONE);
                         new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
@@ -158,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 //                .showOriginalCheckBox(true)
 //                .takePhoto(this, new OnImagePickCompleteListener() {
 //                    @Override
-//                    public void onImagePickComplete(List<ImageItem> items) {
+//                    public void onImagePickComplete(List<SimpleImageItem> items) {
 //                        iv_single.setVisibility(View.VISIBLE);
 //                        gridLayout.setVisibility(View.GONE);
 //                        new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
         YPXImagePicker.with(wxImgPickerUIConfig).takePhoto(this, new OnImagePickCompleteListener() {
             @Override
-            public void onImagePickComplete(List<ImageItem> items) {
+            public void onImagePickComplete(List<SimpleImageItem> items) {
                 iv_single.setVisibility(View.VISIBLE);
                 gridLayout.setVisibility(View.GONE);
                 new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
@@ -181,6 +182,8 @@ public class MainActivity extends AppCompatActivity {
      * 刷新图片显示
      */
     public void refreshGridLayout() {
+        iv_single.setVisibility(View.GONE);
+        gridLayout.setVisibility(View.VISIBLE);
         gridLayout.removeAllViews();
         int num = picList.size();
         int picSize = (getScreenWidth() - dp(20)) / 4;
@@ -227,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (com.example.ypxredbookpicker.bean.ImageItem imageItem : mList) {
+                for (ImageItem imageItem : mList) {
                     if (imageItem.getCropUrl().equals(picList.get(pos))) {
                         mList.remove(imageItem);
                         break;
@@ -257,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    List<com.example.ypxredbookpicker.bean.ImageItem> mList = new ArrayList<>();
+    List<ImageItem> mList = new ArrayList<>();
 
     public void redBook(View view) {
         MarsImagePicker.create(new RedBookImageLoader())
@@ -267,26 +270,22 @@ public class MainActivity extends AppCompatActivity {
                 .showBottomView(true)
                 .setCropPicSaveFilePath(Environment.getExternalStorageDirectory().toString() +
                         File.separator + "MarsCrop" + File.separator)
-                .pick(this, new com.example.ypxredbookpicker.data.OnImagePickCompleteListener() {
-                    @Override
-                    public void onImagePickComplete(List<com.example.ypxredbookpicker.bean.ImageItem> items) {
-                        iv_single.setVisibility(View.GONE);
-                        gridLayout.setVisibility(View.VISIBLE);
-                        if (items != null && items.size() > 0) {
-                            for (com.example.ypxredbookpicker.bean.ImageItem item : items) {
-                                mList.add(item);
-                                picList.add(item.getCropUrl());
-                                refreshGridLayout();
-                            }
-                        }
-                    }
-                });
+                .pick(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == MarsImagePicker.REQ_PICKER_RESULT_CODE &&
+                data != null && data.hasExtra(MarsImagePicker.INTENT_KEY_PICKERRESULT)) {
+            List<ImageItem> imageItems= (List<ImageItem>) data.getSerializableExtra(MarsImagePicker.INTENT_KEY_PICKERRESULT);
+            if (imageItems != null && imageItems.size() > 0) {
+                for (ImageItem item : imageItems) {
+                    mList.add(item);
+                    picList.add(item.getCropUrl());
+                    refreshGridLayout();
+                }
+            }
         }
     }
 

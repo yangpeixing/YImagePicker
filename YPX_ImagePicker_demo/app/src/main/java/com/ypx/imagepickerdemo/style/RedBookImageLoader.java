@@ -11,8 +11,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
-import com.example.ypxredbookpicker.ImageLoaderProvider;
-import com.example.ypxredbookpicker.utils.ViewSizeUtils;
+import com.ypx.imagepicker.ImageLoaderProvider;
+import com.ypx.imagepicker.utils.ViewSizeUtils;
 
 /**
  * Description: TODO
@@ -46,5 +46,10 @@ public class RedBookImageLoader implements ImageLoaderProvider {
             }
         });
         return textView;
+    }
+
+    @Override
+    public void showDraftDialog(Context context) {
+
     }
 }

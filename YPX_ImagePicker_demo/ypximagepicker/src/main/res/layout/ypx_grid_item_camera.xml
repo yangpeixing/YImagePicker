@@ -17,7 +17,7 @@
   ~  */
   -->
 
-<com.ypx.imagepicker.widget.SquareLayout
+<com.ypx.wximagepicker.widget.SquareLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -42,4 +42,4 @@
 
     </RelativeLayout>
 
-</com.ypx.imagepicker.widget.SquareLayout>
+</com.ypx.wximagepicker.widget.SquareLayout>

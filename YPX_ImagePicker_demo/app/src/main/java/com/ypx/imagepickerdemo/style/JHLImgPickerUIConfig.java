@@ -2,14 +2,13 @@ package com.ypx.imagepickerdemo.style;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.ypx.imagepicker.bean.UiConfig;
-import com.ypx.imagepicker.config.IImgPickerUIConfig;
+import com.ypx.wximagepicker.bean.UiConfig;
+import com.ypx.wximagepicker.config.IImgPickerUIConfig;
 import com.ypx.imagepickerdemo.R;
 
 /**

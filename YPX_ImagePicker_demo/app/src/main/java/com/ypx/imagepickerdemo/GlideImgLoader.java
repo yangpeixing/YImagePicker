@@ -21,7 +21,7 @@ package com.ypx.imagepickerdemo;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.ypx.imagepicker.interf.ImgLoader;
+import com.ypx.wximagepicker.interf.ImgLoader;
 
 
 /**
