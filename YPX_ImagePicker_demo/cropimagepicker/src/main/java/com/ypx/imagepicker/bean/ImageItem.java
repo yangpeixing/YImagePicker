@@ -13,11 +13,16 @@ import java.io.Serializable;
 public class ImageItem implements Serializable {
     private static final long serialVersionUID = 1L;
     public String path;
-    public String name;
     public int width;
     public int height;
     public long time;
     public String timeFormat;
+
+    public long duration;
+    public String durationFormat;
+    public String videoImageUri;
+    private boolean isVideo = false;
+
     private boolean isSelect = false;
     private boolean isPress = false;
     private int selectIndex = -1;
@@ -27,6 +32,35 @@ public class ImageItem implements Serializable {
 
     public ImageItem() {
 
+    }
+
+    public String getVideoImageUri() {
+        if (videoImageUri == null || videoImageUri.length() == 0) {
+            return path;
+        }
+        return videoImageUri;
+    }
+
+    public ImageItem(String path, long duration, String videoImageUri) {
+        this.path = path;
+        this.duration = duration;
+        this.videoImageUri = videoImageUri;
+    }
+
+    public String getDurationFormat() {
+        return durationFormat;
+    }
+
+    public void setDurationFormat(String durationFormat) {
+        this.durationFormat = durationFormat;
+    }
+
+    public void setVideo(boolean video) {
+        isVideo = video;
+    }
+
+    public boolean isVideo() {
+        return isVideo;
     }
 
     public int getCropMode() {
@@ -77,15 +111,13 @@ public class ImageItem implements Serializable {
         this.timeFormat = timeFormat;
     }
 
-    public ImageItem(String path, String name, long time) {
+    public ImageItem(String path,long time) {
         this.path = path;
-        this.name = name;
         this.time = time;
     }
 
-    public ImageItem(String path, String name, int width, int height, long time) {
+    public ImageItem(String path,  int width, int height, long time) {
         this.path = path;
-        this.name = name;
         this.time = time;
         this.width = width;
         this.height = height;

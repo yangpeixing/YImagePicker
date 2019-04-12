@@ -10,9 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ypx.imagepicker.ImageLoaderProvider;
+import com.ypx.imagepicker.IDataBindingProvider;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.ImagePickAndCropActivity;
+import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 
 import java.util.List;
@@ -26,9 +27,9 @@ import java.util.List;
 public class ImageSetAdapter extends RecyclerView.Adapter<ImageSetAdapter.ViewHolder> {
     private List<ImageSet> datas;
     private Context context;
-    private ImageLoaderProvider imageLoader;
+    private IDataBindingProvider imageLoader;
 
-    public ImageSetAdapter(Context context, List<ImageSet> data, ImageLoaderProvider imageLoader) {
+    public ImageSetAdapter(Context context, List<ImageSet> data, IDataBindingProvider imageLoader) {
         this.context = context;
         this.datas = data;
         this.imageLoader = imageLoader;
@@ -47,7 +48,8 @@ public class ImageSetAdapter extends RecyclerView.Adapter<ImageSetAdapter.ViewHo
         viewHolder.mTvCount.setText(imageSet.imageItems.size() + "");
         viewHolder.mTvSetName.setText(imageSet.name);
         if (imageLoader != null) {
-            imageLoader.displayListImage(viewHolder.imageView, imageSet.imageItems.get(0).path);
+            ImageItem imageItem = imageSet.imageItems.get(0);
+            imageLoader.displayListImage(viewHolder.imageView, imageItem.isVideo() ? imageItem.getVideoImageUri() : imageItem.path);
         }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.ypx.imagepicker.bean.ImageItem;
+
 import java.io.Serializable;
 
 /**
@@ -12,7 +14,7 @@ import java.io.Serializable;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public interface ImageLoaderProvider extends Serializable {
+public interface IDataBindingProvider extends Serializable {
 
     void displayListImage(ImageView imageView, String url);
 
@@ -21,5 +23,7 @@ public interface ImageLoaderProvider extends Serializable {
     View getBottomView(Context context);
 
     void showDraftDialog(Context context);
+
+    void clickVideo(Context context, ImageItem imageItem);
 
 }

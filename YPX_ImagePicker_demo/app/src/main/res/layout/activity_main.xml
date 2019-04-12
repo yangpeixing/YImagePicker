@@ -8,29 +8,46 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="horizontal">
 
         <CheckBox
-            android:id="@+id/cb_wx"
-            android:layout_width="0dp"
+            android:id="@+id/cb_redBook"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:text="小红书剪裁样式" />
+
+        <CheckBox
+            android:id="@+id/cb_wx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
             android:text="微信样式" />
 
         <CheckBox
             android:id="@+id/cb_jhl"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="结婚乐样式" />
+            android:layout_marginStart="15dp"
+            android:text="自定义样式" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <CheckBox
             android:id="@+id/cb_showCamera"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="显示拍照" />
+
+        <CheckBox
+            android:id="@+id/cb_showVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="57dp"
+            android:text="显示视频" />
 
 
     </LinearLayout>
@@ -70,11 +87,6 @@
 
     </LinearLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="redBook"
-        android:text="小红书" />
 
     <com.ypx.wximagepicker.widget.browseimage.PicBrowseImageView
         android:id="@+id/iv_single"

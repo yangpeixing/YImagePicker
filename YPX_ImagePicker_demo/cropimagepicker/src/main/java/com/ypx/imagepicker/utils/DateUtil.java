@@ -62,5 +62,20 @@ public class DateUtil {
         return param.equals(now);
     }
 
+    /**
+     * 获取视频时长（格式化）
+     *
+     * @param timestamp
+     * @return
+     */
+    public static String getVideoDuration(long timestamp) {
+        if (timestamp < 1000) {
+            return "00:01";
+        }
+        Date date = new Date(timestamp);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+        return simpleDateFormat.format(date);
+    }
+
 
 }

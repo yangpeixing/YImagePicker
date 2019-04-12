@@ -34,9 +34,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ypx.imagepicker.CropImagePicker;
 import com.ypx.imagepicker.ImageCropMode;
-import com.ypx.imagepicker.ImageLoaderProvider;
-import com.ypx.imagepicker.MarsImagePicker;
+import com.ypx.imagepicker.IDataBindingProvider;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.adapter.ImageGridAdapter;
 import com.ypx.imagepicker.adapter.ImageSetAdapter;
@@ -44,7 +44,8 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.data.DataSource;
 import com.ypx.imagepicker.data.OnImagesLoadedListener;
-import com.ypx.imagepicker.data.impl.LocalDataSource;
+import com.ypx.imagepicker.data.impl.ImageDataSource;
+import com.ypx.imagepicker.data.impl.MediaDataSource;
 import com.ypx.imagepicker.helper.RecyclerViewTouchHelper;
 import com.ypx.imagepicker.utils.CornerUtils;
 import com.ypx.imagepicker.utils.FileUtil;
@@ -70,12 +71,14 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
     public static final int REQ_CAMERA = 1431;
     //存储权限码
     public static final int REQ_STORAGE = 1432;
-    public static final String INTENT_KEY_IMAGELOADER = "ImageLoaderProvider";
+    public static final String INTENT_KEY_IMAGELOADER = "IDataBindingProvider";
     public static final String INTENT_KEY_MAXSELECTEDCOUNT = "maxSelectedCount";
     public static final String INTENT_KEY_FIRSTIMAGEITEM = "firstImageItem";
     public static final String INTENT_KEY_SHOWBOTTOMVIEW = "isShowBottomView";
     public static final String INTENT_KEY_CROPPICSAVEFILEPATH = "cropPicSaveFilePath";
     public static final String INTENT_KEY_SHOWDRAFTDIALOG = "isShowDraftDialog";
+    public static final String INTENT_KEY_SHOWCAMERA = "isShowCamera";
+    public static final String INTENT_KEY_SHOWVIDEO = "isShowVideo";
 
     private TouchRecyclerView mGridImageRecyclerView;
     private RecyclerView mImageSetRecyclerView;
@@ -108,7 +111,7 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
 
 
     //图片加载提供者
-    private ImageLoaderProvider imageLoader;
+    private IDataBindingProvider bindingProvider;
     //最大选中数量
     private int maxCount = 0;
     //默认剪裁模式
@@ -118,6 +121,8 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
     //是否显示底部自定义View
     private boolean isShowBottomView = false;
     private boolean isShowDraftDialog = false;
+    private boolean isShowCamera = false;
+    private boolean isShowVideo = false;
     //剪裁后图片存储的路径
     private String mCropPicsCacheFilePath;
 
@@ -141,7 +146,7 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
 
     private void dealWithIntentData() {
         if (getIntent().hasExtra(INTENT_KEY_IMAGELOADER)) {
-            imageLoader = (ImageLoaderProvider) getIntent().getSerializableExtra(INTENT_KEY_IMAGELOADER);
+            bindingProvider = (IDataBindingProvider) getIntent().getSerializableExtra(INTENT_KEY_IMAGELOADER);
         }
         //最大选中数
         if (getIntent().hasExtra(INTENT_KEY_MAXSELECTEDCOUNT)) {
@@ -168,8 +173,18 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
             isShowDraftDialog = getIntent().getBooleanExtra(INTENT_KEY_SHOWDRAFTDIALOG, false);
         }
 
-        if (isShowDraftDialog && imageLoader != null) {
-            imageLoader.showDraftDialog(this);
+        //是否显示拍照按钮
+        if (getIntent().hasExtra(INTENT_KEY_SHOWCAMERA)) {
+            isShowCamera = getIntent().getBooleanExtra(INTENT_KEY_SHOWCAMERA, false);
+        }
+
+        //是否显示视频
+        if (getIntent().hasExtra(INTENT_KEY_SHOWVIDEO)) {
+            isShowVideo = getIntent().getBooleanExtra(INTENT_KEY_SHOWVIDEO, false);
+        }
+
+        if (isShowDraftDialog && bindingProvider != null) {
+            bindingProvider.showDraftDialog(this);
         }
     }
 
@@ -183,8 +198,13 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
                     Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_STORAGE);
         } else {
             //异步加载图片数据
-            DataSource dataSource = new LocalDataSource(this);
-            dataSource.provideMediaItems(this);
+            if (isShowVideo) {
+                DataSource dataSource = new MediaDataSource(this);
+                dataSource.provideMediaItems(this);
+            } else {
+                DataSource dataSource = new ImageDataSource(this);
+                dataSource.provideMediaItems(this);
+            }
         }
     }
 
@@ -233,11 +253,11 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
                 .setStickHeight(dp(50))
                 .build();
 
-        if (isShowBottomView && imageLoader != null &&
-                imageLoader.getBottomView(this) != null) {
+        if (isShowBottomView && bindingProvider != null &&
+                bindingProvider.getBottomView(this) != null) {
             LinearLayout mBottomViewLayout = findViewById(R.id.mBottomViewLayout);
             mBottomViewLayout.removeAllViews();
-            final View view = imageLoader.getBottomView(this);
+            final View view = bindingProvider.getBottomView(this);
             mBottomViewLayout.addView(view);
             view.post(new Runnable() {
                 @Override
@@ -256,7 +276,9 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
     private void initGridImagesAndImageSets() {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
         mGridImageRecyclerView.setLayoutManager(gridLayoutManager);
-        imageGridAdapter = new ImageGridAdapter(this, imageItems, selectList, imageLoader);
+        imageGridAdapter = new ImageGridAdapter(this, isShowCamera,
+                firstSelectedImageItem != null,
+                imageItems, selectList, bindingProvider);
         imageGridAdapter.setHasStableIds(true);
         mGridImageRecyclerView.setAdapter(imageGridAdapter);
         if (mGridImageRecyclerView.getItemAnimator() instanceof DefaultItemAnimator) {
@@ -265,7 +287,7 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
         }
         //初始化文件夹列表
         mImageSetRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        imageSetAdapter = new ImageSetAdapter(this, imageSets, imageLoader);
+        imageSetAdapter = new ImageSetAdapter(this, imageSets, bindingProvider);
         mImageSetRecyclerView.setAdapter(imageSetAdapter);
         mImageSetRecyclerView.setVisibility(View.GONE);
     }
@@ -287,7 +309,7 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
         imageItems.clear();
         imageItems.addAll(imageSetList.get(imageSetIndex).imageItems);
         imageGridAdapter.notifyDataSetChanged();
-        pressImage(1);
+        pressImage(isShowCamera ? 1 : 0, true);
     }
 
     @Override
@@ -312,19 +334,24 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
      *
      * @param position 图片位置
      */
-    public void pressImage(final int position) {
-        if (position == 0) {
+    public void pressImage(final int position, boolean isShowTransit) {
+        if (isShowCamera && position == 0) {
             takePhoto();
             return;
         }
-        if (position - 1 < 0) {
+        if (position < 0) {
             return;
         }
-        pressImageIndex = position - 1;
+        pressImageIndex = isShowCamera ? position - 1 : position;
         currentImageItem = imageItems.get(pressImageIndex);
-        if (selectList.size() == 0 && firstSelectedImageItem == null) {
-            cropMode = ImageCropMode.CropViewScale_FILL;
-            stateBtn.setImageDrawable(getResources().getDrawable(R.mipmap.picker_icon_fit));
+        if (currentImageItem.isVideo()) {
+            if (selectList.size() > 0 || firstSelectedImageItem != null) {
+                return;
+            }
+            if (bindingProvider != null) {
+                bindingProvider.clickVideo(this, currentImageItem);
+            }
+            return;
         }
         if (lastPressImageItem != null &&
                 lastPressImageItem != currentImageItem) {
@@ -335,7 +362,9 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
         if (lastPressImageItem != currentImageItem) {
             loadCropView();
         }
-        touchHelper.transitTopWithAnim(true, position);
+        if (isShowTransit) {
+            touchHelper.transitTopWithAnim(true, position);
+        }
         checkStateBtn();
         lastPressImageItem = currentImageItem;
     }
@@ -346,10 +375,10 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
      * @param position 图片索引
      */
     public void selectImage(final int position) {
-        if (position - 1 < 0) {
+        if (position < 0) {
             return;
         }
-        ImageItem selectImageItem = imageItems.get(position - 1);
+        ImageItem selectImageItem = imageItems.get(isShowCamera ? position - 1 : position);
         if (selectImageItem.isSelect()) {
             selectImageItem.setSelect(false);
             removeImageItemFromCropViewList(selectImageItem);
@@ -359,7 +388,7 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
                 return;
             }
             selectImageItem.setSelect(true);
-            pressImage(position);
+            pressImage(position, false);
             addImageItemToCropViewList(selectImageItem);
         }
         imageGridAdapter.notifyDataSetChanged();
@@ -399,8 +428,8 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
             mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             mCropView.enable(); // 启用图片缩放功能
             mCropView.setMaxScale(7.0f);
-            if (imageLoader != null) {
-                imageLoader.displayCropImage(mCropView, currentImageItem.path);
+            if (bindingProvider != null) {
+                bindingProvider.displayCropImage(mCropView, currentImageItem.path);
             }
         }
         mCroupContainer.removeAllViews();
@@ -564,6 +593,10 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
                 mInvisibleContainer.addView(picBrowseImageView);
                 resetCropViewSize(picBrowseImageView, false);
             }
+            if (cropMode == ImageCropMode.CropViewScale_FIT) {
+                imageItem.setCropMode(ImageCropMode.ImageScale_FILL);
+                picBrowseImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            }
             cropViewList.put(imageItem, picBrowseImageView);
         }
         mInvisibleContainer.setVisibility(View.INVISIBLE);
@@ -679,16 +712,9 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
         }
 
         Intent intent = new Intent();
-        intent.putExtra(MarsImagePicker.INTENT_KEY_PICKERRESULT, cropUrlList);
-        setResult(MarsImagePicker.REQ_PICKER_RESULT_CODE, intent);
+        intent.putExtra(CropImagePicker.INTENT_KEY_PICKERRESULT, cropUrlList);
+        setResult(CropImagePicker.REQ_PICKER_RESULT_CODE, intent);
         finish();
-
-//        if (MarsImagePicker.listener != null) {
-//            MarsImagePicker.listener.onImagePickComplete(cropUrlList);
-//            mInvisibleContainer.removeAllViews();
-//            mInvisibleContainer.setVisibility(View.INVISIBLE);
-//            finish();
-//        }
     }
 
     /**
@@ -751,14 +777,14 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
         if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {//拍照返回
             if (!TextUtils.isEmpty(TakePhotoUtil.mCurrentPhotoPath)) {
                 refreshGalleryAddPic();
-                ImageItem item = new ImageItem(TakePhotoUtil.mCurrentPhotoPath, "", -1);
+                ImageItem item = new ImageItem(TakePhotoUtil.mCurrentPhotoPath, System.currentTimeMillis());
                 item.width = FileUtil.getImageWidthHeight(TakePhotoUtil.mCurrentPhotoPath)[0];
                 item.height = FileUtil.getImageWidthHeight(TakePhotoUtil.mCurrentPhotoPath)[1];
                 imageItems.add(0, item);
                 if (imageSets != null && imageSets.size() > 0 && imageSets.get(0).imageItems != null) {
                     imageSets.get(0).imageItems.add(0, item);
                 }
-                selectImage(1);
+                selectImage(isShowCamera ? 1 : 0);
                 imageGridAdapter.notifyDataSetChanged();
             }
         }
@@ -769,7 +795,7 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
         if (requestCode == REQ_CAMERA) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //申请成功，可以拍照
-                pressImage(0);
+                pressImage(0, true);
             } else {
                 PermissionUtils.create(this).showSetPermissionDialog(getString(R.string.picker_str_camerapermisson));
             }

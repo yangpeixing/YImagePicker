@@ -26,7 +26,7 @@
         android:id="@+id/v_mask"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.6"
+        android:alpha="0.7"
         android:background="@color/picker_theme_color" />
 
     <View
@@ -46,6 +46,19 @@
         android:gravity="center"
         android:text=""
         android:textColor="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/mTvDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:gravity="end"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
 
 
 </RelativeLayout>

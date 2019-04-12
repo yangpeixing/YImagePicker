@@ -12,7 +12,7 @@ import java.io.File;
  * Author: peixing.yang
  * Date: 2019/2/28
  */
-public class MarsImagePicker {
+public class CropImagePicker {
 
     //选择返回的key
     public static final String INTENT_KEY_PICKERRESULT = "pickerResult";
@@ -22,7 +22,7 @@ public class MarsImagePicker {
     static String cropPicSaveFilePath = Environment.getExternalStorageDirectory().toString() +
             File.separator + "Crop" + File.separator;
 
-    public static PickerBuilder create(ImageLoaderProvider loaderProvider) {
+    public static PickerBuilder create(IDataBindingProvider loaderProvider) {
         return new PickerBuilder(loaderProvider);
     }
 

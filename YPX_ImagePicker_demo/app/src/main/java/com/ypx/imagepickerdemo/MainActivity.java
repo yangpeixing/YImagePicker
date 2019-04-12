@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,32 +12,30 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.ypx.imagepicker.MarsImagePicker;
+import com.ypx.imagepicker.CropImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.wximagepicker.YPXImagePicker;
 import com.ypx.wximagepicker.bean.SimpleImageItem;
 import com.ypx.wximagepicker.interf.OnImagePickCompleteListener;
-import com.ypx.wximagepicker.utils.ProcessUtil;
 import com.ypx.wximagepicker.widget.browseimage.PicBrowseImageView;
 import com.ypx.imagepickerdemo.style.JHLImgPickerUIConfig;
-import com.ypx.imagepickerdemo.style.RedBookImageLoader;
+import com.ypx.imagepickerdemo.style.RedBookDataBingProvider;
 import com.ypx.imagepickerdemo.style.WXImgPickerUIConfig;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     Button btn_multiSelect, btn_singleSelect, btn_cropSelect, btn_takePhoto;
     GridLayout gridLayout;
     PicBrowseImageView iv_single;
-    CheckBox cb_jhl, cb_wx, cb_showCamera;
-    List<String> picList = new ArrayList<>();
+    CheckBox cb_redBook, cb_jhl, cb_wx, cb_showCamera, cb_showVideo;
+    List<Object> picList = new ArrayList<>();
 
     int maxNum = 16;
     WXImgPickerUIConfig wxImgPickerUIConfig;
@@ -55,87 +52,111 @@ public class MainActivity extends AppCompatActivity {
         iv_single = findViewById(R.id.iv_single);
         cb_jhl = findViewById(R.id.cb_jhl);
         cb_wx = findViewById(R.id.cb_wx);
+        cb_redBook = findViewById(R.id.cb_redBook);
+        cb_showVideo = findViewById(R.id.cb_showVideo);
         cb_showCamera = findViewById(R.id.cb_showCamera);
         wxImgPickerUIConfig = new WXImgPickerUIConfig();
         jhlImgPickerUIConfig = new JHLImgPickerUIConfig();
         iv_single.setMaxScale(5.0f);
         iv_single.enable();
         btn_takePhoto = findViewById(R.id.btn_takePhoto);
-        btn_multiSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pick(9 - picList.size());
-            }
-        });
-        btn_singleSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                picList.clear();
-                pick(1);
-            }
-        });
-        btn_cropSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                picList.clear();
-                crop();
-            }
-        });
-        btn_takePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                picList.clear();
-                takePhoto();
-            }
-        });
-        Log.e("process", "MainActivity: " + ProcessUtil.getAppName(this));
-
         cb_wx.setChecked(true);
-        cb_jhl.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                cb_wx.setChecked(!cb_jhl.isChecked());
-            }
-        });
+        btn_multiSelect.setOnClickListener(this);
+        btn_singleSelect.setOnClickListener(this);
+        btn_cropSelect.setOnClickListener(this);
+        btn_takePhoto.setOnClickListener(this);
+        cb_redBook.setOnClickListener(this);
+        cb_jhl.setOnClickListener(this);
+        cb_wx.setOnClickListener(this);
+    }
 
-        cb_wx.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                cb_jhl.setChecked(!cb_wx.isChecked());
-            }
-        });
+
+    @Override
+    public void onClick(View v) {
+        picList.clear();
+        refreshGridLayout();
+        if (v == btn_multiSelect) {
+            pick(9 - picList.size());
+        } else if (v == btn_singleSelect) {
+            pick(1);
+        } else if (v == btn_cropSelect) {
+            crop();
+        } else if (v == btn_takePhoto) {
+            takePhoto();
+        } else if (v == cb_redBook) {
+            cb_jhl.setChecked(false);
+            cb_wx.setChecked(false);
+            cb_redBook.setChecked(true);
+            btn_cropSelect.setVisibility(View.GONE);
+            btn_takePhoto.setVisibility(View.GONE);
+        } else if (v == cb_jhl) {
+            cb_redBook.setChecked(false);
+            cb_wx.setChecked(false);
+            cb_jhl.setChecked(true);
+            btn_cropSelect.setVisibility(View.VISIBLE);
+            btn_takePhoto.setVisibility(View.VISIBLE);
+        } else if (v == cb_wx) {
+            cb_redBook.setChecked(false);
+            cb_jhl.setChecked(false);
+            cb_wx.setChecked(true);
+            btn_cropSelect.setVisibility(View.VISIBLE);
+            btn_takePhoto.setVisibility(View.VISIBLE);
+        }
     }
 
 
     public void pick(final int selectCount) {
-        YPXImagePicker.with(cb_jhl.isChecked() ? jhlImgPickerUIConfig : wxImgPickerUIConfig)
+        if (selectCount > 9) {
+            return;
+        }
+        if (cb_redBook.isChecked()) {
+            redBookPick(selectCount);
+        } else {
+            wxPick(selectCount);
+        }
+    }
+
+    private void redBookPick(int count) {
+        CropImagePicker.create(new RedBookDataBingProvider())
+                //.setFirstImageItem(mList.size() > 0 ? mList.get(0) : null)
+                .setFirstImageUrl(getUrlWithPos(0))
+                .setMaxCount(count)
+                .showBottomView(true)
+                .showVideo(cb_showVideo.isChecked())
                 .showCamera(cb_showCamera.isChecked())
-                .selectLimit(selectCount)
-                .columnCount(4)
-                .canEditPic(true)
-                .showOriginalCheckBox(true)
-                .pick(MainActivity.this, new OnImagePickCompleteListener() {
+                .setCropPicSaveFilePath(Environment.getExternalStorageDirectory().toString() +
+                        File.separator + "MarsCrop" + File.separator)
+                .pick(this, new com.ypx.imagepicker.data.OnImagePickCompleteListener() {
                     @Override
-                    public void onImagePickComplete(List<SimpleImageItem> items) {
-                        if (selectCount == 1) {
-                            iv_single.setVisibility(View.VISIBLE);
-                            gridLayout.setVisibility(View.GONE);
-                            new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
-                            return;
-                        }
-                        iv_single.setVisibility(View.GONE);
-                        gridLayout.setVisibility(View.VISIBLE);
-                        if (items != null && items.size() > 0) {
-                            for (SimpleImageItem item : items) {
-                                picList.add(item.path);
-                                refreshGridLayout();
-                            }
+                    public void onImagePickComplete(List<ImageItem> imageItems) {
+                        if (imageItems != null && imageItems.size() > 0) {
+                            picList.addAll(imageItems);
+                            refreshGridLayout();
                         }
                     }
                 });
     }
 
-    public void crop() {
+    private void wxPick(int count) {
+        YPXImagePicker.with(cb_jhl.isChecked() ? jhlImgPickerUIConfig : wxImgPickerUIConfig)
+                .showCamera(cb_showCamera.isChecked())
+                .selectLimit(count)
+                .columnCount(4)
+                .canEditPic(true)
+                .showOriginalCheckBox(true)
+                .pick(MainActivity.this, new OnImagePickCompleteListener() {
+                    @Override
+                    public void onImagePickComplete(List<SimpleImageItem> imageItems) {
+                        if (imageItems != null && imageItems.size() > 0) {
+                            picList.addAll(imageItems);
+                            refreshGridLayout();
+                        }
+                    }
+                });
+    }
+
+    private void crop() {
+        picList.clear();
         YPXImagePicker.with(cb_jhl.isChecked() ? jhlImgPickerUIConfig : wxImgPickerUIConfig)
                 .showCamera(cb_showCamera.isChecked())
                 .columnCount(4)
@@ -143,36 +164,24 @@ public class MainActivity extends AppCompatActivity {
                 .showOriginalCheckBox(true)
                 .crop(MainActivity.this, new OnImagePickCompleteListener() {
                     @Override
-                    public void onImagePickComplete(List<SimpleImageItem> items) {
-                        iv_single.setVisibility(View.VISIBLE);
-                        gridLayout.setVisibility(View.GONE);
-                        new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
+                    public void onImagePickComplete(List<SimpleImageItem> imageItems) {
+                        if (imageItems != null && imageItems.size() > 0) {
+                            picList.addAll(imageItems);
+                            refreshGridLayout();
+                        }
                     }
                 });
     }
 
     public void takePhoto() {
-//        YPXImagePicker.with(cb_jhl.isChecked() ? jhlImgPickerUIConfig : wxImgPickerUIConfig)
-//                .showCamera(false)
-//                .columnCount(4)
-//                .canEditPic(true)
-//                .showOriginalCheckBox(true)
-//                .takePhoto(this, new OnImagePickCompleteListener() {
-//                    @Override
-//                    public void onImagePickComplete(List<SimpleImageItem> items) {
-//                        iv_single.setVisibility(View.VISIBLE);
-//                        gridLayout.setVisibility(View.GONE);
-//                        new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
-//                    }
-//                });
-
-
+        picList.clear();
         YPXImagePicker.with(wxImgPickerUIConfig).takePhoto(this, new OnImagePickCompleteListener() {
             @Override
-            public void onImagePickComplete(List<SimpleImageItem> items) {
-                iv_single.setVisibility(View.VISIBLE);
-                gridLayout.setVisibility(View.GONE);
-                new GlideImgLoader().onPresentImage(iv_single, items.get(0).path, 0);
+            public void onImagePickComplete(List<SimpleImageItem> imageItems) {
+                if (imageItems != null && imageItems.size() > 0) {
+                    picList.addAll(imageItems);
+                    refreshGridLayout();
+                }
             }
         });
     }
@@ -181,12 +190,12 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 刷新图片显示
      */
-    public void refreshGridLayout() {
+    private void refreshGridLayout() {
         iv_single.setVisibility(View.GONE);
         gridLayout.setVisibility(View.VISIBLE);
         gridLayout.removeAllViews();
         int num = picList.size();
-        int picSize = (getScreenWidth() - dp(20)) / 4;
+        final int picSize = (getScreenWidth() - dp(20)) / 4;
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(picSize, picSize);
         if (num == 0) {
             gridLayout.setVisibility(View.GONE);
@@ -209,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    btn_multiSelect.performClick();
+                    pick(9 - picList.size());
                 }
             });
             for (int i = 0; i < num; i++) {
@@ -226,16 +235,10 @@ public class MainActivity extends AppCompatActivity {
     public void setPicItemClick(RelativeLayout layout, final int pos) {
         ImageView iv_pic = (ImageView) layout.getChildAt(0);
         ImageView iv_close = (ImageView) layout.getChildAt(1);
-        new GlideImgLoader().onPresentImage(iv_pic, picList.get(pos), 0);
+        new GlideImgLoader().onPresentImage(iv_pic, getUrlWithPos(pos), 0);
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (ImageItem imageItem : mList) {
-                    if (imageItem.getCropUrl().equals(picList.get(pos))) {
-                        mList.remove(imageItem);
-                        break;
-                    }
-                }
                 picList.remove(pos);
                 refreshGridLayout();
             }
@@ -259,39 +262,39 @@ public class MainActivity extends AppCompatActivity {
         return outMetrics.widthPixels;
     }
 
-
-    List<ImageItem> mList = new ArrayList<>();
-
-    public void redBook(View view) {
-        MarsImagePicker.create(new RedBookImageLoader())
-                //.setFirstImageItem(mList.size() > 0 ? mList.get(0) : null)
-                .setFirstImageUrl(picList.size() > 0 ? picList.get(0) : null)
-                .setMaxCount(9 - mList.size())
-                .showBottomView(true)
-                .setCropPicSaveFilePath(Environment.getExternalStorageDirectory().toString() +
-                        File.separator + "MarsCrop" + File.separator)
-                .pick(this);
+    private String getUrlWithPos(int pos) {
+        if (picList.size() == 0) {
+            return "";
+        }
+        String url;
+        if (picList.get(pos) instanceof SimpleImageItem) {
+            url = ((SimpleImageItem) picList.get(pos)).path;
+        } else {
+            url = ((ImageItem) picList.get(pos)).getCropUrl();
+        }
+        return url;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == MarsImagePicker.REQ_PICKER_RESULT_CODE &&
-                data != null && data.hasExtra(MarsImagePicker.INTENT_KEY_PICKERRESULT)) {
-            List<ImageItem> imageItems= (List<ImageItem>) data.getSerializableExtra(MarsImagePicker.INTENT_KEY_PICKERRESULT);
-            if (imageItems != null && imageItems.size() > 0) {
-                for (ImageItem item : imageItems) {
-                    mList.add(item);
-                    picList.add(item.getCropUrl());
-                    refreshGridLayout();
-                }
-            }
-        }
+//        if (resultCode == CropImagePicker.REQ_PICKER_RESULT_CODE &&
+//                data != null && data.hasExtra(CropImagePicker.INTENT_KEY_PICKERRESULT)) {
+//            List<ImageItem> imageItems = (List<ImageItem>) data.getSerializableExtra(CropImagePicker.INTENT_KEY_PICKERRESULT);
+//            if (imageItems != null && imageItems.size() > 0) {
+//                for (ImageItem item : imageItems) {
+//                    mList.add(item);
+//                    picList.add(item.getCropUrl());
+//                    refreshGridLayout();
+//                }
+//            }
+//        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MarsImagePicker.clearCropFiles();
+        CropImagePicker.clearCropFiles();
     }
+
 }

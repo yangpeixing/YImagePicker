@@ -22,9 +22,11 @@ public class PickerBuilder {
     private ImageItem firstImageItem = null;
     private boolean isShowBottomView = false;
     private boolean isShowDraft = false;
-    private ImageLoaderProvider imageLoaderProvider;
+    private boolean isShowCamera = false;
+    private boolean isShowVideo = false;
+    private IDataBindingProvider imageLoaderProvider;
 
-    PickerBuilder(ImageLoaderProvider imageLoaderProvider) {
+    PickerBuilder(IDataBindingProvider imageLoaderProvider) {
         this.imageLoaderProvider = imageLoaderProvider;
     }
 
@@ -72,8 +74,18 @@ public class PickerBuilder {
         return this;
     }
 
+    public PickerBuilder showCamera(boolean isShowCamera) {
+        this.isShowCamera = isShowCamera;
+        return this;
+    }
+
+    public PickerBuilder showVideo(boolean isShowVideo) {
+        this.isShowVideo = isShowVideo;
+        return this;
+    }
+
     public PickerBuilder setCropPicSaveFilePath(String cropPicSaveFilePath) {
-        MarsImagePicker.cropPicSaveFilePath = cropPicSaveFilePath;
+        CropImagePicker.cropPicSaveFilePath = cropPicSaveFilePath;
         return this;
     }
 
@@ -84,9 +96,11 @@ public class PickerBuilder {
         if (firstImageItem != null) {
             intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_FIRSTIMAGEITEM, firstImageItem);
         }
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_CROPPICSAVEFILEPATH, MarsImagePicker.cropPicSaveFilePath);
+        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_CROPPICSAVEFILEPATH, CropImagePicker.cropPicSaveFilePath);
         intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWBOTTOMVIEW, isShowBottomView);
         intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWDRAFTDIALOG, isShowDraft);
+        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWCAMERA, isShowCamera);
+        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWVIDEO, isShowVideo);
         return intent;
 
     }
@@ -95,9 +109,9 @@ public class PickerBuilder {
         ActivityLauncher.init(activity).startActivityForResult(getIntent(activity), new ActivityLauncher.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
-                if (data != null && data.hasExtra(MarsImagePicker.INTENT_KEY_PICKERRESULT)
-                        && resultCode == MarsImagePicker.REQ_PICKER_RESULT_CODE && listener != null) {
-                    ArrayList list = (ArrayList) data.getSerializableExtra(MarsImagePicker.INTENT_KEY_PICKERRESULT);
+                if (data != null && data.hasExtra(CropImagePicker.INTENT_KEY_PICKERRESULT)
+                        && resultCode == CropImagePicker.REQ_PICKER_RESULT_CODE && listener != null) {
+                    ArrayList list = (ArrayList) data.getSerializableExtra(CropImagePicker.INTENT_KEY_PICKERRESULT);
                     listener.onImagePickComplete(list);
                 }
             }
@@ -106,6 +120,6 @@ public class PickerBuilder {
 
     public void pick(Activity activity) {
         activity.startActivityForResult(getIntent(activity),
-                MarsImagePicker.REQ_PICKER_RESULT_CODE);
+                CropImagePicker.REQ_PICKER_RESULT_CODE);
     }
 }

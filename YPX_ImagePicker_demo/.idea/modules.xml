@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/YPX_ImagePicker_demo.iml" filepath="$PROJECT_DIR$/YPX_ImagePicker_demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/redbookimagepicker/redbookimagepicker.iml" filepath="$PROJECT_DIR$/redbookimagepicker/redbookimagepicker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cropimagepicker/cropimagepicker.iml" filepath="$PROJECT_DIR$/cropimagepicker/cropimagepicker.iml" />
       <module fileurl="file://$PROJECT_DIR$/ypximagepicker/ypximagepicker.iml" filepath="$PROJECT_DIR$/ypximagepicker/ypximagepicker.iml" />
       <module fileurl="file://$PROJECT_DIR$/ypxredbookpicker/ypxredbookpicker.iml" filepath="$PROJECT_DIR$/ypxredbookpicker/ypxredbookpicker.iml" />
     </modules>

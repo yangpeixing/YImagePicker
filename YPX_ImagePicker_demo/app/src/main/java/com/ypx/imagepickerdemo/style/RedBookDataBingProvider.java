@@ -11,7 +11,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
-import com.ypx.imagepicker.ImageLoaderProvider;
+import com.ypx.imagepicker.IDataBindingProvider;
+import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.utils.ViewSizeUtils;
 
 /**
@@ -20,7 +21,7 @@ import com.ypx.imagepicker.utils.ViewSizeUtils;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class RedBookImageLoader implements ImageLoaderProvider {
+public class RedBookDataBingProvider implements IDataBindingProvider {
     @Override
     public void displayListImage(ImageView imageView, String url) {
         Glide.with(imageView.getContext()).load(url).asBitmap().into(imageView);
@@ -51,5 +52,10 @@ public class RedBookImageLoader implements ImageLoaderProvider {
     @Override
     public void showDraftDialog(Context context) {
 
+    }
+
+    @Override
+    public void clickVideo(Context context, ImageItem imageItem) {
+        Toast.makeText(context, imageItem.path, Toast.LENGTH_SHORT).show();
     }
 }
