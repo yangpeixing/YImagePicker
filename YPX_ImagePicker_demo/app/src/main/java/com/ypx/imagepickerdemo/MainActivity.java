@@ -23,7 +23,7 @@ import com.ypx.wximagepicker.bean.SimpleImageItem;
 import com.ypx.wximagepicker.interf.OnImagePickCompleteListener;
 import com.ypx.wximagepicker.widget.browseimage.PicBrowseImageView;
 import com.ypx.imagepickerdemo.style.JHLImgPickerUIConfig;
-import com.ypx.imagepickerdemo.style.RedBookDataBingProvider;
+import com.ypx.imagepickerdemo.style.RedBookDataBindProvider;
 import com.ypx.imagepickerdemo.style.WXImgPickerUIConfig;
 
 import java.io.File;
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void redBookPick(int count) {
-        CropImagePicker.create(new RedBookDataBingProvider())
+        CropImagePicker.create(new RedBookDataBindProvider())
                 //.setFirstImageItem(mList.size() > 0 ? mList.get(0) : null)
                 .setFirstImageUrl(getUrlWithPos(0))
                 .setMaxCount(count)

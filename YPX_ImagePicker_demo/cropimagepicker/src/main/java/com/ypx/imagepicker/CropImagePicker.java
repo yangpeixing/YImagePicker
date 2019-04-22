@@ -22,7 +22,7 @@ public class CropImagePicker {
     static String cropPicSaveFilePath = Environment.getExternalStorageDirectory().toString() +
             File.separator + "Crop" + File.separator;
 
-    public static PickerBuilder create(IDataBindingProvider loaderProvider) {
+    public static PickerBuilder create(IImageCropPresenter loaderProvider) {
         return new PickerBuilder(loaderProvider);
     }
 

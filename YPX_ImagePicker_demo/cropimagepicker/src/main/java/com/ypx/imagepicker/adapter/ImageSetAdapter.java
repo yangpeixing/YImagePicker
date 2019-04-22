@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ypx.imagepicker.IDataBindingProvider;
+import com.ypx.imagepicker.IImageCropPresenter;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.ImagePickAndCropActivity;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -27,9 +27,9 @@ import java.util.List;
 public class ImageSetAdapter extends RecyclerView.Adapter<ImageSetAdapter.ViewHolder> {
     private List<ImageSet> datas;
     private Context context;
-    private IDataBindingProvider imageLoader;
+    private IImageCropPresenter imageLoader;
 
-    public ImageSetAdapter(Context context, List<ImageSet> data, IDataBindingProvider imageLoader) {
+    public ImageSetAdapter(Context context, List<ImageSet> data, IImageCropPresenter imageLoader) {
         this.context = context;
         this.datas = data;
         this.imageLoader = imageLoader;

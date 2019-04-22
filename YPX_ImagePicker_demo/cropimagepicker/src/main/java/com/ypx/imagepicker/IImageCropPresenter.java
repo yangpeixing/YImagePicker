@@ -14,7 +14,7 @@ import java.io.Serializable;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public interface IDataBindingProvider extends Serializable {
+public interface IImageCropPresenter extends Serializable {
 
     void displayListImage(ImageView imageView, String url);
 

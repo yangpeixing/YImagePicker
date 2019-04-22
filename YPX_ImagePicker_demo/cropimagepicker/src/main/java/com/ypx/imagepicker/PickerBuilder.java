@@ -24,9 +24,9 @@ public class PickerBuilder {
     private boolean isShowDraft = false;
     private boolean isShowCamera = false;
     private boolean isShowVideo = false;
-    private IDataBindingProvider imageLoaderProvider;
+    private IImageCropPresenter imageLoaderProvider;
 
-    PickerBuilder(IDataBindingProvider imageLoaderProvider) {
+    PickerBuilder(IImageCropPresenter imageLoaderProvider) {
         this.imageLoaderProvider = imageLoaderProvider;
     }
 

@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.ypx.imagepicker.IDataBindingProvider;
+import com.ypx.imagepicker.IImageCropPresenter;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.ImagePickAndCropActivity;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -34,9 +34,9 @@ public class ImageGridAdapter extends RecyclerView.Adapter<ImageGridAdapter.View
     private Context context;
     private boolean isShowCamera;
     private boolean isVideoShowMask;
-    private IDataBindingProvider bindingProvider;
+    private IImageCropPresenter bindingProvider;
 
-    public ImageGridAdapter(Context context, boolean isShowCamera, boolean isVideoShowMask, List<ImageItem> data, List<ImageItem> selectList, IDataBindingProvider imageLoader) {
+    public ImageGridAdapter(Context context, boolean isShowCamera, boolean isVideoShowMask, List<ImageItem> data, List<ImageItem> selectList, IImageCropPresenter imageLoader) {
         this.context = context;
         this.isShowCamera = isShowCamera;
         this.isVideoShowMask = isVideoShowMask;

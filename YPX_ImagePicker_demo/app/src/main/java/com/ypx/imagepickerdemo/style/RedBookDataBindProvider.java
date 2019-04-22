@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
-import com.ypx.imagepicker.IDataBindingProvider;
+import com.ypx.imagepicker.IImageCropPresenter;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.utils.ViewSizeUtils;
 
@@ -21,7 +21,7 @@ import com.ypx.imagepicker.utils.ViewSizeUtils;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class RedBookDataBingProvider implements IDataBindingProvider {
+public class RedBookDataBindProvider implements IImageCropPresenter {
     @Override
     public void displayListImage(ImageView imageView, String url) {
         Glide.with(imageView.getContext()).load(url).asBitmap().into(imageView);

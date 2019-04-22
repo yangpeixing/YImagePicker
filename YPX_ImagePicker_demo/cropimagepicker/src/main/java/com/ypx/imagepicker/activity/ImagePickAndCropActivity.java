@@ -35,8 +35,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ypx.imagepicker.CropImagePicker;
+import com.ypx.imagepicker.IImageCropPresenter;
 import com.ypx.imagepicker.ImageCropMode;
-import com.ypx.imagepicker.IDataBindingProvider;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.adapter.ImageGridAdapter;
 import com.ypx.imagepicker.adapter.ImageSetAdapter;
@@ -71,7 +71,7 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
     public static final int REQ_CAMERA = 1431;
     //存储权限码
     public static final int REQ_STORAGE = 1432;
-    public static final String INTENT_KEY_IMAGELOADER = "IDataBindingProvider";
+    public static final String INTENT_KEY_IMAGELOADER = "IImageCropPresenter";
     public static final String INTENT_KEY_MAXSELECTEDCOUNT = "maxSelectedCount";
     public static final String INTENT_KEY_FIRSTIMAGEITEM = "firstImageItem";
     public static final String INTENT_KEY_SHOWBOTTOMVIEW = "isShowBottomView";
@@ -111,7 +111,7 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
 
 
     //图片加载提供者
-    private IDataBindingProvider bindingProvider;
+    private IImageCropPresenter bindingProvider;
     //最大选中数量
     private int maxCount = 0;
     //默认剪裁模式
@@ -146,7 +146,7 @@ public class ImagePickAndCropActivity extends FragmentActivity implements OnImag
 
     private void dealWithIntentData() {
         if (getIntent().hasExtra(INTENT_KEY_IMAGELOADER)) {
-            bindingProvider = (IDataBindingProvider) getIntent().getSerializableExtra(INTENT_KEY_IMAGELOADER);
+            bindingProvider = (IImageCropPresenter) getIntent().getSerializableExtra(INTENT_KEY_IMAGELOADER);
         }
         //最大选中数
         if (getIntent().hasExtra(INTENT_KEY_MAXSELECTEDCOUNT)) {
