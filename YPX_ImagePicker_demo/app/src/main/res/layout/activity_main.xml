@@ -34,7 +34,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <CheckBox
             android:id="@+id/cb_showCamera"
@@ -46,8 +46,25 @@
             android:id="@+id/cb_showVideo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="57dp"
             android:text="显示视频" />
+
+        <CheckBox
+            android:id="@+id/cb_showGif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="显示Gif" />
+
+        <CheckBox
+            android:id="@+id/cb_shield"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="连续选择时，屏蔽已选中图片" />
+
+        <CheckBox
+            android:id="@+id/cb_last"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="连续选择时，带入已选中图片" />
 
 
     </LinearLayout>
@@ -88,7 +105,7 @@
     </LinearLayout>
 
 
-    <com.ypx.wximagepicker.widget.browseimage.PicBrowseImageView
+    <com.ypx.imagepicker.widget.browseimage.PicBrowseImageView
         android:id="@+id/iv_single"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

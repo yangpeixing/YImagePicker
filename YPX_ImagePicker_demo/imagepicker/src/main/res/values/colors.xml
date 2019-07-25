@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="press">#F0F0F0</color>
+    <color name="normal">#FFFFFF</color>
+    <color name="picker_theme_color">#859D7B</color>
+
+
+    <color name="main_color">#EA508F</color>
+    <color name="main_black">#333333</color>
+    <color name="divideline">#e8e8e8</color>
+    <color name="common_bg">#F4F4F4</color>
+    <color name="black">#FF000000</color>
+    <color name="theme_body">#303030</color>
+    <color name="dividecolor">#f4f4f4</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

@@ -617,20 +617,15 @@
         <subPane>
           <expand>
             <path>
-              <item name="YPXImagePicker" type="1abcf292:AndroidViewProjectNode" />
-              <item name="YPXImagePicker" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="YPXImagePicker" type="1abcf292:AndroidViewProjectNode" />
-              <item name="YPXImagePicker" type="462c0819:PsiDirectoryNode" />
-              <item name="YPX_ImagePicker_demo" type="462c0819:PsiDirectoryNode" />
+              <item name="YPX_ImagePicker" type="1abcf292:AndroidViewProjectNode" />
+              <item name="YPX_ImagePicker" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="ProjectPane" />
+      <pane id="Scope" />
       <pane id="PackagesPane" />
     </panes>
   </component>
@@ -945,7 +940,7 @@
       <window_info anchor="bottom" id="Terminal" order="12" />
       <window_info id="Capture Tool" order="3" />
       <window_info anchor="right" id="Designer" order="5" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49554566" visible="true" weight="0.19139785" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49554566" visible="true" weight="0.19354838" />
       <window_info anchor="right" id="Gradle" order="8" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Theme Preview" order="9" />
@@ -953,7 +948,6 @@
       <window_info id="Favorites" order="6" sideWeight="0.5044543" side_tool="true" weight="0.18550107" />
       <window_info anchor="bottom" id="Application Servers" order="8" />
       <window_info anchor="bottom" id="Gradle Console" order="13" side_tool="true" />
-      <window_info anchor="right" id="Android Model" order="6" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
@@ -966,10 +960,11 @@
       <window_info anchor="right" id="Device File Explorer" order="9" side_tool="true" />
       <window_info id="Captures" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Logcat" order="14" weight="0.39229023" />
-      <window_info anchor="right" id="Maven Projects" order="4" />
+      <window_info anchor="right" id="Android Model" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.1632653" />
       <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="right" id="Maven Projects" order="4" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -1010,27 +1005,9 @@
     <entry file="file://$PROJECT_DIR$/ypximagepicker/src/main/java/com/ypx/imagepicker/bean/ImageSet.java" />
     <entry file="file://$PROJECT_DIR$/ypximagepicker/src/main/java/com/ypx/imagepicker/data/impl/LocalDataSource.java" />
     <entry file="file://$PROJECT_DIR$/ypximagepicker/src/main/java/com/ypx/imagepicker/YPXImagePickerManager.java" />
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/3.8.0/cd6e591964f60aed960bdadbc3754665d3a0f32e/glide-3.8.0-sources.jar!/com/bumptech/glide/RequestManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-11086">
-          <caret line="42" column="27" selection-start-line="42" selection-start-column="13" selection-end-line="42" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/3.8.0/cd6e591964f60aed960bdadbc3754665d3a0f32e/glide-3.8.0-sources.jar!/com/bumptech/glide/Glide.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="678" column="23" selection-start-line="678" selection-start-column="23" selection-end-line="678" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/3.8.0/cd6e591964f60aed960bdadbc3754665d3a0f32e/glide-3.8.0-sources.jar!/com/bumptech/glide/GenericRequestBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="599">
-          <caret line="681" column="33" selection-start-line="681" selection-start-column="33" selection-end-line="681" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/3.8.0/cd6e591964f60aed960bdadbc3754665d3a0f32e/glide-3.8.0-sources.jar!/com/bumptech/glide/RequestManager.java" />
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/3.8.0/cd6e591964f60aed960bdadbc3754665d3a0f32e/glide-3.8.0-sources.jar!/com/bumptech/glide/Glide.java" />
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/3.8.0/cd6e591964f60aed960bdadbc3754665d3a0f32e/glide-3.8.0-sources.jar!/com/bumptech/glide/GenericRequestBuilder.java" />
     <entry file="file://$PROJECT_DIR$/app/build.gradle" />
     <entry file="file://$PROJECT_DIR$/ypximagepicker/build.gradle" />
     <entry file="file://$PROJECT_DIR$/ypximagepicker/src/main/AndroidManifest.xml" />

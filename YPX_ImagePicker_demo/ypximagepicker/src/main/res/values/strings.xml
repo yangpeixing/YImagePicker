@@ -1,7 +1,0 @@
-<resources>
-    <string name="you_have_a_select_limit">最多选择%1$s张图片</string>
-    <string name="piece">张</string>
-    <string name="select_complete">完成(%1$s/%2$s)</string>
-    <string name="complete">完成</string>
-    <string name="all_images">全部图片</string>
-</resources>

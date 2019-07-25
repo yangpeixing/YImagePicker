@@ -1,9 +1,9 @@
 package com.ypx.imagepickerdemo;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -16,30 +16,31 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.ypx.imagepicker.CropImagePicker;
+
+import androidx.fragment.app.FragmentActivity;
+
+import com.bumptech.glide.Glide;
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.wximagepicker.YPXImagePicker;
-import com.ypx.wximagepicker.bean.SimpleImageItem;
-import com.ypx.wximagepicker.interf.OnImagePickCompleteListener;
-import com.ypx.wximagepicker.widget.browseimage.PicBrowseImageView;
-import com.ypx.imagepickerdemo.style.JHLImgPickerUIConfig;
-import com.ypx.imagepickerdemo.style.RedBookDataBindProvider;
-import com.ypx.imagepickerdemo.style.WXImgPickerUIConfig;
+import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.widget.browseimage.PicBrowseImageView;
+import com.ypx.imagepickerdemo.style.CustomImgPickerPresenter;
+import com.ypx.imagepickerdemo.style.RedBookCropPresenter;
+import com.ypx.imagepickerdemo.style.WXImgPickerPresenter;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    Button btn_multiSelect, btn_singleSelect, btn_cropSelect, btn_takePhoto;
-    GridLayout gridLayout;
-    PicBrowseImageView iv_single;
-    CheckBox cb_redBook, cb_jhl, cb_wx, cb_showCamera, cb_showVideo;
-    List<Object> picList = new ArrayList<>();
+public class MainActivity extends FragmentActivity implements View.OnClickListener {
+    private Button btn_multiSelect, btn_singleSelect, btn_cropSelect, btn_takePhoto;
+    private GridLayout gridLayout;
+    private PicBrowseImageView iv_single;
+    private CheckBox cb_redBook, cb_jhl, cb_wx, cb_showCamera, cb_showVideo, cb_showGif, cb_shield, cb_last;
+    private ArrayList<ImageItem> picList = new ArrayList<>();
 
     int maxNum = 16;
-    WXImgPickerUIConfig wxImgPickerUIConfig;
-    JHLImgPickerUIConfig jhlImgPickerUIConfig;
+    private WXImgPickerPresenter wxImgPickerPresenter;
+    private CustomImgPickerPresenter customImgPickerPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +56,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cb_redBook = findViewById(R.id.cb_redBook);
         cb_showVideo = findViewById(R.id.cb_showVideo);
         cb_showCamera = findViewById(R.id.cb_showCamera);
-        wxImgPickerUIConfig = new WXImgPickerUIConfig();
-        jhlImgPickerUIConfig = new JHLImgPickerUIConfig();
+        cb_showGif = findViewById(R.id.cb_showGif);
+        cb_shield = findViewById(R.id.cb_shield);
+        cb_last = findViewById(R.id.cb_last);
+        wxImgPickerPresenter = new WXImgPickerPresenter();
+        customImgPickerPresenter = new CustomImgPickerPresenter();
         iv_single.setMaxScale(5.0f);
         iv_single.enable();
         btn_takePhoto = findViewById(R.id.btn_takePhoto);
@@ -117,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void redBookPick(int count) {
-        CropImagePicker.create(new RedBookDataBindProvider())
+        ImagePicker.withCrop(new RedBookCropPresenter())
                 //.setFirstImageItem(mList.size() > 0 ? mList.get(0) : null)
                 .setFirstImageUrl(getUrlWithPos(0))
                 .setMaxCount(count)
@@ -126,9 +130,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .showCamera(cb_showCamera.isChecked())
                 .setCropPicSaveFilePath(Environment.getExternalStorageDirectory().toString() +
                         File.separator + "MarsCrop" + File.separator)
-                .pick(this, new com.ypx.imagepicker.data.OnImagePickCompleteListener() {
+                .pick(this, new OnImagePickCompleteListener() {
                     @Override
-                    public void onImagePickComplete(List<ImageItem> imageItems) {
+                    public void onImagePickComplete(ArrayList<com.ypx.imagepicker.bean.ImageItem> imageItems) {
                         if (imageItems != null && imageItems.size() > 0) {
                             picList.addAll(imageItems);
                             refreshGridLayout();
@@ -138,15 +142,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void wxPick(int count) {
-        YPXImagePicker.with(cb_jhl.isChecked() ? jhlImgPickerUIConfig : wxImgPickerUIConfig)
+        ImagePicker.withMulti(cb_jhl.isChecked() ? customImgPickerPresenter : wxImgPickerPresenter)
                 .showCamera(cb_showCamera.isChecked())
-                .selectLimit(count)
-                .columnCount(4)
-                .canEditPic(true)
-                .showOriginalCheckBox(true)
-                .pick(MainActivity.this, new OnImagePickCompleteListener() {
+                .showVideo(cb_showVideo.isChecked())
+                .setLastImageList(cb_last.isChecked() ? picList : null)
+                .setShieldList(cb_shield.isChecked() ? picList : null)
+                .setMaxCount(count)
+                .setColumnCount(4)
+                .showGif(cb_showGif.isChecked())
+                .pick(this, new OnImagePickCompleteListener() {
                     @Override
-                    public void onImagePickComplete(List<SimpleImageItem> imageItems) {
+                    public void onImagePickComplete(ArrayList<ImageItem> imageItems) {
                         if (imageItems != null && imageItems.size() > 0) {
                             picList.addAll(imageItems);
                             refreshGridLayout();
@@ -157,14 +163,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void crop() {
         picList.clear();
-        YPXImagePicker.with(cb_jhl.isChecked() ? jhlImgPickerUIConfig : wxImgPickerUIConfig)
+        ImagePicker.withMulti(cb_jhl.isChecked() ? customImgPickerPresenter : wxImgPickerPresenter)
                 .showCamera(cb_showCamera.isChecked())
-                .columnCount(4)
-                .canEditPic(true)
-                .showOriginalCheckBox(true)
-                .crop(MainActivity.this, new OnImagePickCompleteListener() {
+                .setColumnCount(4)
+                .showVideo(cb_showVideo.isChecked())
+                .showGif(cb_showGif.isChecked())
+                .setCropRatio(1, 1)
+                .crop(this, new OnImagePickCompleteListener() {
                     @Override
-                    public void onImagePickComplete(List<SimpleImageItem> imageItems) {
+                    public void onImagePickComplete(ArrayList<ImageItem> imageItems) {
                         if (imageItems != null && imageItems.size() > 0) {
                             picList.addAll(imageItems);
                             refreshGridLayout();
@@ -175,15 +182,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void takePhoto() {
         picList.clear();
-        YPXImagePicker.with(wxImgPickerUIConfig).takePhoto(this, new OnImagePickCompleteListener() {
+        ImagePicker.withMulti(wxImgPickerPresenter).takePhoto(this, new OnImagePickCompleteListener() {
             @Override
-            public void onImagePickComplete(List<SimpleImageItem> imageItems) {
+            public void onImagePickComplete(ArrayList<ImageItem> imageItems) {
                 if (imageItems != null && imageItems.size() > 0) {
                     picList.addAll(imageItems);
                     refreshGridLayout();
                 }
             }
         });
+    }
+
+    public void preview(int pos) {
+        ImagePicker.withMulti(cb_jhl.isChecked() ? customImgPickerPresenter : wxImgPickerPresenter)
+                .preview(this, picList, pos, new OnImagePickCompleteListener() {
+                    @Override
+                    public void onImagePickComplete(ArrayList<ImageItem> imageItems) {
+                        if (imageItems != null && imageItems.size() > 0) {
+                            picList.clear();
+                            picList.addAll(imageItems);
+                            refreshGridLayout();
+                        }
+                    }
+                });
     }
 
 
@@ -235,12 +256,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void setPicItemClick(RelativeLayout layout, final int pos) {
         ImageView iv_pic = (ImageView) layout.getChildAt(0);
         ImageView iv_close = (ImageView) layout.getChildAt(1);
-        new GlideImgLoader().onPresentImage(iv_pic, getUrlWithPos(pos), 0);
+        Glide.with(this).load(getUrlWithPos(pos)).into(iv_pic);
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 picList.remove(pos);
                 refreshGridLayout();
+            }
+        });
+        iv_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                preview(pos);
             }
         });
     }
@@ -267,34 +294,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return "";
         }
         String url;
-        if (picList.get(pos) instanceof SimpleImageItem) {
-            url = ((SimpleImageItem) picList.get(pos)).path;
+        if (picList.get(pos) instanceof ImageItem) {
+            url = ((ImageItem) picList.get(pos)).path;
         } else {
-            url = ((ImageItem) picList.get(pos)).getCropUrl();
+            url = ((com.ypx.imagepicker.bean.ImageItem) picList.get(pos)).getCropUrl();
         }
         return url;
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode == CropImagePicker.REQ_PICKER_RESULT_CODE &&
-//                data != null && data.hasExtra(CropImagePicker.INTENT_KEY_PICKERRESULT)) {
-//            List<ImageItem> imageItems = (List<ImageItem>) data.getSerializableExtra(CropImagePicker.INTENT_KEY_PICKERRESULT);
-//            if (imageItems != null && imageItems.size() > 0) {
-//                for (ImageItem item : imageItems) {
-//                    mList.add(item);
-//                    picList.add(item.getCropUrl());
-//                    refreshGridLayout();
-//                }
-//            }
-//        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        CropImagePicker.clearCropFiles();
-    }
-
 }
