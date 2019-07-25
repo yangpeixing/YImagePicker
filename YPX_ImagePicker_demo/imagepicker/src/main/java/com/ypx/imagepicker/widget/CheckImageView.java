@@ -1,6 +1,5 @@
 package com.ypx.imagepicker.widget;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -13,7 +12,6 @@ import androidx.annotation.Nullable;
  * 功能：选择框
  * 产权：南京婚尚信息技术
  */
-@SuppressLint("AppCompatCustomView")
 public class CheckImageView extends ImageView {
     private int unSelectIconId;
     private int selectIconId;

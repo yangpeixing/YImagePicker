@@ -25,10 +25,6 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.github.bumptech.glide:glide:4.8.0'
-   // compile 'com.ypx.imagepicker:ypximagepicker:2.0.1'
-    implementation project(path: ':imagepicker')
-//    implementation project(':imagePicker')
-//    implementation project(':ypximagepicker')
- //   implementation project( ':imagepicker')
-
+    implementation 'com.ypx.imagepicker:ypxImagePicker:2.0.1'
+   // implementation project(path: ':imagepicker')
 }
