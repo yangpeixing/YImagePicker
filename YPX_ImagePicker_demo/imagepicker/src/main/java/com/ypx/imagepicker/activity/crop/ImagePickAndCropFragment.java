@@ -393,7 +393,7 @@ public class ImagePickAndCropFragment extends Fragment implements
      * @param position 图片索引
      */
     public void selectImage(final int position) {
-        if (position < 0) {
+        if (position < 0 || position - 1 < 0) {
             return;
         }
         ImageItem selectImageItem = imageItems.get(isShowCamera ? position - 1 : position);
@@ -815,22 +815,18 @@ public class ImagePickAndCropFragment extends Fragment implements
         dialog.show();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {
-            if (!TextUtils.isEmpty(TakePhotoUtil.mCurrentPhotoPath)) {
-                refreshGalleryAddPic();
-                ImageItem item = new ImageItem(TakePhotoUtil.mCurrentPhotoPath, System.currentTimeMillis());
-                item.width = FileUtil.getImageWidthHeight(TakePhotoUtil.mCurrentPhotoPath)[0];
-                item.height = FileUtil.getImageWidthHeight(TakePhotoUtil.mCurrentPhotoPath)[1];
-                imageItems.add(0, item);
-                if (imageSets != null && imageSets.size() > 0 && imageSets.get(0).imageItems != null) {
-                    imageSets.get(0).imageItems.add(0, item);
-                }
-                selectImage(isShowCamera ? 1 : 0);
-                imageGridAdapter.notifyDataSetChanged();
+    public void refreshPhoto(){
+        if (!TextUtils.isEmpty(TakePhotoUtil.mCurrentPhotoPath)) {
+            refreshGalleryAddPic();
+            ImageItem item = new ImageItem(TakePhotoUtil.mCurrentPhotoPath, System.currentTimeMillis());
+            item.width = FileUtil.getImageWidthHeight(TakePhotoUtil.mCurrentPhotoPath)[0];
+            item.height = FileUtil.getImageWidthHeight(TakePhotoUtil.mCurrentPhotoPath)[1];
+            imageItems.add(0, item);
+            if (imageSets != null && imageSets.size() > 0 && imageSets.get(0).imageItems != null) {
+                imageSets.get(0).imageItems.add(0, item);
             }
+            selectImage(isShowCamera ? 1 : 0);
+            imageGridAdapter.notifyDataSetChanged();
         }
     }
 

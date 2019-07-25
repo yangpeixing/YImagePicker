@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -15,7 +17,9 @@ import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.utils.FileUtil;
 import com.ypx.imagepicker.utils.StatusBarUtil;
+import com.ypx.imagepicker.utils.TakePhotoUtil;
 
 import java.util.ArrayList;
 
@@ -161,5 +165,15 @@ public class ImagePickAndCropActivity extends FragmentActivity {
             }
         }
         getWindow().getDecorView().setSystemUiVisibility(option);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {
+            if (mFragment != null) {
+                mFragment.refreshPhoto();
+            }
+        }
     }
 }

@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ypx.imagepickerdemo">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         tools:replace="android:appComponentFactory"
         android:appComponentFactory="com.ypx.imagepickerdemo"

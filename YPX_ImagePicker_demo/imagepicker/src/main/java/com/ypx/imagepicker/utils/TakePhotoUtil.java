@@ -2,11 +2,14 @@ package com.ypx.imagepicker.utils;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+
+import com.ypx.imagepicker.helper.PickerFileProvider;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,25 +46,46 @@ public class TakePhotoUtil {
         // 判断存储卡是否可以用，可用进行存储
         if (hasSdcard()) {
             Uri imageUri;
-            File photoFile = createImageSaveFile();
-            if (photoFile != null) {
-                mCurrentPhotoPath = photoFile.getAbsolutePath();
-                if (android.os.Build.VERSION.SDK_INT < 24) {
-                    // 从文件中创建uri
-                    imageUri = Uri.fromFile(photoFile);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                } else {
-                    //兼容android7.0 使用共享文件的形式
-                    ContentValues contentValues = new ContentValues(1);
-                    contentValues.put(MediaStore.Images.Media.DATA, mCurrentPhotoPath);
-                    imageUri = activity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                }
-            }
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(new Date());
+            String fileName = "IMG_" + timeStamp;
+            mCurrentPhotoPath = getDCIMOutputPath(activity, fileName, ".jpg");
+            if (android.os.Build.VERSION.SDK_INT < 24) {
+                // 从文件中创建uri
+                imageUri = Uri.fromFile(new File(mCurrentPhotoPath));
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            } else {
+                imageUri = PickerFileProvider.getUriForFile(activity,activity
+                        .getApplication().getPackageName() + ".picker.fileprovider",new File(mCurrentPhotoPath));
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
 
+
+                //兼容android7.0 使用共享文件的形式
+//                ContentValues contentValues = new ContentValues(1);
+//                contentValues.put(MediaStore.Images.Media.DATA, mCurrentPhotoPath);
+//                imageUri = activity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+//                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            }
         }
         // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_CAREMA
         activity.startActivityForResult(intent, REQ);
+    }
+
+    /**
+     * 获取系统相册文件路径
+     */
+    public static String getDCIMOutputPath(Context me, String fileNameStart, String fileNameEnd) {
+        String outputDir;
+        File dcim = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+        if (null != dcim && dcim.exists()) {
+            outputDir = dcim.getAbsolutePath() + File.separator + "Camera";
+        } else {
+            outputDir = (Environment.getDataDirectory().getPath() + File.separator + "Camera");
+        }
+        File outputFolder = new File(outputDir);
+        if (!outputFolder.exists()) {
+            outputFolder.mkdir();
+        }
+        return outputDir + File.separator + fileNameStart + System.currentTimeMillis() + fileNameEnd;
     }
 
     /**

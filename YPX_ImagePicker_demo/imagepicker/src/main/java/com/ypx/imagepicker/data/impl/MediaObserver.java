@@ -10,7 +10,7 @@ import android.provider.MediaStore;
 public enum MediaObserver {
     instance;
 
-    private boolean isMediaChanged = false;
+    private boolean isMediaChanged = true;
 
     public boolean isMediaChanged() {
         return isMediaChanged;

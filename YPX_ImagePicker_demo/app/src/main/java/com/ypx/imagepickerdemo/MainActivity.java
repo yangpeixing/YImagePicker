@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.data.impl.MediaObserver;
 import com.ypx.imagepicker.widget.browseimage.PicBrowseImageView;
 import com.ypx.imagepickerdemo.style.CustomImgPickerPresenter;
 import com.ypx.imagepickerdemo.style.RedBookCropPresenter;
@@ -72,6 +73,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         cb_redBook.setOnClickListener(this);
         cb_jhl.setOnClickListener(this);
         cb_wx.setOnClickListener(this);
+
+        //媒体文件观察者
+        MediaObserver.instance.register(getApplication());
     }
 
 
