@@ -125,10 +125,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //调用小红书剪裁回调的imageItems里，imageItem.path是原图，
+    // imageItem.getCropUrl()才是剪裁后的图片
     private void redBookPick(int count) {
         ImagePicker.withCrop(new RedBookCropPresenter())
                 //.setFirstImageItem(mList.size() > 0 ? mList.get(0) : null)
-                .setFirstImageUrl(getUrlWithPos(0))
+                .setFirstImageUrl(picList.size() > 0 ? picList.get(0).path : null)
                 .setMaxCount(count)
                 .showBottomView(true)
                 .showVideo(cb_showVideo.isChecked())
@@ -137,8 +139,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         File.separator + "MarsCrop" + File.separator)
                 .pick(this, new OnImagePickCompleteListener() {
                     @Override
-                    public void onImagePickComplete(ArrayList<com.ypx.imagepicker.bean.ImageItem> imageItems) {
+                    public void onImagePickComplete(ArrayList<ImageItem> imageItems) {
+                        //调用小红书剪裁回调的imageItems里，imageItem.path是原图，
+                        // imageItem.getCropUrl()才是剪裁后的图片
                         if (imageItems != null && imageItems.size() > 0) {
+                            for (ImageItem imageItem : imageItems) {
+                                imageItem.path = imageItem.getCropUrl();
+                            }
                             picList.addAll(imageItems);
                             refreshGridLayout();
                         }
@@ -261,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void setPicItemClick(RelativeLayout layout, final int pos) {
         ImageView iv_pic = (ImageView) layout.getChildAt(0);
         ImageView iv_close = (ImageView) layout.getChildAt(1);
-        Glide.with(this).load(getUrlWithPos(pos)).into(iv_pic);
+        Glide.with(this).load(picList.get(pos).path).into(iv_pic);
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -292,18 +299,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         assert wm != null;
         wm.getDefaultDisplay().getMetrics(outMetrics);
         return outMetrics.widthPixels;
-    }
-
-    private String getUrlWithPos(int pos) {
-        if (picList.size() == 0) {
-            return "";
-        }
-        String url;
-        if (picList.get(pos) instanceof ImageItem) {
-            url = ((ImageItem) picList.get(pos)).path;
-        } else {
-            url = ((com.ypx.imagepicker.bean.ImageItem) picList.get(pos)).getCropUrl();
-        }
-        return url;
     }
 }
