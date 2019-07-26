@@ -392,11 +392,12 @@ public class ImagePickAndCropFragment extends Fragment implements
      *
      * @param position 图片索引
      */
-    public void selectImage(final int position) {
-        if (position < 0 || position - 1 < 0) {
+    private void selectImage(final int position) {
+        int pos = isShowCamera ? position - 1 : position;
+        if (pos < 0) {
             return;
         }
-        ImageItem selectImageItem = imageItems.get(isShowCamera ? position - 1 : position);
+        ImageItem selectImageItem = imageItems.get(pos);
         if (selectImageItem.isSelect()) {
             selectImageItem.setSelect(false);
             removeImageItemFromCropViewList(selectImageItem);
@@ -815,7 +816,7 @@ public class ImagePickAndCropFragment extends Fragment implements
         dialog.show();
     }
 
-    public void refreshPhoto(){
+    public void refreshPhoto() {
         if (!TextUtils.isEmpty(TakePhotoUtil.mCurrentPhotoPath)) {
             refreshGalleryAddPic();
             ImageItem item = new ImageItem(TakePhotoUtil.mCurrentPhotoPath, System.currentTimeMillis());

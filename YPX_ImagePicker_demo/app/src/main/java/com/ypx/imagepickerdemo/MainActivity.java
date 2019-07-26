@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
@@ -32,7 +33,7 @@ import com.ypx.imagepickerdemo.style.WXImgPickerPresenter;
 import java.io.File;
 import java.util.ArrayList;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button btn_multiSelect, btn_singleSelect, btn_cropSelect, btn_takePhoto;
     private GridLayout gridLayout;
     private PicBrowseImageView iv_single;
