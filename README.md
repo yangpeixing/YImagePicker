@@ -1,7 +1,4 @@
 # 欢迎使用YPXImagePicker
-
-@[TOC]
-## 关于YPXImagePicker
 本库包含了微信的图片选择器、小红书多张剪裁图片选择器，其中微信图片选择器支持高度定制UI、图片加载框架以及跨进程回调，无需使用原始onActivityForResult拿到数据，直接设置选择监听，降低代码耦合度，易于维护！本库已投入多个大型商业项目使用，持续迭代，稳定可靠！
 
 ## 微信图片选择
@@ -239,17 +236,17 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
 ## 相关问题
 
  - **本库只兼容了androidx库，如有需要support库版本请下载源码修改或者联系作者**
+ 
  - **小红书剪裁框架暂且不支持UI自定义**
+ 
  - **微信选择框架暂不支持图片高级编辑，后期会加入**
+ 
  - **小红书剪裁框架中，输出的图片全部是View所截出来的，所以宽高取决于屏幕宽度，其实这样是不对的，应该根据原图密度来截取原始图片区域，而不应该是截取View,不过经测试，View截取的图片质量挺高，所以暂未兼容原图截取。本库中有CropHelper类已经处理了原图截取的方法，赞只支持填充模式下原图截取，留白模式后期优化。**
 
 
 ## 鸣谢
 本项目微信选择器中剪裁使用的是github上[cropView](https://github.com/oginotihiro/cropview)控件，在此感谢作者！
 打个广告：本库来源于mars App,想要体验城市最新的吃喝玩乐，欢迎读者下载体验mars!
-
-[本库Github地址:https://github.com/yangpeixing/YPXImagePicker](https://github.com/yangpeixing/YPXImagePicker)
-
 
 
 
