@@ -138,6 +138,7 @@ public class MultiGridAdapter extends BaseAdapter {
             if (item.isVideo()) {
                 holder.mVideoLayout.setVisibility(View.VISIBLE);
                 holder.mVideoTime.setText(item.getDurationFormat());
+                holder.ivPic.setType(ShowTypeImageView.TYPE_NONE);
             } else {
                 holder.mVideoLayout.setVisibility(View.GONE);
                 holder.ivPic.setTypeWithUrlAndSize(item);
