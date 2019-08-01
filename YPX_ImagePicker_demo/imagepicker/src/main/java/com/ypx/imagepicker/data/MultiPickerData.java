@@ -8,9 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 作者：yangpeixing on 2018/9/20 15:43
- * 功能：
- * 产权：南京婚尚信息技术
+ * Description: 选择器数据源
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
  */
 public enum MultiPickerData {
 
@@ -69,8 +70,8 @@ public enum MultiPickerData {
 
     public void removeImageItem(ImageItem imageItem) {
         if (imageItem != null && selectImgs != null) {
-            for(ImageItem imageItem1:selectImgs){
-                if(imageItem.equals(imageItem1)){
+            for (ImageItem imageItem1 : selectImgs) {
+                if (imageItem.equals(imageItem1)) {
                     selectImgs.remove(imageItem);
                     return;
                 }

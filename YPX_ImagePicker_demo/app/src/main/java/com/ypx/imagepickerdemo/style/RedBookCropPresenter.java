@@ -15,7 +15,7 @@ import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.utils.ViewSizeUtils;
 
 /**
- * Description: TODO
+ * Description: 小红书样式
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/21

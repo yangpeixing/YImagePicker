@@ -56,9 +56,10 @@ import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_CAM
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_STORAGE;
 
 /**
- * 作者：yangpeixing on 2018/5/5 16:35
- * 功能：图片展示
- * 产权：南京婚尚信息技术
+ * Description: 多选页
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
  */
 public class MultiImagePickerActivity extends FragmentActivity implements OnImagesLoadedListener, View.OnClickListener {
 

@@ -1,7 +1,5 @@
 package com.ypx.imagepickerdemo;
 
-import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
@@ -18,7 +16,6 @@ import android.widget.RelativeLayout;
 
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 import com.ypx.imagepicker.ImagePicker;

@@ -9,9 +9,10 @@ import com.ypx.imagepicker.bean.MultiUiConfig;
 import java.io.Serializable;
 
 /**
- * 作者：yangpeixing on 2018/9/26 15:46
- * 功能：图片选择器配置接口，由客户端实现，客户端必须实现
- * 产权：南京婚尚信息技术
+ * Description: 图片选择器配置接口，由客户端实现，客户端必须实现
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
  */
 public interface IMultiPickerBindPresenter extends Serializable {
     /**

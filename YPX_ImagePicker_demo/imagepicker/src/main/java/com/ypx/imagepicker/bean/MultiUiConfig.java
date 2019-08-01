@@ -3,9 +3,10 @@ package com.ypx.imagepicker.bean;
 import java.io.Serializable;
 
 /**
- * 作者：yangpeixing on 2018/10/16 11:00
- * 功能：选择器UI样式模型
- * 产权：南京婚尚信息技术
+ * Description: 选择器UI配置项
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
  */
 public class MultiUiConfig implements Serializable {
     /**

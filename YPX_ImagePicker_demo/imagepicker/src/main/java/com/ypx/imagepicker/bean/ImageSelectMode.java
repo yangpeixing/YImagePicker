@@ -1,9 +1,10 @@
 package com.ypx.imagepicker.bean;
 
 /**
- * 作者：yangpeixing on 2018/4/6 10:19
- * 功能：图片选择模式
- * 产权：南京婚尚信息技术
+ * Description: 图片选择模式
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
  */
 public interface ImageSelectMode {
     int MODE_SINGLE = 0;

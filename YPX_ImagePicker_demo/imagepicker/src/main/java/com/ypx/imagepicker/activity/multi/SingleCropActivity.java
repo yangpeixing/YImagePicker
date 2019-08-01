@@ -33,7 +33,10 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
 
 
 /**
- * 截取头像
+ * Description: 剪裁页
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
  */
 public class SingleCropActivity extends FragmentActivity {
     private CropView cropView;

@@ -13,9 +13,10 @@ import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepickerdemo.R;
 
 /**
- * 作者：yangpeixing on 2018/9/26 15:57
- * 功能：微信样式图片选择器
- * 产权：南京婚尚信息技术
+ * Description: 微信样式
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
  */
 public class WXImgPickerPresenter implements IMultiPickerBindPresenter {
 

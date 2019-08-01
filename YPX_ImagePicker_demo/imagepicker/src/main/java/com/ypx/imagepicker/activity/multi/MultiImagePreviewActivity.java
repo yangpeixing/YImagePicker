@@ -51,6 +51,12 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_UI_CONFIG;
 
+/**
+ * Description: 预览页
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
+ */
 public class MultiImagePreviewActivity extends FragmentActivity {
     public static final String INTENT_KEY_PREVIEW_LIST = "previewList";
     public static final String INTENT_KEY_CAN_EDIT = "canEdit";

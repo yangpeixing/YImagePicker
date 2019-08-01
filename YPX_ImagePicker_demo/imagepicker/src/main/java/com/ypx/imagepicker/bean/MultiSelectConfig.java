@@ -4,9 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * 作者：yangpeixing on 2018/9/26 16:27
- * 功能：图片选择器配置器
- * 产权：南京婚尚信息技术
+ * Description: 多选配置项
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
  */
 public class MultiSelectConfig implements Serializable {
     private int maxCount = -1;
