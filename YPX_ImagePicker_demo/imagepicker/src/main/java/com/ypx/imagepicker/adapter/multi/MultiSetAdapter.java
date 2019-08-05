@@ -20,10 +20,11 @@ import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * 作者：yangpeixing on 2018/4/6 10:47
- * 功能：
- * 产权：南京婚尚信息技术
+ * Time: 2018/4/6 10:47
+ * Author:yangpeixing
+ * Description: 文件夹adapter
  */
 public class MultiSetAdapter extends BaseAdapter {
     private int lastSelected = 0;

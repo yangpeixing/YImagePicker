@@ -31,7 +31,7 @@ public class MediaDataSource implements DataSource {
     private boolean isVideoLoaded = false;
     private List<ImageSet> imageSetList;
     private List<ImageSet> videoSetList;
-    public static List<ImageSet> allSetList = new ArrayList<>();
+    private List<ImageSet> allSetList = new ArrayList<>();
 
     public MediaDataSource(FragmentActivity context) {
         this.context = context;
@@ -41,50 +41,61 @@ public class MediaDataSource implements DataSource {
         imageDataSource = new ImageDataSource(context);
     }
 
-    public MediaDataSource(FragmentActivity context,boolean isLoadGif) {
-        this.context = context;
-        imageSetList = new ArrayList<>();
-        videoSetList = new ArrayList<>();
-        videoDataSource = new VideoDataSource(context);
-        imageDataSource = new ImageDataSource(context,isLoadGif);
+    private boolean isLoadGif = true;
+    private boolean isLoadImage = true;
+    private boolean isLoadVideo = true;
+
+    public void setLoadGif(boolean isLoadGif) {
+        this.isLoadGif = isLoadGif;
+    }
+
+    public void setLoadImage(boolean isLoadImage) {
+        this.isLoadImage = isLoadImage;
+    }
+
+    public void setLoadVideo(boolean isLoadVideo) {
+        this.isLoadVideo = isLoadVideo;
     }
 
     @Override
     public void provideMediaItems(OnImagesLoadedListener loadedListener) {
         this.imagesLoadedListener = loadedListener;
-        if (allSetList != null && allSetList.size() > 0 && imagesLoadedListener != null && !MediaObserver.instance.isMediaChanged()) {
-            for (ImageSet set : allSetList) {
-                set.isSelected = false;
-            }
-            allSetList.get(0).isSelected = true;
-            for (ImageItem imageItem : allSetList.get(0).imageItems) {
-                imageItem.setSelect(false);
-                imageItem.setPress(false);
-            }
-            imagesLoadedListener.onImagesLoaded(allSetList);
-            return;
+        if (isLoadImage) {//加载图片
+            imageDataSource.setLoadGif(isLoadGif);
+            imageDataSource.provideMediaItems(new OnImagesLoadedListener() {
+                @Override
+                public void onImagesLoaded(List<ImageSet> mImageSetList) {
+                    imageSetList = mImageSetList;
+                    isImageLoaded = true;
+                    if (isLoadVideo) {//如果加载视频，则整合图片和视频
+                        compressImageAndVideo();
+                    } else {
+                        imagesLoadedListener.onImagesLoaded(mImageSetList);
+                    }
+                }
+            });
         }
-        MediaObserver.instance.setMediaChanged(false);
-        videoDataSource.provideMediaItems(new OnImagesLoadedListener() {
-            @Override
-            public void onImagesLoaded(List<ImageSet> mImageSetList) {
-                videoSetList = mImageSetList;
-                isVideoLoaded = true;
-                compressImageAndVideo();
-            }
-        });
 
-        imageDataSource.provideMediaItems(new OnImagesLoadedListener() {
-            @Override
-            public void onImagesLoaded(List<ImageSet> mImageSetList) {
-                imageSetList = mImageSetList;
-                isImageLoaded = true;
-                compressImageAndVideo();
-            }
-        });
+        if (isLoadVideo) {//加载视频
+            videoDataSource.provideMediaItems(new OnImagesLoadedListener() {
+                @Override
+                public void onImagesLoaded(List<ImageSet> mImageSetList) {
+                    videoSetList = mImageSetList;
+                    isVideoLoaded = true;
+                    if (isLoadImage) {//如果加载图片，则整合图片和视频
+                        compressImageAndVideo();
+                    } else {
+                        imagesLoadedListener.onImagesLoaded(mImageSetList);
+                    }
+                }
+            });
+        }
     }
 
 
+    /**
+     * 整合图片和视频，按照时间顺序排序
+     */
     private void compressImageAndVideo() {
         if (!isImageLoaded || !isVideoLoaded) {
             return;
@@ -106,6 +117,9 @@ public class MediaDataSource implements DataSource {
         }).start();
     }
 
+    /**
+     * 数据整合
+     */
     private void compress() {
         allSetList.clear();
 

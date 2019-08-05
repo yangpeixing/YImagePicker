@@ -1,6 +1,5 @@
 package com.ypx.imagepicker.adapter.multi;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
@@ -9,31 +8,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerActivity;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.ImageSelectMode;
-import com.ypx.imagepicker.bean.MultiUiConfig;
-import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.bean.MultiSelectConfig;
+import com.ypx.imagepicker.bean.MultiUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
+import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.widget.CheckImageView;
 import com.ypx.imagepicker.widget.ShowTypeImageView;
 
 import java.util.List;
 
-
 /**
- * 作者：yangpeixing on 2018/4/6 10:32
- * 功能：gridview适配器
- * 产权：南京婚尚信息技术
+ * Description: 多选adapter
+ * <p>
+ * Author: yangpeixing on 2018/4/6 10:32
+ * Date: 2019/2/21
  */
-public class MultiGridAdapter extends BaseAdapter {
+public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_TYPE_CAMERA = 0;
     private static final int ITEM_TYPE_NORMAL = 1;
     private List<ImageItem> images;
@@ -50,9 +47,85 @@ public class MultiGridAdapter extends BaseAdapter {
         multiUiConfig = presenter.getUiConfig(ctx);
     }
 
+    @NonNull
     @Override
-    public int getViewTypeCount() {
-        return 2;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == ITEM_TYPE_CAMERA) {
+            return new CameraViewHolder(LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.ypx_grid_item_camera, parent, false),
+                    selectConfig, multiUiConfig);
+        } else {
+            return new ItemViewHolder(LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.ypx_image_grid_item, parent, false),
+                    selectConfig, multiUiConfig);
+        }
+    }
+
+
+    @Override
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, final int position) {
+        int itemViewType = getItemViewType(position);
+        final ImageItem item = getItem(position);
+        if (itemViewType == ITEM_TYPE_CAMERA || item == null) {
+            return;
+        }
+        final ItemViewHolder holder = (ItemViewHolder) viewHolder;
+        if (item.isVideo()) {
+            holder.mVideoLayout.setVisibility(View.VISIBLE);
+            holder.mVideoTime.setText(item.getDurationFormat());
+            holder.ivPic.setType(ShowTypeImageView.TYPE_NONE);
+        } else {
+            holder.mVideoLayout.setVisibility(View.GONE);
+            holder.ivPic.setTypeWithUrlAndSize(item);
+        }
+        holder.cbSelected.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MultiPickerData.instance.isOverLimit(selectConfig.getMaxCount() - 1) && !holder.cbSelected.isChecked()) {
+                    String toast = mContext.getResources().getString(R.string.you_have_a_select_limit, selectConfig.getMaxCount() + "");
+                    presenter.tip(mContext, toast);
+                    return;
+                }
+                holder.cbSelected.toggle();
+                if (mContext instanceof MultiImagePickerActivity) {
+                    ((MultiImagePickerActivity) mContext).imageSelectChange(item, holder.cbSelected.isChecked());
+                    notifyDataSetChanged();
+                }
+            }
+        });
+
+        //屏蔽列表
+        if (selectConfig.isShieldItem(item)) {
+            holder.cbSelected.setVisibility(View.GONE);
+            holder.v_masker.setVisibility(View.VISIBLE);
+            holder.v_masker.setBackgroundColor(Color.parseColor("#80FFFFFF"));
+        } else {
+            if (MultiPickerData.instance.hasItem(item)) {
+                holder.cbSelected.setChecked(true);
+                holder.v_masker.setVisibility(View.VISIBLE);
+                holder.v_masker.setBackgroundColor(Color.parseColor("#80000000"));
+            } else {
+                holder.cbSelected.setChecked(false);
+                holder.v_masker.setVisibility(View.GONE);
+            }
+        }
+
+        holder.ivPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (selectConfig.isShieldItem(item)) {
+                    presenter.tip(mContext, mContext.getResources().getString(R.string.str_shield));
+                    return;
+                }
+                if (mContext instanceof MultiImagePickerActivity) {
+                    ((MultiImagePickerActivity) mContext).onImageClickListener(item, selectConfig.isShowCamera() ? position - 1 : position);
+                }
+            }
+        });
+
+        if (presenter != null) {
+            presenter.displayListImage(holder.ivPic, item.path, 0);
+        }
     }
 
     @Override
@@ -65,12 +138,16 @@ public class MultiGridAdapter extends BaseAdapter {
 
 
     @Override
-    public int getCount() {
-        return selectConfig.isShowCamera() ? images.size() + 1 : images.size();
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
-    public ImageItem getItem(int position) {
+    public int getItemCount() {
+        return selectConfig.isShowCamera() ? images.size() + 1 : images.size();
+    }
+
+    private ImageItem getItem(int position) {
         if (selectConfig.isShowCamera()) {
             if (position == 0) {
                 return null;
@@ -79,124 +156,6 @@ public class MultiGridAdapter extends BaseAdapter {
         } else {
             return images.get(position);
         }
-
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @SuppressLint("InflateParams")
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        int itemViewType = getItemViewType(position);
-        if (itemViewType == ITEM_TYPE_CAMERA) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.ypx_grid_item_camera, parent, false);
-            TextView tv_camera = convertView.findViewById(R.id.tv_camera);
-            tv_camera.setCompoundDrawablesWithIntrinsicBounds(null, mContext.getResources().getDrawable(multiUiConfig.getCameraIconID()), null, null);
-            convertView.setTag(null);
-            convertView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mContext instanceof MultiImagePickerActivity) {
-                        ((MultiImagePickerActivity) mContext).takePhoto();
-                    }
-                }
-            });
-            ViewGroup.LayoutParams params = convertView.getLayoutParams();
-            params.width = params.height = (getScreenWidth() - dp_2() * 2) / selectConfig.getColumnCount();
-            convertView.setLayoutParams(params);
-        } else {
-            final ViewHolder holder;
-            if (convertView == null) {
-                convertView = LayoutInflater.from(mContext).inflate(R.layout.ypx_image_grid_item, null);
-                holder = new ViewHolder();
-                holder.ivPic = convertView.findViewById(R.id.iv_thumb);
-                holder.cbSelected = convertView.findViewById(R.id.iv_thumb_check);
-                holder.cbPanel = convertView.findViewById(R.id.thumb_check_panel);
-                holder.v_masker = convertView.findViewById(R.id.v_masker);
-                holder.mVideoLayout = convertView.findViewById(R.id.mVideoLayout);
-                holder.mVideoTime = convertView.findViewById(R.id.mVideoTime);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-            if (selectConfig.getSelectMode() == ImageSelectMode.MODE_MULTI) {
-                holder.cbSelected.setVisibility(View.VISIBLE);
-            } else {
-                holder.cbSelected.setVisibility(View.GONE);
-            }
-
-            if (multiUiConfig.getImageItemBackgroundColor() != 0) {
-                holder.ivPic.setBackgroundColor(multiUiConfig.getImageItemBackgroundColor());
-            }
-            holder.cbSelected.setSelectIconId(multiUiConfig.getSelectedIconID());
-            holder.cbSelected.setUnSelectIconId(multiUiConfig.getUnSelectIconID());
-            final ImageItem item = getItem(position);
-            if (item.isVideo()) {
-                holder.mVideoLayout.setVisibility(View.VISIBLE);
-                holder.mVideoTime.setText(item.getDurationFormat());
-                holder.ivPic.setType(ShowTypeImageView.TYPE_NONE);
-            } else {
-                holder.mVideoLayout.setVisibility(View.GONE);
-                holder.ivPic.setTypeWithUrlAndSize(item);
-            }
-            holder.cbSelected.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (MultiPickerData.instance.isOverLimit(selectConfig.getMaxCount() - 1) && !holder.cbSelected.isChecked()) {
-                        String toast = mContext.getResources().getString(R.string.you_have_a_select_limit, selectConfig.getMaxCount() + "");
-                        presenter.tip(mContext, toast);
-                        return;
-                    }
-                    holder.cbSelected.toggle();
-                    if (mContext instanceof MultiImagePickerActivity) {
-                        ((MultiImagePickerActivity) mContext).imageSelectChange(item, holder.cbSelected.isChecked());
-                        notifyDataSetChanged();
-                    }
-                }
-            });
-
-            //屏蔽列表
-            if (selectConfig.isShieldItem(item)) {
-                holder.cbSelected.setVisibility(View.GONE);
-                holder.v_masker.setVisibility(View.VISIBLE);
-                holder.v_masker.setBackgroundColor(Color.parseColor("#80FFFFFF"));
-            } else {
-                if (MultiPickerData.instance.hasItem(item)) {
-                    holder.cbSelected.setChecked(true);
-                    holder.v_masker.setVisibility(View.VISIBLE);
-                    holder.v_masker.setBackgroundColor(Color.parseColor("#80000000"));
-                } else {
-                    holder.cbSelected.setChecked(false);
-                    holder.v_masker.setVisibility(View.GONE);
-                }
-            }
-
-            ViewGroup.LayoutParams params = holder.ivPic.getLayoutParams();
-            params.width = params.height = (getScreenWidth() - dp_2() * 2) / selectConfig.getColumnCount();
-            holder.v_masker.setLayoutParams(params);
-
-            holder.ivPic.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (selectConfig.isShieldItem(item)) {
-                        presenter.tip(mContext, mContext.getResources().getString(R.string.str_shield));
-                        return;
-                    }
-                    if (mContext instanceof MultiImagePickerActivity) {
-                        ((MultiImagePickerActivity) mContext).onImageClickListener(item, selectConfig.isShowCamera() ? position - 1 : position);
-                    }
-                }
-            });
-
-            if (presenter != null) {
-                presenter.displayListImage(holder.ivPic, item.path, params.width);
-            }
-        }
-        return convertView;
     }
 
     public void refreshData(List<ImageItem> items) {
@@ -206,8 +165,69 @@ public class MultiGridAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    private int getScreenWidth() {
-        WindowManager wm = (WindowManager) mContext
+    static class CameraViewHolder extends RecyclerView.ViewHolder {
+        private TextView tv_camera;
+
+        CameraViewHolder(@NonNull View itemView, MultiSelectConfig selectConfig, MultiUiConfig uiConfig) {
+            super(itemView);
+            Context context = itemView.getContext();
+            tv_camera = itemView.findViewById(R.id.tv_camera);
+            tv_camera.setCompoundDrawablesWithIntrinsicBounds(null, itemView.getContext().getResources().getDrawable(uiConfig.getCameraIconID()),
+                    null, null);
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) itemView.getLayoutParams();
+            params.leftMargin = dp(context, 1);
+            params.topMargin = dp(context, 1);
+            params.rightMargin = dp(context, 1);
+            params.bottomMargin = dp(context, 1);
+            params.height = getScreenWidth(context) / selectConfig.getColumnCount() - dp(context, 2);
+            itemView.setLayoutParams(params);
+            tv_camera.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (v.getContext() instanceof MultiImagePickerActivity) {
+                        ((MultiImagePickerActivity) v.getContext()).takePhoto();
+                    }
+                }
+            });
+        }
+    }
+
+    static class ItemViewHolder extends RecyclerView.ViewHolder {
+        private ShowTypeImageView ivPic;
+        private CheckImageView cbSelected;
+        private View v_masker;
+        private LinearLayout mVideoLayout;
+        private TextView mVideoTime;
+        private Context context;
+
+        ItemViewHolder(@NonNull View itemView, MultiSelectConfig selectConfig, MultiUiConfig uiConfig) {
+            super(itemView);
+            context = itemView.getContext();
+            ivPic = itemView.findViewById(R.id.iv_thumb);
+            cbSelected = itemView.findViewById(R.id.iv_thumb_check);
+            v_masker = itemView.findViewById(R.id.v_masker);
+            mVideoLayout = itemView.findViewById(R.id.mVideoLayout);
+            mVideoTime = itemView.findViewById(R.id.mVideoTime);
+
+            if (uiConfig.getImageItemBackgroundColor() != 0) {
+                ivPic.setBackgroundColor(uiConfig.getImageItemBackgroundColor());
+            }
+            cbSelected.setSelectIconId(uiConfig.getSelectedIconID());
+            cbSelected.setUnSelectIconId(uiConfig.getUnSelectIconID());
+
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) itemView.getLayoutParams();
+            params.leftMargin = dp(context, 1);
+            params.topMargin = dp(context, 1);
+            params.rightMargin = dp(context, 1);
+            params.bottomMargin = dp(context, 1);
+            params.height = getScreenWidth(context) / selectConfig.getColumnCount() - dp(context, 2);
+            itemView.setLayoutParams(params);
+        }
+    }
+
+
+    private static int getScreenWidth(Context context) {
+        WindowManager wm = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics outMetrics = new DisplayMetrics();
         assert wm != null;
@@ -215,16 +235,8 @@ public class MultiGridAdapter extends BaseAdapter {
         return outMetrics.widthPixels;
     }
 
-    private int dp_2() {
+    private static int dp(Context context, int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                (float) 2, mContext.getResources().getDisplayMetrics());
-    }
-
-    class ViewHolder {
-        ShowTypeImageView ivPic;
-        CheckImageView cbSelected;
-        View cbPanel, v_masker;
-        LinearLayout mVideoLayout;
-        TextView mVideoTime;
+                (float) dp, context.getResources().getDisplayMetrics());
     }
 }

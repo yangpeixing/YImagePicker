@@ -12,8 +12,11 @@ public enum MediaObserver {
 
     private boolean isMediaChanged = true;
 
-    public boolean isMediaChanged() {
-        return isMediaChanged;
+    /**
+     * @return 媒体文件没有更新
+     */
+    public boolean isMediaNotChanged() {
+        return !isMediaChanged;
     }
 
     public void setMediaChanged(boolean mediaChanged) {

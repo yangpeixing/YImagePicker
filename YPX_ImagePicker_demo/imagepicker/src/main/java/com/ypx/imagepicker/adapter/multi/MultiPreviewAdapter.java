@@ -22,7 +22,7 @@ import java.util.ArrayList;
 /**
  * Time: 2019/7/23 10:43
  * Author:ypx
- * Description:
+ * Description: 多选预览adapter
  */
 public class MultiPreviewAdapter extends RecyclerView.Adapter<MultiPreviewAdapter.ViewHolder> {
     private ArrayList<ImageItem> previewList;

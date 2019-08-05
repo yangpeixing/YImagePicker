@@ -12,10 +12,8 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -25,6 +23,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
@@ -34,13 +34,11 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSelectMode;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MultiUiConfig;
-import com.ypx.imagepicker.data.DataSource;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagesLoadedListener;
-import com.ypx.imagepicker.data.impl.ImageDataSource;
 import com.ypx.imagepicker.data.impl.MediaDataSource;
 import com.ypx.imagepicker.helper.launcher.ActivityLauncher;
 import com.ypx.imagepicker.utils.PermissionUtils;
@@ -52,7 +50,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_CAMERA;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_STORAGE;
 
 /**
@@ -72,7 +69,7 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
 
     private List<ImageSet> imageSets;
     private List<ImageItem> imageItems;
-    private GridView gridView;
+    private RecyclerView mRecyclerView;
 
     private View v_masker;
     private Button btnDir;
@@ -165,7 +162,7 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
     private void findView() {
         v_masker = findViewById(R.id.v_masker);
         btnDir = findViewById(R.id.btn_dir);
-        gridView = findViewById(R.id.gridview);
+        mRecyclerView = findViewById(R.id.mRecyclerView);
         mImageSetListView = findViewById(R.id.lv_imagesets);
         mTvTime = findViewById(R.id.tv_time);
         mTvTime.setVisibility(View.GONE);
@@ -224,7 +221,7 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
         }
 
         if (multiUiConfig.getGridViewBackgroundColor() != 0) {
-            gridView.setBackgroundColor(multiUiConfig.getGridViewBackgroundColor());
+            mRecyclerView.setBackgroundColor(multiUiConfig.getGridViewBackgroundColor());
         }
 
         if (multiUiConfig.getBottomBarBackgroundColor() != 0) {
@@ -272,10 +269,11 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
                 selectImageSet(position);
             }
         });
-        gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     mTvTime.setVisibility(View.GONE);
                     mTvTime.setAnimation(AnimationUtils.loadAnimation(MultiImagePickerActivity.this, R.anim.ypx_fade_in));
                 } else {
@@ -284,10 +282,11 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
             }
 
             @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
                 if (imageItems != null)
                     try {
-                        mTvTime.setText(imageItems.get(firstVisibleItem).getTimeFormat());
+                        mTvTime.setText(imageItems.get(layoutManager.findFirstVisibleItemPosition()).getTimeFormat());
                     } catch (IndexOutOfBoundsException ignored) {
 
                     }
@@ -295,6 +294,7 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
         });
     }
 
+    private GridLayoutManager layoutManager;
 
     /**
      * 初始化相关adapter
@@ -305,8 +305,9 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
         mImageSetListView.setAdapter(mImageSetAdapter);
 
         mAdapter = new MultiGridAdapter(this, new ArrayList<ImageItem>(), selectConfig, presenter);
-        gridView.setAdapter(mAdapter);
-        gridView.setNumColumns(selectConfig.getColumnCount());
+        layoutManager = new GridLayoutManager(this, selectConfig.getColumnCount());
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     /**
@@ -319,13 +320,12 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
                 requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_STORAGE);
             }
         } else {
-            if (selectConfig.isShowVideo()) {
-                MediaDataSource dataSource = new MediaDataSource(this, selectConfig.isLoadGif());
-                dataSource.provideMediaItems(this);
-            } else {
-                ImageDataSource dataSource = new ImageDataSource(this, selectConfig.isLoadGif());
-                dataSource.provideMediaItems(this);
-            }
+            //从媒体库拿到数据
+            MediaDataSource dataSource = new MediaDataSource(this);
+            dataSource.setLoadImage(true);
+            dataSource.setLoadGif(selectConfig.isLoadGif());
+            dataSource.setLoadVideo(selectConfig.isShowVideo());
+            dataSource.provideMediaItems(this);
         }
     }
 
@@ -348,7 +348,7 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
                     mAdapter.refreshData(imageSet.imageItems);
                     btnDir.setText(imageSet.name);
                 }
-                gridView.smoothScrollToPosition(0);
+                mRecyclerView.smoothScrollToPosition(0);
             }
         }, 100);
     }
@@ -460,7 +460,7 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
      * @param position 点击的位置
      */
     public void onImageClickListener(ImageItem item, int position) {
-        gridView.setTag(item);
+        mRecyclerView.setTag(item);
         switch (selectConfig.getSelectMode()) {
             //多选情况下，点击跳转预览
             case ImageSelectMode.MODE_MULTI:

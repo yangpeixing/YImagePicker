@@ -25,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -42,10 +41,8 @@ import com.ypx.imagepicker.adapter.crop.CropGridAdapter;
 import com.ypx.imagepicker.adapter.crop.CropSetAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.data.DataSource;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.OnImagesLoadedListener;
-import com.ypx.imagepicker.data.impl.ImageDataSource;
 import com.ypx.imagepicker.data.impl.MediaDataSource;
 import com.ypx.imagepicker.helper.RecyclerViewTouchHelper;
 import com.ypx.imagepicker.utils.CornerUtils;
@@ -181,14 +178,12 @@ public class ImagePickAndCropFragment extends Fragment implements
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_STORAGE);
         } else {
-            //异步加载图片数据
-            if (isShowVideo) {
-                DataSource dataSource = new MediaDataSource(getActivity());
-                dataSource.provideMediaItems(this);
-            } else {
-                DataSource dataSource = new ImageDataSource(getActivity());
-                dataSource.provideMediaItems(this);
-            }
+            //异步加载图片数据\
+            MediaDataSource dataSource = new MediaDataSource(getActivity());
+            dataSource.setLoadVideo(isShowVideo);
+            dataSource.setLoadGif(false);
+            dataSource.setLoadImage(true);
+            dataSource.provideMediaItems(this);
         }
     }
 

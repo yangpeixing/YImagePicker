@@ -29,7 +29,7 @@ import java.util.List;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Cursor> {
+class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Cursor> {
 
     private final String[] IMAGE_PROJECTION = {
             MediaStore.Images.Media.DATA,
@@ -43,24 +43,46 @@ public class ImageDataSource implements DataSource, LoaderManager.LoaderCallback
 
     private OnImagesLoadedListener imagesLoadedListener;
     private FragmentActivity mContext;
-    private ArrayList<ImageSet> mImageSetList = new ArrayList<>();
+    private static ArrayList<ImageSet> mImageSetList = new ArrayList<>();
+    private static boolean lastIsLoadGif = true;
 
     @Override
     public void provideMediaItems(OnImagesLoadedListener loadedListener) {
         this.imagesLoadedListener = loadedListener;
-        mContext.getSupportLoaderManager().initLoader(888, null, this);
+        if (imagesLoadedListener == null) {
+            return;
+        }
+        //如果缓存中有数据，并且媒体库没有数据更新，则直接加载缓存数据
+        if (mImageSetList != null && mImageSetList.size() > 0
+                && MediaObserver.instance.isMediaNotChanged()) {
+            imagesLoadedListener.onImagesLoaded(mImageSetList);
+            return;
+        }
+
+        clearList();
+        LoaderManager.getInstance(mContext).initLoader(888, null, this);
     }
 
-    private boolean isLoadGif = true;
+    private boolean isLoadGif;
 
-    public ImageDataSource(FragmentActivity ctx, boolean loadGif) {
-        this.mContext = ctx;
+    void setLoadGif(boolean loadGif) {
         isLoadGif = loadGif;
+        if (isLoadGif != lastIsLoadGif) {
+            lastIsLoadGif = isLoadGif;
+            clearList();
+        }
     }
 
-    public ImageDataSource(FragmentActivity ctx) {
+    private void clearList() {
+        if (mImageSetList != null) {
+            mImageSetList.clear();
+        } else {
+            mImageSetList = new ArrayList<>();
+        }
+    }
+
+    ImageDataSource(FragmentActivity ctx) {
         this.mContext = ctx;
-        isLoadGif = true;
     }
 
 
@@ -179,6 +201,7 @@ public class ImageDataSource implements DataSource, LoaderManager.LoaderCallback
                 if (mContext.isDestroyed()) {
                     return;
                 }
+                MediaObserver.instance.setMediaChanged(false);
                 if (imagesLoadedListener != null) {
                     imagesLoadedListener.onImagesLoaded(mImageSetList);
                 }

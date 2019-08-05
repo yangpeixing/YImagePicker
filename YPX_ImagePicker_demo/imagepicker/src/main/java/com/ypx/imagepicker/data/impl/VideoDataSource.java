@@ -3,6 +3,7 @@ package com.ypx.imagepicker.data.impl;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
@@ -27,7 +28,7 @@ import java.util.List;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Cursor> {
+class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Cursor> {
 
     private final String[] VIDEO_PROJECTION = {
             MediaStore.Video.Media._ID,
@@ -41,13 +42,29 @@ public class VideoDataSource implements DataSource, LoaderManager.LoaderCallback
 
     private OnImagesLoadedListener imagesLoadedListener;
     private FragmentActivity mContext;
-    private ArrayList<ImageSet> mVideoSetList = new ArrayList<>();
+    private static ArrayList<ImageSet> mVideoSetList = new ArrayList<>();
 
     @Override
     public void provideMediaItems(OnImagesLoadedListener loadedListener) {
         this.imagesLoadedListener = loadedListener;
+        if (imagesLoadedListener == null) {
+            return;
+        }
+        //如果缓存中有数据，则直接加载
+        if (mVideoSetList != null && mVideoSetList.size() > 0
+                && MediaObserver.instance.isMediaNotChanged()) {
+            imagesLoadedListener.onImagesLoaded(mVideoSetList);
+            return;
+        }
+
+        if (mVideoSetList != null) {
+            mVideoSetList.clear();
+        } else {
+            mVideoSetList = new ArrayList<>();
+        }
+
         if (mContext != null) {
-            mContext.getSupportLoaderManager().initLoader(999, null, this);
+            LoaderManager.getInstance(mContext).initLoader(999, null, this);
         }
     }
 
@@ -72,7 +89,7 @@ public class VideoDataSource implements DataSource, LoaderManager.LoaderCallback
             return;
         }
 
-        if (data == null || data.getCount() <= 0||data.isClosed()) {
+        if (data == null || data.getCount() <= 0 || data.isClosed()) {
             if (imagesLoadedListener != null) {
                 imagesLoadedListener.onImagesLoaded(null);
             }
@@ -138,6 +155,7 @@ public class VideoDataSource implements DataSource, LoaderManager.LoaderCallback
                 if (mContext.isDestroyed()) {
                     return;
                 }
+                MediaObserver.instance.setMediaChanged(false);
                 if (imagesLoadedListener != null) {
                     imagesLoadedListener.onImagesLoaded(mVideoSetList);
                 }
