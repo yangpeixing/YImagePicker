@@ -175,7 +175,7 @@ public class MediaDataSource implements DataSource {
                 for (ImageSet imageSet : b) {
                     if (videoSet.equals(imageSet)) {
                         //同一个文件夹
-                        imageSet.imageItems.addAll(videoSet.imageItems);
+                        compressImageSet(imageSet.imageItems, videoSet.imageItems);
                         sort(imageSet.imageItems);
                     }
                     if (isNotContainsImageSet(imageSet)) {
@@ -185,6 +185,20 @@ public class MediaDataSource implements DataSource {
             }
             if (isNotContainsImageSet(videoSet)) {
                 allSetList.add(videoSet);
+            }
+        }
+    }
+
+    /**
+     * 整合文件夹中所有图片和视频，要去重
+     *
+     * @param items  文件夹1
+     * @param items2 文件夹2
+     */
+    private void compressImageSet(ArrayList<ImageItem> items, ArrayList<ImageItem> items2) {
+        for (ImageItem imageItem : items2) {
+            if (!items.contains(imageItem)) {
+                items.add(imageItem);
             }
         }
     }

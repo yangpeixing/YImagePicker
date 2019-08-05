@@ -58,7 +58,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static android.app.Activity.RESULT_OK;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_CROPPICSAVEFILEPATH;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_FIRSTIMAGEITEM;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_IMAGELOADER;

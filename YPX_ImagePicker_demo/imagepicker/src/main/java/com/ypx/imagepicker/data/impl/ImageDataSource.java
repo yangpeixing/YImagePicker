@@ -20,7 +20,6 @@ import com.ypx.imagepicker.utils.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -30,7 +29,7 @@ import java.util.List;
  * Date: 2019/2/21
  */
 class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Cursor> {
-
+    private final int ID = 888;
     private final String[] IMAGE_PROJECTION = {
             MediaStore.Images.Media.DATA,
             MediaStore.Images.Media.DISPLAY_NAME,
@@ -49,7 +48,7 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
     @Override
     public void provideMediaItems(OnImagesLoadedListener loadedListener) {
         this.imagesLoadedListener = loadedListener;
-        if (imagesLoadedListener == null) {
+        if (imagesLoadedListener == null || mContext == null) {
             return;
         }
         //如果缓存中有数据，并且媒体库没有数据更新，则直接加载缓存数据
@@ -60,7 +59,7 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
         }
 
         clearList();
-        LoaderManager.getInstance(mContext).initLoader(888, null, this);
+        LoaderManager.getInstance(mContext).initLoader(ID, null, this);
     }
 
     private boolean isLoadGif;
@@ -121,13 +120,11 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, final Cursor data) {
-        if (mContext.isDestroyed() || mImageSetList.size() > 0) {
+        if (mContext.isDestroyed()) {
             return;
         }
         if (data == null || data.getCount() <= 0 || data.isClosed()) {
-            if (imagesLoadedListener != null) {
-                imagesLoadedListener.onImagesLoaded(null);
-            }
+            imagesLoadedListener.onImagesLoaded(null);
             return;
         }
         new Thread(new Runnable() {
@@ -139,9 +136,6 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
     }
 
     private void compressToList(Cursor data) {
-        if (mContext.isDestroyed()) {
-            return;
-        }
         ArrayList<ImageItem> allImages = new ArrayList<>();
         data.moveToFirst();
         do {
@@ -183,7 +177,7 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
                 imageSet.imageItems = imageList;
                 mImageSetList.add(imageSet);
             } else {
-                mImageSetList.get(mImageSetList.indexOf(imageSet)).imageItems.add(item);
+                addItem(mImageSetList.get(mImageSetList.indexOf(imageSet)).imageItems, item);
             }
 
         } while (data.moveToNext());
@@ -195,21 +189,29 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
         imageSetAll.path = "/";
         mImageSetList.add(0, imageSetAll);
 
-        mContext.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mContext.isDestroyed()) {
-                    return;
-                }
-                MediaObserver.instance.setMediaChanged(false);
-                if (imagesLoadedListener != null) {
+        if (!mContext.isDestroyed()) {
+            mContext.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MediaObserver.instance.setMediaChanged(false);
                     imagesLoadedListener.onImagesLoaded(mImageSetList);
+                    //销毁Loader
+                    LoaderManager.getInstance(mContext).destroyLoader(ID);
                 }
+            });
+        }
+    }
+
+    private void addItem(ArrayList<ImageItem> imageItems, ImageItem imageItem) {
+        for (ImageItem imageItem1 : imageItems) {
+            if (imageItem1.equals(imageItem)) {
+                return;
             }
-        });
+        }
+        imageItems.add(imageItem);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
     }
 }

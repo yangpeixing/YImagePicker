@@ -10,11 +10,14 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerActivity;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.ImageSelectMode;
 import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.MultiUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
@@ -70,6 +73,11 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return;
         }
         final ItemViewHolder holder = (ItemViewHolder) viewHolder;
+        if (selectConfig.getSelectMode() != ImageSelectMode.MODE_MULTI) {
+            holder.cbSelected.setVisibility(View.GONE);
+        } else {
+            holder.cbSelected.setVisibility(View.VISIBLE);
+        }
         if (item.isVideo()) {
             holder.mVideoLayout.setVisibility(View.VISIBLE);
             holder.mVideoTime.setText(item.getDurationFormat());

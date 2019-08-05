@@ -19,7 +19,6 @@ import com.ypx.imagepicker.utils.DateUtil;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -29,7 +28,7 @@ import java.util.List;
  * Date: 2019/2/21
  */
 class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Cursor> {
-
+    private final int ID = 999;
     private final String[] VIDEO_PROJECTION = {
             MediaStore.Video.Media._ID,
             MediaStore.Video.Media.DATA,
@@ -47,7 +46,7 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
     @Override
     public void provideMediaItems(OnImagesLoadedListener loadedListener) {
         this.imagesLoadedListener = loadedListener;
-        if (imagesLoadedListener == null) {
+        if (imagesLoadedListener == null || mContext == null) {
             return;
         }
         //如果缓存中有数据，则直接加载
@@ -63,9 +62,7 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
             mVideoSetList = new ArrayList<>();
         }
 
-        if (mContext != null) {
-            LoaderManager.getInstance(mContext).initLoader(999, null, this);
-        }
+        LoaderManager.getInstance(mContext).initLoader(ID, null, this);
     }
 
     VideoDataSource(FragmentActivity ctx) {
@@ -85,16 +82,15 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, final Cursor data) {
-        if (mContext.isDestroyed() || mVideoSetList.size() > 0) {
+        if (mContext.isDestroyed()) {
             return;
         }
 
         if (data == null || data.getCount() <= 0 || data.isClosed()) {
-            if (imagesLoadedListener != null) {
-                imagesLoadedListener.onImagesLoaded(null);
-            }
+            imagesLoadedListener.onImagesLoaded(null);
             return;
         }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -137,7 +133,7 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
                 imageSet.imageItems = imageList;
                 mVideoSetList.add(imageSet);
             } else {
-                mVideoSetList.get(mVideoSetList.indexOf(imageSet)).imageItems.add(item);
+                addItem(mVideoSetList.get(mVideoSetList.indexOf(imageSet)).imageItems, item);
             }
 
         } while (data.moveToNext());
@@ -149,21 +145,28 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
         imageSetAll.path = "/";
         mVideoSetList.add(0, imageSetAll);
 
-        mContext.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mContext.isDestroyed()) {
-                    return;
-                }
-                MediaObserver.instance.setMediaChanged(false);
-                if (imagesLoadedListener != null) {
+        if (!mContext.isDestroyed()) {
+            mContext.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MediaObserver.instance.setMediaChanged(false);
                     imagesLoadedListener.onImagesLoaded(mVideoSetList);
+                    LoaderManager.getInstance(mContext).destroyLoader(ID);
                 }
+            });
+        }
+    }
+
+    private void addItem(ArrayList<ImageItem> imageItems, ImageItem imageItem) {
+        for (ImageItem imageItem1 : imageItems) {
+            if (imageItem1.equals(imageItem)) {
+                return;
             }
-        });
+        }
+        imageItems.add(imageItem);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
     }
 }

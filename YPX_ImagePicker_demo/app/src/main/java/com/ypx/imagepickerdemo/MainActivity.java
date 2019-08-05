@@ -73,7 +73,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cb_wx.setOnClickListener(this);
 
         //媒体文件观察者
-        MediaObserver.instance.register(getApplication());
+        ImagePicker.registerMediaObserver(getApplication());
+        ImagePicker.preload(this, true, true, false);
     }
 
 
