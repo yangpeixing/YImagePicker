@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -51,12 +49,6 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_UI_CONFIG;
 
-/**
- * Description: 预览页
- * <p>
- * Author: peixing.yang
- * Date: 2019/2/21
- */
 public class MultiImagePreviewActivity extends FragmentActivity {
     public static final String INTENT_KEY_PREVIEW_LIST = "previewList";
     public static final String INTENT_KEY_CAN_EDIT = "canEdit";
@@ -108,7 +100,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ypx_activity_image_pre);
+        setContentView(R.layout.picker_activity_image_pre);
         if (getIntent() == null || !getIntent().hasExtra(INTENT_KEY_SELECT_CONFIG)
                 || !getIntent().hasExtra(INTENT_KEY_UI_CONFIG)) {
             finish();
@@ -195,14 +187,16 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         mCbSelected.setLeftDrawable(getResources().getDrawable(multiUiConfig.getSelectedIconID()),
                 getResources().getDrawable(multiUiConfig.getUnSelectIconID()));
         if (multiUiConfig.isImmersionBar() && multiUiConfig.getTopBarBackgroundColor() != 0) {
-            StatusBarUtil.setWindowStatusBarColor(this, multiUiConfig.getTopBarBackgroundColor());
+            StatusBarUtil.setStatusBar(this,multiUiConfig.getTopBarBackgroundColor(), false,
+                    StatusBarUtil.isDarkColor(multiUiConfig.getTopBarBackgroundColor()));
         }
+
         if (multiUiConfig.getBackIconID() != 0) {
             iv_back.setImageDrawable(getResources().getDrawable(multiUiConfig.getBackIconID()));
         }
 
-        if (multiUiConfig.getLeftBackIconColor() != 0) {
-            iv_back.setColorFilter(multiUiConfig.getLeftBackIconColor());
+        if (multiUiConfig.getBackIconColor() != 0) {
+            iv_back.setColorFilter(multiUiConfig.getBackIconColor());
         }
 
         if (multiUiConfig.getTopBarBackgroundColor() != 0) {
@@ -214,18 +208,9 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             mPreviewRecyclerView.setBackgroundColor(multiUiConfig.getBottomBarBackgroundColor());
         }
 
-        if (multiUiConfig.getRightBtnBackground() != 0) {
-            mTvRight.setBackground(getResources().getDrawable(multiUiConfig.getRightBtnBackground()));
-        }
-
         if (multiUiConfig.getTitleColor() != 0) {
             mTvTitle.setTextColor(multiUiConfig.getTitleColor());
         }
-
-        if (multiUiConfig.getRightBtnTextColor() != 0) {
-            mTvRight.setTextColor(multiUiConfig.getRightBtnTextColor());
-        }
-
 
         if (!isCanEdit) {
             mCbSelected.setVisibility(View.GONE);
@@ -313,16 +298,16 @@ public class MultiImagePreviewActivity extends FragmentActivity {
 
     public void onImageSingleTap() {
         if (mTitleBar.getVisibility() == View.VISIBLE) {
-            mTitleBar.setAnimation(AnimationUtils.loadAnimation(this, R.anim.ypx_top_out));
-            mBottomBar.setAnimation(AnimationUtils.loadAnimation(this, R.anim.ypx_fade_out));
-            mPreviewRecyclerView.setAnimation(AnimationUtils.loadAnimation(this, R.anim.ypx_fade_out));
+            mTitleBar.setAnimation(AnimationUtils.loadAnimation(this, R.anim.picker_top_out));
+            mBottomBar.setAnimation(AnimationUtils.loadAnimation(this, R.anim.picker_fade_out));
+            mPreviewRecyclerView.setAnimation(AnimationUtils.loadAnimation(this, R.anim.picker_fade_out));
             mTitleBar.setVisibility(View.GONE);
             mBottomBar.setVisibility(View.GONE);
             mPreviewRecyclerView.setVisibility(View.GONE);
         } else {
-            mTitleBar.setAnimation(AnimationUtils.loadAnimation(this, R.anim.ypx_top_in));
-            mBottomBar.setAnimation(AnimationUtils.loadAnimation(this, R.anim.ypx_fade_in));
-            mPreviewRecyclerView.setAnimation(AnimationUtils.loadAnimation(this, R.anim.ypx_fade_in));
+            mTitleBar.setAnimation(AnimationUtils.loadAnimation(this, R.anim.picker_top_in));
+            mBottomBar.setAnimation(AnimationUtils.loadAnimation(this, R.anim.picker_fade_in));
+            mPreviewRecyclerView.setAnimation(AnimationUtils.loadAnimation(this, R.anim.picker_fade_in));
             mTitleBar.setVisibility(View.VISIBLE);
             if (isCanEdit) {
                 mBottomBar.setVisibility(View.VISIBLE);
@@ -357,18 +342,34 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             mTvRight.setEnabled(true);
             mTvRight.setAlpha(1f);
             if (selectConfig.getMaxCount() < 0) {
-                mTvRight.setText(multiUiConfig.getoKBtnText());
+                mTvRight.setText(multiUiConfig.getOkBtnText());
             } else {
-                String text = String.format("%s(%d/%d)", multiUiConfig.getoKBtnText(),
+                String text = String.format("%s(%d/%d)", multiUiConfig.getOkBtnText(),
                         mPreviewList.size(),
                         selectConfig.getMaxCount());
                 mTvRight.setText(text);
             }
+
+            if (multiUiConfig.getOkBtnSelectBackground() != null) {
+                mTvRight.setBackground(multiUiConfig.getOkBtnSelectBackground());
+            }else {
+                mTvRight.setBackground(getResources().getDrawable(R.drawable.picker_wechat_okbtn_select));
+            }
+            if (multiUiConfig.getOkBtnSelectTextColor() != 0) {
+                mTvRight.setTextColor(multiUiConfig.getOkBtnSelectTextColor());
+            }
         } else {
-            mTvRight.setAlpha(0.6f);
-            mTvRight.setText(multiUiConfig.getoKBtnText());
+            mTvRight.setText(multiUiConfig.getOkBtnText());
             mTvRight.setClickable(false);
             mTvRight.setEnabled(false);
+            if (multiUiConfig.getOkBtnUnSelectBackground() != null) {
+                mTvRight.setBackground(multiUiConfig.getOkBtnUnSelectBackground());
+            }else {
+                mTvRight.setBackground(getResources().getDrawable(R.drawable.picker_wechat_okbtn_unselect));
+            }
+            if (multiUiConfig.getOkBtnUnSelectTextColor() != 0) {
+                mTvRight.setTextColor(multiUiConfig.getOkBtnUnSelectTextColor());
+            }
         }
     }
 

@@ -36,7 +36,9 @@ public class CheckImageView extends ImageView {
 
     public void setChecked(boolean isCheck) {
         isChecked = isCheck;
-        setImageDrawable(getResources().getDrawable(isCheck ? selectIconId : unSelectIconId));
+        if (selectIconId != 0 && unSelectIconId != 0) {
+            setImageDrawable(getResources().getDrawable(isCheck ? selectIconId : unSelectIconId));
+        }
         if (!isCheck) {
             setColorFilter(Color.WHITE);
         } else {

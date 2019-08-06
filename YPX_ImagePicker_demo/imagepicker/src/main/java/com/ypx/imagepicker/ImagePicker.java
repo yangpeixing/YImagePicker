@@ -1,8 +1,12 @@
 package com.ypx.imagepicker;
 
+import android.Manifest;
 import android.app.Application;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Environment;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.ypx.imagepicker.bean.ImageSet;
@@ -16,6 +20,8 @@ import com.ypx.imagepicker.builder.MultiPickerBuilder;
 
 import java.io.File;
 import java.util.List;
+
+import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_STORAGE;
 
 /**
  * Description: 图片加载启动类
@@ -33,26 +39,63 @@ public class ImagePicker {
     //选择返回code
     public static final int REQ_PICKER_RESULT_CODE = 1433;
 
+    /**
+     * 图片剪裁的保存路径
+     */
     public static String cropPicSaveFilePath = Environment.getExternalStorageDirectory().toString() +
             File.separator + "Crop" + File.separator;
 
-    public static CropPickerBuilder withCrop(ICropPickerBindPresenter loaderProvider) {
-        return new CropPickerBuilder(loaderProvider);
+    /**
+     * 小红书样式剪裁activity形式
+     *
+     * @param bindPresenter 数据交互类
+     */
+    public static CropPickerBuilder withCrop(ICropPickerBindPresenter bindPresenter) {
+        return new CropPickerBuilder(bindPresenter);
     }
 
-    public static CropPickerBuilder withCropFragment(ICropPickerBindPresenter loaderProvider) {
-        return new CropPickerBuilder(loaderProvider);
+    /**
+     * 小红书样式剪裁fragment形式
+     *
+     * @param bindPresenter 数据交互类
+     */
+    public static CropPickerBuilder withCropFragment(ICropPickerBindPresenter bindPresenter) {
+        return new CropPickerBuilder(bindPresenter);
     }
 
-    public static MultiPickerBuilder withMulti(IMultiPickerBindPresenter iMultiPickerUIProvider) {
-        return new MultiPickerBuilder(iMultiPickerUIProvider);
+    /**
+     * 微信样式多选
+     *
+     * @param iMultiPickerBindPresenter 选择器UI提供者
+     * @return 微信样式多选
+     */
+    public static MultiPickerBuilder withMulti(IMultiPickerBindPresenter iMultiPickerBindPresenter) {
+        return new MultiPickerBuilder(iMultiPickerBindPresenter);
     }
 
+    /**
+     * 注册媒体监听器，用于捕获系统媒体文件发生变化
+     *
+     * @param application 应用application，可放入自定义Application中
+     */
     public static void registerMediaObserver(Application application) {
         MediaObserver.instance.register(application);
     }
 
+    /**
+     * 预加载选择器媒体文件
+     *
+     * @param activity    预加载的activity
+     * @param isLoadImage 是否预加载图片
+     * @param isLoadVideo 是否预加载视频
+     * @param isLoadGif   是否预加载GIF图
+     */
     public static void preload(FragmentActivity activity, boolean isLoadImage, boolean isLoadVideo, boolean isLoadGif) {
+        //没有文件访问权限，不预加载选择器
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         MediaDataSource dataSource = new MediaDataSource(activity);
         dataSource.setLoadVideo(isLoadVideo);
         dataSource.setLoadImage(isLoadImage);

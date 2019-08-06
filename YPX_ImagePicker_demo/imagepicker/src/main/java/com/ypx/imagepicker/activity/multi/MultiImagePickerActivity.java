@@ -33,14 +33,14 @@ import com.ypx.imagepicker.adapter.multi.MultiSetAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSelectMode;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.bean.MultiUiConfig;
-import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.bean.MultiSelectConfig;
+import com.ypx.imagepicker.bean.MultiUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
+import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.OnImagesLoadedListener;
 import com.ypx.imagepicker.data.impl.MediaDataSource;
 import com.ypx.imagepicker.helper.launcher.ActivityLauncher;
+import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PermissionUtils;
 import com.ypx.imagepicker.utils.StatusBarUtil;
 import com.ypx.imagepicker.utils.TakePhotoUtil;
@@ -110,7 +110,7 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ypx_activity_images_grid);
+        setContentView(R.layout.picker_activity_images_grid);
         if (getIntent() == null || !getIntent().hasExtra(INTENT_KEY_SELECT_CONFIG)
                 || !getIntent().hasExtra(INTENT_KEY_UI_CONFIG)) {
             finish();
@@ -205,41 +205,40 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
             }
         });
         if (multiUiConfig.isImmersionBar() && multiUiConfig.getTopBarBackgroundColor() != 0) {
-            StatusBarUtil.setWindowStatusBarColor(this, multiUiConfig.getTopBarBackgroundColor());
+            StatusBarUtil.setStatusBar(this, multiUiConfig.getTopBarBackgroundColor(), false,
+                    StatusBarUtil.isDarkColor(multiUiConfig.getTopBarBackgroundColor()));
         }
 
         if (multiUiConfig.getBackIconID() != 0) {
             iv_back.setImageDrawable(getResources().getDrawable(multiUiConfig.getBackIconID()));
         }
 
-        if (multiUiConfig.getLeftBackIconColor() != 0) {
-            iv_back.setColorFilter(multiUiConfig.getLeftBackIconColor());
+        if (multiUiConfig.getBackIconColor() != 0) {
+            iv_back.setColorFilter(multiUiConfig.getBackIconColor());
         }
 
         if (multiUiConfig.getTopBarBackgroundColor() != 0) {
             top_bar.setBackgroundColor(multiUiConfig.getTopBarBackgroundColor());
         }
 
-        if (multiUiConfig.getGridViewBackgroundColor() != 0) {
-            mRecyclerView.setBackgroundColor(multiUiConfig.getGridViewBackgroundColor());
+        if (multiUiConfig.getPickerBackgroundColor() != 0) {
+            mRecyclerView.setBackgroundColor(multiUiConfig.getPickerBackgroundColor());
         }
 
         if (multiUiConfig.getBottomBarBackgroundColor() != 0) {
             footer_panel.setBackgroundColor(multiUiConfig.getBottomBarBackgroundColor());
         }
 
-        if (multiUiConfig.getRightBtnBackground() != 0) {
-            mTvRight.setBackground(getResources().getDrawable(multiUiConfig.getRightBtnBackground()));
-        }
-
         if (multiUiConfig.getTitleColor() != 0) {
             tv_title.setTextColor(multiUiConfig.getTitleColor());
         }
-
-        if (multiUiConfig.getRightBtnTextColor() != 0) {
-            mTvRight.setTextColor(multiUiConfig.getRightBtnTextColor());
+        if (selectConfig.isShowVideo() && selectConfig.isShowImage()) {
+            tv_title.setText(getResources().getString(R.string.str_image_video));
+        } else if (selectConfig.isShowVideo()) {
+            tv_title.setText(getResources().getString(R.string.str_video));
+        } else {
+            tv_title.setText(getResources().getString(R.string.str_image));
         }
-
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -274,10 +273,15 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    mTvTime.setVisibility(View.GONE);
-                    mTvTime.setAnimation(AnimationUtils.loadAnimation(MultiImagePickerActivity.this, R.anim.ypx_fade_in));
+                    if (mTvTime.getVisibility() == View.VISIBLE) {
+                        mTvTime.setVisibility(View.GONE);
+                        mTvTime.startAnimation(AnimationUtils.loadAnimation(MultiImagePickerActivity.this, R.anim.picker_fade_out));
+                    }
                 } else {
-                    mTvTime.setVisibility(View.VISIBLE);
+                    if (mTvTime.getVisibility() == View.GONE) {
+                        mTvTime.setVisibility(View.VISIBLE);
+                        mTvTime.startAnimation(AnimationUtils.loadAnimation(MultiImagePickerActivity.this, R.anim.picker_fade_in));
+                    }
                 }
             }
 
@@ -287,7 +291,7 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
                 if (imageItems != null)
                     try {
                         mTvTime.setText(imageItems.get(layoutManager.findFirstVisibleItemPosition()).getTimeFormat());
-                    } catch (IndexOutOfBoundsException ignored) {
+                    } catch (Exception ignored) {
 
                     }
             }
@@ -322,7 +326,7 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
         } else {
             //从媒体库拿到数据
             MediaDataSource dataSource = new MediaDataSource(this);
-            dataSource.setLoadImage(true);
+            dataSource.setLoadImage(selectConfig.isShowImage());
             dataSource.setLoadGif(selectConfig.isLoadGif());
             dataSource.setLoadVideo(selectConfig.isShowVideo());
             dataSource.provideMediaItems(this);
@@ -360,7 +364,7 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
         if (mImageSetListView.getVisibility() == View.GONE) {
             v_masker.setVisibility(View.VISIBLE);
             mImageSetListView.setVisibility(View.VISIBLE);
-            mImageSetListView.setAnimation(AnimationUtils.loadAnimation(MultiImagePickerActivity.this, R.anim.ypx_show_from_bottom));
+            mImageSetListView.setAnimation(AnimationUtils.loadAnimation(MultiImagePickerActivity.this, R.anim.picker_show2bottom));
             int index = mImageSetAdapter.getSelectIndex();
             index = index == 0 ? index : index - 1;
             mImageSetListView.setSelection(index);
@@ -377,7 +381,7 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
         } else {
             v_masker.setVisibility(View.GONE);
             mImageSetListView.setVisibility(View.GONE);
-            mImageSetListView.setAnimation(AnimationUtils.loadAnimation(MultiImagePickerActivity.this, R.anim.ypx_hide2bottom));
+            mImageSetListView.setAnimation(AnimationUtils.loadAnimation(MultiImagePickerActivity.this, R.anim.picker_hide2bottom));
         }
     }
 
@@ -524,18 +528,35 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
             mTvRight.setClickable(true);
             mTvRight.setEnabled(true);
             mTvRight.setAlpha(1f);
-            String text = String.format("%s(%d/%d)", multiUiConfig.getoKBtnText(),
+            String text = String.format("%s(%d/%d)", multiUiConfig.getOkBtnText(),
                     MultiPickerData.instance.getSelectCount(),
                     selectConfig.getMaxCount());
             mTvRight.setText(text);
             mTvPreview.setText(String.format("预览(%d)",
                     MultiPickerData.instance.getSelectCount()));
+            mTvPreview.setVisibility(View.VISIBLE);
+            if (multiUiConfig.getOkBtnSelectBackground() != null) {
+                mTvRight.setBackground(multiUiConfig.getOkBtnSelectBackground());
+            } else {
+                mTvRight.setBackground(getResources().getDrawable(R.drawable.picker_wechat_okbtn_select));
+            }
+            if (multiUiConfig.getOkBtnSelectTextColor() != 0) {
+                mTvRight.setTextColor(multiUiConfig.getOkBtnSelectTextColor());
+            }
         } else {
-            mTvRight.setAlpha(0.6f);
-            mTvRight.setText(multiUiConfig.getoKBtnText());
+            mTvRight.setText(multiUiConfig.getOkBtnText());
             mTvRight.setClickable(false);
             mTvRight.setEnabled(false);
             mTvPreview.setText("预览");
+            mTvPreview.setVisibility(View.GONE);
+            if (multiUiConfig.getOkBtnUnSelectBackground() != null) {
+                mTvRight.setBackground(multiUiConfig.getOkBtnUnSelectBackground());
+            } else {
+                mTvRight.setBackground(getResources().getDrawable(R.drawable.picker_wechat_okbtn_unselect));
+            }
+            if (multiUiConfig.getOkBtnUnSelectTextColor() != 0) {
+                mTvRight.setTextColor(multiUiConfig.getOkBtnUnSelectTextColor());
+            }
         }
     }
 

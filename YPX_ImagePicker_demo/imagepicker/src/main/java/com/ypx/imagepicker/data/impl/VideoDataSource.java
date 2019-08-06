@@ -133,7 +133,7 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
                 imageSet.imageItems = imageList;
                 mVideoSetList.add(imageSet);
             } else {
-                addItem(mVideoSetList.get(mVideoSetList.indexOf(imageSet)).imageItems, item);
+                mVideoSetList.get(mVideoSetList.indexOf(imageSet)).imageItems.add(item);
             }
 
         } while (data.moveToNext());
@@ -155,15 +155,6 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
                 }
             });
         }
-    }
-
-    private void addItem(ArrayList<ImageItem> imageItems, ImageItem imageItem) {
-        for (ImageItem imageItem1 : imageItems) {
-            if (imageItem1.equals(imageItem)) {
-                return;
-            }
-        }
-        imageItems.add(imageItem);
     }
 
     @Override

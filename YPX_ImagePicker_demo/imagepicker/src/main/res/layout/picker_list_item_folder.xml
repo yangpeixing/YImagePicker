@@ -20,7 +20,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/ypx_selector_list_item_bg"
+    android:background="@drawable/picker_selector_list_item_bg"
     android:orientation="horizontal"
     android:paddingTop="10dp">
 
@@ -67,12 +67,12 @@
         android:id="@+id/indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="20dp"
-        android:src="@mipmap/ypx_drop_down_checked" />
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="20dp"
+        android:src="@mipmap/pricker_drop_down_checked" />
 
     <View
         style="@style/horizontal_gray_divider"

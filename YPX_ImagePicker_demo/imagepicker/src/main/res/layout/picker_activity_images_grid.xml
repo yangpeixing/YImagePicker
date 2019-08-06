@@ -2,47 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/top_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#303030">
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@id/tv_rightBtn"
-            android:layout_toEndOf="@id/iv_back"
-            android:gravity="center_vertical"
-            android:text="图片选择"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/tv_rightBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
-            android:gravity="center"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="确定"
-            android:textColor="#ffffff"
-            android:textSize="14sp" />
-
-        <ImageView
-            android:id="@+id/iv_back"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:src="@mipmap/ypx_icon_back_black" />
-
-    </RelativeLayout>
+    <include layout="@layout/picker_default_titlebar" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -53,25 +13,7 @@
             android:id="@+id/mRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/black"/>
-
-        <!--<GridView-->
-            <!--android:id="@+id/gridview"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:background="@color/black"-->
-            <!--android:clipToPadding="false"-->
-            <!--android:horizontalSpacing="2dp"-->
-            <!--android:listSelector="@android:color/transparent"-->
-            <!--android:numColumns="3"-->
-            <!--android:overScrollMode="never"-->
-            <!--android:paddingBottom="50dp"-->
-            <!--android:paddingLeft="2dp"-->
-            <!--android:paddingRight="2dp"-->
-            <!--android:paddingTop="2dp"-->
-            <!--android:stretchMode="columnWidth"-->
-            <!--android:verticalSpacing="2dp"-->
-            <!--android:visibility="visible" />-->
+            android:background="@color/black" />
 
         <TextView
             android:id="@+id/tv_time"
@@ -117,8 +59,8 @@
                 android:layout_height="match_parent"
                 android:layout_centerVertical="true"
                 android:background="@null"
+                android:drawableEnd="@mipmap/picker_text_indicator"
                 android:drawablePadding="4dp"
-                android:drawableEnd="@mipmap/ypx_text_indicator"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:paddingLeft="16dp"
@@ -134,8 +76,8 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:gravity="center"
-                android:paddingEnd="15dp"
                 android:paddingStart="15dp"
+                android:paddingEnd="15dp"
                 android:text="预览"
                 android:textColor="@color/white"
                 android:textSize="16sp" />

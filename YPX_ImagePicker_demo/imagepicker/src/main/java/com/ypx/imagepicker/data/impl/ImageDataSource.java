@@ -177,7 +177,7 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
                 imageSet.imageItems = imageList;
                 mImageSetList.add(imageSet);
             } else {
-                addItem(mImageSetList.get(mImageSetList.indexOf(imageSet)).imageItems, item);
+                mImageSetList.get(mImageSetList.indexOf(imageSet)).imageItems.add(item);
             }
 
         } while (data.moveToNext());
@@ -202,14 +202,7 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
         }
     }
 
-    private void addItem(ArrayList<ImageItem> imageItems, ImageItem imageItem) {
-        for (ImageItem imageItem1 : imageItems) {
-            if (imageItem1.equals(imageItem)) {
-                return;
-            }
-        }
-        imageItems.add(imageItem);
-    }
+
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {

@@ -1,18 +1,23 @@
 package com.ypx.imagepicker.bean;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+
+import com.ypx.imagepicker.R;
+
 import java.io.Serializable;
 
 /**
- * Description: 选择器UI配置项
+ * Description: 选择器UI样式模型
  * <p>
  * Author: peixing.yang
- * Date: 2019/2/21
+ * Date: 2018/10/16 11:00
  */
 public class MultiUiConfig implements Serializable {
     /**
      * 是否沉浸式状态栏，如果返回true将会自动读取topbar的颜色
      */
-    private boolean isImmersionBar;
+    private boolean isImmersionBar = true;
     /**
      * 获取整个选择器主题颜色，主要是所有按钮颜色
      */
@@ -29,14 +34,25 @@ public class MultiUiConfig implements Serializable {
      * 获取返回图标ID
      */
     private int backIconID;
+
+    /**
+     * 返回箭头颜色
+     */
+    private int backIconColor;
+
     /**
      * 获取拍照按钮的图片ID
      */
     private int cameraIconID;
+
+    /**
+     * 获取拍照按钮的背景色
+     */
+    private int cameraBackgroundColor;
     /**
      * 获取完成按钮的文本，调用者可自定义默认文本为完成或者确定
      */
-    private String oKBtnText;
+    private String OkBtnText;
     /**
      * 获取标题字体颜色
      */
@@ -46,10 +62,6 @@ public class MultiUiConfig implements Serializable {
      */
     private int topBarTitleGravity;
     /**
-     * 获取右上角按钮的背景样式，如果没有背景可以返回null
-     */
-    private int rightBtnBackgroundId;
-    /**
      * 获取顶部topbar的背景色
      */
     private int topBarBackgroundColor;
@@ -58,30 +70,40 @@ public class MultiUiConfig implements Serializable {
      */
     private int bottomBarBackgroundColor;
     /**
-     * gridview的背景色
+     * 选择器的背景色
      */
-    private int gridViewBackgroundColor;
+    private int pickerBackgroundColor;
     /**
      * item的默认背景色
      */
-    private int imageItemBackgroundColor;
+    private int pickerItemBackgroundColor;
+
 
     /**
-     * 返回箭头颜色
+     * 右上角按钮选中颜色
      */
-    private int leftBackIconColor;
+    private int OkBtnSelectTextColor;
 
     /**
-     * 右上角按钮颜色
+     * 右上角按钮未选中颜色
      */
-    private int rightBtnTextColor;
+    private int OkBtnUnSelectTextColor;
 
-    public int getLeftBackIconColor() {
-        return leftBackIconColor;
+    /**
+     * 获取右上角按钮选中的背景样式
+     */
+    private Drawable OkBtnSelectBackground;
+    /**
+     * 获取右上角按钮未选中的背景样式
+     */
+    private Drawable OkBtnUnSelectBackground;
+
+    public int getBackIconColor() {
+        return backIconColor;
     }
 
-    public void setLeftBackIconColor(int leftBackIconColor) {
-        this.leftBackIconColor = leftBackIconColor;
+    public void setBackIconColor(int leftBackIconColor) {
+        this.backIconColor = leftBackIconColor;
     }
 
     public boolean isImmersionBar() {
@@ -93,6 +115,9 @@ public class MultiUiConfig implements Serializable {
     }
 
     public int getThemeColor() {
+        if (themeColor == 0) {
+            return Color.parseColor("#333333");
+        }
         return themeColor;
     }
 
@@ -101,6 +126,9 @@ public class MultiUiConfig implements Serializable {
     }
 
     public int getSelectedIconID() {
+        if (selectedIconID == 0) {
+            return R.mipmap.picker_wechat_select;
+        }
         return selectedIconID;
     }
 
@@ -109,6 +137,9 @@ public class MultiUiConfig implements Serializable {
     }
 
     public int getUnSelectIconID() {
+        if (unSelectIconID == 0) {
+            return R.mipmap.picker_wechat_unselect;
+        }
         return unSelectIconID;
     }
 
@@ -117,6 +148,9 @@ public class MultiUiConfig implements Serializable {
     }
 
     public int getBackIconID() {
+        if (backIconID == 0) {
+            return R.mipmap.picker_icon_back_black;
+        }
         return backIconID;
     }
 
@@ -125,6 +159,9 @@ public class MultiUiConfig implements Serializable {
     }
 
     public int getCameraIconID() {
+        if (cameraIconID == 0) {
+            return R.mipmap.picker_ic_camera;
+        }
         return cameraIconID;
     }
 
@@ -132,15 +169,21 @@ public class MultiUiConfig implements Serializable {
         this.cameraIconID = cameraIconID;
     }
 
-    public String getoKBtnText() {
-        return oKBtnText;
+    public String getOkBtnText() {
+        if (OkBtnText == null) {
+            return "完成";
+        }
+        return OkBtnText;
     }
 
-    public void setoKBtnText(String oKBtnText) {
-        this.oKBtnText = oKBtnText;
+    public void setOkBtnText(String oKBtnText) {
+        this.OkBtnText = oKBtnText;
     }
 
     public int getTitleColor() {
+        if (titleColor == 0) {
+            return Color.BLACK;
+        }
         return titleColor;
     }
 
@@ -156,15 +199,10 @@ public class MultiUiConfig implements Serializable {
         this.topBarTitleGravity = topBarTitleGravity;
     }
 
-    public int getRightBtnBackground() {
-        return rightBtnBackgroundId;
-    }
-
-    public void setRightBtnBackground(int rightBtnBackground) {
-        this.rightBtnBackgroundId = rightBtnBackground;
-    }
-
     public int getTopBarBackgroundColor() {
+        if (topBarBackgroundColor == 0) {
+            return Color.WHITE;
+        }
         return topBarBackgroundColor;
     }
 
@@ -173,6 +211,9 @@ public class MultiUiConfig implements Serializable {
     }
 
     public int getBottomBarBackgroundColor() {
+        if (bottomBarBackgroundColor == 0) {
+            return getThemeColor();
+        }
         return bottomBarBackgroundColor;
     }
 
@@ -180,27 +221,71 @@ public class MultiUiConfig implements Serializable {
         this.bottomBarBackgroundColor = bottomBarBackgroundColor;
     }
 
-    public int getGridViewBackgroundColor() {
-        return gridViewBackgroundColor;
+    public int getPickerBackgroundColor() {
+        if (pickerBackgroundColor == 0) {
+            return Color.WHITE;
+        }
+        return pickerBackgroundColor;
     }
 
-    public void setGridViewBackgroundColor(int gridViewBackgroundColor) {
-        this.gridViewBackgroundColor = gridViewBackgroundColor;
+    public void setPickerBackgroundColor(int pickerBackgroundColor) {
+        this.pickerBackgroundColor = pickerBackgroundColor;
     }
 
-    public int getImageItemBackgroundColor() {
-        return imageItemBackgroundColor;
+    public int getPickerItemBackgroundColor() {
+        if (pickerItemBackgroundColor == 0) {
+            return Color.parseColor("#484848");
+        }
+        return pickerItemBackgroundColor;
     }
 
-    public void setImageItemBackgroundColor(int imageItemBackgroundColor) {
-        this.imageItemBackgroundColor = imageItemBackgroundColor;
+    public void setPickerItemBackgroundColor(int pickerItemBackgroundColor) {
+        this.pickerItemBackgroundColor = pickerItemBackgroundColor;
     }
 
-    public int getRightBtnTextColor() {
-        return rightBtnTextColor;
+    public int getOkBtnSelectTextColor() {
+        if (OkBtnSelectTextColor == 0) {
+            return Color.WHITE;
+        }
+        return OkBtnSelectTextColor;
     }
 
-    public void setRightBtnTextColor(int rightBtnTextColor) {
-        this.rightBtnTextColor = rightBtnTextColor;
+    public void setOkBtnSelectTextColor(int okBtnSelectTextColor) {
+        OkBtnSelectTextColor = okBtnSelectTextColor;
+    }
+
+    public int getOkBtnUnSelectTextColor() {
+        if (OkBtnUnSelectTextColor == 0) {
+            return Color.parseColor("#50ffffff");
+        }
+        return OkBtnUnSelectTextColor;
+    }
+
+    public void setOkBtnUnSelectTextColor(int okBtnUnSelectTextColor) {
+        OkBtnUnSelectTextColor = okBtnUnSelectTextColor;
+    }
+
+    public Drawable getOkBtnSelectBackground() {
+        return OkBtnSelectBackground;
+    }
+
+    public void setOkBtnSelectBackground(Drawable okBtnSelectBackground) {
+        OkBtnSelectBackground = okBtnSelectBackground;
+    }
+
+    public Drawable getOkBtnUnSelectBackground() {
+        return OkBtnUnSelectBackground;
+    }
+
+    public void setOkBtnUnSelectBackground(Drawable okBtnUnSelectBackground) {
+        OkBtnUnSelectBackground = okBtnUnSelectBackground;
+    }
+
+    public int getCameraBackgroundColor() {
+        return cameraBackgroundColor;
+    }
+
+    public void setCameraBackgroundColor(int cameraBackgroundColor) {
+        this.cameraBackgroundColor = cameraBackgroundColor;
     }
 }

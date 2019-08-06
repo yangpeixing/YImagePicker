@@ -102,6 +102,12 @@ public class MultiPickerBuilder {
         return this;
     }
 
+
+    public MultiPickerBuilder showImage(boolean showImage) {
+        multiSelectConfig.setShowImage(showImage);
+        return this;
+    }
+
     public <T> MultiPickerBuilder setShieldList(ArrayList<T> imageList) {
         if (imageList == null || imageList.size() == 0) {
             return this;

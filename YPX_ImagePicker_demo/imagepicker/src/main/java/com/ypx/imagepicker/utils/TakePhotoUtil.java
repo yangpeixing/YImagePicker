@@ -30,7 +30,7 @@ public class TakePhotoUtil {
     /*
      * 判断sdcard是否被挂载
      */
-    public static boolean hasSdcard() {
+    private static boolean hasSdcard() {
         return Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED);
     }
@@ -57,13 +57,6 @@ public class TakePhotoUtil {
                 imageUri = PickerFileProvider.getUriForFile(activity,activity
                         .getApplication().getPackageName() + ".picker.fileprovider",new File(mCurrentPhotoPath));
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-
-
-                //兼容android7.0 使用共享文件的形式
-//                ContentValues contentValues = new ContentValues(1);
-//                contentValues.put(MediaStore.Images.Media.DATA, mCurrentPhotoPath);
-//                imageUri = activity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-//                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             }
         }
         // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_CAREMA

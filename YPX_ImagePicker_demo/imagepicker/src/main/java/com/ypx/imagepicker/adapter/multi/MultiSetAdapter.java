@@ -67,7 +67,7 @@ public class MultiSetAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         ViewHolder holder;
         if (view == null) {
-            view = mInflater.inflate(R.layout.ypx_list_item_folder, viewGroup, false);
+            view = mInflater.inflate(R.layout.picker_list_item_folder, viewGroup, false);
             holder = new ViewHolder(view);
         } else {
             holder = (ViewHolder) view.getTag();

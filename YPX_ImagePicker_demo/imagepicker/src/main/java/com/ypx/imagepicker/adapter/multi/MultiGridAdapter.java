@@ -55,11 +55,11 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == ITEM_TYPE_CAMERA) {
             return new CameraViewHolder(LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.ypx_grid_item_camera, parent, false),
+                    inflate(R.layout.picker_grid_item_camera, parent, false),
                     selectConfig, multiUiConfig);
         } else {
             return new ItemViewHolder(LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.ypx_image_grid_item, parent, false),
+                    inflate(R.layout.picker_image_grid_item, parent, false),
                     selectConfig, multiUiConfig);
         }
     }
@@ -189,6 +189,9 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             params.bottomMargin = dp(context, 1);
             params.height = getScreenWidth(context) / selectConfig.getColumnCount() - dp(context, 2);
             itemView.setLayoutParams(params);
+            if (uiConfig.getCameraBackgroundColor() != 0) {
+                itemView.setBackgroundColor(uiConfig.getCameraBackgroundColor());
+            }
             tv_camera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -217,8 +220,8 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             mVideoLayout = itemView.findViewById(R.id.mVideoLayout);
             mVideoTime = itemView.findViewById(R.id.mVideoTime);
 
-            if (uiConfig.getImageItemBackgroundColor() != 0) {
-                ivPic.setBackgroundColor(uiConfig.getImageItemBackgroundColor());
+            if (uiConfig.getPickerItemBackgroundColor() != 0) {
+                ivPic.setBackgroundColor(uiConfig.getPickerItemBackgroundColor());
             }
             cbSelected.setSelectIconId(uiConfig.getSelectedIconID());
             cbSelected.setUnSelectIconId(uiConfig.getUnSelectIconID());

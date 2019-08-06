@@ -3,8 +3,10 @@ package com.ypx.imagepicker.utils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.view.DisplayCutout;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -114,33 +116,53 @@ public class StatusBarUtil {
         }
     }
 
-    public static void setWindowStatusBarColor(Activity activity, int color) {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Window window = activity.getWindow();
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.setStatusBarColor(color);
-
-                //底部导航栏
-                //window.setNavigationBarColor(activity.getResources().getColor(colorResId));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public static void setStatusBar(Activity activity, int bgColor, boolean isFullScreen, boolean isDarkStatusBarIcon) {
+        //5.0以下不处理
+        if (Build.VERSION.SDK_INT < 21) {
+            return;
         }
+        int option = 0;
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        //只有在6.0以上才改变状态栏颜色，否则在5.0机器上，电量条图标是白色的，标题栏也是白色的，就看不见电量条了了
+        //在5.0上显示默认灰色背景色
+        if (Build.VERSION.SDK_INT >= 23) {
+            // 设置状态栏底色颜色
+            activity.getWindow().setStatusBarColor(bgColor);
+            //浅色状态栏，则让状态栏图标变黑，深色状态栏，则让状态栏图标变白
+            if (isDarkStatusBarIcon) {
+                if (isFullScreen) {
+                    option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                } else {
+                    option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                }
+            } else {
+                if (isFullScreen) {
+                    option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_VISIBLE;
+                } else {
+                    option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_VISIBLE;
+                }
+            }
+        } else {
+            activity.getWindow().setStatusBarColor(Color.parseColor("#B0B0B0"));
+            if (isFullScreen) {
+                option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            } else {
+                option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            }
+        }
+        activity.getWindow().getDecorView().setSystemUiVisibility(option);
     }
 
-    public static void setWindowStatusBarColor(Dialog dialog, int colorResId) {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Window window = dialog.getWindow();
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.setStatusBarColor(dialog.getContext().getResources().getColor(colorResId));
 
-                //底部导航栏
-                //window.setNavigationBarColor(activity.getResources().getColor(colorResId));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    /**
+     * 显示标题背景颜色
+     */
+    public static boolean isDarkColor(int colorInt) {
+        int gray = (int) (Color.red(colorInt) * 0.299 + Color.green(colorInt) * 0.587 + Color.blue(colorInt) * 0.114);
+        return gray >= 192;
     }
 }

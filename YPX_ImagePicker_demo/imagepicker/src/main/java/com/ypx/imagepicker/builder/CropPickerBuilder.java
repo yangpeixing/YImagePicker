@@ -29,6 +29,7 @@ public class CropPickerBuilder {
     private boolean isShowDraft = false;
     private boolean isShowCamera = false;
     private boolean isShowVideo = false;
+    private boolean isStartDirect;
     private ICropPickerBindPresenter imageLoaderProvider;
     private OnImagePickCompleteListener imageListener;
 
@@ -96,6 +97,11 @@ public class CropPickerBuilder {
         return this;
     }
 
+    public CropPickerBuilder startDirect(boolean isShowDraft) {
+        this.isShowDraft = isShowDraft;
+        return this;
+    }
+
     public CropPickerBuilder setCropPicSaveFilePath(String cropPicSaveFilePath) {
         ImagePicker.cropPicSaveFilePath = cropPicSaveFilePath;
         return this;
@@ -111,6 +117,7 @@ public class CropPickerBuilder {
         intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWDRAFTDIALOG, isShowDraft);
         intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWCAMERA, isShowCamera);
         intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWVIDEO, isShowVideo);
+        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_STARTDIRECT,isStartDirect );
         return intent;
 
     }
@@ -139,6 +146,7 @@ public class CropPickerBuilder {
         bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWDRAFTDIALOG, isShowDraft);
         bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWCAMERA, isShowCamera);
         bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWVIDEO, isShowVideo);
+        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_STARTDIRECT,isStartDirect );
         return bundle;
     }
 

@@ -12,8 +12,9 @@ import java.util.ArrayList;
 public class MultiSelectConfig implements Serializable {
     private int maxCount = -1;
     private int columnCount = 4;
-    private boolean isShowCamera = false;
-    private boolean isShowVideo = false;
+    private boolean isShowCamera = true;
+    private boolean isShowVideo = true;
+    private boolean isShowImage = true;
     private boolean isLoadGif = true;
     private boolean isShowOriginalCheckBox;
     private boolean isCanEditPic;
@@ -34,6 +35,14 @@ public class MultiSelectConfig implements Serializable {
 
     public int getCropRatioX() {
         return cropRatioX;
+    }
+
+    public boolean isShowImage() {
+        return isShowImage;
+    }
+
+    public void setShowImage(boolean showImage) {
+        isShowImage = showImage;
     }
 
     public void setCropRatio(int x, int y) {

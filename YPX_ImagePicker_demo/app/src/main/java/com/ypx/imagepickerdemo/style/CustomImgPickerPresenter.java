@@ -37,20 +37,20 @@ public class CustomImgPickerPresenter implements IMultiPickerBindPresenter {
     @Override
     public MultiUiConfig getUiConfig(Context context) {
         MultiUiConfig config = new MultiUiConfig();
-        config.setImmersionBar(true);
-        config.setThemeColor(Color.parseColor("#ffffff"));
-        config.setSelectedIconID(R.mipmap.ypx_pic_selected);
-        config.setUnSelectIconID(R.mipmap.ypx_pic_unselected);
-        config.setBackIconID(R.mipmap.ypx_icon_back_black);
-        config.setCameraIconID(R.mipmap.ypx_ic_camera);
-        config.setoKBtnText("完成");
-        config.setTitleColor(Color.WHITE);
-        config.setTopBarTitleGravity(Gravity.START);
-        config.setRightBtnBackground(R.drawable.selector_bt_selectpic);
-        config.setTopBarBackgroundColor(Color.parseColor("#FF4081"));
-        config.setBottomBarBackgroundColor(Color.parseColor("#FF4081"));
-        config.setGridViewBackgroundColor(Color.WHITE);
-        config.setImageItemBackgroundColor(Color.parseColor("#50000000"));
+//        config.setImmersionBar(true);
+//        config.setThemeColor(Color.parseColor("#ffffff"));
+//        config.setSelectedIconID(R.mipmap.ypx_pic_selected);
+//        config.setUnSelectIconID(R.mipmap.ypx_pic_unselected);
+//        config.setBackIconID(R.mipmap.picker_icon_back_black);
+//        config.setBackIconColor(Color.WHITE);
+//        config.setCameraIconID(R.mipmap.picker_ic_camera);
+//        config.setOkBtnText("完成");
+//        config.setTitleColor(Color.WHITE);
+//        config.setTopBarTitleGravity(Gravity.START);
+//        config.setTopBarBackgroundColor(Color.parseColor("#FF4081"));
+//        config.setBottomBarBackgroundColor(Color.parseColor("#FF4081"));
+//        config.setGridViewBackgroundColor(Color.WHITE);
+//        config.setImageItemBackgroundColor(Color.parseColor("#50000000"));
         return config;
     }
 

@@ -2,24 +2,19 @@ package com.ypx.imagepicker.activity.crop;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-
-import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.utils.FileUtil;
 import com.ypx.imagepicker.utils.StatusBarUtil;
-import com.ypx.imagepicker.utils.TakePhotoUtil;
 
 import java.util.ArrayList;
 
@@ -42,19 +37,21 @@ public class ImagePickAndCropActivity extends FragmentActivity {
     public static final String INTENT_KEY_SHOWDRAFTDIALOG = "isShowDraftDialog";
     public static final String INTENT_KEY_SHOWCAMERA = "isShowCamera";
     public static final String INTENT_KEY_SHOWVIDEO = "isShowVideo";
+    public static final String INTENT_KEY_STARTDIRECT = "startDirect";
     private ImagePickAndCropFragment mFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        if (StatusBarUtil.hasNotchOPPO(this)) {
-            setStatusBar(Color.TRANSPARENT, true, true);
+        if (StatusBarUtil.hasNotchInScreen(this)) {
+            StatusBarUtil.setStatusBar(this, Color.parseColor("#F6F6F6"),
+                    false, true);
         } else {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
-        setContentView(R.layout.activity_fragment_wrapper);
+        setContentView(R.layout.picker_activity_fragment_wrapper);
         initView();
     }
 
@@ -102,6 +99,11 @@ public class ImagePickAndCropActivity extends FragmentActivity {
         if (getIntent().hasExtra(INTENT_KEY_SHOWVIDEO)) {
             bundle.putBoolean(INTENT_KEY_SHOWVIDEO, getIntent().getBooleanExtra(INTENT_KEY_SHOWVIDEO, false));
         }
+
+        // 是否直接启动
+        if (getIntent().hasExtra(INTENT_KEY_STARTDIRECT)) {
+            bundle.putBoolean(INTENT_KEY_STARTDIRECT, getIntent().getBooleanExtra(INTENT_KEY_STARTDIRECT, true));
+        }
         mFragment = new ImagePickAndCropFragment();
         mFragment.setArguments(bundle);
         mFragment.setImageListener(new OnImagePickCompleteListener() {
@@ -126,53 +128,13 @@ public class ImagePickAndCropActivity extends FragmentActivity {
         super.onBackPressed();
     }
 
-    protected void setStatusBar(int bgColor, boolean isFullScreen, boolean isDarkStatusBarIcon) {
-        //5.0以下不处理
-        if (Build.VERSION.SDK_INT < 21) {
-            return;
-        }
-        int option = 0;
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        //只有在6.0以上才改变状态栏颜色，否则在5.0机器上，电量条图标是白色的，标题栏也是白色的，就看不见电量条了了
-        //在5.0上显示默认灰色背景色
-        if (Build.VERSION.SDK_INT >= 23) {
-            // 设置状态栏底色颜色
-            getWindow().setStatusBarColor(bgColor);
-            //浅色状态栏，则让状态栏图标变黑，深色状态栏，则让状态栏图标变白
-            if (isDarkStatusBarIcon) {
-                if (isFullScreen) {
-                    option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                } else {
-                    option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                }
-            } else {
-                if (isFullScreen) {
-                    option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_VISIBLE;
-                } else {
-                    option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_VISIBLE;
-                }
-            }
-        } else {
-            getWindow().setStatusBarColor(Color.parseColor("#B0B0B0"));
-            if (isFullScreen) {
-                option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            } else {
-                option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            }
-        }
-        getWindow().getDecorView().setSystemUiVisibility(option);
-    }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {
             if (mFragment != null) {
-                mFragment.refreshPhoto();
+                mFragment.onTakePhotoResult();
             }
         }
     }

@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 
-
 import com.oginotihiro.cropview.CropView;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
@@ -33,10 +32,7 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
 
 
 /**
- * Description: 剪裁页
- * <p>
- * Author: peixing.yang
- * Date: 2019/2/21
+ * 截取头像
  */
 public class SingleCropActivity extends FragmentActivity {
     private CropView cropView;
@@ -48,7 +44,7 @@ public class SingleCropActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ypx_activity_crop);
+        setContentView(R.layout.picker_activity_crop);
         if (getIntent() != null && getIntent().hasExtra(INTENT_KEY_UI_CONFIG)) {
             IMultiPickerBindPresenter presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_UI_CONFIG);
             MultiSelectConfig selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
@@ -70,7 +66,8 @@ public class SingleCropActivity extends FragmentActivity {
         TextView tv_rightBtn = findViewById(R.id.tv_rightBtn);
         ImageView iv_back = findViewById(R.id.iv_back);
         if (multiUiConfig.isImmersionBar() && multiUiConfig.getTopBarBackgroundColor() != 0) {
-            StatusBarUtil.setWindowStatusBarColor(this, multiUiConfig.getTopBarBackgroundColor());
+            StatusBarUtil.setStatusBar(this, multiUiConfig.getTopBarBackgroundColor(), false,
+                    StatusBarUtil.isDarkColor(multiUiConfig.getTopBarBackgroundColor()));
         }
         if (multiUiConfig.getBackIconID() != 0) {
             iv_back.setImageDrawable(getResources().getDrawable(multiUiConfig.getBackIconID()));
@@ -80,24 +77,23 @@ public class SingleCropActivity extends FragmentActivity {
             top_bar.setBackgroundColor(multiUiConfig.getTopBarBackgroundColor());
         }
 
-        if (multiUiConfig.getLeftBackIconColor() != 0) {
-            iv_back.setColorFilter(multiUiConfig.getLeftBackIconColor());
-        }
-
-        if (multiUiConfig.getRightBtnBackground() != 0) {
-            tv_rightBtn.setBackground(getResources().getDrawable(multiUiConfig.getRightBtnBackground()));
+        if (multiUiConfig.getBackIconColor() != 0) {
+            iv_back.setColorFilter(multiUiConfig.getBackIconColor());
         }
 
         if (multiUiConfig.getTitleColor() != 0) {
             tv_title.setTextColor(multiUiConfig.getTitleColor());
         }
 
-        if (multiUiConfig.getRightBtnTextColor() != 0) {
-            tv_rightBtn.setTextColor(multiUiConfig.getRightBtnTextColor());
-        }
-
         tv_title.setGravity(Gravity.CENTER | multiUiConfig.getTopBarTitleGravity());
-        // tv_rightBtn.setTextColor(multiUiConfig.getThemeColor());
+        if (multiUiConfig.getOkBtnSelectBackground() != null) {
+            tv_rightBtn.setBackground(multiUiConfig.getOkBtnSelectBackground());
+        } else {
+            tv_rightBtn.setBackground(getResources().getDrawable(R.drawable.picker_wechat_okbtn_select));
+        }
+        if (multiUiConfig.getOkBtnSelectTextColor() != 0) {
+            tv_rightBtn.setTextColor(multiUiConfig.getOkBtnSelectTextColor());
+        }
         tv_rightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

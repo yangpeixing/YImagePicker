@@ -1,5 +1,6 @@
 package com.ypx.imagepicker.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,6 +25,5 @@ public interface ICropPickerBindPresenter extends Serializable {
 
     void showDraftDialog(Context context);
 
-    void clickVideo(Context context, ImageItem imageItem);
-
+    void clickVideo(Activity activity, ImageItem imageItem, boolean startDirect);
 }

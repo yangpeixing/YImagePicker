@@ -1,5 +1,6 @@
 package com.ypx.imagepickerdemo.style;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.Gravity;
@@ -54,7 +55,8 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
     }
 
     @Override
-    public void clickVideo(Context context, ImageItem imageItem) {
-        Toast.makeText(context, imageItem.path, Toast.LENGTH_SHORT).show();
+    public void clickVideo(Activity activity, ImageItem imageItem, boolean startDirect) {
+        Toast.makeText(activity, imageItem.path, Toast.LENGTH_SHORT).show();
     }
+
 }

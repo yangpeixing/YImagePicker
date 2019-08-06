@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -34,17 +35,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ypx.imagepicker.ImagePicker;
-import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
-import com.ypx.imagepicker.bean.ImageCropMode;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.adapter.crop.CropGridAdapter;
 import com.ypx.imagepicker.adapter.crop.CropSetAdapter;
+import com.ypx.imagepicker.bean.ImageCropMode;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.OnImagesLoadedListener;
 import com.ypx.imagepicker.data.impl.MediaDataSource;
 import com.ypx.imagepicker.helper.RecyclerViewTouchHelper;
+import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.utils.CornerUtils;
 import com.ypx.imagepicker.utils.FileUtil;
 import com.ypx.imagepicker.utils.PermissionUtils;
@@ -66,6 +67,7 @@ import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_SHOWCAMERA;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_SHOWDRAFTDIALOG;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_SHOWVIDEO;
+import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_STARTDIRECT;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_CAMERA;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_STORAGE;
 
@@ -119,6 +121,8 @@ public class ImagePickAndCropFragment extends Fragment implements
     private boolean isShowDraftDialog = false;
     private boolean isShowCamera = false;
     private boolean isShowVideo = false;
+    // 编辑图片后是否直接启动
+    private boolean startDirect = true;
     //剪裁后图片存储的路径
     private String mCropPicsCacheFilePath;
     private ImageItem currentImageItem;
@@ -129,7 +133,6 @@ public class ImagePickAndCropFragment extends Fragment implements
     public void setImageListener(OnImagePickCompleteListener imageListener) {
         this.imageListener = imageListener;
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -160,6 +163,7 @@ public class ImagePickAndCropFragment extends Fragment implements
             isShowDraftDialog = argu.getBoolean(INTENT_KEY_SHOWDRAFTDIALOG, false);
             isShowCamera = argu.getBoolean(INTENT_KEY_SHOWCAMERA, false);
             isShowVideo = argu.getBoolean(INTENT_KEY_SHOWVIDEO, false);
+            startDirect = argu.getBoolean(INTENT_KEY_STARTDIRECT, true);
         }
         if (isShowDraftDialog && bindingProvider != null) {
             bindingProvider.showDraftDialog(getContext());
@@ -345,7 +349,7 @@ public class ImagePickAndCropFragment extends Fragment implements
      *
      * @param position 图片位置
      */
-    public void pressImage(final int position, boolean isShowTransit) {
+    private void pressImage(final int position, boolean isShowTransit) {
         if (isShowCamera && position == 0) {
             takePhoto();
             return;
@@ -361,7 +365,7 @@ public class ImagePickAndCropFragment extends Fragment implements
                 return;
             }
             if (bindingProvider != null) {
-                bindingProvider.clickVideo(getActivity(), currentImageItem);
+                bindingProvider.clickVideo(getActivity(), currentImageItem, startDirect);
             }
             return;
         }
@@ -387,11 +391,10 @@ public class ImagePickAndCropFragment extends Fragment implements
      * @param position 图片索引
      */
     private void selectImage(final int position) {
-        int pos = isShowCamera ? position - 1 : position;
-        if (pos < 0) {
+        if (position < 0) {
             return;
         }
-        ImageItem selectImageItem = imageItems.get(pos);
+        ImageItem selectImageItem = imageItems.get(isShowCamera ? position - 1 : position);
         if (selectImageItem.isSelect()) {
             selectImageItem.setSelect(false);
             removeImageItemFromCropViewList(selectImageItem);
@@ -412,7 +415,7 @@ public class ImagePickAndCropFragment extends Fragment implements
      *
      * @param position 相册position
      */
-    public void selectImageSet(int position) {
+    private void selectImageSet(int position) {
         ImageSet imageSet = imageSets.get(position);
         if (imageSet == null) {
             return;
@@ -599,7 +602,7 @@ public class ImagePickAndCropFragment extends Fragment implements
     /**
      * 第一张图片剪裁区域充满或者自适应（是剪裁区域，不是图片填充和留白）
      */
-    public void fullOrFit() {
+    private void fullOrFit() {
         if (cropMode == ImageCropMode.CropViewScale_FIT) {
             cropMode = ImageCropMode.CropViewScale_FILL;
             stateBtn.setImageDrawable(getResources().getDrawable(R.mipmap.picker_icon_fit));
@@ -676,7 +679,7 @@ public class ImagePickAndCropFragment extends Fragment implements
     /**
      * 充满或者留白
      */
-    public void fullOrWhiteSpace() {
+    private void fullOrWhiteSpace() {
         if (currentImageItem.getCropMode() == ImageCropMode.ImageScale_FILL) {
             //留白
             currentImageItem.setCropMode(ImageCropMode.ImageScale_FIT);
@@ -727,7 +730,7 @@ public class ImagePickAndCropFragment extends Fragment implements
     /**
      * 点击下一步
      */
-    public void next() {
+    private void next() {
         if (mCropView.isShowLine()) {
             return;
         }
@@ -735,7 +738,7 @@ public class ImagePickAndCropFragment extends Fragment implements
                 && (mCropView.getDrawable() == null ||
                 mCropView.getImgRect().height() == 0 ||
                 mCropView.getImgRect().width() == 0)) {
-            Toast.makeText(getActivity(), "图片未加载完成，请稍后!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.wait_for_load), Toast.LENGTH_SHORT).show();
             return;
         }
         ArrayList<ImageItem> cropUrlList = new ArrayList<>();
@@ -745,11 +748,35 @@ public class ImagePickAndCropFragment extends Fragment implements
             String cropUrl = FileUtil.saveBitmapToLocalWithJPEG(view, f.getAbsolutePath());
             imageItem.setCropUrl(cropUrl);
             imageItem.setCropMode(cropMode);
+            imageItem.setSelect(false);
+            imageItem.setPress(false);
             cropUrlList.add(imageItem);
         }
+
         if (null != imageListener) {
             imageListener.onImagePickComplete(cropUrlList);
         }
+    }
+
+
+    /**
+     * 清空缓存数据选中状态
+     */
+    private void clearData() {
+        for (ImageItem imageItem : selectList) {
+            imageItem.setPress(false);
+            imageItem.setSelect(false);
+        }
+        if (lastPressImageItem != null) {
+            lastPressImageItem.setSelect(false);
+            lastPressImageItem.setPress(false);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        clearData();
     }
 
     /**
@@ -769,7 +796,7 @@ public class ImagePickAndCropFragment extends Fragment implements
     /**
      * 刷新相册
      */
-    public void refreshGalleryAddPic() {
+    private void refreshGalleryAddPic() {
         if (getActivity() == null) {
             return;
         }
@@ -810,7 +837,7 @@ public class ImagePickAndCropFragment extends Fragment implements
         dialog.show();
     }
 
-    public void refreshPhoto() {
+    void onTakePhotoResult() {
         if (!TextUtils.isEmpty(TakePhotoUtil.mCurrentPhotoPath)) {
             refreshGalleryAddPic();
             ImageItem item = new ImageItem(TakePhotoUtil.mCurrentPhotoPath, System.currentTimeMillis());
@@ -848,7 +875,7 @@ public class ImagePickAndCropFragment extends Fragment implements
     /**
      * 相册选择是否打开
      */
-    public boolean onBackPressed() {
+    public  boolean onBackPressed() {
         if (mImageSetRecyclerView.getVisibility() == View.VISIBLE) {
             toggleImageSet();
             return true;
