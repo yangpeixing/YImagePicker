@@ -1,11 +1,11 @@
 ## 关于YPXImagePicker
-本库包含了微信的图片选择器、小红书多张剪裁图片选择器，其中微信图片选择器支持高度定制UI、图片加载框架以及跨进程回调，无需使用原始onActivityForResult拿到数据，直接设置选择监听，降低代码耦合度，易于维护！本库已投入多个大型商业项目使用，持续迭代，稳定可靠！
+本库包含了微信的图片选择器、小红书多图剪裁选择器。采用切入式fragment代替传统的onActivityForResult，更易于业务逻辑维护！本库采用序列化接口方式实现解耦，调用框架前需要实现中间层Presenter接口，比如指定固定的图片加载框架（Glide等）以及一些定制性UI弹窗等。本库已投入多个商业项目的使用，稳定可靠，持续迭代！
 
 ## 全局配置
 
  - **引用方式：**
 ```xml
-implementation 'com.ypx.imagepicker:ypxImagePicker:2.0.2'
+implementation 'com.ypx.imagepicker:ypxImagePicker:2.0.3'
 ```
  - **全局配置：**
 ```java
@@ -31,7 +31,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
         .showVideo(true)//设置是否加载视频                                           
         .showGif(true)//设置是否加载GIF                                            
         .showCamera(true)//设置是否显示拍照按钮（在列表第一个）          
-        .showImage(true)//设置是否                        
+        .showImage(true)//设置是否加载图片                     
         //设置下次选择需要屏蔽的图片或视频（简单点就是不可重复选择）                                      
         .setShieldList(new ArrayList<String>())                              
         //设置下次选择需要带入的图片和视频（简单点就是记录上次选择的图片，可以取消之前选择）                          
