@@ -18,12 +18,21 @@ public class MultiSelectConfig implements Serializable {
     private boolean isLoadGif = true;
     private boolean isShowOriginalCheckBox;
     private boolean isCanEditPic;
+    private boolean isPreview = true;
     private int selectMode;
     private ArrayList<ImageItem> lastImageList = new ArrayList<>();
     private ArrayList<ImageItem> shieldImageList = new ArrayList<>();
 
     private int cropRatioX = 1;
     private int cropRatioY = 1;
+
+    public boolean isPreview() {
+        return isPreview;
+    }
+
+    public void setPreview(boolean preview) {
+        isPreview = preview;
+    }
 
     public boolean isLoadGif() {
         return isLoadGif;

@@ -125,6 +125,10 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     presenter.tip(mContext, mContext.getResources().getString(R.string.str_shield));
                     return;
                 }
+                if (!selectConfig.isPreview()) {
+                    holder.cbSelected.performClick();
+                    return;
+                }
                 if (mContext instanceof MultiImagePickerActivity) {
                     ((MultiImagePickerActivity) mContext).onImageClickListener(item, selectConfig.isShowCamera() ? position - 1 : position);
                 }

@@ -98,6 +98,21 @@ public class MultiUiConfig implements Serializable {
      */
     private Drawable OkBtnUnSelectBackground;
 
+    /**
+     * 是否显示底部栏，如果不显示底部栏，默认切换相册在标题栏上
+     */
+    private boolean isShowBottomBar = true;
+
+    /**
+     * 标题栏文字右边icon
+     */
+    private Drawable titleDrawableRight;
+
+    /**
+     * 预览文字颜色
+     */
+    private int previewTextColor;
+
     public int getBackIconColor() {
         return backIconColor;
     }
@@ -112,6 +127,33 @@ public class MultiUiConfig implements Serializable {
 
     public void setImmersionBar(boolean immersionBar) {
         isImmersionBar = immersionBar;
+    }
+
+    public boolean isShowBottomBar() {
+        return isShowBottomBar;
+    }
+
+    public void setShowBottomBar(boolean showBottomBar) {
+        isShowBottomBar = showBottomBar;
+    }
+
+    public Drawable getTitleDrawableRight() {
+        return titleDrawableRight;
+    }
+
+    public void setTitleDrawableRight(Drawable titleDrawableRight) {
+        this.titleDrawableRight = titleDrawableRight;
+    }
+
+    public int getPreviewTextColor() {
+        if (previewTextColor == 0) {
+            return Color.WHITE;
+        }
+        return previewTextColor;
+    }
+
+    public void setPreviewTextColor(int previewTextColor) {
+        this.previewTextColor = previewTextColor;
     }
 
     public int getThemeColor() {

@@ -5,16 +5,18 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,6 +46,7 @@ import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PermissionUtils;
 import com.ypx.imagepicker.utils.StatusBarUtil;
 import com.ypx.imagepicker.utils.TakePhotoUtil;
+import com.ypx.imagepicker.utils.ViewSizeUtils;
 
 import java.io.File;
 import java.io.Serializable;
@@ -81,10 +84,15 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
 
     private TextView mTvPreview;
     private TextView mTvRight;
+    private ImageView mSetArrowImg;
+    private TextView mTvTitle;
+    private ImageView mBckImg;
+    private ViewGroup mTitleLayout;
+    private RelativeLayout mBottomLayout;
 
     private MultiSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
-    private MultiUiConfig multiUiConfig;
+    private MultiUiConfig uiConfig;
     private String mCurrentPhotoPath;
 
     public static void intent(Activity activity,
@@ -127,7 +135,7 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
             MultiPickerData.instance.addAllImageItems(selectConfig.getLastImageList());
         }
 
-        multiUiConfig = presenter.getUiConfig(this);
+        uiConfig = presenter.getUiConfig(this);
         if (selectConfig.getSelectMode() == ImageSelectMode.MODE_TAKEPHOTO) {
             takePhoto();
         } else {
@@ -166,7 +174,15 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
         mImageSetListView = findViewById(R.id.lv_imagesets);
         mTvTime = findViewById(R.id.tv_time);
         mTvTime.setVisibility(View.GONE);
-        setTitleBar();
+        mSetArrowImg = findViewById(R.id.mSetArrowImg);
+        mTvTitle = findViewById(R.id.tv_title);
+        mTvRight = findViewById(R.id.tv_rightBtn);
+        mTitleLayout = findViewById(R.id.top_bar);
+        mBottomLayout = findViewById(R.id.footer_panel);
+        mBckImg = findViewById(R.id.iv_back);
+        mTvPreview = findViewById(R.id.tv_preview);
+        setUi();
+        resetBtnOKBtn();
     }
 
     @Override
@@ -178,81 +194,101 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
         }
     }
 
-    private void setTitleBar() {
-        RelativeLayout top_bar = findViewById(R.id.top_bar);
-        RelativeLayout footer_panel = findViewById(R.id.footer_panel);
-        TextView tv_title = findViewById(R.id.tv_title);
-        mTvRight = findViewById(R.id.tv_rightBtn);
-        ImageView iv_back = findViewById(R.id.iv_back);
-        mTvPreview = findViewById(R.id.tv_preview);
-        mTvPreview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isEmpty()) {
-                    return;
-                }
-                MultiImagePreviewActivity.preview(MultiImagePickerActivity.this,
-                        selectConfig, presenter,
-                        true,
-                        MultiPickerData.instance.getSelectImageList(),
-                        0,
-                        new OnImagePickCompleteListener() {
-                            @Override
-                            public void onImagePickComplete(ArrayList<ImageItem> items) {
-                                notifyOnImagePickComplete(items);
-                            }
-                        });
+    private View.OnClickListener previewClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (isEmpty()) {
+                return;
             }
-        });
-        if (multiUiConfig.isImmersionBar() && multiUiConfig.getTopBarBackgroundColor() != 0) {
-            StatusBarUtil.setStatusBar(this, multiUiConfig.getTopBarBackgroundColor(), false,
-                    StatusBarUtil.isDarkColor(multiUiConfig.getTopBarBackgroundColor()));
+            MultiImagePreviewActivity.preview(MultiImagePickerActivity.this,
+                    selectConfig, presenter,
+                    true,
+                    MultiPickerData.instance.getSelectImageList(),
+                    0,
+                    new OnImagePickCompleteListener() {
+                        @Override
+                        public void onImagePickComplete(ArrayList<ImageItem> items) {
+                            notifyOnImagePickComplete(items);
+                        }
+                    });
+        }
+    };
+
+
+    private void setUi() {
+        if (uiConfig.isImmersionBar() && uiConfig.getTopBarBackgroundColor() != 0) {
+            StatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
+                    StatusBarUtil.isDarkColor(uiConfig.getTopBarBackgroundColor()));
+
+            mTitleLayout.setPadding(0, StatusBarUtil.getStatusBarHeight(this), 0, 0);
+        }
+        if (uiConfig.getBackIconID() != 0) {
+            mBckImg.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
         }
 
-        if (multiUiConfig.getBackIconID() != 0) {
-            iv_back.setImageDrawable(getResources().getDrawable(multiUiConfig.getBackIconID()));
+        if (uiConfig.getBackIconColor() != 0) {
+            mBckImg.setColorFilter(uiConfig.getBackIconColor());
         }
 
-        if (multiUiConfig.getBackIconColor() != 0) {
-            iv_back.setColorFilter(multiUiConfig.getBackIconColor());
+        if (uiConfig.getTopBarBackgroundColor() != 0) {
+            mTitleLayout.setBackgroundColor(uiConfig.getTopBarBackgroundColor());
         }
 
-        if (multiUiConfig.getTopBarBackgroundColor() != 0) {
-            top_bar.setBackgroundColor(multiUiConfig.getTopBarBackgroundColor());
+        if (uiConfig.getPickerBackgroundColor() != 0) {
+            mRecyclerView.setBackgroundColor(uiConfig.getPickerBackgroundColor());
         }
 
-        if (multiUiConfig.getPickerBackgroundColor() != 0) {
-            mRecyclerView.setBackgroundColor(multiUiConfig.getPickerBackgroundColor());
+        if (uiConfig.getBottomBarBackgroundColor() != 0) {
+            mBottomLayout.setBackgroundColor(uiConfig.getBottomBarBackgroundColor());
         }
 
-        if (multiUiConfig.getBottomBarBackgroundColor() != 0) {
-            footer_panel.setBackgroundColor(multiUiConfig.getBottomBarBackgroundColor());
+        if (uiConfig.getTitleColor() != 0) {
+            mTvTitle.setTextColor(uiConfig.getTitleColor());
         }
 
-        if (multiUiConfig.getTitleColor() != 0) {
-            tv_title.setTextColor(multiUiConfig.getTitleColor());
-        }
-        if (selectConfig.isShowVideo() && selectConfig.isShowImage()) {
-            tv_title.setText(getResources().getString(R.string.str_image_video));
-        } else if (selectConfig.isShowVideo()) {
-            tv_title.setText(getResources().getString(R.string.str_video));
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mImageSetListView.getLayoutParams();
+        int height = (int) (getResources().getDisplayMetrics().heightPixels / 4f);
+        if (uiConfig.isShowBottomBar()) {
+            mBottomLayout.setVisibility(View.VISIBLE);
+            v_masker.setPadding(0, 0, 0, ViewSizeUtils.dp(this, 51));
+            mRecyclerView.setPadding(0, 0, 0, ViewSizeUtils.dp(this, 51));
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            params.bottomMargin = ViewSizeUtils.dp(this, 50);
+            params.topMargin = height;
         } else {
-            tv_title.setText(getResources().getString(R.string.str_image));
+            mBottomLayout.setVisibility(View.GONE);
+            v_masker.setPadding(0, 0, 0, 0);
+            mRecyclerView.setPadding(0, 0, 0, 0);
+            params.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+            params.bottomMargin = height;
+            params.topMargin = 0;
+            findViewById(R.id.mTitleRoot).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showOrHideImageSetList();
+                }
+            });
         }
-        iv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        tv_title.setGravity(Gravity.CENTER | multiUiConfig.getTopBarTitleGravity());
+
+
+        if (uiConfig.getTitleDrawableRight() != null) {
+            mSetArrowImg.setImageDrawable(uiConfig.getTitleDrawableRight());
+        }
+
+        if (selectConfig.isShowVideo() && selectConfig.isShowImage()) {
+            mTvTitle.setText(getResources().getString(R.string.str_image_video));
+        } else if (selectConfig.isShowVideo()) {
+            mTvTitle.setText(getResources().getString(R.string.str_video));
+        } else {
+            mTvTitle.setText(getResources().getString(R.string.str_image));
+        }
+
+        ((LinearLayout) findViewById(R.id.mTitleRoot)).setGravity(uiConfig.getTopBarTitleGravity());
         if (selectConfig.getSelectMode() != ImageSelectMode.MODE_MULTI) {
             mTvRight.setVisibility(View.GONE);
         } else {
             mTvRight.setVisibility(View.VISIBLE);
         }
-
-        resetBtnOKBtn();
     }
 
     /**
@@ -262,6 +298,13 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
         btnDir.setOnClickListener(this);
         v_masker.setOnClickListener(this);
         mTvRight.setOnClickListener(this);
+        mTvPreview.setOnClickListener(previewClickListener);
+        mBckImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         mImageSetListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -351,6 +394,9 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
                 if (null != imageSet) {
                     mAdapter.refreshData(imageSet.imageItems);
                     btnDir.setText(imageSet.name);
+                    if (!uiConfig.isShowBottomBar()) {
+                        mTvTitle.setText(imageSet.name);
+                    }
                 }
                 mRecyclerView.smoothScrollToPosition(0);
             }
@@ -362,26 +408,20 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
      */
     private void showOrHideImageSetList() {
         if (mImageSetListView.getVisibility() == View.GONE) {
+            mSetArrowImg.setRotation(180);
             v_masker.setVisibility(View.VISIBLE);
             mImageSetListView.setVisibility(View.VISIBLE);
-            mImageSetListView.setAnimation(AnimationUtils.loadAnimation(MultiImagePickerActivity.this, R.anim.picker_show2bottom));
+            mImageSetListView.setAnimation(AnimationUtils.loadAnimation(MultiImagePickerActivity.this,
+                    uiConfig.isShowBottomBar() ? R.anim.picker_show2bottom : R.anim.picker_anim_in));
             int index = mImageSetAdapter.getSelectIndex();
             index = index == 0 ? index : index - 1;
             mImageSetListView.setSelection(index);
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mImageSetListView.getLayoutParams();
-            if (params != null) {
-                if (imageSets.size() > 5) {
-                    params.height = (int) (getResources().getDisplayMetrics().heightPixels / 1.6f);
-                } else {
-                    params.height = RelativeLayout.LayoutParams.WRAP_CONTENT;
-                }
-                mImageSetListView.setLayoutParams(params);
-            }
-
         } else {
+            mSetArrowImg.setRotation(0);
             v_masker.setVisibility(View.GONE);
             mImageSetListView.setVisibility(View.GONE);
-            mImageSetListView.setAnimation(AnimationUtils.loadAnimation(MultiImagePickerActivity.this, R.anim.picker_hide2bottom));
+            mImageSetListView.setAnimation(AnimationUtils.loadAnimation(MultiImagePickerActivity.this,
+                    uiConfig.isShowBottomBar() ? R.anim.picker_hide2bottom : R.anim.picker_anim_up));
         }
     }
 
@@ -389,10 +429,13 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
     public void onImagesLoaded(List<ImageSet> imageSetList) {
         this.imageSets = imageSetList;
         this.imageItems = imageSetList.get(currentSetIndex).imageItems;
-        MultiPickerData.instance.setCurrentImageSet(imageSetList.get(currentSetIndex));
-        btnDir.setText(imageSetList.get(currentSetIndex).name);
+        MultiPickerData.instance.setCurrentImageSet(imageSets.get(currentSetIndex));
+        btnDir.setText(imageSets.get(currentSetIndex).name);
+        if (!uiConfig.isShowBottomBar()) {
+            mTvTitle.setText(imageSets.get(currentSetIndex).name);
+        }
         mAdapter.refreshData(imageItems);
-        mImageSetAdapter.refreshData(imageSetList);
+        mImageSetAdapter.refreshData(imageSets);
     }
 
     @Override
@@ -527,35 +570,28 @@ public class MultiImagePickerActivity extends FragmentActivity implements OnImag
         if (!MultiPickerData.instance.isEmpty()) {
             mTvRight.setClickable(true);
             mTvRight.setEnabled(true);
-            mTvRight.setAlpha(1f);
-            String text = String.format("%s(%d/%d)", multiUiConfig.getOkBtnText(),
+            String text = String.format("%s(%d/%d)", uiConfig.getOkBtnText(),
                     MultiPickerData.instance.getSelectCount(),
                     selectConfig.getMaxCount());
             mTvRight.setText(text);
             mTvPreview.setText(String.format("预览(%d)",
                     MultiPickerData.instance.getSelectCount()));
-            mTvPreview.setVisibility(View.VISIBLE);
-            if (multiUiConfig.getOkBtnSelectBackground() != null) {
-                mTvRight.setBackground(multiUiConfig.getOkBtnSelectBackground());
-            } else {
-                mTvRight.setBackground(getResources().getDrawable(R.drawable.picker_wechat_okbtn_select));
+            if (selectConfig.isPreview()) {
+                mTvPreview.setVisibility(View.VISIBLE);
             }
-            if (multiUiConfig.getOkBtnSelectTextColor() != 0) {
-                mTvRight.setTextColor(multiUiConfig.getOkBtnSelectTextColor());
+            mTvRight.setBackground(uiConfig.getOkBtnSelectBackground());
+            if (uiConfig.getOkBtnSelectTextColor() != 0) {
+                mTvRight.setTextColor(uiConfig.getOkBtnSelectTextColor());
             }
         } else {
-            mTvRight.setText(multiUiConfig.getOkBtnText());
+            mTvRight.setText(uiConfig.getOkBtnText());
             mTvRight.setClickable(false);
             mTvRight.setEnabled(false);
             mTvPreview.setText("预览");
             mTvPreview.setVisibility(View.GONE);
-            if (multiUiConfig.getOkBtnUnSelectBackground() != null) {
-                mTvRight.setBackground(multiUiConfig.getOkBtnUnSelectBackground());
-            } else {
-                mTvRight.setBackground(getResources().getDrawable(R.drawable.picker_wechat_okbtn_unselect));
-            }
-            if (multiUiConfig.getOkBtnUnSelectTextColor() != 0) {
-                mTvRight.setTextColor(multiUiConfig.getOkBtnUnSelectTextColor());
+            mTvRight.setBackground(uiConfig.getOkBtnUnSelectBackground());
+            if (uiConfig.getOkBtnUnSelectTextColor() != 0) {
+                mTvRight.setTextColor(uiConfig.getOkBtnUnSelectTextColor());
             }
         }
     }

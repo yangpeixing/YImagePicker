@@ -96,6 +96,11 @@ public class MultiPickerBuilder {
         return this;
     }
 
+    public MultiPickerBuilder setPreview(boolean isPreview) {
+        multiSelectConfig.setPreview(isPreview);
+        return this;
+    }
+
 
     public MultiPickerBuilder showCamera(boolean showCamera) {
         multiSelectConfig.setShowCamera(showCamera);

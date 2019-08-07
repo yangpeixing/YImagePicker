@@ -3,6 +3,7 @@ package com.ypx.imagepicker.activity.multi;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,7 +61,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     private int mCurrentItemPosition = 0;
     private TextView mTvTitle;
     private TextView mTvRight;
-    private RelativeLayout mTitleBar;
+    private ViewGroup mTitleBar;
     private RelativeLayout mBottomBar;
     private MultiSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
@@ -187,8 +189,10 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         mCbSelected.setLeftDrawable(getResources().getDrawable(multiUiConfig.getSelectedIconID()),
                 getResources().getDrawable(multiUiConfig.getUnSelectIconID()));
         if (multiUiConfig.isImmersionBar() && multiUiConfig.getTopBarBackgroundColor() != 0) {
-            StatusBarUtil.setStatusBar(this,multiUiConfig.getTopBarBackgroundColor(), false,
+            StatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
                     StatusBarUtil.isDarkColor(multiUiConfig.getTopBarBackgroundColor()));
+
+            mTitleBar.setPadding(0,StatusBarUtil.getStatusBarHeight(this),0,0);
         }
 
         if (multiUiConfig.getBackIconID() != 0) {
@@ -198,6 +202,8 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         if (multiUiConfig.getBackIconColor() != 0) {
             iv_back.setColorFilter(multiUiConfig.getBackIconColor());
         }
+
+        mCbSelected.setTextColor(multiUiConfig.getPreviewTextColor());
 
         if (multiUiConfig.getTopBarBackgroundColor() != 0) {
             mTitleBar.setBackgroundColor(multiUiConfig.getTopBarBackgroundColor());
@@ -225,7 +231,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
                 finish();
             }
         });
-        mTvTitle.setGravity(Gravity.CENTER | multiUiConfig.getTopBarTitleGravity());
+        ((LinearLayout)findViewById(R.id.mTitleRoot)).setGravity(multiUiConfig.getTopBarTitleGravity());
         resetBtnOKBtn();
         mTvRight.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -349,12 +355,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
                         selectConfig.getMaxCount());
                 mTvRight.setText(text);
             }
-
-            if (multiUiConfig.getOkBtnSelectBackground() != null) {
-                mTvRight.setBackground(multiUiConfig.getOkBtnSelectBackground());
-            }else {
-                mTvRight.setBackground(getResources().getDrawable(R.drawable.picker_wechat_okbtn_select));
-            }
+            mTvRight.setBackground(multiUiConfig.getOkBtnSelectBackground());
             if (multiUiConfig.getOkBtnSelectTextColor() != 0) {
                 mTvRight.setTextColor(multiUiConfig.getOkBtnSelectTextColor());
             }
@@ -362,11 +363,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             mTvRight.setText(multiUiConfig.getOkBtnText());
             mTvRight.setClickable(false);
             mTvRight.setEnabled(false);
-            if (multiUiConfig.getOkBtnUnSelectBackground() != null) {
-                mTvRight.setBackground(multiUiConfig.getOkBtnUnSelectBackground());
-            }else {
-                mTvRight.setBackground(getResources().getDrawable(R.drawable.picker_wechat_okbtn_unselect));
-            }
+            mTvRight.setBackground(multiUiConfig.getOkBtnUnSelectBackground());
             if (multiUiConfig.getOkBtnUnSelectTextColor() != 0) {
                 mTvRight.setTextColor(multiUiConfig.getOkBtnUnSelectTextColor());
             }

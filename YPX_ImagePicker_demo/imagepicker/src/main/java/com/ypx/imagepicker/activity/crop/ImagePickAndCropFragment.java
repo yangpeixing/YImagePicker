@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -700,7 +699,7 @@ public class ImagePickAndCropFragment extends Fragment implements
     private void toggleImageSet() {
         if (mImageSetRecyclerView.getVisibility() == View.VISIBLE) {
             mImageSetRecyclerView.setVisibility(View.GONE);
-            mArrowImg.setRotation(180);
+            mArrowImg.setRotation(0);
             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.picker_anim_up);
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -720,7 +719,7 @@ public class ImagePickAndCropFragment extends Fragment implements
             });
             mImageSetRecyclerView.setAnimation(animation);
         } else {
-            mArrowImg.setRotation(0);
+            mArrowImg.setRotation(180);
             mImageSetRecyclerView.setVisibility(View.VISIBLE);
             ((ViewGroup) mTvSetName2.getParent()).setVisibility(View.VISIBLE);
             mImageSetRecyclerView.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picker_anim_in));

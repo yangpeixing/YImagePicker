@@ -165,4 +165,27 @@ public class StatusBarUtil {
         int gray = (int) (Color.red(colorInt) * 0.299 + Color.green(colorInt) * 0.587 + Color.blue(colorInt) * 0.114);
         return gray >= 192;
     }
+
+    private static int statusBarHeight;
+
+    /**
+     * 利用反射获取状态栏高度
+     */
+    public static int getStatusBarHeight(Context activity) {
+        if (statusBarHeight != 0) {
+            return statusBarHeight;
+        }
+        try {
+            int result = 0;
+            //获取状态栏高度的资源id
+            int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                result = activity.getResources().getDimensionPixelSize(resourceId);
+            }
+            statusBarHeight = result;
+            return result;
+        } catch (Exception e) {
+            return ViewSizeUtils.dp(activity, 20);
+        }
+    }
 }

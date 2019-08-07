@@ -2,11 +2,14 @@ package com.ypx.imagepicker.activity.multi;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,13 +64,15 @@ public class SingleCropActivity extends FragmentActivity {
     }
 
     private void setTitleBar() {
-        RelativeLayout top_bar = findViewById(R.id.top_bar);
+        ViewGroup top_bar = findViewById(R.id.top_bar);
         TextView tv_title = findViewById(R.id.tv_title);
         TextView tv_rightBtn = findViewById(R.id.tv_rightBtn);
         ImageView iv_back = findViewById(R.id.iv_back);
         if (multiUiConfig.isImmersionBar() && multiUiConfig.getTopBarBackgroundColor() != 0) {
-            StatusBarUtil.setStatusBar(this, multiUiConfig.getTopBarBackgroundColor(), false,
+            StatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
                     StatusBarUtil.isDarkColor(multiUiConfig.getTopBarBackgroundColor()));
+
+            top_bar.setPadding(0,StatusBarUtil.getStatusBarHeight(this),0,0);
         }
         if (multiUiConfig.getBackIconID() != 0) {
             iv_back.setImageDrawable(getResources().getDrawable(multiUiConfig.getBackIconID()));
@@ -85,12 +90,8 @@ public class SingleCropActivity extends FragmentActivity {
             tv_title.setTextColor(multiUiConfig.getTitleColor());
         }
 
-        tv_title.setGravity(Gravity.CENTER | multiUiConfig.getTopBarTitleGravity());
-        if (multiUiConfig.getOkBtnSelectBackground() != null) {
-            tv_rightBtn.setBackground(multiUiConfig.getOkBtnSelectBackground());
-        } else {
-            tv_rightBtn.setBackground(getResources().getDrawable(R.drawable.picker_wechat_okbtn_select));
-        }
+        ((LinearLayout)findViewById(R.id.mTitleRoot)).setGravity(multiUiConfig.getTopBarTitleGravity());
+        tv_rightBtn.setBackground(multiUiConfig.getOkBtnSelectBackground());
         if (multiUiConfig.getOkBtnSelectTextColor() != 0) {
             tv_rightBtn.setTextColor(multiUiConfig.getOkBtnSelectTextColor());
         }

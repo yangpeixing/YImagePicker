@@ -17,4 +17,4 @@ dependencies {
 }
 
 
-//apply from: 'generate.gradle'
+apply from: 'generate.gradle'

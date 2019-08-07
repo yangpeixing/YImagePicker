@@ -36,27 +36,35 @@ public class WXImgPickerPresenter implements IMultiPickerBindPresenter {
     @Override
     public MultiUiConfig getUiConfig(Context context) {
         MultiUiConfig config = new MultiUiConfig();
+        //是否沉浸式状态栏，状态栏颜色将根据TopBarBackgroundColor指定，
+        // 并动态更改状态栏图标颜色
         config.setImmersionBar(true);
+        //设置主题色
         config.setThemeColor(Color.parseColor("#09C768"));
+        //设置选中和未选中时图标
         config.setSelectedIconID(R.mipmap.picker_wechat_select);
         config.setUnSelectIconID(R.mipmap.picker_wechat_unselect);
-
+        //设置返回图标以及返回图标颜色
         config.setBackIconID(R.mipmap.picker_icon_back_black);
         config.setBackIconColor(Color.BLACK);
+        //设置标题栏背景色和对齐方式，设置标题栏文本颜色
         config.setTopBarBackgroundColor(Color.parseColor("#F1F1F1"));
         config.setTopBarTitleGravity(Gravity.START);
         config.setTitleColor(Color.BLACK);
-
+        //设置标题栏右上角完成按钮选中和未选中样式，以及文字颜色
         int r = ViewSizeUtils.dp(context, 2);
         config.setOkBtnSelectBackground(CornerUtils.cornerDrawable(Color.parseColor("#09C768"), r));
         config.setOkBtnUnSelectBackground(CornerUtils.cornerDrawable(Color.parseColor("#B4ECCE"), r));
         config.setOkBtnSelectTextColor(Color.WHITE);
         config.setOkBtnUnSelectTextColor(Color.parseColor("#50ffffff"));
         config.setOkBtnText("完成");
-
+        //设置选择器背景色
         config.setPickerBackgroundColor(Color.WHITE);
+        //设置选择器item背景色
         config.setPickerItemBackgroundColor(Color.parseColor("#484848"));
+        //设置底部栏颜色
         config.setBottomBarBackgroundColor(Color.parseColor("#333333"));
+        //设置拍照按钮图标和背景色
         config.setCameraIconID(R.mipmap.picker_ic_camera);
         config.setCameraBackgroundColor(Color.parseColor("#484848"));
         return config;
