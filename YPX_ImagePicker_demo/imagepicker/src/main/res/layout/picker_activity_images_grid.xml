@@ -42,7 +42,7 @@
             android:background="#ffffff"
             android:divider="@null"
             android:overScrollMode="never"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <RelativeLayout
             android:id="@+id/footer_panel"

@@ -67,7 +67,7 @@ public class CustomPickerItem extends BaseItemView {
     @SuppressLint("DefaultLocale")
     @Override
     protected void bindData(final ImageItem imageItem, final RecyclerView.Adapter adapter,
-                            final int position, ArrayList<ImageItem> selectImageList,
+                            final int position, final ArrayList<ImageItem> selectImageList,
                             final MultiGridAdapter.OnActionResult result) {
         //加载图片
         presenter.displayListImage(mItemImage, imageItem, 0);
@@ -155,7 +155,8 @@ public class CustomPickerItem extends BaseItemView {
             @Override
             public void onClick(View view) {
                 if (null != result) {
-                    result.onCheckItem(imageItem, !imageItem.isSelect());
+                    boolean isSelect = selectImageList != null && selectImageList.contains(imageItem);
+                    result.onCheckItem(imageItem, !isSelect);
                 }
                 adapter.notifyDataSetChanged();
             }

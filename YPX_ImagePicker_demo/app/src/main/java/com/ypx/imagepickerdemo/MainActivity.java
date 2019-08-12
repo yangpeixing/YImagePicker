@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ImagePicker.registerMediaObserver(getApplication());
         //预加载选择器，需要APP先申请存储权限，否则无效
         //设置预加载后，可实现快速打开选择器（毫秒级加载千张大图）
-        ImagePicker.preload(this, true, true, false);
+        ImagePicker.preload(this, true, true, true);
     }
 
     private void initView() {

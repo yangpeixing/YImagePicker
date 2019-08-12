@@ -37,8 +37,12 @@ public class MediaDataSource implements DataSource {
         this.context = context;
         imageSetList = new ArrayList<>();
         videoSetList = new ArrayList<>();
-        videoDataSource = new VideoDataSource(context);
-        imageDataSource = new ImageDataSource(context);
+        try {
+            videoDataSource = new VideoDataSource(context);
+            imageDataSource = new ImageDataSource(context);
+        } catch (Exception ignored) {
+
+        }
     }
 
     private boolean isLoadGif = true;

@@ -19,6 +19,7 @@ import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.builder.MultiPickerBuilder;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_STORAGE;
@@ -106,7 +107,11 @@ public class ImagePicker {
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        MediaDataSource dataSource = new MediaDataSource(activity);
+        WeakReference<FragmentActivity> fragmentActivityWeakReference = new WeakReference<>(activity);
+        if (fragmentActivityWeakReference.get() == null) {
+            return;
+        }
+        MediaDataSource dataSource = new MediaDataSource(fragmentActivityWeakReference.get());
         dataSource.setLoadVideo(isLoadVideo);
         dataSource.setLoadImage(isLoadImage);
         dataSource.setLoadGif(isLoadGif);
