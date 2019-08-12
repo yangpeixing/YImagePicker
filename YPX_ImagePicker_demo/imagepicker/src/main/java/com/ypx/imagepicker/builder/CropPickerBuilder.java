@@ -38,7 +38,9 @@ public class CropPickerBuilder {
     }
 
     public CropPickerBuilder setFirstImageItem(ImageItem firstImageItem) {
-        this.firstImageItem = firstImageItem;
+        if (firstImageItem.width > 0 && firstImageItem.height > 0) {
+            this.firstImageItem = firstImageItem;
+        }
         return this;
     }
 
@@ -117,7 +119,7 @@ public class CropPickerBuilder {
         intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWDRAFTDIALOG, isShowDraft);
         intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWCAMERA, isShowCamera);
         intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWVIDEO, isShowVideo);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_STARTDIRECT,isStartDirect );
+        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_STARTDIRECT, isStartDirect);
         return intent;
 
     }
@@ -146,7 +148,7 @@ public class CropPickerBuilder {
         bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWDRAFTDIALOG, isShowDraft);
         bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWCAMERA, isShowCamera);
         bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWVIDEO, isShowVideo);
-        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_STARTDIRECT,isStartDirect );
+        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_STARTDIRECT, isStartDirect);
         return bundle;
     }
 
