@@ -2,9 +2,10 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F4F4F4"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -124,6 +125,12 @@
             android:layout_height="wrap_content"
             android:text="只能选择图片或视频" />
 
+        <CheckBox
+            android:id="@+id/cb_previewCanEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="预览时可以取消选择或排序" />
+
 
         <TextView
             android:id="@+id/mTvSelectListTitle"
@@ -134,6 +141,7 @@
             android:text="连续选择时已选中列表状态："
             android:textSize="14sp"
             android:textStyle="bold" />
+
 
         <RadioGroup
             android:layout_width="match_parent"
@@ -160,40 +168,48 @@
 
         </RadioGroup>
 
-        <LinearLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="6dp"
+            android:gravity="center_vertical"
+            android:text="打开类型："
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rg_openType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_multiSelect"
+            <RadioButton
+                android:id="@+id/rb_multi"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="多选" />
+
+            <RadioButton
+                android:id="@+id/rb_single"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="单选" />
+
+            <RadioButton
+                android:id="@+id/rb_crop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="多选图片"
-                tools:ignore="ButtonStyle" />
+                android:text="单张剪裁" />
 
-            <Button
-                android:id="@+id/btn_singleSelect"
+            <RadioButton
+                android:id="@+id/rb_takePhoto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="单选图片"
-                tools:ignore="ButtonStyle" />
+                android:layout_marginStart="15dp"
+                android:text="拍照" />
 
-            <Button
-                android:id="@+id/btn_cropSelect"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="单张剪裁"
-                tools:ignore="ButtonStyle" />
-
-            <Button
-                android:id="@+id/btn_takePhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="拍照"
-                tools:ignore="ButtonStyle" />
-
-        </LinearLayout>
+        </RadioGroup>
 
         <GridLayout
             android:id="@+id/gridLayout"

@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -15,6 +14,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -28,7 +28,7 @@ import com.ypx.imagepickerdemo.style.WXImgPickerPresenter;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
     private ArrayList<ImageItem> picList = new ArrayList<>();
 
     int maxNum = 16;
@@ -46,14 +46,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RadioButton mRbNew;
     private RadioButton mRbShield;
     private RadioButton mRbSave;
-    private Button mBtnMultiSelect;
-    private Button mBtnSingleSelect;
-    private Button mBtnCropSelect;
-    private Button mBtnTakePhoto;
     private GridLayout mGridLayout;
     private RadioGroup mRgStyle;
     private RadioGroup mRgType;
     private TextView mTvSelectListTitle;
+    private RadioButton mRbMulti;
+    private RadioButton mRbSingle;
+    private RadioButton mRbCrop;
+    private RadioButton mRbTakePhoto;
+    private RadioGroup mRgOpenType;
+    private CheckBox mCbPreviewCanEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,31 +87,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRbNew = findViewById(R.id.rb_new);
         mRbShield = findViewById(R.id.rb_shield);
         mRbSave = findViewById(R.id.rb_save);
-        mBtnMultiSelect = findViewById(R.id.btn_multiSelect);
-        mBtnSingleSelect = findViewById(R.id.btn_singleSelect);
-        mBtnCropSelect = findViewById(R.id.btn_cropSelect);
-        mBtnTakePhoto = findViewById(R.id.btn_takePhoto);
         mGridLayout = findViewById(R.id.gridLayout);
         mTvSelectListTitle = findViewById(R.id.mTvSelectListTitle);
 
-        mBtnMultiSelect.setOnClickListener(this);
-        mBtnSingleSelect.setOnClickListener(this);
-        mBtnCropSelect.setOnClickListener(this);
-        mBtnTakePhoto.setOnClickListener(this);
-
+        mRbMulti = findViewById(R.id.rb_multi);
+        mRbSingle = findViewById(R.id.rb_single);
+        mRbCrop = findViewById(R.id.rb_crop);
+        mRbTakePhoto = findViewById(R.id.rb_takePhoto);
+        mRgOpenType = findViewById(R.id.rg_openType);
+        mCbPreviewCanEdit = findViewById(R.id.cb_previewCanEdit);
 
         mRgStyle.setOnCheckedChangeListener(listener);
         mRgType.setOnCheckedChangeListener(listener);
+        mRgOpenType.setOnCheckedChangeListener(listener);
 
         mRbWeChat.setChecked(true);
         mRbAll.setChecked(true);
         mRbNew.setChecked(true);
+        mRbMulti.setChecked(true);
 
+        picList.clear();
+        refreshGridLayout();
     }
 
     RadioGroup.OnCheckedChangeListener listener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
+            if (group == mRgOpenType) {
+                picList.clear();
+                refreshGridLayout();
+                return;
+            }
             mCbVideoSingle.setEnabled(true);
             mCbImageOrVideoMix.setEnabled(true);
             if (checkedId == mRbRedBook.getId()) {
@@ -120,9 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mTvSelectListTitle.setVisibility(View.GONE);
                 ((ViewGroup) mRbNew.getParent()).setVisibility(View.GONE);
                 mCbClosePreview.setVisibility(View.GONE);
-                mBtnSingleSelect.setVisibility(View.GONE);
-                mBtnCropSelect.setVisibility(View.GONE);
-                mBtnTakePhoto.setVisibility(View.GONE);
+                mRbCrop.setVisibility(View.GONE);
             } else if (checkedId == mRbWeChat.getId()) {
                 mCbShowGif.setVisibility(View.VISIBLE);
                 mCbClosePreview.setVisibility(View.VISIBLE);
@@ -132,9 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mCbShowGif.setVisibility(View.VISIBLE);
                 mCbClosePreview.setVisibility(View.VISIBLE);
                 ((ViewGroup) mRbNew.getParent()).setVisibility(View.VISIBLE);
-                mBtnSingleSelect.setVisibility(View.VISIBLE);
-                mBtnCropSelect.setVisibility(View.VISIBLE);
-                mBtnTakePhoto.setVisibility(View.VISIBLE);
+                mRbCrop.setVisibility(View.VISIBLE);
             } else if (checkedId == mRbCustom.getId()) {
                 mCbShowGif.setVisibility(View.VISIBLE);
                 mCbVideoSingle.setVisibility(View.VISIBLE);
@@ -142,9 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mTvSelectListTitle.setVisibility(View.VISIBLE);
                 mCbClosePreview.setVisibility(View.VISIBLE);
                 ((ViewGroup) mRbNew.getParent()).setVisibility(View.VISIBLE);
-                mBtnSingleSelect.setVisibility(View.VISIBLE);
-                mBtnCropSelect.setVisibility(View.VISIBLE);
-                mBtnTakePhoto.setVisibility(View.VISIBLE);
+                mRbCrop.setVisibility(View.VISIBLE);
                 mCbVideoSingle.setChecked(true);
                 mCbImageOrVideoMix.setChecked(true);
                 mCbVideoSingle.setEnabled(false);
@@ -174,26 +176,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
 
-    @Override
-    public void onClick(View v) {
-        picList.clear();
-        refreshGridLayout();
-        if (v == mBtnMultiSelect) {
-            if (mRbRedBook.isChecked()) {
-                redBookPick(false);
-            } else {
-                pick(9, false);
-            }
-        } else if (v == mBtnSingleSelect) {
-            pick(1, false);
-        } else if (v == mBtnCropSelect) {
-            crop();
-        } else if (v == mBtnTakePhoto) {
-            //takePhoto();
-        }
-    }
-
-
     private void redBookPick(final boolean isAdd) {
         ImagePicker.withCrop(new RedBookCropPresenter())
                 .setMaxCount(9)
@@ -216,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
     }
 
-    private void pick(int count, final boolean isAdd) {
+    private void pick(int count) {
         if (mRbSave.isChecked()) {
             count = 9;
         }
@@ -235,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .pick(this, new OnImagePickCompleteListener() {
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {
-                        if (!isAdd || mRbSave.isChecked()) {
+                        if (mRbSave.isChecked()) {
                             picList.clear();
                         }
                         picList.addAll(items);
@@ -254,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .showImage(true)
                 .setSinglePickImageOrVideoType(false)
                 .setVideoSinglePick(false)
-                .setLastImageList(null)
+                .setShieldList(null)
                 .setLastImageList(null)
                 .setPreview(false)
                 .setCropRatio(1, 1)
@@ -268,6 +250,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
     }
 
+    private void preview(int pos) {
+        ImagePicker.withMulti(mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter())
+                .preview(this, picList, pos, mCbPreviewCanEdit.isChecked() ? new OnImagePickCompleteListener() {
+                    @Override
+                    public void onImagePickComplete(ArrayList<ImageItem> items) {
+                        picList.clear();
+                        picList.addAll(items);
+                        refreshGridLayout();
+                    }
+                } : null);
+    }
+
+    private void startPick() {
+        if (mRbRedBook.isChecked()) {
+            redBookPick(true);
+        } else {
+            if (mRbCrop.isChecked()) {
+                crop();
+            } else if (mRbSingle.isChecked()) {
+                pick(1);
+            } else if (mRbMulti.isChecked()) {
+                pick(9 - picList.size());
+            } else {
+                Toast.makeText(this, "拍照功能暂未开放!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     /**
      * 刷新图片显示
@@ -278,9 +288,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int num = picList.size();
         final int picSize = (getScreenWidth() - dp(20)) / 4;
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(picSize, picSize);
-        if (num == 0) {
-            mGridLayout.setVisibility(View.GONE);
-        } else if (num >= maxNum) {
+        if (num >= maxNum) {
             mGridLayout.setVisibility(View.VISIBLE);
             for (int i = 0; i < num; i++) {
                 RelativeLayout view = (RelativeLayout) LayoutInflater.from(this).inflate(R.layout.a_layout_pic_select, null);
@@ -299,11 +307,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mRbRedBook.isChecked()) {
-                        redBookPick(true);
-                    } else {
-                        pick(9 - picList.size(), true);
-                    }
+                    startPick();
                 }
             });
             for (int i = 0; i < num; i++) {
@@ -331,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         iv_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // preview(pos);
+                preview(pos);
             }
         });
     }

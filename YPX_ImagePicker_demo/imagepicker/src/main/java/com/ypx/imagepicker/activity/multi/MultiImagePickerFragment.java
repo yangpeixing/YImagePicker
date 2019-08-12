@@ -502,17 +502,17 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
             return;
         }
 
-        //如果只能选择一个是视频，且当前是视频的时候直接返回
-        if (selectConfig.isVideoSinglePick() && item.isVideo()) {
-            ArrayList<ImageItem> list = new ArrayList<>();
-            list.add(item);
-            notifyOnImagePickComplete(list);
-            return;
-        }
         mRecyclerView.setTag(item);
         switch (selectConfig.getSelectMode()) {
             //多选情况下，点击跳转预览
             case ImageSelectMode.MODE_MULTI:
+                //如果只能选择一个是视频，且当前是视频的时候直接返回
+                if (selectConfig.isVideoSinglePick() && item.isVideo()) {
+                    ArrayList<ImageItem> list = new ArrayList<>();
+                    list.add(item);
+                    notifyOnImagePickComplete(list);
+                    return;
+                }
                 //打开了预览，则跳转预览
                 if (selectConfig.isPreview()) {
                     ImageSet imageSet = imageSets.get(currentSetIndex);

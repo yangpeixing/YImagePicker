@@ -37,6 +37,11 @@ public class MultiPickerBuilder {
         this.pickerSelectConfig = new PickerSelectConfig();
     }
 
+    public MultiPickerBuilder setPickerSelectConfig(PickerSelectConfig config) {
+        this.pickerSelectConfig = config;
+        return this;
+    }
+
     public void pick(Activity context, final OnImagePickCompleteListener listener) {
         pickerSelectConfig.setSelectMode(pickerSelectConfig.getMaxCount() > 1 ?
                 ImageSelectMode.MODE_MULTI : ImageSelectMode.MODE_SINGLE);
@@ -49,10 +54,15 @@ public class MultiPickerBuilder {
     }
 
     public void crop(Activity context, OnImagePickCompleteListener listener) {
-        pickerSelectConfig.setSelectMode(ImageSelectMode.MODE_CROP);
-        showVideo(false);
         setMaxCount(1);
+        showVideo(false);
+        setSinglePickImageOrVideoType(false);
+        setVideoSinglePick(false);
+        setShieldList(null);
+        setLastImageList(null);
+        setPreview(false);
         MultiPickerData.instance.clear();
+        pickerSelectConfig.setSelectMode(ImageSelectMode.MODE_CROP);
         dealIntent(context, listener);
     }
 

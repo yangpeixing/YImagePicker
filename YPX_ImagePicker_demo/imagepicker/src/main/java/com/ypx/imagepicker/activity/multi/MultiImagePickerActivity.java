@@ -70,18 +70,7 @@ public class MultiImagePickerActivity extends FragmentActivity {
             return;
         }
         fragment = ImagePicker.withMultiFragment(presenter)
-                .showImage(selectConfig.isShowImage())
-                .showCamera(selectConfig.isShowCamera())
-                .showGif(selectConfig.isLoadGif())
-                .showVideo(selectConfig.isShowVideo())
-                .setMaxCount(selectConfig.getMaxCount())
-                .setVideoSinglePick(selectConfig.isVideoSinglePick())
-                .setSinglePickImageOrVideoType(selectConfig.isSinglePickImageOrVideoType())
-                .setShieldList(selectConfig.getShieldImageList())
-                .setLastImageList(selectConfig.getLastImageList())
-                .setCropRatio(selectConfig.getCropRatioX(), selectConfig.getCropRatioY())
-                .setColumnCount(selectConfig.getColumnCount())
-                .setPreview(selectConfig.isPreview())
+                .setPickerSelectConfig(selectConfig)
                 .pickWithFragment();
         getSupportFragmentManager()
                 .beginTransaction()
