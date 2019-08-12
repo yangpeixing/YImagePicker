@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
 import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.adapter.multi.BaseItemView;
 
 import java.io.Serializable;
 
@@ -13,7 +14,7 @@ import java.io.Serializable;
  * Author: peixing.yang
  * Date: 2018/10/16 11:00
  */
-public class MultiUiConfig implements Serializable {
+public class PickerUiConfig implements Serializable {
     /**
      * 是否沉浸式状态栏，如果返回true将会自动读取topbar的颜色
      */
@@ -60,11 +61,12 @@ public class MultiUiConfig implements Serializable {
     /**
      * 设置标题栏对齐方式
      */
-    private int topBarTitleGravity;
+    private int titleBarGravity;
+
     /**
-     * 获取顶部topbar的背景色
+     * 获取标题栏的背景色
      */
-    private int topBarBackgroundColor;
+    private int titleBarBackgroundColor;
     /**
      * 获取底部BottomBar的背景色
      */
@@ -77,7 +79,6 @@ public class MultiUiConfig implements Serializable {
      * item的默认背景色
      */
     private int pickerItemBackgroundColor;
-
 
     /**
      * 右上角按钮选中颜色
@@ -99,9 +100,11 @@ public class MultiUiConfig implements Serializable {
     private Drawable OkBtnUnSelectBackground;
 
     /**
-     * 是否显示底部栏，如果不显示底部栏，默认切换相册在标题栏上
+     * 选择器选择样式
+     * PICK_STYLE_BOTTOM：底部栏弹出样式
+     * PICK_STYLE_TITLE：标题栏弹出样式
      */
-    private boolean isShowBottomBar = true;
+    private int pickStyle = PICK_STYLE_BOTTOM;
 
     /**
      * 标题栏文字右边icon
@@ -111,9 +114,39 @@ public class MultiUiConfig implements Serializable {
     /**
      * 预览文字颜色
      */
-    private int previewTextColor;
+    private int bottomPreviewTextColor;
+
+    private BaseItemView pickerItemView;
+
+    public BaseItemView getPickerItemView() {
+        return pickerItemView;
+    }
+
+    public void setPickerItemView(BaseItemView pickerItemView) {
+        this.pickerItemView = pickerItemView;
+    }
+
+    public int getPickStyle() {
+        return pickStyle;
+    }
+
+    public boolean isBottomStyle() {
+        return pickStyle == PICK_STYLE_BOTTOM;
+    }
+
+    /**
+     * 设置选择器文件夹列表弹入样式
+     * PICK_STYLE_BOTTOM：底部栏弹出样式
+     * PICK_STYLE_TITLE：标题栏弹出样式
+     */
+    public void setPickStyle(int pickStyle) {
+        this.pickStyle = pickStyle;
+    }
 
     public int getBackIconColor() {
+        if (backIconColor == 0) {
+            return Color.TRANSPARENT;
+        }
         return backIconColor;
     }
 
@@ -129,14 +162,6 @@ public class MultiUiConfig implements Serializable {
         isImmersionBar = immersionBar;
     }
 
-    public boolean isShowBottomBar() {
-        return isShowBottomBar;
-    }
-
-    public void setShowBottomBar(boolean showBottomBar) {
-        isShowBottomBar = showBottomBar;
-    }
-
     public Drawable getTitleDrawableRight() {
         return titleDrawableRight;
     }
@@ -146,14 +171,14 @@ public class MultiUiConfig implements Serializable {
     }
 
     public int getPreviewTextColor() {
-        if (previewTextColor == 0) {
+        if (bottomPreviewTextColor == 0) {
             return Color.WHITE;
         }
-        return previewTextColor;
+        return bottomPreviewTextColor;
     }
 
-    public void setPreviewTextColor(int previewTextColor) {
-        this.previewTextColor = previewTextColor;
+    public void setBottomPreviewTextColor(int previewTextColor) {
+        this.bottomPreviewTextColor = previewTextColor;
     }
 
     public int getThemeColor() {
@@ -233,23 +258,23 @@ public class MultiUiConfig implements Serializable {
         this.titleColor = titleColor;
     }
 
-    public int getTopBarTitleGravity() {
-        return topBarTitleGravity;
+    public int getTitleBarGravity() {
+        return titleBarGravity;
     }
 
-    public void setTopBarTitleGravity(int topBarTitleGravity) {
-        this.topBarTitleGravity = topBarTitleGravity;
+    public void setTitleBarGravity(int titleBarGravity) {
+        this.titleBarGravity = titleBarGravity;
     }
 
-    public int getTopBarBackgroundColor() {
-        if (topBarBackgroundColor == 0) {
+    public int getTitleBarBackgroundColor() {
+        if (titleBarBackgroundColor == 0) {
             return Color.WHITE;
         }
-        return topBarBackgroundColor;
+        return titleBarBackgroundColor;
     }
 
-    public void setTopBarBackgroundColor(int topBarBackgroundColor) {
-        this.topBarBackgroundColor = topBarBackgroundColor;
+    public void setTitleBarBackgroundColor(int titleBarBackgroundColor) {
+        this.titleBarBackgroundColor = titleBarBackgroundColor;
     }
 
     public int getBottomBarBackgroundColor() {
@@ -330,4 +355,7 @@ public class MultiUiConfig implements Serializable {
     public void setCameraBackgroundColor(int cameraBackgroundColor) {
         this.cameraBackgroundColor = cameraBackgroundColor;
     }
+
+    public static final int PICK_STYLE_TITLE = 1;
+    public static final int PICK_STYLE_BOTTOM = 2;
 }

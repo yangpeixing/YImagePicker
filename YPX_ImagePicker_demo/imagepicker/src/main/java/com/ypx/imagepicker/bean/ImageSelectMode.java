@@ -11,5 +11,4 @@ public interface ImageSelectMode {
     int MODE_MULTI = 1;
     int MODE_TAKEPHOTO = 2;
     int MODE_CROP = 3;
-    int MODE_TAKEPHOTO_CROP = 4;
 }

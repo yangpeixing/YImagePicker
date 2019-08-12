@@ -2,6 +2,8 @@ package com.ypx.imagepicker.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
+import android.os.ParcelFileDescriptor;
 import android.view.View;
 
 import java.io.File;
@@ -95,4 +97,11 @@ public class FileUtil {
         }
         return file;
     }
+
+    public static Bitmap getVideoThumb(String path) {
+        MediaMetadataRetriever media = new MediaMetadataRetriever();
+        media.setDataSource(path);
+        return media.getFrameAtTime();
+    }
+
 }

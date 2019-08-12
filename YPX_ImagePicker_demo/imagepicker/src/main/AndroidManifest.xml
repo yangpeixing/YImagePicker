@@ -22,16 +22,15 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <activity
-            android:name=".activity.multi.MultiImagePickerActivity"
-            android:label="@string/app_name"
-            android:multiprocess="true" />
-
-        <activity
             android:name=".activity.multi.MultiImagePreviewActivity"
             android:multiprocess="true" />
 
         <activity
             android:name=".activity.multi.SingleCropActivity"
+            android:multiprocess="true" />
+
+        <activity
+            android:name=".activity.multi.MultiImagePickerActivity"
             android:multiprocess="true" />
 
         <provider

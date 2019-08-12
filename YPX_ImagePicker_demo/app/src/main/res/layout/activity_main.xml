@@ -1,122 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="6dp"
+            android:gravity="center_vertical"
+            android:text="选择器样式："
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rg_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_redBook"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="小红书剪裁" />
+
+            <RadioButton
+                android:id="@+id/rb_weChat"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="微信样式" />
+
+            <RadioButton
+                android:id="@+id/rb_Custom"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="自定义样式" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="6dp"
+            android:gravity="center_vertical"
+            android:text="选择器文件加载类型："
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rg_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_all"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="图片和视频" />
+
+            <RadioButton
+                android:id="@+id/rb_imageOnly"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="只加载图片" />
+
+            <RadioButton
+                android:id="@+id/rb_VideoOnly"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="只加载视频" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="6dp"
+            android:gravity="center_vertical"
+            android:text="相关属性："
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/cb_showCamera"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="显示拍照" />
+
+            <CheckBox
+                android:id="@+id/cb_showGif"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="不加载Gif" />
+
+            <CheckBox
+                android:id="@+id/cb_closePreview"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="关闭预览" />
+        </LinearLayout>
 
         <CheckBox
-            android:id="@+id/cb_redBook"
+            android:id="@+id/cb_videoSingle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="小红书剪裁样式" />
+            android:text="只能选择一个视频" />
 
         <CheckBox
-            android:id="@+id/cb_wx"
+            android:id="@+id/cb_imageOrVideoMix"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:text="微信样式" />
+            android:text="只能选择图片和视频一种" />
 
-        <CheckBox
-            android:id="@+id/cb_jhl"
+
+        <TextView
+            android:id="@+id/mTvSelectListTitle"
             android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="6dp"
+            android:gravity="center_vertical"
+            android:text="连续选择时已选中列表状态："
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:text="自定义样式" />
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_new"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="重新选择" />
+
+            <RadioButton
+                android:id="@+id/rb_shield"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="屏蔽已选择" />
+
+            <RadioButton
+                android:id="@+id/rb_save"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="记录已选择" />
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_multiSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="多选图片"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:id="@+id/btn_singleSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="单选图片"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:id="@+id/btn_cropSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="单张剪裁"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:id="@+id/btn_takePhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="拍照"
+                tools:ignore="ButtonStyle" />
+
+        </LinearLayout>
+
+        <GridLayout
+            android:id="@+id/gridLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp" />
+
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <CheckBox
-            android:id="@+id/cb_showCamera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="显示拍照" />
-
-        <CheckBox
-            android:id="@+id/cb_showVideo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="显示视频" />
-
-        <CheckBox
-            android:id="@+id/cb_showGif"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="显示Gif" />
-
-        <CheckBox
-            android:id="@+id/cb_shield"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="连续选择时，屏蔽已选中图片" />
-
-        <CheckBox
-            android:id="@+id/cb_last"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="连续选择时，带入已选中图片" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btn_multiSelect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="多选图片"
-            tools:ignore="ButtonStyle" />
-
-        <Button
-            android:id="@+id/btn_singleSelect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="单选图片"
-            tools:ignore="ButtonStyle" />
-
-        <Button
-            android:id="@+id/btn_cropSelect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="单张剪裁"
-            tools:ignore="ButtonStyle" />
-
-        <Button
-            android:id="@+id/btn_takePhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="拍照"
-            tools:ignore="ButtonStyle" />
-
-    </LinearLayout>
-
-
-    <com.ypx.imagepicker.widget.browseimage.PicBrowseImageView
-        android:id="@+id/iv_single"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerInside" />
-
-    <GridLayout
-        android:id="@+id/gridLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="4"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
-
-</LinearLayout>
+</ScrollView>

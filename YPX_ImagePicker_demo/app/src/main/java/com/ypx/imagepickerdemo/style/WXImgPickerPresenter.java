@@ -7,12 +7,15 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.MultiUiConfig;
+import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.CornerUtils;
 import com.ypx.imagepicker.utils.ViewSizeUtils;
 import com.ypx.imagepickerdemo.R;
+
+import java.util.ArrayList;
 
 /**
  * Description:<br> 多选选择器数据绑定类
@@ -24,8 +27,8 @@ import com.ypx.imagepickerdemo.R;
 public class WXImgPickerPresenter implements IMultiPickerBindPresenter {
 
     @Override
-    public void displayListImage(ImageView imageView, String url, int size) {
-        Glide.with(imageView.getContext()).load(url).into(imageView);
+    public void displayListImage(ImageView imageView, ImageItem item, int size) {
+        Glide.with(imageView.getContext()).load(item.path).into(imageView);
     }
 
     @Override
@@ -34,8 +37,8 @@ public class WXImgPickerPresenter implements IMultiPickerBindPresenter {
     }
 
     @Override
-    public MultiUiConfig getUiConfig(Context context) {
-        MultiUiConfig config = new MultiUiConfig();
+    public PickerUiConfig getUiConfig(Context context) {
+        PickerUiConfig config = new PickerUiConfig();
         //是否沉浸式状态栏，状态栏颜色将根据TopBarBackgroundColor指定，
         // 并动态更改状态栏图标颜色
         config.setImmersionBar(true);
@@ -48,8 +51,8 @@ public class WXImgPickerPresenter implements IMultiPickerBindPresenter {
         config.setBackIconID(R.mipmap.picker_icon_back_black);
         config.setBackIconColor(Color.BLACK);
         //设置标题栏背景色和对齐方式，设置标题栏文本颜色
-        config.setTopBarBackgroundColor(Color.parseColor("#F1F1F1"));
-        config.setTopBarTitleGravity(Gravity.START);
+        config.setTitleBarBackgroundColor(Color.parseColor("#F1F1F1"));
+        config.setTitleBarGravity(Gravity.START);
         config.setTitleColor(Color.BLACK);
         //设置标题栏右上角完成按钮选中和未选中样式，以及文字颜色
         int r = ViewSizeUtils.dp(context, 2);
@@ -76,8 +79,8 @@ public class WXImgPickerPresenter implements IMultiPickerBindPresenter {
     }
 
     @Override
-    public void onClickVideo(ImageItem videoItem) {
-
+    public void imageItemClick(Context context, ImageItem imageItem, ArrayList<ImageItem> selectImageList,
+                               ArrayList<ImageItem> allSetImageList, MultiGridAdapter adapter) {
+        tip(context, "我是自定义的图片点击事件");
     }
-
 }

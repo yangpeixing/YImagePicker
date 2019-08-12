@@ -1,31 +1,29 @@
 package com.ypx.imagepicker.adapter.multi;
 
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.activity.multi.MultiImagePickerActivity;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.ImageSelectMode;
-import com.ypx.imagepicker.bean.MultiSelectConfig;
-import com.ypx.imagepicker.bean.MultiUiConfig;
+import com.ypx.imagepicker.bean.PickerSelectConfig;
+import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.widget.CheckImageView;
-import com.ypx.imagepicker.widget.ShowTypeImageView;
-
+import com.ypx.imagepicker.utils.TakePhotoUtil;
 import java.util.List;
+
+import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.REQ_CAMERA;
 
 /**
  * Description: 多选adapter
@@ -37,17 +35,15 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int ITEM_TYPE_CAMERA = 0;
     private static final int ITEM_TYPE_NORMAL = 1;
     private List<ImageItem> images;
-    private Context mContext;
-    private MultiSelectConfig selectConfig;
+    private PickerSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
-    private MultiUiConfig multiUiConfig;
+    private PickerUiConfig pickerUiConfig;
 
-    public MultiGridAdapter(Context ctx, List<ImageItem> images, MultiSelectConfig selectConfig, IMultiPickerBindPresenter presenter) {
+    public MultiGridAdapter(Context ctx, List<ImageItem> images, PickerSelectConfig selectConfig, IMultiPickerBindPresenter presenter) {
         this.images = images;
-        this.mContext = ctx;
         this.selectConfig = selectConfig;
         this.presenter = presenter;
-        multiUiConfig = presenter.getUiConfig(ctx);
+        pickerUiConfig = presenter.getUiConfig(ctx);
     }
 
     @NonNull
@@ -56,11 +52,11 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (viewType == ITEM_TYPE_CAMERA) {
             return new CameraViewHolder(LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.picker_grid_item_camera, parent, false),
-                    selectConfig, multiUiConfig);
+                    selectConfig, pickerUiConfig);
         } else {
             return new ItemViewHolder(LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.picker_image_grid_item, parent, false),
-                    selectConfig, multiUiConfig);
+                    inflate(R.layout.picker_image_grid_item_root, parent, false),
+                    selectConfig, presenter);
         }
     }
 
@@ -72,72 +68,10 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (itemViewType == ITEM_TYPE_CAMERA || item == null) {
             return;
         }
-        final ItemViewHolder holder = (ItemViewHolder) viewHolder;
-        if (selectConfig.getSelectMode() != ImageSelectMode.MODE_MULTI) {
-            holder.cbSelected.setVisibility(View.GONE);
-        } else {
-            holder.cbSelected.setVisibility(View.VISIBLE);
-        }
-        if (item.isVideo()) {
-            holder.mVideoLayout.setVisibility(View.VISIBLE);
-            holder.mVideoTime.setText(item.getDurationFormat());
-            holder.ivPic.setType(ShowTypeImageView.TYPE_NONE);
-        } else {
-            holder.mVideoLayout.setVisibility(View.GONE);
-            holder.ivPic.setTypeWithUrlAndSize(item);
-        }
-        holder.cbSelected.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (MultiPickerData.instance.isOverLimit(selectConfig.getMaxCount() - 1) && !holder.cbSelected.isChecked()) {
-                    String toast = mContext.getResources().getString(R.string.you_have_a_select_limit, selectConfig.getMaxCount() + "");
-                    presenter.tip(mContext, toast);
-                    return;
-                }
-                holder.cbSelected.toggle();
-                if (mContext instanceof MultiImagePickerActivity) {
-                    ((MultiImagePickerActivity) mContext).imageSelectChange(item, holder.cbSelected.isChecked());
-                    notifyDataSetChanged();
-                }
-            }
-        });
-
-        //屏蔽列表
-        if (selectConfig.isShieldItem(item)) {
-            holder.cbSelected.setVisibility(View.GONE);
-            holder.v_masker.setVisibility(View.VISIBLE);
-            holder.v_masker.setBackgroundColor(Color.parseColor("#80FFFFFF"));
-        } else {
-            if (MultiPickerData.instance.hasItem(item)) {
-                holder.cbSelected.setChecked(true);
-                holder.v_masker.setVisibility(View.VISIBLE);
-                holder.v_masker.setBackgroundColor(Color.parseColor("#80000000"));
-            } else {
-                holder.cbSelected.setChecked(false);
-                holder.v_masker.setVisibility(View.GONE);
-            }
-        }
-
-        holder.ivPic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (selectConfig.isShieldItem(item)) {
-                    presenter.tip(mContext, mContext.getResources().getString(R.string.str_shield));
-                    return;
-                }
-                if (!selectConfig.isPreview()) {
-                    holder.cbSelected.performClick();
-                    return;
-                }
-                if (mContext instanceof MultiImagePickerActivity) {
-                    ((MultiImagePickerActivity) mContext).onImageClickListener(item, selectConfig.isShowCamera() ? position - 1 : position);
-                }
-            }
-        });
-
-        if (presenter != null) {
-            presenter.displayListImage(holder.ivPic, item.path, 0);
-        }
+        int index= selectConfig.isShowCamera() ? position - 1 : position;
+        ItemViewHolder holder = (ItemViewHolder) viewHolder;
+        holder.getBaseItemView().bindData(item, this, index,
+                MultiPickerData.instance.getSelectImageList(), onActionResult);
     }
 
     @Override
@@ -180,7 +114,7 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     static class CameraViewHolder extends RecyclerView.ViewHolder {
         private TextView tv_camera;
 
-        CameraViewHolder(@NonNull View itemView, MultiSelectConfig selectConfig, MultiUiConfig uiConfig) {
+        CameraViewHolder(@NonNull View itemView, PickerSelectConfig selectConfig, PickerUiConfig uiConfig) {
             super(itemView);
             Context context = itemView.getContext();
             tv_camera = itemView.findViewById(R.id.tv_camera);
@@ -199,44 +133,33 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             tv_camera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (v.getContext() instanceof MultiImagePickerActivity) {
-                        ((MultiImagePickerActivity) v.getContext()).takePhoto();
-                    }
+                    TakePhotoUtil.takePhoto((Activity) v.getContext(), REQ_CAMERA);
                 }
             });
         }
     }
 
-    static class ItemViewHolder extends RecyclerView.ViewHolder {
-        private ShowTypeImageView ivPic;
-        private CheckImageView cbSelected;
-        private View v_masker;
-        private LinearLayout mVideoLayout;
-        private TextView mVideoTime;
-        private Context context;
 
-        ItemViewHolder(@NonNull View itemView, MultiSelectConfig selectConfig, MultiUiConfig uiConfig) {
+    static class ItemViewHolder extends RecyclerView.ViewHolder {
+        private Context context;
+        private BaseItemView baseItemView;
+
+        ItemViewHolder(@NonNull View itemView, PickerSelectConfig selectConfig, IMultiPickerBindPresenter presenter) {
             super(itemView);
             context = itemView.getContext();
-            ivPic = itemView.findViewById(R.id.iv_thumb);
-            cbSelected = itemView.findViewById(R.id.iv_thumb_check);
-            v_masker = itemView.findViewById(R.id.v_masker);
-            mVideoLayout = itemView.findViewById(R.id.mVideoLayout);
-            mVideoTime = itemView.findViewById(R.id.mVideoTime);
-
-            if (uiConfig.getPickerItemBackgroundColor() != 0) {
-                ivPic.setBackgroundColor(uiConfig.getPickerItemBackgroundColor());
+            RelativeLayout layout = itemView.findViewById(R.id.mRoot);
+            PickerUiConfig uiConfig = presenter.getUiConfig(context);
+            if (uiConfig != null && uiConfig.getPickerItemView() != null) {
+                baseItemView = uiConfig.getPickerItemView();
+            } else {
+                baseItemView = new WXItemView(context);
             }
-            cbSelected.setSelectIconId(uiConfig.getSelectedIconID());
-            cbSelected.setUnSelectIconId(uiConfig.getUnSelectIconID());
+            baseItemView.initData(selectConfig, presenter,uiConfig);
+            layout.addView(baseItemView);
+        }
 
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) itemView.getLayoutParams();
-            params.leftMargin = dp(context, 1);
-            params.topMargin = dp(context, 1);
-            params.rightMargin = dp(context, 1);
-            params.bottomMargin = dp(context, 1);
-            params.height = getScreenWidth(context) / selectConfig.getColumnCount() - dp(context, 2);
-            itemView.setLayoutParams(params);
+        BaseItemView getBaseItemView() {
+            return baseItemView;
         }
     }
 
@@ -253,5 +176,17 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static int dp(Context context, int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 (float) dp, context.getResources().getDisplayMetrics());
+    }
+
+    private OnActionResult onActionResult;
+
+    public void setOnActionResult(OnActionResult onActionResult) {
+        this.onActionResult = onActionResult;
+    }
+
+    public interface OnActionResult {
+        void onClickItem(ImageItem item, int position);
+
+        void onCheckItem(ImageItem imageItem, boolean isChecked);
     }
 }

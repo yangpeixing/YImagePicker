@@ -21,6 +21,10 @@ public enum MultiPickerData {
     private ImageSet currentImageSet = new ImageSet();
 
     public void clear() {
+        for (ImageItem imageItem : selectImgs) {
+            imageItem.setSelect(false);
+            imageItem.setPress(false);
+        }
         selectImgs.clear();
         currentImageSet = null;
     }
@@ -52,6 +56,7 @@ public enum MultiPickerData {
                 return;
             }
         }
+        imageItem.setSelect(true);
         selectImgs.add(imageItem);
     }
 
@@ -70,6 +75,7 @@ public enum MultiPickerData {
 
     public void removeImageItem(ImageItem imageItem) {
         if (imageItem != null && selectImgs != null) {
+            imageItem.setSelect(false);
             for (ImageItem imageItem1 : selectImgs) {
                 if (imageItem.equals(imageItem1)) {
                     selectImgs.remove(imageItem);
@@ -84,7 +90,7 @@ public enum MultiPickerData {
             return false;
         }
         for (ImageItem item : selectImgs) {
-            if (item.path != null && item.path.equals(imageItem.path)) {
+            if (item.equals(imageItem)) {
                 return true;
             }
         }
@@ -114,6 +120,6 @@ public enum MultiPickerData {
     }
 
     public boolean isOverLimit(int limit) {
-        return selectImgs != null && selectImgs.size() > limit;
+        return selectImgs != null && selectImgs.size() >= limit;
     }
 }

@@ -17,7 +17,7 @@ import java.io.Serializable;
  */
 public interface ICropPickerBindPresenter extends Serializable {
 
-    void displayListImage(ImageView imageView, String url);
+    void displayListImage(ImageView imageView, ImageItem item);
 
     void displayCropImage(ImageView imageView, String url);
 

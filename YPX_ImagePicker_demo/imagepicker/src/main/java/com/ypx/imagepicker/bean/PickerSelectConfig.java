@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class MultiSelectConfig implements Serializable {
+public class PickerSelectConfig implements Serializable {
     private int maxCount = -1;
     private int columnCount = 4;
     private boolean isShowCamera = true;
@@ -19,12 +19,36 @@ public class MultiSelectConfig implements Serializable {
     private boolean isShowOriginalCheckBox;
     private boolean isCanEditPic;
     private boolean isPreview = true;
+    /**
+     * 图片和视频只能选择一个
+     */
+    private boolean isSinglePickImageOrVideoType = true;
+    /**
+     * 视频是否可以多选
+     */
+    private boolean isVideoSinglePick = true;
     private int selectMode;
     private ArrayList<ImageItem> lastImageList = new ArrayList<>();
     private ArrayList<ImageItem> shieldImageList = new ArrayList<>();
 
     private int cropRatioX = 1;
     private int cropRatioY = 1;
+
+    public boolean isSinglePickImageOrVideoType() {
+        return isSinglePickImageOrVideoType;
+    }
+
+    public void setSinglePickImageOrVideoType(boolean isSinglePickImageOrVideoType) {
+        this.isSinglePickImageOrVideoType = isSinglePickImageOrVideoType;
+    }
+
+    public boolean isVideoSinglePick() {
+        return isVideoSinglePick;
+    }
+
+    public void setVideoSinglePick(boolean isVideoSinglePick) {
+        this.isVideoSinglePick = isVideoSinglePick;
+    }
 
     public boolean isPreview() {
         return isPreview;
@@ -144,6 +168,22 @@ public class MultiSelectConfig implements Serializable {
             return false;
         }
         for (ImageItem item : shieldImageList) {
+            if (item.equals(imageItem)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * 是否是之前选中过的
+     */
+    public boolean isLastItem(ImageItem imageItem) {
+        if (lastImageList == null || lastImageList.size() == 0) {
+            return false;
+        }
+        for (ImageItem item : lastImageList) {
             if (item.equals(imageItem)) {
                 return true;
             }

@@ -65,7 +65,7 @@ public class CropSetAdapter extends RecyclerView.Adapter<CropSetAdapter.ViewHold
         viewHolder.mTvSetName.setText(imageSet.name);
         if (imageLoader != null) {
             ImageItem imageItem = imageSet.imageItems.get(0);
-            imageLoader.displayListImage(viewHolder.imageView, imageItem.isVideo() ? imageItem.getVideoImageUri() : imageItem.path);
+            imageLoader.displayListImage(viewHolder.imageView, imageItem);
         }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

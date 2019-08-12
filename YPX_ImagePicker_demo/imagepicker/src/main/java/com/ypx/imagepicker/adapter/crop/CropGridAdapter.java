@@ -2,9 +2,12 @@ package com.ypx.imagepicker.adapter.crop;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -201,7 +204,7 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
             } else {
                 v_mask.setVisibility(View.GONE);
             }
-            loadImage(imageItem);
+           loadImage(imageItem);
 
 //            if (imageItem.videoImageUri == null || imageItem.videoImageUri.length() == 0) {
 //                String thumbPath = "";
@@ -228,16 +231,8 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             String path =  imageItem.path;
             if (null != bindingProvider) {
-                if (itemView.getTag() instanceof String) {
-                    if (!itemView.getTag().equals(imageItem.path)) {
-                        bindingProvider.displayListImage(imageView, path);
-                    }
-                } else {
-                    bindingProvider.displayListImage(imageView, path);
-                }
-                itemView.setTag(path);
+                bindingProvider.displayListImage(imageView, imageItem);
             }
-
         }
     }
 }

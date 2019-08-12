@@ -23,8 +23,8 @@ import com.ypx.imagepicker.utils.ViewSizeUtils;
  */
 public class RedBookCropPresenter implements ICropPickerBindPresenter {
     @Override
-    public void displayListImage(ImageView imageView, String url) {
-        Glide.with(imageView.getContext()).load(url).into(imageView);
+    public void displayListImage(ImageView imageView, ImageItem item) {
+        Glide.with(imageView.getContext()).load(item.path).into(imageView);
     }
 
     @Override

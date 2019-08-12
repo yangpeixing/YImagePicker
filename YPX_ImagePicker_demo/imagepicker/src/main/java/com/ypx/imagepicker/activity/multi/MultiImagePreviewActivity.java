@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +30,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.adapter.multi.MultiPreviewAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.MultiSelectConfig;
-import com.ypx.imagepicker.bean.MultiUiConfig;
+import com.ypx.imagepicker.bean.PickerSelectConfig;
+import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.PickerFileProvider;
@@ -63,16 +62,16 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     private TextView mTvRight;
     private ViewGroup mTitleBar;
     private RelativeLayout mBottomBar;
-    private MultiSelectConfig selectConfig;
+    private PickerSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
-    private MultiUiConfig multiUiConfig;
+    private PickerUiConfig uiConfig;
 
     private RecyclerView mPreviewRecyclerView;
     private MultiPreviewAdapter previewAdapter;
     private boolean isCanEdit = false;
 
     public static void preview(Activity context,
-                               MultiSelectConfig selectConfig,
+                               PickerSelectConfig selectConfig,
                                IMultiPickerBindPresenter presenter,
                                final boolean isPickerJump,
                                final ArrayList<ImageItem> previewList,
@@ -108,7 +107,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             finish();
             return;
         }
-        selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
+        selectConfig = (PickerSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
         presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_UI_CONFIG);
         mCurrentItemPosition = getIntent().getIntExtra(INTENT_KEY_CURRENT_INDEX, 0);
         isCanEdit = getIntent().getBooleanExtra(INTENT_KEY_CAN_EDIT, false);
@@ -129,7 +128,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             finish();
             return;
         }
-        multiUiConfig = presenter.getUiConfig(this);
+        uiConfig = presenter.getUiConfig(this);
         initUI();
         initPreviewRecyclerView();
         initViewPager();
@@ -138,7 +137,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
 
     @Override
     public void finish() {
-        if (mPreviewList != null && mPreviewList.size() > 0) {
+        if (mPreviewList != null) {
             MultiPickerData.instance.setSelectImageList(mPreviewList);
         }
         super.finish();
@@ -184,38 +183,27 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         mTvRight = findViewById(R.id.tv_rightBtn);
         mTitleBar = findViewById(R.id.top_bar);
         mBottomBar = findViewById(R.id.bottom_bar);
+
+        if (uiConfig.isImmersionBar()) {
+            StatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
+                    StatusBarUtil.isDarkColor(uiConfig.getTitleBarBackgroundColor()));
+
+            mTitleBar.setPadding(0, StatusBarUtil.getStatusBarHeight(this), 0, 0);
+        }
+
         ImageView iv_back = findViewById(R.id.iv_back);
         mBottomBar.setClickable(true);
-        mCbSelected.setLeftDrawable(getResources().getDrawable(multiUiConfig.getSelectedIconID()),
-                getResources().getDrawable(multiUiConfig.getUnSelectIconID()));
-        if (multiUiConfig.isImmersionBar() && multiUiConfig.getTopBarBackgroundColor() != 0) {
-            StatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
-                    StatusBarUtil.isDarkColor(multiUiConfig.getTopBarBackgroundColor()));
-
-            mTitleBar.setPadding(0,StatusBarUtil.getStatusBarHeight(this),0,0);
-        }
-
-        if (multiUiConfig.getBackIconID() != 0) {
-            iv_back.setImageDrawable(getResources().getDrawable(multiUiConfig.getBackIconID()));
-        }
-
-        if (multiUiConfig.getBackIconColor() != 0) {
-            iv_back.setColorFilter(multiUiConfig.getBackIconColor());
-        }
-
-        mCbSelected.setTextColor(multiUiConfig.getPreviewTextColor());
-
-        if (multiUiConfig.getTopBarBackgroundColor() != 0) {
-            mTitleBar.setBackgroundColor(multiUiConfig.getTopBarBackgroundColor());
-        }
-
-        if (multiUiConfig.getBottomBarBackgroundColor() != 0) {
-            mBottomBar.setBackgroundColor(multiUiConfig.getBottomBarBackgroundColor());
-            mPreviewRecyclerView.setBackgroundColor(multiUiConfig.getBottomBarBackgroundColor());
-        }
-
-        if (multiUiConfig.getTitleColor() != 0) {
-            mTvTitle.setTextColor(multiUiConfig.getTitleColor());
+        mCbSelected.setLeftDrawable(getResources().getDrawable(uiConfig.getSelectedIconID()),
+                getResources().getDrawable(uiConfig.getUnSelectIconID()));
+        iv_back.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
+        iv_back.setColorFilter(uiConfig.getBackIconColor());
+        mCbSelected.setTextColor(uiConfig.getPreviewTextColor());
+        mTitleBar.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
+        mBottomBar.setBackgroundColor(uiConfig.getBottomBarBackgroundColor());
+        mPreviewRecyclerView.setBackgroundColor(uiConfig.getBottomBarBackgroundColor());
+        mTvTitle.setTextColor(uiConfig.getTitleColor());
+        if (uiConfig.getOkBtnSelectBackground() == null && uiConfig.getOkBtnUnSelectBackground() == null) {
+            mTvRight.setPadding(0, 0, 0, 0);
         }
 
         if (!isCanEdit) {
@@ -231,7 +219,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
                 finish();
             }
         });
-        ((LinearLayout)findViewById(R.id.mTitleRoot)).setGravity(multiUiConfig.getTopBarTitleGravity());
+        ((LinearLayout) findViewById(R.id.mTitleRoot)).setGravity(uiConfig.getTitleBarGravity());
         resetBtnOKBtn();
         mTvRight.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -326,7 +314,28 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     public void onImagePageSelected(int position, boolean isSelected) {
         mTvTitle.setText(String.format("%d/%d", position + 1, mImageList.size()));
         mCbSelected.setChecked(isSelected);
-        notifyPreviewList(mImageList.get(position));
+        mCbSelected.setVisibility(View.VISIBLE);
+        ImageItem imageItem = mImageList.get(position);
+        notifyPreviewList(imageItem);
+        resetBtnOKBtn();
+        if (selectConfig.isVideoSinglePick() && imageItem.isVideo()) {
+            mCbSelected.setVisibility(View.GONE);
+            if (mPreviewList.size() == 0) {
+                mTvRight.setEnabled(true);
+                mTvRight.setBackground(uiConfig.getOkBtnSelectBackground());
+                mTvRight.setTextColor(uiConfig.getOkBtnSelectTextColor());
+                mTvRight.setText(uiConfig.getOkBtnText());
+            }
+        } else {
+            //如果图片和视频只能选择一种并且已选中列表中第一个item属性与当前图片或视频不符合，则隐藏底部选择框
+            if (selectConfig.isSinglePickImageOrVideoType() && mPreviewList.size() > 0) {
+                if (mPreviewList.get(0).isVideo() != imageItem.isVideo()) {
+                    mCbSelected.setVisibility(View.GONE);
+                } else {
+                    mCbSelected.setVisibility(View.VISIBLE);
+                }
+            }
+        }
     }
 
     private void notifyPreviewList(ImageItem imageItem) {
@@ -344,36 +353,25 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     @SuppressLint("DefaultLocale")
     private void resetBtnOKBtn() {
         if (mPreviewList != null && mPreviewList.size() > 0) {
-            mTvRight.setClickable(true);
             mTvRight.setEnabled(true);
-            mTvRight.setAlpha(1f);
-            if (selectConfig.getMaxCount() < 0) {
-                mTvRight.setText(multiUiConfig.getOkBtnText());
-            } else {
-                String text = String.format("%s(%d/%d)", multiUiConfig.getOkBtnText(),
-                        mPreviewList.size(),
-                        selectConfig.getMaxCount());
-                mTvRight.setText(text);
-            }
-            mTvRight.setBackground(multiUiConfig.getOkBtnSelectBackground());
-            if (multiUiConfig.getOkBtnSelectTextColor() != 0) {
-                mTvRight.setTextColor(multiUiConfig.getOkBtnSelectTextColor());
-            }
+            mTvRight.setBackground(uiConfig.getOkBtnSelectBackground());
+            mTvRight.setTextColor(uiConfig.getOkBtnSelectTextColor());
         } else {
-            mTvRight.setText(multiUiConfig.getOkBtnText());
-            mTvRight.setClickable(false);
             mTvRight.setEnabled(false);
-            mTvRight.setBackground(multiUiConfig.getOkBtnUnSelectBackground());
-            if (multiUiConfig.getOkBtnUnSelectTextColor() != 0) {
-                mTvRight.setTextColor(multiUiConfig.getOkBtnUnSelectTextColor());
-            }
+            mTvRight.setBackground(uiConfig.getOkBtnUnSelectBackground());
+            mTvRight.setTextColor(uiConfig.getOkBtnUnSelectTextColor());
+        }
+
+        if (selectConfig.getMaxCount() < 0 || mPreviewList == null || mPreviewList.size() <= 0) {
+            mTvRight.setText(uiConfig.getOkBtnText());
+        } else {
+            String text = String.format("%s(%d/%d)", uiConfig.getOkBtnText(),
+                    mPreviewList.size(),
+                    selectConfig.getMaxCount());
+            mTvRight.setText(text);
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 
     public IMultiPickerBindPresenter getImgLoader() {
         return presenter;

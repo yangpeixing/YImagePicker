@@ -131,7 +131,7 @@ public class MultiSetAdapter extends BaseAdapter {
             name.setText(data.name);
             size.setText(String.format("%d%s", data.imageItems.size(), mContext.getResources().getString(R.string.piece)));
             if (uiConfig != null) {
-                uiConfig.displayListImage(cover, data.cover.path, (getScreenWidth() - dp(2) * 2) / 3);
+                uiConfig.displayListImage(cover, data.cover, (getScreenWidth() - dp(2) * 2) / 3);
             }
         }
     }

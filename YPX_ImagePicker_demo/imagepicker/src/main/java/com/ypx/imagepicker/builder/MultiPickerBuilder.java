@@ -9,7 +9,7 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSelectMode;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.bean.MultiSelectConfig;
+import com.ypx.imagepicker.bean.PickerSelectConfig;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 
 import java.util.ArrayList;
@@ -20,19 +20,19 @@ import java.util.ArrayList;
  * 产权：南京婚尚信息技术
  */
 public class MultiPickerBuilder {
-    private MultiSelectConfig multiSelectConfig;
+    private PickerSelectConfig pickerSelectConfig;
     private IMultiPickerBindPresenter presenter;
 
     public MultiPickerBuilder(IMultiPickerBindPresenter presenter) {
         this.presenter = presenter;
-        this.multiSelectConfig = new MultiSelectConfig();
+        this.pickerSelectConfig = new PickerSelectConfig();
     }
 
     public void pick(Activity context, final OnImagePickCompleteListener listener) {
-        multiSelectConfig.setSelectMode(multiSelectConfig.getMaxCount() > 1 ?
+        pickerSelectConfig.setSelectMode(pickerSelectConfig.getMaxCount() > 1 ?
                 ImageSelectMode.MODE_MULTI : ImageSelectMode.MODE_SINGLE);
         MultiPickerData.instance.clear();
-        if (multiSelectConfig.getMaxCount() <= 0) {
+        if (pickerSelectConfig.getMaxCount() <= 0) {
             presenter.tip(context, context.getResources().getString(R.string.str_setcount));
             return;
         }
@@ -40,7 +40,7 @@ public class MultiPickerBuilder {
     }
 
     public void crop(Activity context, OnImagePickCompleteListener listener) {
-        multiSelectConfig.setSelectMode(ImageSelectMode.MODE_CROP);
+        pickerSelectConfig.setSelectMode(ImageSelectMode.MODE_CROP);
         showVideo(false);
         setMaxCount(1);
         MultiPickerData.instance.clear();
@@ -49,7 +49,7 @@ public class MultiPickerBuilder {
 
 
     public void takePhoto(Activity context, OnImagePickCompleteListener listener) {
-        multiSelectConfig.setSelectMode(ImageSelectMode.MODE_TAKEPHOTO);
+        pickerSelectConfig.setSelectMode(ImageSelectMode.MODE_TAKEPHOTO);
         MultiPickerData.instance.clear();
         dealIntent(context, listener);
     }
@@ -61,7 +61,7 @@ public class MultiPickerBuilder {
         }
         MultiPickerData.instance.clear();
         MultiImagePreviewActivity.preview(context,
-                multiSelectConfig,
+                pickerSelectConfig,
                 presenter,
                 context instanceof MultiImagePickerActivity,
                 transitArray(imageList),
@@ -71,45 +71,56 @@ public class MultiPickerBuilder {
 
 
     private void dealIntent(Activity activity, final OnImagePickCompleteListener listener) {
-        MultiImagePickerActivity.intent(activity, multiSelectConfig, presenter, listener);
+        MultiImagePickerActivity.intent(activity, pickerSelectConfig, presenter, listener);
     }
 
 
     public MultiPickerBuilder setMaxCount(int selectLimit) {
-        multiSelectConfig.setMaxCount(selectLimit);
+        pickerSelectConfig.setMaxCount(selectLimit);
         return this;
     }
 
     public MultiPickerBuilder showVideo(boolean showVideo) {
-        multiSelectConfig.setShowVideo(showVideo);
+        pickerSelectConfig.setShowVideo(showVideo);
         return this;
     }
 
     public MultiPickerBuilder showGif(boolean showGif) {
-        multiSelectConfig.setLoadGif(showGif);
+        pickerSelectConfig.setLoadGif(showGif);
         return this;
     }
 
 
     public MultiPickerBuilder setColumnCount(int columnCount) {
-        multiSelectConfig.setColumnCount(columnCount);
+        pickerSelectConfig.setColumnCount(columnCount);
         return this;
     }
 
     public MultiPickerBuilder setPreview(boolean isPreview) {
-        multiSelectConfig.setPreview(isPreview);
+        pickerSelectConfig.setPreview(isPreview);
         return this;
     }
 
 
     public MultiPickerBuilder showCamera(boolean showCamera) {
-        multiSelectConfig.setShowCamera(showCamera);
+        pickerSelectConfig.setShowCamera(showCamera);
+        return this;
+    }
+
+    public MultiPickerBuilder setSinglePickImageOrVideoType(boolean isSinglePickImageOrVideoType) {
+        pickerSelectConfig.setSinglePickImageOrVideoType(isSinglePickImageOrVideoType);
+        return this;
+    }
+
+
+    public MultiPickerBuilder setVideoSinglePick(boolean isVideoSinglePick) {
+        pickerSelectConfig.setVideoSinglePick(isVideoSinglePick);
         return this;
     }
 
 
     public MultiPickerBuilder showImage(boolean showImage) {
-        multiSelectConfig.setShowImage(showImage);
+        pickerSelectConfig.setShowImage(showImage);
         return this;
     }
 
@@ -117,7 +128,7 @@ public class MultiPickerBuilder {
         if (imageList == null || imageList.size() == 0) {
             return this;
         }
-        multiSelectConfig.setShieldImageList(transitArray(imageList));
+        pickerSelectConfig.setShieldImageList(transitArray(imageList));
         return this;
     }
 
@@ -126,17 +137,17 @@ public class MultiPickerBuilder {
         if (imageList == null || imageList.size() == 0) {
             return this;
         }
-        multiSelectConfig.setLastImageList(transitArray(imageList));
+        pickerSelectConfig.setLastImageList(transitArray(imageList));
         return this;
     }
 
 //    public MultiPickerBuilder showOriginalCheckBox(boolean showOriginalCheckBox) {
-//        multiSelectConfig.setShowOriginalCheckBox(showOriginalCheckBox);
+//        pickerSelectConfig.setShowOriginalCheckBox(showOriginalCheckBox);
 //        return this;
 //    }
 
     public MultiPickerBuilder setCropRatio(int x, int y) {
-        multiSelectConfig.setCropRatio(x, y);
+        pickerSelectConfig.setCropRatio(x, y);
         return this;
     }
 
@@ -158,7 +169,7 @@ public class MultiPickerBuilder {
     }
 
 //    public MultiPickerBuilder setCanEditPic(boolean canEditPic) {
-//        multiSelectConfig.setCanEditPic(canEditPic);
+//        pickerSelectConfig.setCanEditPic(canEditPic);
 //        return this;
 //    }
 

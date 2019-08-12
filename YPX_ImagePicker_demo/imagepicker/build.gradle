@@ -11,10 +11,9 @@ android {
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.oginotihiro:cropview:1.0.0'
 }
 
 
-apply from: 'generate.gradle'
+//apply from: 'generate.gradle'

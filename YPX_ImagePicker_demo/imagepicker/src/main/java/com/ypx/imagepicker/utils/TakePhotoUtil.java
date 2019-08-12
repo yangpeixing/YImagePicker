@@ -1,13 +1,18 @@
 package com.ypx.imagepicker.utils;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+
+import androidx.core.content.ContextCompat;
 
 import com.ypx.imagepicker.helper.PickerFileProvider;
 
@@ -40,6 +45,14 @@ public class TakePhotoUtil {
      * 调用系统相机拍照
      */
     public static void takePhoto(Activity activity, int REQ) {
+
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                activity.requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ);
+            }
+            return;
+        }
+
         mCurrentPhotoPath = "";
         // 激活相机
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -150,5 +163,16 @@ public class TakePhotoUtil {
         } else {
             return null;
         }
+    }
+
+    /**
+     * 刷新相册
+     */
+    public static void refreshGalleryAddPic(Context context) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        context.sendBroadcast(mediaScanIntent);
     }
 }

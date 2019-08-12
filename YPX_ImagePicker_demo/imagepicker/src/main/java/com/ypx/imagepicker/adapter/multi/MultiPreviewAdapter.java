@@ -1,7 +1,6 @@
 package com.ypx.imagepicker.adapter.multi;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -9,12 +8,9 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.MultiUiConfig;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.utils.ViewSizeUtils;
 import com.ypx.imagepicker.widget.ShowTypeImageView;
 
 import java.util.ArrayList;
@@ -62,7 +58,7 @@ public class MultiPreviewAdapter extends RecyclerView.Adapter<MultiPreviewAdapte
                 }
             }
         });
-        presenter.displayListImage(holder.imageView, imageItem.path, 0);
+        presenter.displayListImage(holder.imageView, imageItem, 0);
     }
 
     @Override
