@@ -121,21 +121,19 @@ public class ImagePickAndCropActivity extends FragmentActivity {
                 .commit();
     }
 
-    public void back(View view) {
+    @Override
+    public void onBackPressed() {
         if (null != mFragment && mFragment.onBackPressed()) {
             return;
         }
         super.onBackPressed();
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {
-            if (mFragment != null) {
-                mFragment.onTakePhotoResult();
-            }
+        if (mFragment != null) {
+            mFragment.onTakePhotoResult(requestCode, resultCode);
         }
     }
 }

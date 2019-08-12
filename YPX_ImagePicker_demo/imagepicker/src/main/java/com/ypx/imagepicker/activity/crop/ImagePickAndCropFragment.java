@@ -58,6 +58,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.app.Activity.RESULT_OK;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_CROPPICSAVEFILEPATH;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_FIRSTIMAGEITEM;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_IMAGELOADER;
@@ -206,6 +207,17 @@ public class ImagePickAndCropFragment extends Fragment implements
         mGridImageRecyclerView = mContentView.findViewById(R.id.mRecyclerView);
         mImageSetRecyclerView = mContentView.findViewById(R.id.mImageSetRecyclerView);
         mTvFullOrFit.setBackground(CornerUtils.cornerDrawable(Color.parseColor("#80000000"), dp(15)));
+        mContentView.findViewById(R.id.mBackImg).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onBackPressed()) {
+                    return;
+                }
+                if (getActivity() != null) {
+                    getActivity().finish();
+                }
+            }
+        });
         //初始化监听
         stateBtn.setOnClickListener(this);
         mTvSetName.setOnClickListener(this);
@@ -836,18 +848,20 @@ public class ImagePickAndCropFragment extends Fragment implements
         dialog.show();
     }
 
-    void onTakePhotoResult() {
-        if (!TextUtils.isEmpty(TakePhotoUtil.mCurrentPhotoPath)) {
-            refreshGalleryAddPic();
-            ImageItem item = new ImageItem(TakePhotoUtil.mCurrentPhotoPath, System.currentTimeMillis());
-            item.width = FileUtil.getImageWidthHeight(TakePhotoUtil.mCurrentPhotoPath)[0];
-            item.height = FileUtil.getImageWidthHeight(TakePhotoUtil.mCurrentPhotoPath)[1];
-            imageItems.add(0, item);
-            if (imageSets != null && imageSets.size() > 0 && imageSets.get(0).imageItems != null) {
-                imageSets.get(0).imageItems.add(0, item);
+    void onTakePhotoResult(int requestCode, int resultCode) {
+        if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {
+            if (!TextUtils.isEmpty(TakePhotoUtil.mCurrentPhotoPath)) {
+                refreshGalleryAddPic();
+                ImageItem item = new ImageItem(TakePhotoUtil.mCurrentPhotoPath, System.currentTimeMillis());
+                item.width = FileUtil.getImageWidthHeight(TakePhotoUtil.mCurrentPhotoPath)[0];
+                item.height = FileUtil.getImageWidthHeight(TakePhotoUtil.mCurrentPhotoPath)[1];
+                imageItems.add(0, item);
+                if (imageSets != null && imageSets.size() > 0 && imageSets.get(0).imageItems != null) {
+                    imageSets.get(0).imageItems.add(0, item);
+                }
+                selectImage(isShowCamera ? 1 : 0);
+                imageGridAdapter.notifyDataSetChanged();
             }
-            selectImage(isShowCamera ? 1 : 0);
-            imageGridAdapter.notifyDataSetChanged();
         }
     }
 
@@ -874,7 +888,7 @@ public class ImagePickAndCropFragment extends Fragment implements
     /**
      * 相册选择是否打开
      */
-    public  boolean onBackPressed() {
+    public boolean onBackPressed() {
         if (mImageSetRecyclerView.getVisibility() == View.VISIBLE) {
             toggleImageSet();
             return true;

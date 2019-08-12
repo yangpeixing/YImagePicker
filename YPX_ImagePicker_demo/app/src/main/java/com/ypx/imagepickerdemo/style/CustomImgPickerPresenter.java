@@ -1,24 +1,17 @@
 package com.ypx.imagepickerdemo.style;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
 import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.utils.FileUtil;
-import com.ypx.imagepicker.utils.ViewSizeUtils;
 import com.ypx.imagepickerdemo.R;
-
-import java.io.File;
 import java.util.ArrayList;
 
 /**
