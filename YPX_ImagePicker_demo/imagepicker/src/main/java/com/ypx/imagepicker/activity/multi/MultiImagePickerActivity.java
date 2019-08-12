@@ -3,8 +3,11 @@ package com.ypx.imagepicker.activity.multi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.PickerSelectConfig;
@@ -12,6 +15,7 @@ import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.launcher.ActivityLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
+
 import java.util.ArrayList;
 
 /**
@@ -27,6 +31,7 @@ public class MultiImagePickerActivity extends FragmentActivity {
     public static final String INTENT_KEY_CURRENT_INDEX = "currentIndex";
     public static final String INTENT_KEY_CURRENT_IMAGE = "currentImage";
     public static final int REQ_CAMERA = 1431;
+
     public static void intent(Activity activity,
                               PickerSelectConfig selectConfig,
                               IMultiPickerBindPresenter presenter,
@@ -47,7 +52,7 @@ public class MultiImagePickerActivity extends FragmentActivity {
         });
     }
 
-   private MultiImagePickerFragment fragment;
+    private MultiImagePickerFragment fragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,11 +69,20 @@ public class MultiImagePickerActivity extends FragmentActivity {
             finish();
             return;
         }
-        fragment = new MultiImagePickerFragment();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(INTENT_KEY_SELECT_CONFIG, selectConfig);
-        bundle.putSerializable(INTENT_KEY_UI_CONFIG, presenter);
-        fragment.setArguments(bundle);
+        fragment = ImagePicker.withMultiFragment(presenter)
+                .showImage(selectConfig.isShowImage())
+                .showCamera(selectConfig.isShowCamera())
+                .showGif(selectConfig.isLoadGif())
+                .showVideo(selectConfig.isShowVideo())
+                .setMaxCount(selectConfig.getMaxCount())
+                .setVideoSinglePick(selectConfig.isVideoSinglePick())
+                .setSinglePickImageOrVideoType(selectConfig.isSinglePickImageOrVideoType())
+                .setShieldList(selectConfig.getShieldImageList())
+                .setLastImageList(selectConfig.getLastImageList())
+                .setCropRatio(selectConfig.getCropRatioX(), selectConfig.getCropRatioY())
+                .setColumnCount(selectConfig.getColumnCount())
+                .setPreview(selectConfig.isPreview())
+                .pickWithFragment();
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment)

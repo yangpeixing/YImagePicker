@@ -32,8 +32,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<ImageItem> picList = new ArrayList<>();
 
     int maxNum = 16;
-    private WXImgPickerPresenter wxImgPickerPresenter;
-    private CustomImgPickerPresenter customImgPickerPresenter;
     private RadioButton mRbRedBook;
     private RadioButton mRbWeChat;
     private RadioButton mRbCustom;
@@ -62,9 +60,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-
-        wxImgPickerPresenter = new WXImgPickerPresenter();
-        customImgPickerPresenter = new CustomImgPickerPresenter();
 
         //注册媒体文件观察者，可放入Application或首页中
         ImagePicker.registerMediaObserver(getApplication());

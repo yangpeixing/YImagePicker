@@ -1,9 +1,14 @@
 package com.ypx.imagepicker.builder;
 
 import android.app.Activity;
+import android.os.Bundle;
 
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity;
+import com.ypx.imagepicker.activity.crop.ImagePickAndCropFragment;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerActivity;
+import com.ypx.imagepicker.activity.multi.MultiImagePickerFragment;
 import com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSelectMode;
@@ -14,10 +19,14 @@ import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 
 import java.util.ArrayList;
 
+import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
+import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_UI_CONFIG;
+
 /**
- * 作者：yangpeixing on 2018/9/19 16:56
- * 功能：图片选择器执行类
- * 产权：南京婚尚信息技术
+ * Description: 多选选择器构造类
+ * <p>
+ * Author: peixing.yang
+ * Date: 2018/9/19 16:56
  */
 public class MultiPickerBuilder {
     private PickerSelectConfig pickerSelectConfig;
@@ -76,6 +85,9 @@ public class MultiPickerBuilder {
 
 
     public MultiPickerBuilder setMaxCount(int selectLimit) {
+        if (selectLimit > 1) {
+            pickerSelectConfig.setSelectMode(ImageSelectMode.MODE_MULTI);
+        }
         pickerSelectConfig.setMaxCount(selectLimit);
         return this;
     }
@@ -132,7 +144,6 @@ public class MultiPickerBuilder {
         return this;
     }
 
-
     public <T> MultiPickerBuilder setLastImageList(ArrayList<T> imageList) {
         if (imageList == null || imageList.size() == 0) {
             return this;
@@ -140,11 +151,6 @@ public class MultiPickerBuilder {
         pickerSelectConfig.setLastImageList(transitArray(imageList));
         return this;
     }
-
-//    public MultiPickerBuilder showOriginalCheckBox(boolean showOriginalCheckBox) {
-//        pickerSelectConfig.setShowOriginalCheckBox(showOriginalCheckBox);
-//        return this;
-//    }
 
     public MultiPickerBuilder setCropRatio(int x, int y) {
         pickerSelectConfig.setCropRatio(x, y);
@@ -168,9 +174,17 @@ public class MultiPickerBuilder {
         return items;
     }
 
-//    public MultiPickerBuilder setCanEditPic(boolean canEditPic) {
-//        pickerSelectConfig.setCanEditPic(canEditPic);
-//        return this;
-//    }
 
+    private Bundle getFragmentArguments() {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(INTENT_KEY_SELECT_CONFIG, pickerSelectConfig);
+        bundle.putSerializable(INTENT_KEY_UI_CONFIG, presenter);
+        return bundle;
+    }
+
+    public MultiImagePickerFragment pickWithFragment() {
+        MultiImagePickerFragment mFragment = new MultiImagePickerFragment();
+        mFragment.setArguments(getFragmentArguments());
+        return mFragment;
+    }
 }

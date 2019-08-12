@@ -12,6 +12,7 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepickerdemo.R;
+
 import java.util.ArrayList;
 
 /**
@@ -37,20 +38,24 @@ public class CustomImgPickerPresenter implements IMultiPickerBindPresenter {
         PickerUiConfig config = new PickerUiConfig();
         config.setImmersionBar(true);
         config.setThemeColor(context.getResources().getColor(R.color.picker_theme_color));
+        //标题栏模式，从标题栏选择相册
         config.setPickStyle(PickerUiConfig.PICK_STYLE_TITLE);
 
         config.setBackIconID(R.mipmap.picker_icon_close_black);
         config.setTitleBarBackgroundColor(Color.parseColor("#F6F6F6"));
         config.setTitleBarGravity(Gravity.CENTER);
+        //设置标题栏选择相册的图标（上下箭头）
         config.setTitleDrawableRight(context.getResources().getDrawable(R.mipmap.picker_arrow_down));
 
         config.setBottomBarBackgroundColor(Color.parseColor("#f0F6F6F6"));
+        //设置预览页面底部文字颜色，防止和背景色撞色看不到文字
         config.setBottomPreviewTextColor(context.getResources().getColor(R.color.picker_theme_color));
 
         config.setOkBtnSelectTextColor(context.getResources().getColor(R.color.picker_theme_color));
         config.setOkBtnUnSelectTextColor(Color.parseColor("#50859D7B"));
         config.setOkBtnText("下一步");
 
+        //设置选择器自定义item样式
         config.setPickerItemView(new CustomPickerItem(context));
         return config;
     }

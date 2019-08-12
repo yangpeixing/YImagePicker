@@ -74,6 +74,16 @@ public class ImagePicker {
     }
 
     /**
+     * 微信样式多选
+     *
+     * @param iMultiPickerBindPresenter 选择器UI提供者
+     * @return 微信样式多选
+     */
+    public static MultiPickerBuilder withMultiFragment(IMultiPickerBindPresenter iMultiPickerBindPresenter) {
+        return new MultiPickerBuilder(iMultiPickerBindPresenter);
+    }
+
+    /**
      * 注册媒体监听器，用于捕获系统媒体文件发生变化
      *
      * @param application 应用application，可放入自定义Application中

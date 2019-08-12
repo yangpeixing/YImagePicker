@@ -122,7 +122,7 @@
             android:id="@+id/cb_imageOrVideoMix"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="只能选择图片和视频一种" />
+            android:text="只能选择图片或视频" />
 
 
         <TextView
