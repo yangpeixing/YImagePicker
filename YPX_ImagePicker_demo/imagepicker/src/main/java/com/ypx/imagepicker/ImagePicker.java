@@ -34,11 +34,13 @@ public class ImagePicker {
     /**
      * 可以选取的视频最大时长
      */
-    public static final int MAX_VIDEO_DURATION = 120000;
+    public static int MAX_VIDEO_DURATION = 120000;
     //选择返回的key
     public static final String INTENT_KEY_PICKERRESULT = "pickerResult";
     //选择返回code
     public static final int REQ_PICKER_RESULT_CODE = 1433;
+
+    public static boolean isPreloadOk = false;
 
     /**
      * 图片剪裁的保存路径
@@ -118,7 +120,7 @@ public class ImagePicker {
         dataSource.provideMediaItems(new OnImagesLoadedListener() {
             @Override
             public void onImagesLoaded(List<ImageSet> imageSetList) {
-
+                isPreloadOk = true;
             }
         });
     }

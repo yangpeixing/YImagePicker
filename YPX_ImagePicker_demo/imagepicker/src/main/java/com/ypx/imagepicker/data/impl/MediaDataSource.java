@@ -4,6 +4,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
@@ -37,12 +38,8 @@ public class MediaDataSource implements DataSource {
         this.context = context;
         imageSetList = new ArrayList<>();
         videoSetList = new ArrayList<>();
-        try {
-            videoDataSource = new VideoDataSource(context);
-            imageDataSource = new ImageDataSource(context);
-        } catch (Exception ignored) {
-
-        }
+        videoDataSource = new VideoDataSource(context);
+        imageDataSource = new ImageDataSource(context);
     }
 
     private boolean isLoadGif = true;
@@ -74,6 +71,7 @@ public class MediaDataSource implements DataSource {
                     if (isLoadVideo) {//如果加载视频，则整合图片和视频
                         compressImageAndVideo();
                     } else {
+                        ImagePicker.isPreloadOk = true;
                         imagesLoadedListener.onImagesLoaded(mImageSetList);
                     }
                 }
@@ -89,6 +87,7 @@ public class MediaDataSource implements DataSource {
                     if (isLoadImage) {//如果加载图片，则整合图片和视频
                         compressImageAndVideo();
                     } else {
+                        ImagePicker.isPreloadOk = true;
                         imagesLoadedListener.onImagesLoaded(mImageSetList);
                     }
                 }
@@ -100,10 +99,11 @@ public class MediaDataSource implements DataSource {
     /**
      * 整合图片和视频，按照时间顺序排序
      */
-    private void compressImageAndVideo() {
+    private synchronized void compressImageAndVideo() {
         if (!isImageLoaded || !isVideoLoaded) {
             return;
         }
+
         boolean isHasVideo = videoSetList != null && videoSetList.size() > 0;
         boolean isHasImage = imageSetList != null && imageSetList.size() > 0;
         if (!isHasVideo && !isHasImage) {
@@ -127,23 +127,43 @@ public class MediaDataSource implements DataSource {
     private void compress() {
         allSetList.clear();
 
-        if (videoSetList != null && videoSetList.size() > 0) {
-            fore(videoSetList, imageSetList);
-        } else if (imageSetList != null && imageSetList.size() > 0) {
-            fore(imageSetList, videoSetList);
+        if (imageSetList == null) {
+            imageSetList = new ArrayList<>();
         }
 
+        if (videoSetList == null) {
+            videoSetList = new ArrayList<>();
+        }
+        //先添加所有图片文件
+        allSetList.addAll(imageSetList);
+        //遍历视频文件夹
+        for (ImageSet videoSet : videoSetList) {
+            //遍历图片文件夹
+            for (ImageSet imageSet : imageSetList) {
+                //如果视频和图片是同一文件夹，则需要合并并排序
+                //否则将视频文件夹加到全部文件夹列表中
+                if (videoSet.equals(imageSet)) {
+                    imageSet.imageItems.addAll(videoSet.imageItems);
+                    sort(imageSet.imageItems);
+                } else {
+                    allSetList.add(videoSet);
+                }
+            }
+        }
+
+        //将所有图片打包到全部媒体文件列表
         ArrayList<ImageItem> allMediaItems = new ArrayList<>();
-        if (imageSetList != null && imageSetList.size() > 0) {
+        if (imageSetList.size() > 0) {
             allMediaItems.addAll(imageSetList.get(0).imageItems);
         }
-
-        if (videoSetList != null && videoSetList.size() > 0) {
+        //将所有视频打包到全部媒体文件列表
+        if (videoSetList.size() > 0) {
             allMediaItems.addAll(videoSetList.get(0).imageItems);
         }
-
+        //排序全部媒体文件列表
         sort(allMediaItems);
 
+        //添加第一个本地文件夹
         ImageSet allMediaSet = new ImageSet();
         allMediaSet.name = context.getString(R.string.str_allmedia);
         allMediaSet.imageItems = allMediaItems;
@@ -151,6 +171,7 @@ public class MediaDataSource implements DataSource {
         allMediaSet.isSelected = true;
         allSetList.add(0, allMediaSet);
 
+        //调整所有视频文件夹顺序为第三个
         for (ImageSet set : allSetList) {
             if (set.name.equals(context.getString(R.string.str_allvideo))) {
                 allSetList.remove(set);
@@ -159,13 +180,13 @@ public class MediaDataSource implements DataSource {
             }
         }
 
-
+        if (context.isDestroyed() || context.isFinishing()) {
+            return;
+        }
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (context.isDestroyed()) {
-                    return;
-                }
+                ImagePicker.isPreloadOk = true;
                 if (imagesLoadedListener != null) {
                     imagesLoadedListener.onImagesLoaded(allSetList);
                 }
@@ -173,48 +194,6 @@ public class MediaDataSource implements DataSource {
         });
     }
 
-    private void fore(List<ImageSet> a, List<ImageSet> b) {
-        for (ImageSet videoSet : a) {
-            if (b != null && b.size() > 0) {
-                for (ImageSet imageSet : b) {
-                    if (videoSet.equals(imageSet)) {
-                        //同一个文件夹
-                        compressImageSet(imageSet.imageItems, videoSet.imageItems);
-                        sort(imageSet.imageItems);
-                    }
-                    if (!allSetList.contains(imageSet)) {
-                        allSetList.add(imageSet);
-                    }
-                }
-            }
-            if (!allSetList.contains(videoSet)) {
-                allSetList.add(videoSet);
-            }
-        }
-    }
-
-    /**
-     * 整合文件夹中所有图片和视频，要去重
-     *
-     * @param items  文件夹1
-     * @param items2 文件夹2
-     */
-    private void compressImageSet(ArrayList<ImageItem> items, ArrayList<ImageItem> items2) {
-        for (ImageItem imageItem : items2) {
-            if (!items.contains(imageItem)) {
-                items.add(imageItem);
-            }
-        }
-    }
-
-    private boolean isNotContainsImageSet(ImageSet imageSet) {
-        for (ImageSet imageSet1 : allSetList) {
-            if (imageSet1.equals(imageSet)) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     private void sort(List<ImageItem> imageItemList) {
         //对媒体数据进行排序

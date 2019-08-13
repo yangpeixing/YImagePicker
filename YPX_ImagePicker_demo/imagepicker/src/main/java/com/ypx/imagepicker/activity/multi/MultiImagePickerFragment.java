@@ -344,6 +344,10 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
 
     @Override
     public void onImagesLoaded(List<ImageSet> imageSetList) {
+        if (imageSetList == null || imageSetList.size() == 0) {
+            btnDir.setText("无媒体文件");
+            return;
+        }
         this.imageSets = imageSetList;
         this.imageItems = imageSetList.get(currentSetIndex).imageItems;
         MultiPickerData.instance.setCurrentImageSet(imageSets.get(currentSetIndex));
@@ -518,9 +522,9 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
                     ImageSet imageSet = imageSets.get(currentSetIndex);
                     MultiPickerData.instance.setCurrentImageSet(imageSet);
                     intentPreview(position, null);
-                }else {
-                    presenter.imageItemClick(mContext,item,MultiPickerData.instance.getSelectImageList()
-                            ,imageSets.get(currentSetIndex).imageItems,mAdapter);
+                } else {
+                    presenter.imageItemClick(mContext, item, MultiPickerData.instance.getSelectImageList()
+                            , imageSets.get(currentSetIndex).imageItems, mAdapter);
                 }
                 break;
             //单选情况下，点击直接返回

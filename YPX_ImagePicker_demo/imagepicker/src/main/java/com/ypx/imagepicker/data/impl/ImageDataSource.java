@@ -10,6 +10,7 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
@@ -52,7 +53,7 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
             return;
         }
         //如果缓存中有数据，并且媒体库没有数据更新，则直接加载缓存数据
-        if (mImageSetList != null && mImageSetList.size() > 0
+        if (ImagePicker.isPreloadOk && mImageSetList != null && mImageSetList.size() > 0
                 && MediaObserver.instance.isMediaNotChanged()) {
             imagesLoadedListener.onImagesLoaded(mImageSetList);
             return;
@@ -119,21 +120,25 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
 
 
     private void close(Cursor cursor) {
-        if (cursor != null && !cursor.isClosed()) {
-            cursor.close();
+        try {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+            MediaObserver.instance.setMediaChanged(false);
+            LoaderManager.getInstance(mContext).destroyLoader(ID);
+        } catch (Exception ignored) {
         }
-        MediaObserver.instance.setMediaChanged(false);
-        LoaderManager.getInstance(mContext).destroyLoader(ID);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, final Cursor data) {
-        if (mContext.isDestroyed()) {
+        if (mContext.isDestroyed() || mContext.isFinishing()) {
             close(data);
             return;
         }
 
         if (data == null || data.getCount() <= 0 || data.isClosed()) {
+            imagesLoadedListener.onImagesLoaded(mImageSetList);
             close(data);
             return;
         }
@@ -147,6 +152,9 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
     }
 
     private void compressToList(Cursor data) {
+        if (mImageSetList == null) {
+            mImageSetList = new ArrayList<>();
+        }
         ArrayList<ImageItem> allImages = new ArrayList<>();
         for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
             String imagePath = getString(data, IMAGE_PROJECTION[0]);
@@ -181,24 +189,20 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
             imageSet.path = imageParentFile.getAbsolutePath();
             imageSet.cover = item;
 
-            if (mImageSetList == null) {
-                mImageSetList = new ArrayList<>();
-            }
+            //更新文件夹
             if (mImageSetList.size() > 0 && mImageSetList.contains(imageSet)) {
-                int index = mImageSetList.indexOf(imageSet);
-                if (index >= 0 && index < mImageSetList.size()) {
-                    ArrayList<ImageItem> imageItems = mImageSetList.get(index).imageItems;
-                    if (imageItems != null) {
-                        imageItems.add(item);
-                    }
+                ArrayList<ImageItem> imageItems = imageSet.imageItems;
+                if (imageItems == null) {
+                    imageItems = new ArrayList<>();
                 }
+                imageItems.add(item);
             } else {
+                //生成图片文件夹
                 ArrayList<ImageItem> imageList = new ArrayList<>();
                 imageList.add(item);
                 imageSet.imageItems = imageList;
                 mImageSetList.add(imageSet);
             }
-
         }
 
         if (mImageSetList.size() > 0) {
@@ -214,15 +218,16 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
     }
 
     private void notifyLoadComplete(final Cursor cursor) {
-        if (!mContext.isDestroyed()) {
-            mContext.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    imagesLoadedListener.onImagesLoaded(mImageSetList);
-                    close(cursor);
-                }
-            });
+        if (mContext.isDestroyed() || mContext.isFinishing()) {
+            return;
         }
+        mContext.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                imagesLoadedListener.onImagesLoaded(mImageSetList);
+                close(cursor);
+            }
+        });
     }
 
     @Override

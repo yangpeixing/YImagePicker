@@ -10,6 +10,7 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
@@ -50,18 +51,17 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
             return;
         }
         //如果缓存中有数据，则直接加载
-        if (mVideoSetList != null && mVideoSetList.size() > 0
+        if (ImagePicker.isPreloadOk && mVideoSetList != null && mVideoSetList.size() > 0
                 && MediaObserver.instance.isMediaNotChanged()) {
             imagesLoadedListener.onImagesLoaded(mVideoSetList);
             return;
         }
 
-        if (mVideoSetList != null) {
-            mVideoSetList.clear();
-        } else {
+        if (mVideoSetList == null) {
             mVideoSetList = new ArrayList<>();
+        } else {
+            mVideoSetList.clear();
         }
-
         LoaderManager.getInstance(mContext).initLoader(ID, null, this);
     }
 
@@ -81,21 +81,25 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
     }
 
     private void close(Cursor cursor) {
-        if (cursor != null && !cursor.isClosed()) {
-            cursor.close();
+        try {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+            MediaObserver.instance.setMediaChanged(false);
+            LoaderManager.getInstance(mContext).destroyLoader(ID);
+        } catch (Exception ignored) {
         }
-        MediaObserver.instance.setMediaChanged(false);
-        LoaderManager.getInstance(mContext).destroyLoader(ID);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, final Cursor data) {
-        if (mContext.isDestroyed()) {
+        if (mContext.isDestroyed() || mContext.isFinishing()) {
             close(data);
             return;
         }
 
         if (data == null || data.getCount() <= 0 || data.isClosed()) {
+            imagesLoadedListener.onImagesLoaded(mVideoSetList);
             close(data);
             return;
         }
@@ -110,6 +114,9 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
 
 
     private void compressToList(final Cursor data) {
+        if (mVideoSetList == null) {
+            mVideoSetList = new ArrayList<>();
+        }
         ArrayList<ImageItem> allImages = new ArrayList<>();
         for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
             int videoId = getInt(data, MediaStore.Video.Media._ID);
@@ -136,18 +143,15 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
             imageSet.path = imageParentFile.getAbsolutePath();
             imageSet.cover = item;
 
-            if (mVideoSetList == null) {
-                mVideoSetList = new ArrayList<>();
-            }
+            //更新文件夹
             if (mVideoSetList.size() > 0 && mVideoSetList.contains(imageSet)) {
-                int index = mVideoSetList.indexOf(imageSet);
-                if (index >= 0 && index < mVideoSetList.size()) {
-                    ArrayList<ImageItem> imageItems = mVideoSetList.get(index).imageItems;
-                    if (imageItems != null) {
-                        imageItems.add(item);
-                    }
+                ArrayList<ImageItem> imageItems = imageSet.imageItems;
+                if (imageItems == null) {
+                    imageItems = new ArrayList<>();
                 }
+                imageItems.add(item);
             } else {
+                //生成视频文件夹
                 ArrayList<ImageItem> imageList = new ArrayList<>();
                 imageList.add(item);
                 imageSet.imageItems = imageList;
@@ -167,15 +171,16 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
     }
 
     private void notifyLoadComplete(final Cursor cursor) {
-        if (!mContext.isDestroyed()) {
-            mContext.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    imagesLoadedListener.onImagesLoaded(mVideoSetList);
-                    close(cursor);
-                }
-            });
+        if (mContext.isDestroyed() || mContext.isFinishing()) {
+            return;
         }
+        mContext.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                imagesLoadedListener.onImagesLoaded(mVideoSetList);
+                close(cursor);
+            }
+        });
     }
 
     @Override
