@@ -115,18 +115,29 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
                     selectionArgs,
                     IMAGE_PROJECTION[2] + " DESC");
         }
+    }
 
+
+    private void close(Cursor cursor) {
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+        MediaObserver.instance.setMediaChanged(false);
+        LoaderManager.getInstance(mContext).destroyLoader(ID);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, final Cursor data) {
         if (mContext.isDestroyed()) {
+            close(data);
             return;
         }
+
         if (data == null || data.getCount() <= 0 || data.isClosed()) {
-            imagesLoadedListener.onImagesLoaded(null);
+            close(data);
             return;
         }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -137,14 +148,13 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
 
     private void compressToList(Cursor data) {
         ArrayList<ImageItem> allImages = new ArrayList<>();
-        data.moveToFirst();
-        do {
-            String imagePath = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[0]));
-            int imageWidth = data.getInt(data.getColumnIndexOrThrow(IMAGE_PROJECTION[3]));
-            int imageHeight = data.getInt(data.getColumnIndexOrThrow(IMAGE_PROJECTION[4]));
-            int size = data.getInt(data.getColumnIndexOrThrow(IMAGE_PROJECTION[5]));
-            long imageAddedTime = data.getLong(data.getColumnIndexOrThrow(IMAGE_PROJECTION[2]));
-            if (size == 0) {
+        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+            String imagePath = getString(data, IMAGE_PROJECTION[0]);
+            int imageWidth = getInt(data, IMAGE_PROJECTION[3]);
+            int imageHeight = getInt(data, IMAGE_PROJECTION[4]);
+            int size = getInt(data, IMAGE_PROJECTION[5]);
+            long imageAddedTime = getLong(data, IMAGE_PROJECTION[2]);
+            if (size == 0 || imagePath.length() == 0) {
                 continue;
             }
 
@@ -171,40 +181,82 @@ class ImageDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
             imageSet.path = imageParentFile.getAbsolutePath();
             imageSet.cover = item;
 
-            if (!mImageSetList.contains(imageSet)) {
+            if (mImageSetList == null) {
+                mImageSetList = new ArrayList<>();
+            }
+            if (mImageSetList.size() > 0 && mImageSetList.contains(imageSet)) {
+                int index = mImageSetList.indexOf(imageSet);
+                if (index >= 0 && index < mImageSetList.size()) {
+                    ArrayList<ImageItem> imageItems = mImageSetList.get(index).imageItems;
+                    if (imageItems != null) {
+                        imageItems.add(item);
+                    }
+                }
+            } else {
                 ArrayList<ImageItem> imageList = new ArrayList<>();
                 imageList.add(item);
                 imageSet.imageItems = imageList;
                 mImageSetList.add(imageSet);
-            } else {
-                mImageSetList.get(mImageSetList.indexOf(imageSet)).imageItems.add(item);
             }
 
-        } while (data.moveToNext());
+        }
 
-        ImageSet imageSetAll = new ImageSet();
-        imageSetAll.name = mContext.getResources().getString(R.string.all_images);
-        imageSetAll.cover = allImages.get(0);
-        imageSetAll.imageItems = allImages;
-        imageSetAll.path = "/";
-        mImageSetList.add(0, imageSetAll);
+        if (mImageSetList.size() > 0) {
+            ImageSet imageSetAll = new ImageSet();
+            imageSetAll.name = mContext.getResources().getString(R.string.all_images);
+            imageSetAll.cover = allImages.get(0);
+            imageSetAll.imageItems = allImages;
+            imageSetAll.path = "/";
+            mImageSetList.add(0, imageSetAll);
+        }
 
+        notifyLoadComplete(data);
+    }
+
+    private void notifyLoadComplete(final Cursor cursor) {
         if (!mContext.isDestroyed()) {
             mContext.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    MediaObserver.instance.setMediaChanged(false);
                     imagesLoadedListener.onImagesLoaded(mImageSetList);
-                    //销毁Loader
-                    LoaderManager.getInstance(mContext).destroyLoader(ID);
+                    close(cursor);
                 }
             });
         }
     }
 
-
-
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+    }
+
+    private int hasColumn(Cursor data, String id) {
+        return data.getColumnIndex(id);
+    }
+
+    private int getInt(Cursor data, String text) {
+        int hasColumn = hasColumn(data, text);
+        if (hasColumn != -1) {
+            return data.getInt(hasColumn);
+        } else {
+            return 0;
+        }
+    }
+
+    private long getLong(Cursor data, String text) {
+        int index = hasColumn(data, text);
+        if (index != -1) {
+            return data.getLong(index);
+        } else {
+            return 0;
+        }
+    }
+
+    private String getString(Cursor data, String text) {
+        int index = hasColumn(data, text);
+        if (index != -1) {
+            return data.getString(index);
+        } else {
+            return "";
+        }
     }
 }

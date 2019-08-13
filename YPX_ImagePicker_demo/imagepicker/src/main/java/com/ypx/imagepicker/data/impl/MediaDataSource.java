@@ -107,7 +107,7 @@ public class MediaDataSource implements DataSource {
         boolean isHasVideo = videoSetList != null && videoSetList.size() > 0;
         boolean isHasImage = imageSetList != null && imageSetList.size() > 0;
         if (!isHasVideo && !isHasImage) {
-            Toast.makeText(context, "未找到相关文件!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "未找到媒体文件!", Toast.LENGTH_SHORT).show();
             return;
         }
         new Thread(new Runnable() {
@@ -182,12 +182,12 @@ public class MediaDataSource implements DataSource {
                         compressImageSet(imageSet.imageItems, videoSet.imageItems);
                         sort(imageSet.imageItems);
                     }
-                    if (isNotContainsImageSet(imageSet)) {
+                    if (!allSetList.contains(imageSet)) {
                         allSetList.add(imageSet);
                     }
                 }
             }
-            if (isNotContainsImageSet(videoSet)) {
+            if (!allSetList.contains(videoSet)) {
                 allSetList.add(videoSet);
             }
         }

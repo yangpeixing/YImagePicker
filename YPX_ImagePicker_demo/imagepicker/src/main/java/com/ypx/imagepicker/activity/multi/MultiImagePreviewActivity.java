@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.adapter.multi.MultiPreviewAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -318,6 +319,10 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         ImageItem imageItem = mImageList.get(position);
         notifyPreviewList(imageItem);
         resetBtnOKBtn();
+        if (imageItem.duration > ImagePicker.MAX_VIDEO_DURATION) {
+            mCbSelected.setVisibility(View.GONE);
+            return;
+        }
         if (selectConfig.isVideoSinglePick() && imageItem.isVideo()) {
             mCbSelected.setVisibility(View.GONE);
             if (mPreviewList.size() == 0) {

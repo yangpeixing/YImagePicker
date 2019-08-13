@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    private void redBookPick(final boolean isAdd) {
+    private void redBookPick() {
         ImagePicker.withCrop(new RedBookCropPresenter())
                 .setMaxCount(9)
                 .showCamera(mCbShowCamera.isChecked())
@@ -189,9 +189,7 @@ public class MainActivity extends AppCompatActivity {
                         for (ImageItem imageItem : items) {
                             imageItem.path = imageItem.getCropUrl();
                         }
-                        if (!isAdd) {
-                            picList.clear();
-                        }
+                        picList.clear();
                         picList.addAll(items);
                         refreshGridLayout();
                     }
@@ -228,17 +226,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void crop() {
         ImagePicker.withMulti(mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter())
-                .setMaxCount(1)
                 .setColumnCount(4)
-                .showVideo(false)
-                .showGif(false)
                 .showCamera(mCbShowCamera.isChecked())
                 .showImage(true)
-                .setSinglePickImageOrVideoType(false)
-                .setVideoSinglePick(false)
-                .setShieldList(null)
-                .setLastImageList(null)
-                .setPreview(false)
                 .setCropRatio(1, 1)
                 .crop(this, new OnImagePickCompleteListener() {
                     @Override
@@ -264,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startPick() {
         if (mRbRedBook.isChecked()) {
-            redBookPick(true);
+            redBookPick();
         } else {
             if (mRbCrop.isChecked()) {
                 crop();

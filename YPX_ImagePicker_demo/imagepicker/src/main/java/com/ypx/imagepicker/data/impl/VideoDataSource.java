@@ -80,14 +80,23 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
                 VIDEO_PROJECTION[6] + " DESC");
     }
 
+    private void close(Cursor cursor) {
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+        MediaObserver.instance.setMediaChanged(false);
+        LoaderManager.getInstance(mContext).destroyLoader(ID);
+    }
+
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, final Cursor data) {
         if (mContext.isDestroyed()) {
+            close(data);
             return;
         }
 
         if (data == null || data.getCount() <= 0 || data.isClosed()) {
-            imagesLoadedListener.onImagesLoaded(null);
+            close(data);
             return;
         }
 
@@ -99,15 +108,15 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
         }).start();
     }
 
-    private void compressToList(Cursor data) {
+
+    private void compressToList(final Cursor data) {
         ArrayList<ImageItem> allImages = new ArrayList<>();
-        data.moveToFirst();
-        do {
-            int videoId = data.getInt(data.getColumnIndexOrThrow(MediaStore.Video.Media._ID));
-            String imagePath = data.getString(data.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
-            long imageAddedTime = data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_TAKEN));
-            long duration = data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));
-            if (duration == 0) {
+        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+            int videoId = getInt(data, MediaStore.Video.Media._ID);
+            String imagePath = getString(data, MediaStore.Video.Media.DATA);
+            long imageAddedTime = getLong(data, MediaStore.Video.Media.DATE_TAKEN);
+            long duration = getLong(data, MediaStore.Video.Media.DURATION);
+            if (duration == 0 || imagePath.length() == 0) {
                 continue;
             }
 
@@ -127,31 +136,43 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
             imageSet.path = imageParentFile.getAbsolutePath();
             imageSet.cover = item;
 
-            if (!mVideoSetList.contains(imageSet)) {
+            if (mVideoSetList == null) {
+                mVideoSetList = new ArrayList<>();
+            }
+            if (mVideoSetList.size() > 0 && mVideoSetList.contains(imageSet)) {
+                int index = mVideoSetList.indexOf(imageSet);
+                if (index >= 0 && index < mVideoSetList.size()) {
+                    ArrayList<ImageItem> imageItems = mVideoSetList.get(index).imageItems;
+                    if (imageItems != null) {
+                        imageItems.add(item);
+                    }
+                }
+            } else {
                 ArrayList<ImageItem> imageList = new ArrayList<>();
                 imageList.add(item);
                 imageSet.imageItems = imageList;
                 mVideoSetList.add(imageSet);
-            } else {
-                mVideoSetList.get(mVideoSetList.indexOf(imageSet)).imageItems.add(item);
             }
+        }
 
-        } while (data.moveToNext());
+        if (mVideoSetList.size() > 0) {
+            ImageSet imageSetAll = new ImageSet();
+            imageSetAll.name = mContext.getString(R.string.str_allvideo);
+            imageSetAll.cover = allImages.get(0);
+            imageSetAll.imageItems = allImages;
+            imageSetAll.path = "/";
+            mVideoSetList.add(0, imageSetAll);
+        }
+        notifyLoadComplete(data);
+    }
 
-        ImageSet imageSetAll = new ImageSet();
-        imageSetAll.name = mContext.getString(R.string.str_allvideo);
-        imageSetAll.cover = allImages.get(0);
-        imageSetAll.imageItems = allImages;
-        imageSetAll.path = "/";
-        mVideoSetList.add(0, imageSetAll);
-
+    private void notifyLoadComplete(final Cursor cursor) {
         if (!mContext.isDestroyed()) {
             mContext.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    MediaObserver.instance.setMediaChanged(false);
                     imagesLoadedListener.onImagesLoaded(mVideoSetList);
-                    LoaderManager.getInstance(mContext).destroyLoader(ID);
+                    close(cursor);
                 }
             });
         }
@@ -159,5 +180,36 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+    }
+
+    private int hasColumn(Cursor data, String id) {
+        return data.getColumnIndex(id);
+    }
+
+    private int getInt(Cursor data, String text) {
+        int hasColumn = hasColumn(data, text);
+        if (hasColumn != -1) {
+            return data.getInt(hasColumn);
+        } else {
+            return 0;
+        }
+    }
+
+    private long getLong(Cursor data, String text) {
+        int index = hasColumn(data, text);
+        if (index != -1) {
+            return data.getLong(index);
+        } else {
+            return 0;
+        }
+    }
+
+    private String getString(Cursor data, String text) {
+        int index = hasColumn(data, text);
+        if (index != -1) {
+            return data.getString(index);
+        } else {
+            return "";
+        }
     }
 }
