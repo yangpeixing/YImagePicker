@@ -18,11 +18,13 @@ ImagePicker.registerMediaObserver(getApplication());
 ImagePicker.preload(this, true, true, false);       
 ```
 ## 效果图集
+
  - 功能展示
  
 ![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvZWE4MjEzOTQzZTliNWJiY2NiY2E3NTIzNTZmZjlkMTYtNTI4)  
 
 - 微信样式
+
 ![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvYjc3MjUwMmU3YjBhOTk1ZTJhZGY4NjFkZTg1YjhiMzAtNTI4) 
 ![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvMDQ4ZjY2MjI3YTQxYTUzYWRlNWM5ZmZhZWRkYzc1MGMtNTI4) 
 
