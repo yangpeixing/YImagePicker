@@ -7,7 +7,7 @@
 
  - **引用方式：**
 ```xml
-implementation 'com.ypx.imagepicker:ypxImagePicker:2.0.3'
+implementation 'com.ypx.imagepicker:ypxImagePicker:2.0.5'
 ```
  - **全局配置：**
 ```java
