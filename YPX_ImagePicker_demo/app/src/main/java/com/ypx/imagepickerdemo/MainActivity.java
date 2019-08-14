@@ -212,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
                 .setShieldList(mRbShield.isChecked() ? picList : null)
                 .setLastImageList(mRbSave.isChecked() ? picList : null)
                 .setPreview(!mCbClosePreview.isChecked())
+                .setMaxVideoDuration(120000)
                 .pick(this, new OnImagePickCompleteListener() {
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {

@@ -49,6 +49,11 @@ public class CropPickerBuilder {
         return this;
     }
 
+    public CropPickerBuilder setMaxVideoDuration(long duration) {
+        ImagePicker.MAX_VIDEO_DURATION = duration;
+        return this;
+    }
+
 
     /**
      * 在没有指定setFirstImageItem时，使用这个方法传入当前的第一张剪裁图片url,

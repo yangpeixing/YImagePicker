@@ -185,10 +185,26 @@ public class MediaDataSource implements DataSource {
             allSetList.add(allVideoSet);
         }
 
+        if (videoSetList.size() > 0) {
+            compressImageSet(videoSetList, imageSetList);
+        } else if (imageSetList.size() > 0) {
+            compressImageSet(imageSetList, videoSetList);
+        }
+
+        notifyOnLoaded();
+    }
+
+    /**
+     * 整合文件夹文件
+     *
+     * @param list1 视频或图片文件夹列表
+     * @param list2 视频或图片文件夹列表
+     */
+    private void compressImageSet(ArrayList<ImageSet> list1, ArrayList<ImageSet> list2) {
         //遍历视频文件夹
-        for (ImageSet videoSet : videoSetList) {
+        for (ImageSet videoSet : list1) {
             //遍历图片文件夹
-            for (ImageSet imageSet : imageSetList) {
+            for (ImageSet imageSet : list2) {
                 //如果视频和图片是同一文件夹，则需要合并并排序
                 //否则将视频文件夹加到全部文件夹列表中
                 if (videoSet.equals(imageSet)) {
@@ -205,7 +221,6 @@ public class MediaDataSource implements DataSource {
                 allSetList.add(videoSet);
             }
         }
-        notifyOnLoaded();
     }
 
     private void notifyOnLoaded() {

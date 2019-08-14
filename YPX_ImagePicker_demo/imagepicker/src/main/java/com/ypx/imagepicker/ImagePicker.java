@@ -34,7 +34,7 @@ public class ImagePicker {
     /**
      * 可以选取的视频最大时长
      */
-    public static int MAX_VIDEO_DURATION = 120000;
+    public static long MAX_VIDEO_DURATION = 120000;
     //选择返回的key
     public static final String INTENT_KEY_PICKERRESULT = "pickerResult";
     //选择返回code

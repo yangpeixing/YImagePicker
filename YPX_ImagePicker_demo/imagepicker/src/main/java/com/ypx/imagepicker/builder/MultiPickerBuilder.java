@@ -102,6 +102,11 @@ public class MultiPickerBuilder {
         return this;
     }
 
+    public MultiPickerBuilder setMaxVideoDuration(long duration) {
+        ImagePicker.MAX_VIDEO_DURATION = duration;
+        return this;
+    }
+
     public MultiPickerBuilder showVideo(boolean showVideo) {
         pickerSelectConfig.setShowVideo(showVideo);
         return this;
