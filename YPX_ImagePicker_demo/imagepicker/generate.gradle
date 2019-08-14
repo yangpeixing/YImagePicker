@@ -6,7 +6,7 @@ def groupId = 'com.ypx.imagepicker'
 //声明模块名称
 def artifactId = 'ypxImagePicker'
 //要发布的版本号
-def version = '2.1'
+def version = '2.1.2'
 
 def localReleaseDest = "${buildDir}/release/${version}"
 

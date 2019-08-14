@@ -22,7 +22,7 @@ import java.util.ArrayList;
 /**
  * Time: 2019/8/8 15:42
  * Author:ypx
- * Description:
+ * Description:自定义item基类
  */
 public abstract class BaseItemView extends LinearLayout {
     protected View view;

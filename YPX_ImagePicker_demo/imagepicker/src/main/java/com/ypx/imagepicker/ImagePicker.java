@@ -22,8 +22,6 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_STORAGE;
-
 /**
  * Description: 图片加载启动类
  * <p>

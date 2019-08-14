@@ -1,0 +1,108 @@
+//应用插件 maven
+apply plugin: 'maven'
+
+//声明你的包名
+def groupId = 'com.ypx.imagepicker'
+//声明模块名称
+def artifactId = 'ypxImagePicker'
+//要发布的版本号
+def version = '2.0.3'
+
+def localReleaseDest = "${buildDir}/release/${version}"
+
+task androidJavadocs(type: Javadoc) {
+    failOnError = false
+    source = android.sourceSets.main.java.srcDirs
+    ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+    classpath += files(ext.androidJar)
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+//Maven本地仓库构建
+uploadArchives {
+    repositories.mavenDeployer {
+        pom.groupId = groupId
+        pom.artifactId = artifactId
+        pom.version = version
+        // Add other pom properties here if you want (developer details / licenses)
+        repository(url: "file://${localReleaseDest}")
+    }
+}
+
+//压缩为zip
+task zipRelease(type: Zip) {
+    from localReleaseDest
+    destinationDir buildDir
+    archiveName "release-${version}.zip"
+}
+
+//输出到本地补录，位于你的模块中的build下
+task generateRelease {
+    doLast {
+        println "Release ${version} can be found at ${localReleaseDest}/"
+        //注意此处，Windows系统需要加入\\转义符，Mac请去掉转义符"\\"
+        println "Release ${version} zipped can be found ${buildDir}\\release-${version}.zip"
+    }
+}
+
+generateRelease.dependsOn(uploadArchives)
+generateRelease.dependsOn(zipRelease)
+
+artifacts {
+    archives androidSourcesJar
+    archives androidJavadocsJar
+}
+
+//以下为上传bintray
+//apply plugin: 'com.github.dcendents.android-maven'
+//apply plugin: 'com.jfrog.bintray'
+//
+//
+////更新代码：
+//group = "com.ypx.imagepicker" // Maven Group ID for the artifact，
+//version = "2.0.1"
+//
+//def siteUrl = 'https://github.com/yangpeixing/YPXImagePicker'   // 项目的主页
+//def gitUrl = 'https://github.com/yangpeixing/YPXImagePicker.git'   // Git仓库的url
+//
+//task sourcesJar(type: Jar) {
+//    from android.sourceSets.main.java.srcDirs
+//    classifier = 'sources'
+//}
+//
+//task javadoc(type: Javadoc) {
+//    source = android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//}
+//
+//Properties properties = new Properties()
+////读取properties的配置信息，当然直接把信息写到代码里也是可以的
+//properties.load(project.rootProject.file('local.properties').newDataInputStream())
+//bintray {
+//    user = properties.getProperty("bintray.user")
+//    key = properties.getProperty("bintray.apikey")
+//    configurations = ['archives']
+//    pkg {
+//        repo = "ypxImagePicker"    //这个应该是传到maven的仓库的名字
+//        name = "ypxImagePicker"    //发布的项目名字
+//        websiteUrl = siteUrl
+//        vcsUrl = gitUrl
+//        licenses = ["Apache-2.0"]
+//        version {
+//            name = '2.0.1'
+//            desc = "优化了图片选择框架，支持微信样式选择和小红书剪裁样式，支持跨进程回调，支持预览、拍照、视频、图片、剪裁等"
+//            released = new Date()
+//            vcsTag = '2.0.1'
+//        }
+//        publish = true
+//    }
+//}
+//

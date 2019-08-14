@@ -1,0 +1,16 @@
+<resources>
+    <style name="horizontal_gray_divider">
+        <item name="android:layout_height">1px</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:background">#d9d9d9</item>
+    </style>
+
+    <!--  这个是加入的代码 -->
+    <style name="popupwindow_anim_style">
+        <item name="android:windowEnterAnimation">@anim/picker_show2bottom</item>
+        <!-- 指定显示的动画xml -->
+        <item name="android:windowExitAnimation">@anim/picker_hide2bottom</item>
+        <!-- 指定消失的动画xml -->
+    </style>
+
+</resources>

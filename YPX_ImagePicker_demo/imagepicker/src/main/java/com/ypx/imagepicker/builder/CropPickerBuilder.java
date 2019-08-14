@@ -38,7 +38,7 @@ public class CropPickerBuilder {
     }
 
     public CropPickerBuilder setFirstImageItem(ImageItem firstImageItem) {
-        if (firstImageItem.width > 0 && firstImageItem.height > 0) {
+        if (firstImageItem != null && firstImageItem.width > 0 && firstImageItem.height > 0) {
             this.firstImageItem = firstImageItem;
         }
         return this;
