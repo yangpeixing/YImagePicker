@@ -40,12 +40,25 @@
 
 ## 效果图集
  - 微信样式
-![demo](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvZWE4MjEzOTQzZTliNWJiY2NiY2E3NTIzNTZmZjlkMTYtNTI4)  ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvYjc3MjUwMmU3YjBhOTk1ZTJhZGY4NjFkZTg1YjhiMzAtNTI4) ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvMDQ4ZjY2MjI3YTQxYTUzYWRlNWM5ZmZhZWRkYzc1MGMtNTI4) 
+ 
+![demo](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvZWE4MjEzOTQzZTliNWJiY2NiY2E3NTIzNTZmZjlkMTYtNTI4) 
+
+![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvYjc3MjUwMmU3YjBhOTk1ZTJhZGY4NjFkZTg1YjhiMzAtNTI4)
+
+![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvMDQ4ZjY2MjI3YTQxYTUzYWRlNWM5ZmZhZWRkYzc1MGMtNTI4) 
+
  - 自定义样式
- ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvODZmMmNkNDQ4MDIzMzFmODg3MWQ5ODFiNmU0NDQ1NjAtNTI4) ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvY2M5MzVmNWVkZTM1NmJlYjkyOTIwYjJmZjczZWRjNjgtNTI4) 
+ 
+ ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvODZmMmNkNDQ4MDIzMzFmODg3MWQ5ODFiNmU0NDQ1NjAtNTI4)
+ 
+ ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvY2M5MzVmNWVkZTM1NmJlYjkyOTIwYjJmZjczZWRjNjgtNTI4) 
+ 
  - 小红书样式
+
 ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvZDUzODc0N2VlZTA2ZDVjNzFiMzgwNTEyMTg0ZTczNTMtNTI4)
+
  - 自定义比例剪裁
+ 
  ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvMTRjZDJiZjIxMzk1MjVhMDhmZWZhNjdjNmExMjkwMWMtNTI4)
 
 ## 微信图片选择
