@@ -7,7 +7,7 @@
 
  - **引用方式：**
 ```xml
-implementation 'com.ypx.imagepicker:ypxImagePicker:2.1'
+implementation 'com.ypx.imagepicker:ypxImagePicker:2.1.1'
 ```
  - **全局配置：**
 ```java
@@ -55,6 +55,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
         .showGif(true)//设置是否加载GIF                                            
         .showCamera(true)//设置是否显示拍照按钮（在列表第一个）          
         .showImage(true)//设置是否加载图片
+	.setMaxVideoDuration(120000)//设置视频可选择的最大时长
         //设置只能选择视频或图片
         .setSinglePickImageOrVideoType(true)
         //设置只能选择一个视频 
