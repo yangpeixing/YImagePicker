@@ -14,6 +14,7 @@ import com.ypx.imagepicker.data.OnImagesLoadedListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -30,9 +31,9 @@ public class MediaDataSource implements DataSource {
     private FragmentActivity context;
     private boolean isImageLoaded = false;
     private boolean isVideoLoaded = false;
-    private List<ImageSet> imageSetList;
-    private List<ImageSet> videoSetList;
-    private List<ImageSet> allSetList = new ArrayList<>();
+    private ArrayList<ImageSet> imageSetList;
+    private ArrayList<ImageSet> videoSetList;
+    private ArrayList<ImageSet> allSetList = new ArrayList<>();
 
     public MediaDataSource(FragmentActivity context) {
         this.context = context;
@@ -66,7 +67,7 @@ public class MediaDataSource implements DataSource {
             imageDataSource.provideMediaItems(new OnImagesLoadedListener() {
                 @Override
                 public void onImagesLoaded(List<ImageSet> mImageSetList) {
-                    imageSetList = mImageSetList;
+                    resetList(imageSetList, mImageSetList);
                     isImageLoaded = true;
                     if (isLoadVideo) {//如果加载视频，则整合图片和视频
                         compressImageAndVideo();
@@ -82,7 +83,7 @@ public class MediaDataSource implements DataSource {
             videoDataSource.provideMediaItems(new OnImagesLoadedListener() {
                 @Override
                 public void onImagesLoaded(List<ImageSet> mImageSetList) {
-                    videoSetList = mImageSetList;
+                    resetList(videoSetList, mImageSetList);
                     isVideoLoaded = true;
                     if (isLoadImage) {//如果加载图片，则整合图片和视频
                         compressImageAndVideo();
@@ -92,6 +93,13 @@ public class MediaDataSource implements DataSource {
                     }
                 }
             });
+        }
+    }
+
+    private void resetList(ArrayList<ImageSet> newList, List<ImageSet> oldList) {
+        newList.clear();
+        for (ImageSet imageSet : oldList) {
+            newList.add(imageSet.copy());
         }
     }
 
@@ -125,8 +133,6 @@ public class MediaDataSource implements DataSource {
      * 数据整合
      */
     private void compress() {
-        allSetList.clear();
-
         if (imageSetList == null) {
             imageSetList = new ArrayList<>();
         }
@@ -134,8 +140,51 @@ public class MediaDataSource implements DataSource {
         if (videoSetList == null) {
             videoSetList = new ArrayList<>();
         }
-        //先添加所有图片文件
-        allSetList.addAll(imageSetList);
+
+        ImageSet allImageSet = null;
+        ImageSet allVideoSet = null;
+
+        //将所有图片打包到全部媒体文件列表
+        ArrayList<ImageItem> allMediaItems = new ArrayList<>();
+        if (imageSetList.size() > 0) {
+            allImageSet = imageSetList.get(0);
+            if (allImageSet.imageItems != null) {
+                allMediaItems.addAll(allImageSet.imageItems);
+            }
+        }
+        //将所有视频打包到全部媒体文件列表
+        if (videoSetList.size() > 0) {
+            allVideoSet = videoSetList.get(0);
+            if (allVideoSet.imageItems != null) {
+                allMediaItems.addAll(allVideoSet.imageItems);
+            }
+        }
+        //排序全部媒体文件列表
+        sort(allMediaItems);
+
+        //清空所有文件夹
+        allSetList.clear();
+        if (allMediaItems.size() == 0) {
+            notifyOnLoaded();
+            return;
+        }
+
+        //添加第一个本地文件夹
+        ImageSet allMediaSet = new ImageSet();
+        allMediaSet.name = context.getString(R.string.str_allmedia);
+        allMediaSet.imageItems = allMediaItems;
+        allMediaSet.cover = allMediaItems.get(0);
+        allMediaSet.isSelected = true;
+        allSetList.add(allMediaSet);
+
+        if (allImageSet != null) {
+            allSetList.add(allImageSet);
+        }
+
+        if (allVideoSet != null) {
+            allSetList.add(allVideoSet);
+        }
+
         //遍历视频文件夹
         for (ImageSet videoSet : videoSetList) {
             //遍历图片文件夹
@@ -145,41 +194,21 @@ public class MediaDataSource implements DataSource {
                 if (videoSet.equals(imageSet)) {
                     imageSet.imageItems.addAll(videoSet.imageItems);
                     sort(imageSet.imageItems);
-                } else {
-                    allSetList.add(videoSet);
+                }
+
+                if (!allSetList.contains(imageSet)) {
+                    allSetList.add(imageSet);
                 }
             }
-        }
 
-        //将所有图片打包到全部媒体文件列表
-        ArrayList<ImageItem> allMediaItems = new ArrayList<>();
-        if (imageSetList.size() > 0) {
-            allMediaItems.addAll(imageSetList.get(0).imageItems);
-        }
-        //将所有视频打包到全部媒体文件列表
-        if (videoSetList.size() > 0) {
-            allMediaItems.addAll(videoSetList.get(0).imageItems);
-        }
-        //排序全部媒体文件列表
-        sort(allMediaItems);
-
-        //添加第一个本地文件夹
-        ImageSet allMediaSet = new ImageSet();
-        allMediaSet.name = context.getString(R.string.str_allmedia);
-        allMediaSet.imageItems = allMediaItems;
-        allMediaSet.cover = allMediaItems.get(0);
-        allMediaSet.isSelected = true;
-        allSetList.add(0, allMediaSet);
-
-        //调整所有视频文件夹顺序为第三个
-        for (ImageSet set : allSetList) {
-            if (set.name.equals(context.getString(R.string.str_allvideo))) {
-                allSetList.remove(set);
-                allSetList.add(2, set);
-                break;
+            if (!allSetList.contains(videoSet)) {
+                allSetList.add(videoSet);
             }
         }
+        notifyOnLoaded();
+    }
 
+    private void notifyOnLoaded() {
         if (context.isDestroyed() || context.isFinishing()) {
             return;
         }

@@ -143,14 +143,24 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
             imageSet.path = imageParentFile.getAbsolutePath();
             imageSet.cover = item;
 
-            //更新文件夹
-            if (mVideoSetList.size() > 0 && mVideoSetList.contains(imageSet)) {
-                ArrayList<ImageItem> imageItems = imageSet.imageItems;
-                if (imageItems == null) {
-                    imageItems = new ArrayList<>();
+            //是否是新的文件夹
+            boolean isNewSet = true;
+            //遍历文件夹列表，如果包含当前文件的文件夹，则直接把视频放进文件夹中
+            //否则新增一个文件夹
+            for (ImageSet set : mVideoSetList) {
+                if (set.equals(imageSet)) {
+                    isNewSet = false;
+                    ArrayList<ImageItem> imageItems = set.imageItems;
+                    if (imageItems == null) {
+                        imageItems = new ArrayList<>();
+                    }
+                    imageItems.add(item);
+                    break;
                 }
-                imageItems.add(item);
-            } else {
+            }
+
+            //如果没有重复的文件夹，则新增一个文件夹
+            if (isNewSet) {
                 //生成视频文件夹
                 ArrayList<ImageItem> imageList = new ArrayList<>();
                 imageList.add(item);
@@ -158,7 +168,6 @@ class VideoDataSource implements DataSource, LoaderManager.LoaderCallbacks<Curso
                 mVideoSetList.add(imageSet);
             }
         }
-
         if (mVideoSetList.size() > 0) {
             ImageSet imageSetAll = new ImageSet();
             imageSetAll.name = mContext.getString(R.string.str_allvideo);

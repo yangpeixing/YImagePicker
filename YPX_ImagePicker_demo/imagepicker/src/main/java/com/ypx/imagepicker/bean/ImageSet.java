@@ -19,13 +19,25 @@ public class ImageSet implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        try {
-            ImageSet other = (ImageSet) o;
-            return this.path.equalsIgnoreCase(other.path) && this.name.equalsIgnoreCase(other.name);
-        } catch (ClassCastException e) {
-            e.printStackTrace();
+        ImageSet other = (ImageSet) o;
+        if (this == o) {
+            return true;
+        }
+        if (this.name != null && other != null && other.name != null) {
+            return this.name.equals(other.name);
         }
         return super.equals(o);
+    }
+
+    public ImageSet copy() {
+        ImageSet imageSet = new ImageSet();
+        imageSet.name = this.name;
+        imageSet.path = this.path;
+        imageSet.cover = this.cover;
+        imageSet.isSelected = this.isSelected;
+        imageSet.imageItems = new ArrayList<>();
+        imageSet.imageItems.addAll(this.imageItems);
+        return imageSet;
     }
 
 }
