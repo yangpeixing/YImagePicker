@@ -848,7 +848,7 @@ public class ImagePickAndCropFragment extends Fragment implements
         dialog.show();
     }
 
-    void onTakePhotoResult(int requestCode, int resultCode) {
+    public void onTakePhotoResult(int requestCode, int resultCode) {
         if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {
             if (!TextUtils.isEmpty(TakePhotoUtil.mCurrentPhotoPath)) {
                 refreshGalleryAddPic();
