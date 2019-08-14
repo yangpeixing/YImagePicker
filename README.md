@@ -7,7 +7,7 @@
 
  - **引用方式：**
 ```xml
-implementation 'com.ypx.imagepicker:ypxImagePicker:2.1.1'
+implementation 'com.ypx.imagepicker:ypxImagePicker:2.1.2'
 ```
  - **全局配置：**
 ```java
@@ -254,6 +254,24 @@ fragment.setImageListener(new OnImagePickCompleteListener() {
         //TODO 图片剪裁完回调                                                                      
     }                                                                                       
 });                                                                                         
+```
+外部activity需要重写的方法
+```java
+@Override                                                                                   
+public void onBackPressed() {                                                               
+    if (null != mFragment && mFragment.onBackPressed()) {                                   
+        return;                                                                             
+    }                                                                                       
+    super.onBackPressed();                                                                  
+}                                                                                           
+                                                                                            
+@Override                                                                                   
+protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {   
+    super.onActivityResult(requestCode, resultCode, data);                                  
+    if (mFragment != null) {                                                                
+        mFragment.onTakePhotoResult(requestCode, resultCode);                               
+    }                                                                                       
+}                                                                                           
 ```
 
  - **自定义数据绑定交互**
