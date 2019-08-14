@@ -6,40 +6,47 @@
 ## 全局配置
 
  - **引用方式：**
-```xml
-implementation 'com.ypx.imagepicker:ypxImagePicker:2.1.2'
-```
+- androidx版本：
+
+	```java
+	implementation 'com.ypx.imagepicker:ypxImagePicker:2.1.2'
+	```
+- support版本(未发布jcenter,所以需要maven仓库指定)：
+
+ 1. 在Project的build.gradle添加bintray仓库地址：
+	```java
+	allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url "https://dl.bintray.com/yangpeixing/ypxImagePicker/" }
+    	}
+	}   
+	```
+ 2. app的build.gradle添加如下依赖：
+	```java
+	implementation 'com.ypx.imagepicker:imagepicker_support:2.1.2'
+	```
+	
  - **全局配置：**
-```java
- //注册媒体文件观察者，可放入Application或首页中                      
-ImagePicker.registerMediaObserver(getApplication());
-//预加载选择器，需要APP先申请存储权限，否则无效                          
-//设置预加载后，可实现快速打开选择器                      
-ImagePicker.preload(this, true, true, false);       
-```
+ 
+	```java
+	 //注册媒体文件观察者，可放入Application或首页中                      
+	ImagePicker.registerMediaObserver(getApplication());
+	//预加载选择器，需要APP先申请存储权限，否则无效                          
+	//设置预加载后，可实现快速打开选择器                      
+	ImagePicker.preload(this, true, true, false);       
+	```
+
 ## 效果图集
-
- - 功能展示
- 
-![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvZWE4MjEzOTQzZTliNWJiY2NiY2E3NTIzNTZmZjlkMTYtNTI4)  
-
-- 微信样式
-
-![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvYjc3MjUwMmU3YjBhOTk1ZTJhZGY4NjFkZTg1YjhiMzAtNTI4) 
-![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvMDQ4ZjY2MjI3YTQxYTUzYWRlNWM5ZmZhZWRkYzc1MGMtNTI4) 
-
+ - 微信样式
+![demo](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvZWE4MjEzOTQzZTliNWJiY2NiY2E3NTIzNTZmZjlkMTYtNTI4)  ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvYjc3MjUwMmU3YjBhOTk1ZTJhZGY4NjFkZTg1YjhiMzAtNTI4) ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvMDQ4ZjY2MjI3YTQxYTUzYWRlNWM5ZmZhZWRkYzc1MGMtNTI4) 
  - 自定义样式
- 
-![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvODZmMmNkNDQ4MDIzMzFmODg3MWQ5ODFiNmU0NDQ1NjAtNTI4) 
-![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvY2M5MzVmNWVkZTM1NmJlYjkyOTIwYjJmZjczZWRjNjgtNTI4)
- 
+ ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvODZmMmNkNDQ4MDIzMzFmODg3MWQ5ODFiNmU0NDQ1NjAtNTI4) ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvY2M5MzVmNWVkZTM1NmJlYjkyOTIwYjJmZjczZWRjNjgtNTI4) 
  - 小红书样式
- 
- ![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvZDUzODc0N2VlZTA2ZDVjNzFiMzgwNTEyMTg0ZTczNTMtNTI4)
-
+![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvZDUzODc0N2VlZTA2ZDVjNzFiMzgwNTEyMTg0ZTczNTMtNTI4)
  - 自定义比例剪裁
- 
- ![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvMTRjZDJiZjIxMzk1MjVhMDhmZWZhNjdjNmExMjkwMWMtNTI4)
+ ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvMTRjZDJiZjIxMzk1MjVhMDhmZWZhNjdjNmExMjkwMWMtNTI4)
 
 ## 微信图片选择
 支持视频、GIF、长图选择，支持单张多比例剪裁，支持多图预览、编辑、以及调序，支持直接拍照          
@@ -55,7 +62,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
         .showGif(true)//设置是否加载GIF                                            
         .showCamera(true)//设置是否显示拍照按钮（在列表第一个）          
         .showImage(true)//设置是否加载图片
-	.setMaxVideoDuration(120000)//设置视频可选择的最大时长
+        .setMaxVideoDuration(120000)//设置视频可选择的最大时长
         //设置只能选择视频或图片
         .setSinglePickImageOrVideoType(true)
         //设置只能选择一个视频 
@@ -327,7 +334,6 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
 ```
 ## 相关问题
 
- - **本库只兼容了androidx库，如有需要support库版本请下载源码修改或者联系作者**
  - **小红书剪裁框架暂且不支持UI自定义**
  - **微信选择框架暂不支持图片高级编辑，后期会加入**
  - **小红书剪裁框架中，输出的图片全部是View所截出来的，所以宽高取决于屏幕宽度，其实这样是不对的，应该根据原图密度来截取原始图片区域，而不应该是截取View,不过经测试，View截取的图片质量挺高，所以暂未兼容原图截取。本库中有CropHelper类已经处理了原图截取的方法，赞只支持填充模式下原图截取，留白模式后期优化。**
@@ -335,7 +341,7 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
 
 ## 鸣谢
 本项目微信选择器中剪裁使用的是github上[cropView](https://github.com/oginotihiro/cropview)控件，在此感谢作者！
-打个广告：本库来源于mars App,想要体验城市最新的吃喝玩乐，欢迎读者下载体验mars!
+本库来源于mars App,想要体验城市最新的吃喝玩乐，欢迎读者下载体验mars!
 
 [本库Github地址:https://github.com/yangpeixing/YPXImagePicker](https://github.com/yangpeixing/YPXImagePicker)
 
