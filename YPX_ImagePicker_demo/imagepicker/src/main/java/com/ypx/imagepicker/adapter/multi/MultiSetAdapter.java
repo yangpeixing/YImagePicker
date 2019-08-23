@@ -8,12 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 
@@ -26,17 +28,15 @@ import java.util.List;
  * Author:yangpeixing
  * Description: 文件夹adapter
  */
-public class MultiSetAdapter extends BaseAdapter {
+public class MultiSetAdapter extends RecyclerView.Adapter<MultiSetAdapter.ViewHolder> {
     private int lastSelected = 0;
     private Context mContext;
-    private LayoutInflater mInflater;
     private List<ImageSet> mImageSets = new ArrayList<>();
     private IMultiPickerBindPresenter uiConfig;
 
     public MultiSetAdapter(Context context, IMultiPickerBindPresenter uiConfig) {
         this.mContext = context;
         this.uiConfig = uiConfig;
-        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public void refreshData(List<ImageSet> folders) {
@@ -48,14 +48,36 @@ public class MultiSetAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    private ImageSet getItem(int i) {
+        return mImageSets.get(i);
+    }
+
+    @NonNull
     @Override
-    public int getCount() {
-        return mImageSets.size();
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.picker_list_item_folder, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public ImageSet getItem(int i) {
-        return mImageSets.get(i);
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+        holder.bindData(getItem(position));
+
+        if (lastSelected == position) {
+            holder.indicator.setVisibility(View.VISIBLE);
+        } else {
+            holder.indicator.setVisibility(View.INVISIBLE);
+        }
+
+        holder.indicator.setColorFilter(uiConfig.getUiConfig(mContext).getThemeColor());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (setSelectCallBack != null) {
+                    setSelectCallBack.selectImageSet(getItem(position), position);
+                }
+            }
+        });
     }
 
     @Override
@@ -64,26 +86,8 @@ public class MultiSetAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-        if (view == null) {
-            view = mInflater.inflate(R.layout.picker_list_item_folder, viewGroup, false);
-            holder = new ViewHolder(view);
-        } else {
-            holder = (ViewHolder) view.getTag();
-        }
-
-        holder.bindData(getItem(i));
-
-        if (lastSelected == i) {
-            holder.indicator.setVisibility(View.VISIBLE);
-        } else {
-            holder.indicator.setVisibility(View.INVISIBLE);
-        }
-
-        holder.indicator.setColorFilter(uiConfig.getUiConfig(mContext).getThemeColor());
-
-        return view;
+    public int getItemCount() {
+        return mImageSets.size();
     }
 
     public int getSelectIndex() {
@@ -112,27 +116,40 @@ public class MultiSetAdapter extends BaseAdapter {
         return outMetrics.widthPixels;
     }
 
-    class ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         ImageView cover;
         TextView name;
         TextView size;
         ImageView indicator;
 
         ViewHolder(View view) {
-            cover = (ImageView) view.findViewById(R.id.cover);
-            name = (TextView) view.findViewById(R.id.name);
-            size = (TextView) view.findViewById(R.id.size);
-            indicator = (ImageView) view.findViewById(R.id.indicator);
+            super(view);
+            cover = view.findViewById(R.id.cover);
+            name = view.findViewById(R.id.name);
+            size = view.findViewById(R.id.size);
+            indicator = view.findViewById(R.id.indicator);
             view.setTag(this);
         }
 
         @SuppressLint("DefaultLocale")
         void bindData(ImageSet data) {
             name.setText(data.name);
-            size.setText(String.format("%d%s", data.imageItems.size(), mContext.getResources().getString(R.string.piece)));
+            size.setText(String.format("%d%s", data.count, mContext.getResources().getString(R.string.piece)));
             if (uiConfig != null) {
-                uiConfig.displayListImage(cover, data.cover, (getScreenWidth() - dp(2) * 2) / 3);
+                ImageItem imageItem = new ImageItem();
+                imageItem.path = data.coverPath;
+                uiConfig.displayListImage(cover, imageItem, (getScreenWidth() - dp(2) * 2) / 3);
             }
         }
+    }
+
+    private SetSelectCallBack setSelectCallBack;
+
+    public void setSetSelectCallBack(SetSelectCallBack setSelectCallBack) {
+        this.setSelectCallBack = setSelectCallBack;
+    }
+
+    public interface SetSelectCallBack {
+        void selectImageSet(ImageSet set, int pos);
     }
 }

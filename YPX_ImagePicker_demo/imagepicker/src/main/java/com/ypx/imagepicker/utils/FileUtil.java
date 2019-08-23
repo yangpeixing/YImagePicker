@@ -32,6 +32,35 @@ public class FileUtil {
     /**
      * 保存一张图片到本地
      */
+    public static String saveBitmapToLocalWithJPEG(Bitmap bmp, String localPath) {
+        if (bmp == null || localPath == null || localPath.length() == 0) {
+            return "";
+        }
+        FileOutputStream b = null;
+        createFile(localPath);
+        try {
+            b = new FileOutputStream(localPath);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, b);// 把数据写入文件
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (b != null) {
+                    b.flush();
+                }
+                if (b != null) {
+                    b.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return localPath;
+    }
+
+    /**
+     * 保存一张图片到本地
+     */
     public static String saveBitmapToLocalWithJPEG(View view, String localPath) {
         Bitmap bmp = getViewBitmap(view);
         if (bmp == null || localPath == null || localPath.length() == 0) {

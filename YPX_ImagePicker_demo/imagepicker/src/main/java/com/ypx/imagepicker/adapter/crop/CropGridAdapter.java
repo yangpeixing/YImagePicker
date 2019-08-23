@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -56,7 +57,8 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
         void onPressImage(final int position, boolean isShowTransit);
     }
 
-    public CropGridAdapter(Context context, boolean isShowCamera, boolean isVideoShowMask, List<ImageItem> data, List<ImageItem> selectList, ICropPickerBindPresenter imageLoader) {
+    public CropGridAdapter(Context context, boolean isShowCamera, boolean isVideoShowMask, List<ImageItem> data,
+                           List<ImageItem> selectList, ICropPickerBindPresenter imageLoader) {
         this.context = context;
         this.isShowCamera = isShowCamera;
         this.isVideoShowMask = isVideoShowMask;
@@ -91,6 +93,7 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
             viewHolder.showCamera();
         } else {
             final ImageItem imageItem = datas.get(isShowCamera ? i - 1 : i);
+            viewHolder.loadImage(imageItem);
             if (imageItem.isVideo()) {
                 viewHolder.showVideo(imageItem, selectList.size() > 0 || isVideoShowMask ||
                         imageItem.duration > ImagePicker.MAX_VIDEO_DURATION);
@@ -111,19 +114,6 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
                     viewHolder.v_mask.setVisibility(View.GONE);
                 }
 
-                if (imageItem.isSelect()) {
-                    viewHolder.mTvIndex.setBackground(CornerUtils.cornerDrawableAndStroke(
-                            context.getResources().getColor(R.color.picker_theme_color), dp(12), dp(1), Color.WHITE));
-                    for (int t = 0; t < selectList.size(); t++) {
-                        if (imageItem.path.equals(selectList.get(t).path)) {
-                            imageItem.setSelectIndex(t + 1);
-                        }
-                    }
-                    viewHolder.mTvIndex.setText(String.format("%d", imageItem.getSelectIndex()));
-                } else {
-                    viewHolder.mTvIndex.setText("");
-                    viewHolder.mTvIndex.setBackground(context.getResources().getDrawable(R.mipmap.picker_icon_unselect));
-                }
                 viewHolder.v_select.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -133,9 +123,22 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
                     }
                 });
 
-                viewHolder.loadImage(imageItem);
-            }
+                //如果当前item在选中列表里
+                if (selectList != null && selectList.size() > 0) {
+                    for (int t = 0; t < selectList.size(); t++) {
+                        if (imageItem.equals(selectList.get(t))) {
+                            imageItem.setSelectIndex(t);
+                            viewHolder.mTvIndex.setBackground(CornerUtils.cornerDrawableAndStroke(
+                                    context.getResources().getColor(R.color.picker_theme_color), dp(12), dp(1), Color.WHITE));
+                            viewHolder.mTvIndex.setText(String.format("%d", imageItem.getSelectIndex() + 1));
+                            return;
+                        }
+                    }
+                }
 
+                viewHolder.mTvIndex.setText("");
+                viewHolder.mTvIndex.setBackground(context.getResources().getDrawable(R.mipmap.picker_icon_unselect));
+            }
         }
 
         viewHolder.rootView.setOnClickListener(new View.OnClickListener() {
@@ -153,7 +156,7 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
         return isShowCamera ? datas.size() + 1 : datas.size();
     }
 
-    public  int dp(float dp) {
+    public int dp(float dp) {
         float density = context.getResources().getDisplayMetrics().density;
         return (int) (dp * density + 0.5);
     }
@@ -204,7 +207,7 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
             } else {
                 v_mask.setVisibility(View.GONE);
             }
-           loadImage(imageItem);
+            loadImage(imageItem);
 
 //            if (imageItem.videoImageUri == null || imageItem.videoImageUri.length() == 0) {
 //                String thumbPath = "";
@@ -229,7 +232,7 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
 
         public void loadImage(ImageItem imageItem) {
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            String path =  imageItem.path;
+            String path = imageItem.path;
             if (null != bindingProvider) {
                 bindingProvider.displayListImage(imageView, imageItem);
             }

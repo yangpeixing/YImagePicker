@@ -1,5 +1,9 @@
-package com.ypx.imagepicker.widget.browseimage;
+package com.ypx.imagepicker.widget;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,8 +11,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -22,29 +30,31 @@ import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
+import com.ypx.imagepicker.widget.browseimage.Info;
+import com.ypx.imagepicker.widget.browseimage.OnRotateListener;
+import com.ypx.imagepicker.widget.browseimage.RotateGestureDetector;
 
 /**
- * Description: 可放大缩小的自定义ImageView
+ * Description: 剪裁ImageView
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/21
  */
 @SuppressLint("AppCompatCustomView")
-public class PicBrowseImageView extends ImageView {
-
+public class CropImageView extends ImageView {
     private final static int MIN_ROTATE = 35;
-    private final static int ANIMA_DURING = 340;
+    private final static int ANIM_DURING = 340;
     private final static float MAX_SCALE = 2.5f;
 
     private int mMinRotate;
-    private int mAnimaDuring;
+    private int mAnimDuring;
     private float mMaxScale;
 
     private int MAX_FLING_OVER_SCROLL = 0;
     private int MAX_OVER_RESISTANCE = 0;
 
     private Matrix mBaseMatrix = new Matrix();
-    private Matrix mAnimaMatrix = new Matrix();
+    private Matrix mAnimMatrix = new Matrix();
     private Matrix mSynthesisMatrix = new Matrix();
     private Matrix mTmpMatrix = new Matrix();
 
@@ -53,7 +63,7 @@ public class PicBrowseImageView extends ImageView {
     private ScaleGestureDetector mScaleDetector;
     private OnClickListener mClickListener;
 
-    private ScaleType mScaleType;
+    private ScaleType mScaleType = ScaleType.CENTER_INSIDE;
 
     private boolean hasMultiTouch;
     private boolean hasDrawable;
@@ -61,9 +71,8 @@ public class PicBrowseImageView extends ImageView {
     private boolean hasOverTranslate;
     private boolean isEnable = false;
     private boolean isRotateEnable = false;
-    private boolean isInit;
     // 当前是否处于放大状态
-    private boolean isZoonUp;
+    private boolean isZoomUp;
     private boolean canRotate;
 
     private boolean imgLargeWidth;
@@ -75,10 +84,7 @@ public class PicBrowseImageView extends ImageView {
     private int mTranslateX;
     private int mTranslateY;
 
-    private float mHalfBaseRectWidth;
-    private float mHalfBaseRectHeight;
-
-    private RectF mWidgetRect = new RectF();
+    private RectF mCropRect = new RectF();
     private RectF mBaseRect = new RectF();
     private RectF mImgRect = new RectF();
     private RectF mTmpRect = new RectF();
@@ -93,30 +99,28 @@ public class PicBrowseImageView extends ImageView {
     private Transform mTranslate = new Transform();
 
     private RectF mClip;
-    private Info mFromInfo;
-    private long mInfoTime;
     private Runnable mCompleteCallBack;
 
     private OnLongClickListener mLongClick;
 
-    public PicBrowseImageView(Context context) {
+    public CropImageView(Context context) {
         super(context);
         init();
     }
 
-    public PicBrowseImageView(Context context, AttributeSet attrs) {
+    public CropImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public PicBrowseImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CropImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
         super.setScaleType(ScaleType.MATRIX);
-        if (mScaleType == null) mScaleType = ScaleType.CENTER_INSIDE;
+        if (mScaleType == null) mScaleType = ScaleType.CENTER_CROP;
         mRotateDetector = new RotateGestureDetector(mRotateListener);
         mDetector = new GestureDetector(getContext(), mGestureListener);
         mScaleDetector = new ScaleGestureDetector(getContext(), mScaleListener);
@@ -125,14 +129,11 @@ public class PicBrowseImageView extends ImageView {
         MAX_OVER_RESISTANCE = (int) (density * 140);
 
         mMinRotate = MIN_ROTATE;
-        mAnimaDuring = ANIMA_DURING;
+        mAnimDuring = ANIM_DURING;
         mMaxScale = MAX_SCALE;
 
-        linePaint = new Paint();
-        linePaint.setColor(Color.parseColor("#90ffffff"));
-        linePaint.setAntiAlias(true);
-        linePaint.setStrokeWidth(dp(0.5f));
-        linePaint.setStyle(Paint.Style.FILL);
+        initCropLineRect();
+        initCropRect();
     }
 
     @Override
@@ -148,13 +149,13 @@ public class PicBrowseImageView extends ImageView {
         if (scaleType != mScaleType) {
             mScaleType = scaleType;
 
-            if (isInit) {
+            if (hasDrawable) {
                 initBase();
             }
         }
     }
 
-    public ScaleType getmScaleType() {
+    public ScaleType getNewScaleType() {
         return mScaleType;
     }
 
@@ -191,16 +192,6 @@ public class PicBrowseImageView extends ImageView {
 
     private Bitmap originalBitmap;
 
-    @Override
-    public void setImageBitmap(Bitmap bm) {
-        super.setImageBitmap(bm);
-        originalBitmap = bm;
-        if (onImageLoadListener != null && originalBitmap != null && originalBitmap.getWidth() > 0
-                && originalBitmap.getHeight() > 0) {
-            onImageLoadListener.onImageLoaded(originalBitmap.getWidth(), originalBitmap.getHeight());
-        }
-    }
-
     public Bitmap getOriginalBitmap() {
         return originalBitmap;
     }
@@ -217,11 +208,84 @@ public class PicBrowseImageView extends ImageView {
         if (!hasSize(drawable))
             return;
 
-        if (!hasDrawable) {
-            hasDrawable = true;
+        hasDrawable = true;
+
+        if (drawable instanceof BitmapDrawable) {
+            originalBitmap = ((BitmapDrawable) drawable).getBitmap();
+        } else if (drawable instanceof AnimationDrawable) {
+            AnimationDrawable drawable1 = (AnimationDrawable) drawable;
+            Drawable drawable2 = drawable1.getFrame(0);
+            if (drawable2 instanceof BitmapDrawable) {
+                originalBitmap = ((BitmapDrawable) drawable2).getBitmap();
+            }
         }
 
-        initBase();
+
+        if (onImageLoadListener != null) {
+            onImageLoadListener.onImageLoaded(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            onImageLoadListener = null;
+        }
+
+        if (restoreInfo != null) {
+            mScaleType = ScaleType.CENTER_CROP;
+            mScaleType = restoreInfo.mScaleType;
+            mCropRect = restoreInfo.mWidgetRect;
+            aspectX = (int) restoreInfo.mCropX;
+            aspectY = (int) restoreInfo.mCropY;
+            initBase();
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    restoreCrop();
+                }
+            });
+        } else {
+            initBase();
+        }
+    }
+
+
+    private Info restoreInfo;
+
+    public void setRestoreInfo(Info restoreInfo) {
+        this.restoreInfo = restoreInfo;
+    }
+
+    /**
+     * 恢复状态
+     */
+    private void restoreCrop() {
+        Info info = restoreInfo;
+
+        mTranslateX = 0;
+        mTranslateY = 0;
+
+        float tcx = info.mRect.left + info.mRect.width() / 2;
+        float tcy = info.mRect.top + info.mRect.height() / 2;
+
+        mScaleCenter.set(mImgRect.left + mImgRect.width() / 2, mImgRect.top + mImgRect.height() / 2);
+        mRotateCenter.set(mScaleCenter);
+
+        // 将图片旋转回正常位置，用以计算
+        mAnimMatrix.postRotate(-mDegrees, mScaleCenter.x, mScaleCenter.y);
+        mAnimMatrix.mapRect(mImgRect, mBaseRect);
+
+        // 缩放
+        float scaleX = info.mImgRect.width() / mBaseRect.width();
+        float scaleY = info.mImgRect.height() / mBaseRect.height();
+        float scale = scaleX > scaleY ? scaleX : scaleY;
+
+        mAnimMatrix.postRotate(mDegrees, mScaleCenter.x, mScaleCenter.y);
+        mAnimMatrix.mapRect(mImgRect, mBaseRect);
+
+        mDegrees = mDegrees % 360;
+
+        mTranslate.withTranslate(0, 0, (int) (tcx - mScaleCenter.x), (int) (tcy - mScaleCenter.y));
+        mTranslate.withScale(mScale, scale);
+        mTranslate.withRotate((int) mDegrees, (int) info.mDegrees, mAnimDuring * 2 / 3);
+        mTranslate.start();
+
+        restoreInfo = null;
     }
 
     onImageLoadListener onImageLoadListener;
@@ -235,12 +299,9 @@ public class PicBrowseImageView extends ImageView {
     }
 
     private boolean hasSize(Drawable d) {
-        if ((d.getIntrinsicHeight() <= 0 || d.getIntrinsicWidth() <= 0)
-                && (d.getMinimumWidth() <= 0 || d.getMinimumHeight() <= 0)
-                && (d.getBounds().width() <= 0 || d.getBounds().height() <= 0)) {
-            return false;
-        }
-        return true;
+        return (d.getIntrinsicHeight() > 0 && d.getIntrinsicWidth() > 0)
+                || (d.getMinimumWidth() > 0 && d.getMinimumHeight() > 0)
+                || (d.getBounds().width() > 0 && d.getBounds().height() > 0);
     }
 
     private static int getDrawableWidth(Drawable d) {
@@ -257,53 +318,47 @@ public class PicBrowseImageView extends ImageView {
         return height;
     }
 
-    private boolean isTooLarge;
+    float baseScale;
 
     public void initBase() {
         if (!hasDrawable) return;
         if (!isKnowSize) return;
 
         mBaseMatrix.reset();
-        mAnimaMatrix.reset();
-
-        isZoonUp = false;
+        mAnimMatrix.reset();
+        isZoomUp = false;
 
         Drawable img = getDrawable();
 
         int w = getWidth();
         int h = getHeight();
-        int imgw = getDrawableWidth(img);
-        int imgh = getDrawableHeight(img);
+        int drawableWidth = getDrawableWidth(img);
+        int drawableHeight = getDrawableHeight(img);
 
-        isTooLarge = imgw * 1.00f / imgh >= 3.0f || imgw * 1.00f / imgh <= 0.3f;
-
-        mBaseRect.set(0, 0, imgw, imgh);
+        mBaseRect.set(0, 0, drawableWidth, drawableHeight);
 
         // 以图片中心点居中位移
-        int tx = (w - imgw) / 2;
-        int ty = (h - imgh) / 2;
+        int tx = (w - drawableWidth) / 2;
+        int ty = (h - drawableHeight) / 2;
 
         float sx = 1;
         float sy = 1;
 
         // 缩放，默认不超过屏幕大小
-        if (imgw > w) {
-            sx = (float) w / imgw;
+        if (drawableWidth > w) {
+            sx = (float) w / drawableWidth;
         }
 
-        if (imgh > h) {
-            sy = (float) h / imgh;
+        if (drawableHeight > h) {
+            sy = (float) h / drawableHeight;
         }
 
-        float scale = sx < sy ? sx : sy;
+        baseScale = sx < sy ? sx : sy;
 
         mBaseMatrix.reset();
         mBaseMatrix.postTranslate(tx, ty);
-        mBaseMatrix.postScale(scale, scale, mScreenCenter.x, mScreenCenter.y);
+        mBaseMatrix.postScale(baseScale, baseScale, mScreenCenter.x, mScreenCenter.y);
         mBaseMatrix.mapRect(mBaseRect);
-
-        mHalfBaseRectWidth = mBaseRect.width() / 2;
-        mHalfBaseRectHeight = mBaseRect.height() / 2;
 
         mScaleCenter.set(mScreenCenter);
         mRotateCenter.set(mScaleCenter);
@@ -333,67 +388,41 @@ public class PicBrowseImageView extends ImageView {
                 initFitXY();
                 break;
         }
-
-        isInit = true;
-
-        int MAX_ANIM_FROM_WAITE = 500;
-        if (mFromInfo != null && System.currentTimeMillis() - mInfoTime < MAX_ANIM_FROM_WAITE) {
-            animaFrom(mFromInfo);
-        }
-
-        mFromInfo = null;
     }
 
     private void initCenter() {
-        if (!hasDrawable) return;
-        if (!isKnowSize) return;
-
-        Drawable img = getDrawable();
-
-        int imgw = getDrawableWidth(img);
-        int imgh = getDrawableHeight(img);
-
-        if (imgw > mWidgetRect.width() || imgh > mWidgetRect.height()) {
-            float scaleX = imgw / mImgRect.width();
-            float scaleY = imgh / mImgRect.height();
+        if (mImgRect.width() > mCropRect.width() || mImgRect.height() > mCropRect.height()) {
+            float scaleX = mImgRect.width() / mImgRect.width();
+            float scaleY = mImgRect.height() / mImgRect.height();
             mScale = scaleX > scaleY ? scaleX : scaleY;
-            mAnimaMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
+            mAnimMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
             executeTranslate();
             resetBase();
         }
     }
+
 
     private void initCenterCrop() {
-        if (mImgRect.width() < mWidgetRect.width() || mImgRect.height() < mWidgetRect.height()) {
-            float scaleX = mWidgetRect.width() / mImgRect.width();
-            float scaleY = mWidgetRect.height() / mImgRect.height();
-            mScale = scaleX > scaleY ? scaleX : scaleY;
-            mAnimaMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
-            executeTranslate();
-            resetBase();
-        }
-    }
-
-    private void initCenterInside() {
-        if (isTooLarge) {
-            initCenterCrop();
-            return;
-        }
-        float widthScale = mWidgetRect.width() / mImgRect.width();
-        float heightScale = mWidgetRect.height() / mImgRect.height();
-        mScale = Math.min(widthScale, heightScale);
-        mAnimaMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
+        float scaleX = mCropRect.width() / mImgRect.width();
+        float scaleY = mCropRect.height() / mImgRect.height();
+        mScale = scaleX > scaleY ? scaleX : scaleY;
+        mAnimMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
         executeTranslate();
         resetBase();
     }
 
-    public RectF getImgRect() {
-        return mImgRect;
+    private void initCenterInside() {
+        float widthScale = mCropRect.width() / mImgRect.width();
+        float heightScale = mCropRect.height() / mImgRect.height();
+        mScale = Math.min(widthScale, heightScale);
+        mAnimMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
+        executeTranslate();
+        resetBase();
     }
 
     private void initFitCenter() {
-        mScale = Math.max(mWidgetRect.width() / mImgRect.width(), mWidgetRect.height() / mImgRect.height());
-        mAnimaMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
+        mScale = Math.max(mCropRect.width() / mImgRect.width(), mCropRect.height() / mImgRect.height());
+        mAnimMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
         executeTranslate();
         resetBase();
     }
@@ -401,7 +430,7 @@ public class PicBrowseImageView extends ImageView {
     private void initFitStart() {
         initFitCenter();
         float ty = -mImgRect.top;
-        mAnimaMatrix.postTranslate(0, ty);
+        mAnimMatrix.postTranslate(0, ty);
         executeTranslate();
         resetBase();
         mTranslateY += ty;
@@ -409,64 +438,170 @@ public class PicBrowseImageView extends ImageView {
 
     private void initFitEnd() {
         initFitCenter();
-        float ty = (mWidgetRect.bottom - mImgRect.bottom);
+        float ty = (mCropRect.bottom - mImgRect.bottom);
         mTranslateY += ty;
-        mAnimaMatrix.postTranslate(0, ty);
+        mAnimMatrix.postTranslate(0, ty);
         executeTranslate();
         resetBase();
     }
 
     private void initFitXY() {
-        float scaleX = mWidgetRect.width() / mImgRect.width();
-        float scaleY = mWidgetRect.height() / mImgRect.height();
-        mAnimaMatrix.postScale(scaleX, scaleY, mScreenCenter.x, mScreenCenter.y);
+        float scaleX = mCropRect.width() / mImgRect.width();
+        float scaleY = mCropRect.height() / mImgRect.height();
+        mAnimMatrix.postScale(scaleX, scaleY, mScreenCenter.x, mScreenCenter.y);
         executeTranslate();
         resetBase();
     }
 
     private void resetBase() {
         Drawable img = getDrawable();
-        int imgw = getDrawableWidth(img);
-        int imgh = getDrawableHeight(img);
-        mBaseRect.set(0, 0, imgw, imgh);
+        mBaseRect.set(0, 0, getDrawableWidth(img),
+                getDrawableHeight(img));
         mBaseMatrix.set(mSynthesisMatrix);
         mBaseMatrix.mapRect(mBaseRect);
-        mHalfBaseRectWidth = mBaseRect.width() / 2;
-        mHalfBaseRectHeight = mBaseRect.height() / 2;
         mScale = 1;
         mTranslateX = 0;
         mTranslateY = 0;
-        mAnimaMatrix.reset();
+        mAnimMatrix.reset();
     }
 
     private void executeTranslate() {
         mSynthesisMatrix.set(mBaseMatrix);
-        mSynthesisMatrix.postConcat(mAnimaMatrix);
+        mSynthesisMatrix.postConcat(mAnimMatrix);
         setImageMatrix(mSynthesisMatrix);
-        mAnimaMatrix.mapRect(mImgRect, mBaseRect);
-        imgLargeWidth = mImgRect.width() >= mWidgetRect.width();
-        imgLargeHeight = mImgRect.height() >= mWidgetRect.height();
+        mAnimMatrix.mapRect(mImgRect, mBaseRect);
+        imgLargeWidth = mImgRect.width() >= mCropRect.width();
+        imgLargeHeight = mImgRect.height() >= mCropRect.height();
     }
 
+    private int aspectX = -1, aspectY = -1;
+    private int cropMargin = 0;
+
+    public void setCropRatio(int aspectX, int aspectY) {
+        this.aspectX = aspectX;
+        this.aspectY = aspectY;
+        if (cropAnim != null && cropAnim.isRunning()) {
+            cropAnim.cancel();
+        }
+        if (aspectX <= 0 || aspectY <= 0) {
+            mCropRect.set(0, 0, getWidth(), getHeight());
+            mScaleType = ScaleType.CENTER_INSIDE;
+            initBase();
+            invalidate();
+            return;
+        }
+
+        mScaleType = ScaleType.CENTER_CROP;
+        resetCropSize(getWidth(), getHeight());
+    }
+
+    public boolean isEditing() {
+        return isShowLine;
+    }
+
+    public void setCropMargin(int cropMargin) {
+        this.cropMargin = cropMargin;
+    }
+
+    public int getCropWidth() {
+        return (int) mCropRect.width();
+    }
+
+    public int getCropHeight() {
+        return (int) mCropRect.height();
+    }
+
+    private void resetCropSize(int w, int h) {
+        float left = 0, top = 0, right = w, bottom = h;
+        if (aspectY != -1 && aspectX != -1) {
+            float cropRatio = aspectX * 1.00f / aspectY;
+            float viewRatio = w * 1.00f / h;
+            if (h > w) {//view的高>宽
+                float top1 = (h - (w - cropMargin * 2) * 1.00f / cropRatio) * 1.00f / 2;
+                if (cropRatio >= 1) {//宽比例剪裁
+                    left = cropMargin;
+                    right = w - left;
+                    top = top1;
+                    bottom = h - top;
+                } else if (cropRatio < 1) {//高比例剪裁
+                    if (cropRatio > viewRatio) {//剪裁比例大于view宽高比，说明以宽充满，剪裁的高肯定不会超出view的高
+                        left = cropMargin;
+                        right = w - left;
+                        top = top1;
+                        bottom = h - top;
+                    } else {//剪裁比例小于view宽高比,说明以高充满，宽度肯定不会超过view的宽度
+                        top = cropMargin;
+                        bottom = h - top;
+                        left = (w - (h - cropMargin * 2) * cropRatio) / 2;
+                        right = w - left;
+
+                    }
+                }
+            }
+            anim(left, top, right, bottom);
+        } else {
+            mCropRect.set(left, top, right, bottom);
+            if (getDrawable() != null) {
+                initBase();
+            }
+        }
+    }
+
+    private ValueAnimator cropAnim;
+
+    private void anim(float left, float top, float right, float bottom) {
+        final float oldLeft = mCropRect.left;
+        final float oldTop = mCropRect.top;
+        final float oldRight = mCropRect.right;
+        final float oldBottom = mCropRect.bottom;
+        final float finalLeft = left;
+        final float finalTop = top;
+        final float finalRight = right;
+        final float finalBottom = bottom;
+
+        if ((oldRight == 0 || oldBottom == 0) || (oldLeft == left && oldBottom == bottom
+                && oldRight == right && oldTop == top)) {
+            mCropRect.set(finalLeft, finalTop, finalRight, finalBottom);
+            initBase();
+            invalidate();
+            return;
+        }
+
+        if (cropAnim == null) {
+            cropAnim = ObjectAnimator.ofFloat(0.0F, 1.0F).setDuration(400);
+            cropAnim.setInterpolator(new DecelerateInterpolator());
+        }
+        cropAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+                mCropRect.left = (finalLeft - oldLeft) * value + oldLeft;
+                mCropRect.top = (finalTop - oldTop) * value + oldTop;
+                mCropRect.right = (finalRight - oldRight) * value + oldRight;
+                mCropRect.bottom = (finalBottom - oldBottom) * value + oldBottom;
+                isShowLine = value < 1.0f;
+                initBase();
+                invalidate();
+            }
+        });
+        cropAnim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                initBase();
+                invalidate();
+            }
+        });
+        cropAnim.start();
+    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-
-        mWidgetRect.set(0, 0, w, h);
+        resetCropSize(w, h);
         mScreenCenter.set(w / 2.0f, h / 2.0f);
-
-        if (!isKnowSize) {
-            isKnowSize = true;
-            initBase();
-        }
-
-        post(new Runnable() {
-            @Override
-            public void run() {
-                setImageDrawable(getDrawable());
-            }
-        });
+        isKnowSize = true;
+        setImageDrawable(getDrawable());
     }
 
     public void setRotateEnable(boolean rotateEnable) {
@@ -475,27 +610,88 @@ public class PicBrowseImageView extends ImageView {
 
     private boolean isShowLine = false;
 
-    private boolean canShowLine = true;
+    private Paint cropRectPaint;
+    private Paint maskPaint;
+    private Paint cropStrokePaint;
 
-    public void setShowLine(boolean canShowLine) {
-        this.canShowLine = canShowLine;
+    private void initCropRect() {
+        cropRectPaint = new Paint();
+        cropRectPaint.setStrokeWidth(dp(2f));
+        cropRectPaint.setColor(Color.WHITE);
+        cropRectPaint.setAntiAlias(true);
+        cropRectPaint.setStyle(Paint.Style.STROKE);
+        initMaskPaint();
+    }
+
+    private void initCropLineRect() {
+        linePaint = new Paint();
+        linePaint.setColor(Color.WHITE);
+        linePaint.setAntiAlias(true);
+        linePaint.setStrokeWidth(dp(0.5f));
+        linePaint.setStyle(Paint.Style.FILL);
+
+        cropStrokePaint = new Paint();
+        cropStrokePaint.setColor(Color.WHITE);
+        cropStrokePaint.setAntiAlias(true);
+        cropStrokePaint.setStrokeCap(Paint.Cap.ROUND);
+        cropStrokePaint.setStrokeWidth(dp(4));
+        cropStrokePaint.setStyle(Paint.Style.STROKE);
+    }
+
+    private void initMaskPaint() {
+        maskPaint = new Paint();
+        maskPaint.setColor(Color.parseColor("#a0000000"));
+        maskPaint.setAntiAlias(true);
+        maskPaint.setStyle(Paint.Style.FILL);
+    }
+
+    private Rect viewDrawingRect = new Rect();
+    private Path path = new Path();
+
+    private void drawStrokeLine(Canvas canvas) {
+        int lineWidth = dp(30);
+        float x = mCropRect.left;
+        float y = mCropRect.top + dp(1);
+        float w = mCropRect.width();
+        float h = mCropRect.height() - dp(2);
+        canvas.drawLine(x, y, lineWidth + x, y, cropStrokePaint);
+        canvas.drawLine(x, y, x, y + lineWidth, cropStrokePaint);
+        canvas.drawLine(x, y + h, x, y + h - lineWidth, cropStrokePaint);
+        canvas.drawLine(x, y + h, x + lineWidth, y + h, cropStrokePaint);
+        canvas.drawLine(x + w, y, x + w - lineWidth, y, cropStrokePaint);
+        canvas.drawLine(x + w, y, x + w, y + lineWidth, cropStrokePaint);
+        canvas.drawLine(x + w, y + h, x + w - lineWidth, y + h, cropStrokePaint);
+        canvas.drawLine(x + w, y + h, x + w, y + h - lineWidth, cropStrokePaint);
+
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (isShowLine && canShowLine) {
-            int w = getWidth();
-            int h = getHeight();
-            canvas.drawLine(w / 3.0f, 0, w / 3.0f, getHeight(), linePaint);
-            canvas.drawLine(w * 2 / 3.0f, 0, w * 2 / 3.0f, getHeight(), linePaint);
-            canvas.drawLine(0, h / 3.0f, getWidth(), h / 3.0f, linePaint);
-            canvas.drawLine(0, h * 2 / 3.0f, getWidth(), h * 2 / 3.0f, linePaint);
+        if (aspectY <= 0 || aspectX <= 0) {
+            return;
         }
-    }
+        int w = (int) mCropRect.width();
+        int h = (int) mCropRect.height();
+        int left = (int) mCropRect.left;
+        int top = (int) mCropRect.top;
 
-    public boolean isShowLine() {
-        return isShowLine;
+        drawStrokeLine(canvas);
+
+        if (isShowLine) {
+            canvas.drawLine(left + w / 3.0f, top, left + w / 3.0f, h + top, linePaint);
+            canvas.drawLine(left + w * 2 / 3.0f, top, left + w * 2 / 3.0f, h + top, linePaint);
+            canvas.drawLine(left, top + h / 3.0f, left + w, top + h / 3.0f, linePaint);
+            canvas.drawLine(left, top + h * 2 / 3.0f, left + w, top + h * 2 / 3.0f, linePaint);
+        }
+
+        getDrawingRect(viewDrawingRect);
+        path.reset();
+        path.addRect(mCropRect.left, mCropRect.top, mCropRect.right, mCropRect.bottom, Path.Direction.CW);
+        canvas.clipPath(path, android.graphics.Region.Op.DIFFERENCE);
+        canvas.drawRect(viewDrawingRect, maskPaint);
+
+        canvas.drawPath(path, cropRectPaint);
     }
 
     @Override
@@ -551,14 +747,13 @@ public class PicBrowseImageView extends ImageView {
             mDegrees = toDegrees;
         }
 
-        float scale = mScale;
 
         if (mScale < 1) {
-            scale = 1;
             mTranslate.withScale(mScale, 1);
+            mScale = 1;
         } else if (mScale > mMaxScale) {
-            scale = mMaxScale;
             mTranslate.withScale(mScale, mMaxScale);
+            mScale = mMaxScale;
         }
 
         float cx = mImgRect.left + mImgRect.width() / 2;
@@ -572,8 +767,8 @@ public class PicBrowseImageView extends ImageView {
 
         mTmpMatrix.reset();
         mTmpMatrix.postTranslate(-mBaseRect.left, -mBaseRect.top);
-        mTmpMatrix.postTranslate(cx - mHalfBaseRectWidth, cy - mHalfBaseRectHeight);
-        mTmpMatrix.postScale(scale, scale, cx, cy);
+        mTmpMatrix.postTranslate(cx - mBaseRect.width() / 2, cy - mBaseRect.height() / 2);
+        mTmpMatrix.postScale(mScale, mScale, cx, cy);
         mTmpMatrix.postRotate(mDegrees, cx, cy);
         mTmpMatrix.mapRect(mTmpRect, mBaseRect);
 
@@ -585,25 +780,37 @@ public class PicBrowseImageView extends ImageView {
         int tx = 0;
         int ty = 0;
 
-        if (imgRect.width() <= mWidgetRect.width()) {
-            if (!isImageCenterWidth(imgRect))
-                tx = -(int) ((mWidgetRect.width() - imgRect.width()) / 2 - imgRect.left);
+        int width = (int) (mCropRect.width());
+        int height = (int) (mCropRect.height());
+
+        if (imgRect.width() <= width) {
+            if (!isImageCenterWidth(imgRect)) {
+                if (aspectX > 0 && aspectY > 0) {
+                    tx = (int) (imgRect.left - mCropRect.left);
+                } else {
+                    tx = -(int) ((mCropRect.width() - imgRect.width()) / 2 - imgRect.left);
+                }
+            }
         } else {
-            if (imgRect.left > mWidgetRect.left) {
-                tx = (int) (imgRect.left - mWidgetRect.left);
-            } else if (imgRect.right < mWidgetRect.right) {
-                tx = (int) (imgRect.right - mWidgetRect.right);
+            if (imgRect.left > mCropRect.left) {
+                tx = (int) (imgRect.left - mCropRect.left);
+            } else if (imgRect.right < mCropRect.right) {
+                tx = (int) (imgRect.right - mCropRect.right);
             }
         }
 
-        if (imgRect.height() <= mWidgetRect.height()) {
+        if (imgRect.height() <= height) {
             if (!isImageCenterHeight(imgRect))
-                ty = -(int) ((mWidgetRect.height() - imgRect.height()) / 2 - imgRect.top);
+                if (aspectX > 0 && aspectY > 0) {
+                    ty = (int) (imgRect.top - mCropRect.top);
+                } else {
+                    ty = -(int) ((mCropRect.height() - imgRect.height()) / 2 - imgRect.top);
+                }
         } else {
-            if (imgRect.top > mWidgetRect.top) {
-                ty = (int) (imgRect.top - mWidgetRect.top);
-            } else if (imgRect.bottom < mWidgetRect.bottom) {
-                ty = (int) (imgRect.bottom - mWidgetRect.bottom);
+            if (imgRect.top > mCropRect.top) {
+                ty = (int) (imgRect.top - mCropRect.top);
+            } else if (imgRect.bottom < mCropRect.bottom) {
+                ty = (int) (imgRect.bottom - mCropRect.bottom);
             }
         }
 
@@ -614,11 +821,11 @@ public class PicBrowseImageView extends ImageView {
     }
 
     private boolean isImageCenterHeight(RectF rect) {
-        return Math.abs(Math.round(rect.top) - (mWidgetRect.height() - rect.height()) / 2) < 1;
+        return Math.abs(Math.round(rect.top) - (mCropRect.height() - rect.height()) / 2) < 1;
     }
 
     private boolean isImageCenterWidth(RectF rect) {
-        return Math.abs(Math.round(rect.left) - (mWidgetRect.width() - rect.width()) / 2) < 1;
+        return Math.abs(Math.round(rect.left) - (mCropRect.width() - rect.width()) / 2) < 1;
     }
 
     private OnRotateListener mRotateListener = new OnRotateListener() {
@@ -627,7 +834,7 @@ public class PicBrowseImageView extends ImageView {
             mRotateFlag += degrees;
             if (canRotate) {
                 mDegrees += degrees;
-                mAnimaMatrix.postRotate(degrees, focusX, focusY);
+                mAnimMatrix.postRotate(degrees, focusX, focusY);
             } else {
                 if (Math.abs(mRotateFlag) >= mMinRotate) {
                     canRotate = true;
@@ -647,7 +854,7 @@ public class PicBrowseImageView extends ImageView {
 
             mScale *= scaleFactor;
             mScaleCenter.set(detector.getFocusX(), detector.getFocusY());
-            mAnimaMatrix.postScale(scaleFactor, scaleFactor, detector.getFocusX(), detector.getFocusY());
+            mAnimMatrix.postScale(scaleFactor, scaleFactor, detector.getFocusX(), detector.getFocusY());
             executeTranslate();
             return true;
         }
@@ -695,7 +902,7 @@ public class PicBrowseImageView extends ImageView {
 
     private void checkRect() {
         if (!hasOverTranslate) {
-            mapRect(mWidgetRect, mImgRect, mCommonRect);
+            mapRect(mCropRect, mImgRect, mCommonRect);
         }
     }
 
@@ -703,7 +910,7 @@ public class PicBrowseImageView extends ImageView {
         @Override
         public void run() {
             if (mClickListener != null) {
-                mClickListener.onClick(PicBrowseImageView.this);
+                mClickListener.onClick(CropImageView.this);
             }
         }
     };
@@ -712,7 +919,7 @@ public class PicBrowseImageView extends ImageView {
         @Override
         public void onLongPress(MotionEvent e) {
             if (mLongClick != null) {
-                mLongClick.onLongClick(PicBrowseImageView.this);
+                mLongClick.onLongClick(CropImageView.this);
             }
         }
 
@@ -734,11 +941,11 @@ public class PicBrowseImageView extends ImageView {
             float vx = velocityX;
             float vy = velocityY;
 
-            if (Math.round(mImgRect.left) >= mWidgetRect.left || Math.round(mImgRect.right) <= mWidgetRect.right) {
+            if (Math.round(mImgRect.left) >= mCropRect.left || Math.round(mImgRect.right) <= mCropRect.right) {
                 vx = 0;
             }
 
-            if (Math.round(mImgRect.top) >= mWidgetRect.top || Math.round(mImgRect.bottom) <= mWidgetRect.bottom) {
+            if (Math.round(mImgRect.top) >= mCropRect.top || Math.round(mImgRect.bottom) <= mCropRect.bottom) {
                 vy = 0;
             }
 
@@ -754,12 +961,7 @@ public class PicBrowseImageView extends ImageView {
                 mTranslate.withRotate((int) mDegrees, (int) toDegrees);
                 mDegrees = toDegrees;
             }
-
-//            doTranslateReset(mImgRect);
-//
             mTranslate.withFling(vx, vy);
-//
-//            mTranslate.start();
             return super.onFling(e1, e2, velocityX, velocityY);
         }
 
@@ -771,12 +973,12 @@ public class PicBrowseImageView extends ImageView {
             }
 
             if (canScrollHorizontallySelf(distanceX)) {
-                if (distanceX < 0 && mImgRect.left - distanceX > mWidgetRect.left)
+                if (distanceX < 0 && mImgRect.left - distanceX > mCropRect.left)
                     distanceX = mImgRect.left;
-                if (distanceX > 0 && mImgRect.right - distanceX < mWidgetRect.right)
-                    distanceX = mImgRect.right - mWidgetRect.right;
+                if (distanceX > 0 && mImgRect.right - distanceX < mCropRect.right)
+                    distanceX = mImgRect.right - mCropRect.right;
 
-                mAnimaMatrix.postTranslate(-distanceX, 0);
+                mAnimMatrix.postTranslate(-distanceX, 0);
                 mTranslateX -= distanceX;
             } else if (imgLargeWidth || hasMultiTouch || hasOverTranslate) {
                 checkRect();
@@ -788,17 +990,17 @@ public class PicBrowseImageView extends ImageView {
                 }
 
                 mTranslateX -= distanceX;
-                mAnimaMatrix.postTranslate(-distanceX, 0);
+                mAnimMatrix.postTranslate(-distanceX, 0);
                 hasOverTranslate = true;
             }
 
             if (canScrollVerticallySelf(distanceY)) {
-                if (distanceY < 0 && mImgRect.top - distanceY > mWidgetRect.top)
+                if (distanceY < 0 && mImgRect.top - distanceY > mCropRect.top)
                     distanceY = mImgRect.top;
-                if (distanceY > 0 && mImgRect.bottom - distanceY < mWidgetRect.bottom)
-                    distanceY = mImgRect.bottom - mWidgetRect.bottom;
+                if (distanceY > 0 && mImgRect.bottom - distanceY < mCropRect.bottom)
+                    distanceY = mImgRect.bottom - mCropRect.bottom;
 
-                mAnimaMatrix.postTranslate(0, -distanceY);
+                mAnimMatrix.postTranslate(0, -distanceY);
                 mTranslateY -= distanceY;
             } else if (imgLargeHeight || hasOverTranslate || hasMultiTouch) {
                 checkRect();
@@ -809,7 +1011,7 @@ public class PicBrowseImageView extends ImageView {
                         distanceY = resistanceScrollByY(mImgRect.bottom - mCommonRect.bottom, distanceY);
                 }
 
-                mAnimaMatrix.postTranslate(0, -distanceY);
+                mAnimMatrix.postTranslate(0, -distanceY);
                 mTranslateY -= distanceY;
                 hasOverTranslate = true;
             }
@@ -828,14 +1030,14 @@ public class PicBrowseImageView extends ImageView {
         public boolean onDoubleTap(MotionEvent e) {
             mTranslate.stop();
 
-            float from = 1;
-            float to = 1;
+            float from;
+            float to;
 
-            float imgcx = mImgRect.left + mImgRect.width() / 2;
-            float imgcy = mImgRect.top + mImgRect.height() / 2;
+            float imageCenterX = mImgRect.left + mImgRect.width() / 2;
+            float imageCenterY = mImgRect.top + mImgRect.height() / 2;
 
-            mScaleCenter.set(imgcx, imgcy);
-            mRotateCenter.set(imgcx, imgcy);
+            mScaleCenter.set(imageCenterX, imageCenterY);
+            mRotateCenter.set(imageCenterX, imageCenterY);
             mTranslateX = 0;
             mTranslateY = 0;
 
@@ -852,14 +1054,14 @@ public class PicBrowseImageView extends ImageView {
             mTmpMatrix.reset();
             mTmpMatrix.postTranslate(-mBaseRect.left, -mBaseRect.top);
             mTmpMatrix.postTranslate(mRotateCenter.x, mRotateCenter.y);
-            mTmpMatrix.postTranslate(-mHalfBaseRectWidth, -mHalfBaseRectHeight);
+            mTmpMatrix.postTranslate(-mBaseRect.width() / 2, -mBaseRect.height() / 2);
             mTmpMatrix.postRotate(mDegrees, mRotateCenter.x, mRotateCenter.y);
             mTmpMatrix.postScale(to, to, mScaleCenter.x, mScaleCenter.y);
             mTmpMatrix.postTranslate(mTranslateX, mTranslateY);
             mTmpMatrix.mapRect(mTmpRect, mBaseRect);
             doTranslateReset(mTmpRect);
 
-            isZoonUp = !isZoonUp;
+            isZoomUp = !isZoomUp;
             mTranslate.withScale(from, to);
             mTranslate.start();
 
@@ -868,21 +1070,17 @@ public class PicBrowseImageView extends ImageView {
     };
 
     public boolean canScrollHorizontallySelf(float direction) {
-        if (mImgRect.width() <= mWidgetRect.width()) return false;
-        if (direction < 0 && Math.round(mImgRect.left) - direction >= mWidgetRect.left)
+        if (mImgRect.width() <= mCropRect.width()) return false;
+        if (direction < 0 && Math.round(mImgRect.left) - direction >= mCropRect.left)
             return false;
-        if (direction > 0 && Math.round(mImgRect.right) - direction <= mWidgetRect.right)
-            return false;
-        return true;
+        return !(direction > 0) || !(Math.round(mImgRect.right) - direction <= mCropRect.right);
     }
 
     public boolean canScrollVerticallySelf(float direction) {
-        if (mImgRect.height() <= mWidgetRect.height()) return false;
-        if (direction < 0 && Math.round(mImgRect.top) - direction >= mWidgetRect.top)
+        if (mImgRect.height() <= mCropRect.height()) return false;
+        if (direction < 0 && Math.round(mImgRect.top) - direction >= mCropRect.top)
             return false;
-        if (direction > 0 && Math.round(mImgRect.bottom) - direction <= mWidgetRect.bottom)
-            return false;
-        return true;
+        return !(direction > 0) || !(Math.round(mImgRect.bottom) - direction <= mCropRect.bottom);
     }
 
     @Override
@@ -905,7 +1103,7 @@ public class PicBrowseImageView extends ImageView {
             mTarget = new DecelerateInterpolator();
         }
 
-        public void setTargetInterpolator(Interpolator interpolator) {
+        void setTargetInterpolator(Interpolator interpolator) {
             mTarget = interpolator;
         }
 
@@ -956,20 +1154,15 @@ public class PicBrowseImageView extends ImageView {
         void withTranslate(int startX, int startY, int deltaX, int deltaY) {
             mLastTranslateX = 0;
             mLastTranslateY = 0;
-            mTranslateScroller.startScroll(0, 0, deltaX, deltaY, mAnimaDuring);
+            mTranslateScroller.startScroll(startX, startY, deltaX, deltaY, mAnimDuring);
         }
 
         void withScale(float form, float to) {
-            mScaleScroller.startScroll((int) (form * 10000), 0, (int) ((to - form) * 10000), 0, mAnimaDuring);
-        }
-
-        void withClip(float fromX, float fromY, float deltaX, float deltaY, int d, ClipCalculate c) {
-            mClipScroller.startScroll((int) (fromX * 10000), (int) (fromY * 10000), (int) (deltaX * 10000), (int) (deltaY * 10000), d);
-            C = c;
+            mScaleScroller.startScroll((int) (form * 10000), 0, (int) ((to - form) * 10000), 0, mAnimDuring);
         }
 
         void withRotate(int fromDegrees, int toDegrees) {
-            mRotateScroller.startScroll(fromDegrees, 0, toDegrees - fromDegrees, 0, mAnimaDuring);
+            mRotateScroller.startScroll(fromDegrees, 0, toDegrees - fromDegrees, 0, mAnimDuring);
         }
 
         void withRotate(int fromDegrees, int toDegrees, int during) {
@@ -978,14 +1171,14 @@ public class PicBrowseImageView extends ImageView {
 
         void withFling(float velocityX, float velocityY) {
             mLastFlingX = velocityX < 0 ? Integer.MAX_VALUE : 0;
-            int distanceX = (int) (velocityX > 0 ? Math.abs(mImgRect.left) : mImgRect.right - mWidgetRect.right);
+            int distanceX = (int) (velocityX > 0 ? Math.abs(mImgRect.left) : mImgRect.right - mCropRect.right);
             distanceX = velocityX < 0 ? Integer.MAX_VALUE - distanceX : distanceX;
             int minX = velocityX < 0 ? distanceX : 0;
             int maxX = velocityX < 0 ? Integer.MAX_VALUE : distanceX;
             int overX = velocityX < 0 ? Integer.MAX_VALUE - minX : distanceX;
 
             mLastFlingY = velocityY < 0 ? Integer.MAX_VALUE : 0;
-            int distanceY = (int) (velocityY > 0 ? Math.abs(mImgRect.top) : mImgRect.bottom - mWidgetRect.bottom);
+            int distanceY = (int) (velocityY > 0 ? Math.abs(mImgRect.top - mCropRect.top) : mImgRect.bottom - mCropRect.bottom);
             distanceY = velocityY < 0 ? Integer.MAX_VALUE - distanceY : distanceY;
             int minY = velocityY < 0 ? distanceY : 0;
             int maxY = velocityY < 0 ? Integer.MAX_VALUE : distanceY;
@@ -1022,14 +1215,13 @@ public class PicBrowseImageView extends ImageView {
 
         @Override
         public void run() {
+            if (!isRuning) return;
 
-            // if (!isRuning) return;
-
-            boolean endAnima = true;
+            boolean endAnim = true;
 
             if (mScaleScroller.computeScrollOffset()) {
                 mScale = mScaleScroller.getCurrX() / 10000f;
-                endAnima = false;
+                endAnim = false;
             }
 
             if (mTranslateScroller.computeScrollOffset()) {
@@ -1039,7 +1231,7 @@ public class PicBrowseImageView extends ImageView {
                 mTranslateY += ty;
                 mLastTranslateX = mTranslateScroller.getCurrX();
                 mLastTranslateY = mTranslateScroller.getCurrY();
-                endAnima = false;
+                endAnim = false;
             }
 
             if (mFlingScroller.computeScrollOffset()) {
@@ -1051,12 +1243,12 @@ public class PicBrowseImageView extends ImageView {
 
                 mTranslateX += x;
                 mTranslateY += y;
-                endAnima = false;
+                endAnim = false;
             }
 
             if (mRotateScroller.computeScrollOffset()) {
                 mDegrees = mRotateScroller.getCurrX();
-                endAnima = false;
+                endAnim = false;
             }
 
             if (mClipScroller.computeScrollOffset() || mClip != null) {
@@ -1066,69 +1258,67 @@ public class PicBrowseImageView extends ImageView {
                 mTmpMatrix.mapRect(mClipRect, mImgRect);
 
                 if (sx == 1) {
-                    mClipRect.left = mWidgetRect.left;
-                    mClipRect.right = mWidgetRect.right;
+                    mClipRect.left = mCropRect.left;
+                    mClipRect.right = mCropRect.right;
                 }
 
                 if (sy == 1) {
-                    mClipRect.top = mWidgetRect.top;
-                    mClipRect.bottom = mWidgetRect.bottom;
+                    mClipRect.top = mCropRect.top;
+                    mClipRect.bottom = mCropRect.bottom;
                 }
 
                 mClip = mClipRect;
             }
-
-            if (!endAnima) {
-                applyAnima();
+            if (!endAnim) {
+                applyAnim();
                 postExecute();
             } else {
                 isRuning = false;
-
+                if (aspectX > 0 && aspectY > 0) {
+                    return;
+                }
                 // 修复动画结束后边距有些空隙，
                 boolean needFix = false;
-
                 if (imgLargeWidth) {
                     if (mImgRect.left > 0) {
-                        mTranslateX -= mImgRect.left;
-                    } else if (mImgRect.right < mWidgetRect.width()) {
-                        mTranslateX -= (int) (mWidgetRect.width() - mImgRect.right);
+                        mTranslateX -= mCropRect.left;
+                    } else if (mImgRect.right < mCropRect.width()) {
+                        mTranslateX -= (int) (mCropRect.width() - mImgRect.right);
                     }
                     needFix = true;
                 }
 
                 if (imgLargeHeight) {
                     if (mImgRect.top > 0) {
-                        mTranslateY -= mImgRect.top;
-                    } else if (mImgRect.bottom < mWidgetRect.height()) {
-                        mTranslateY -= (int) (mWidgetRect.height() - mImgRect.bottom);
+                        mTranslateY -= mCropRect.top;
+                    } else if (mImgRect.bottom < mCropRect.height()) {
+                        mTranslateY -= (int) (mCropRect.height() - mImgRect.bottom);
                     }
                     needFix = true;
                 }
 
                 if (needFix) {
-                    applyAnima();
+                    applyAnim();
                 }
 
                 invalidate();
-
-                if (mCompleteCallBack != null) {
-                    mCompleteCallBack.run();
-                    mCompleteCallBack = null;
-                }
+            }
+            if (mCompleteCallBack != null) {
+                mCompleteCallBack.run();
+                mCompleteCallBack = null;
             }
         }
 
-        private void applyAnima() {
-            mAnimaMatrix.reset();
-            mAnimaMatrix.postTranslate(-mBaseRect.left, -mBaseRect.top);
-            mAnimaMatrix.postTranslate(mRotateCenter.x, mRotateCenter.y);
-            mAnimaMatrix.postTranslate(-mHalfBaseRectWidth, -mHalfBaseRectHeight);
-            mAnimaMatrix.postRotate(mDegrees, mRotateCenter.x, mRotateCenter.y);
-            mAnimaMatrix.postScale(mScale, mScale, mScaleCenter.x, mScaleCenter.y);
-            mAnimaMatrix.postTranslate(mTranslateX, mTranslateY);
+        private void applyAnim() {
+            mAnimMatrix.reset();
+            mAnimMatrix.postTranslate(-mBaseRect.left, -mBaseRect.top);
+            mAnimMatrix.postTranslate(mRotateCenter.x, mRotateCenter.y);
+            mAnimMatrix.postTranslate(-mBaseRect.width() / 2, -mBaseRect.height() / 2);
+            mAnimMatrix.postRotate(mDegrees, mRotateCenter.x, mRotateCenter.y);
+            mAnimMatrix.postScale(mScale, mScale, mScaleCenter.x, mScaleCenter.y);
+            mAnimMatrix.postTranslate(mTranslateX, mTranslateY);
             executeTranslate();
         }
-
 
         private void postExecute() {
             if (isRuning) post(this);
@@ -1140,33 +1330,11 @@ public class PicBrowseImageView extends ImageView {
         int[] p = new int[2];
         getLocation(this, p);
         rect.set(p[0] + mImgRect.left, p[1] + mImgRect.top, p[0] + mImgRect.right, p[1] + mImgRect.bottom);
-        return new Info(rect, mImgRect, mWidgetRect, mBaseRect, mScreenCenter, mScale, mDegrees, mScaleType);
-    }
-
-    public static Info getImageViewInfo(ImageView imgView) {
-        int[] p = new int[2];
-        getLocation(imgView, p);
-
-        Drawable drawable = imgView.getDrawable();
-
-        Matrix matrix = imgView.getImageMatrix();
-
-        int width = getDrawableWidth(drawable);
-        int height = getDrawableHeight(drawable);
-
-        RectF imgRect = new RectF(0, 0, width, height);
-        matrix.mapRect(imgRect);
-
-        RectF rect = new RectF(p[0] + imgRect.left, p[1] + imgRect.top, p[0] + imgRect.right, p[1] + imgRect.bottom);
-        RectF widgetRect = new RectF(0, 0, imgView.getWidth(), imgView.getHeight());
-        RectF baseRect = new RectF(widgetRect);
-        PointF screenCenter = new PointF(widgetRect.width() / 2, widgetRect.height() / 2);
-
-        return new Info(rect, imgRect, widgetRect, baseRect, screenCenter, 1, 0, imgView.getScaleType());
+        return new Info(rect, mImgRect, mCropRect, mBaseRect, mScreenCenter, getScale(), mDegrees,
+                mScaleType, aspectX, aspectY, getTranslateX(), getTranslateY());
     }
 
     private static void getLocation(View target, int[] position) {
-
         position[0] += target.getLeft();
         position[1] += target.getTop();
 
@@ -1189,171 +1357,94 @@ public class PicBrowseImageView extends ImageView {
         position[1] = (int) (position[1] + 0.5f);
     }
 
-    private void reset() {
-        mAnimaMatrix.reset();
-        executeTranslate();
-        mScale = 1;
-        mTranslateX = 0;
-        mTranslateY = 0;
-    }
-
     public interface ClipCalculate {
         float calculateTop();
     }
 
-    public class START implements ClipCalculate {
-        public float calculateTop() {
-            return mImgRect.top;
-        }
-    }
-
-    public class END implements ClipCalculate {
-        public float calculateTop() {
-            return mImgRect.bottom;
-        }
-    }
-
-    public class OTHER implements ClipCalculate {
-        public float calculateTop() {
-            return (mImgRect.top + mImgRect.bottom) / 2;
-        }
-    }
-
-    /**
-     * 在PhotoView内部还没有图片的时候同样可以调用该方法
-     * <p></p>
-     * 此时并不会播放动画，当给PhotoView设置图片后会自动播放动画。
-     * <p></p>
-     * 若等待时间过长也没有给控件设置图片，则会忽略该动画，若要再次播放动画则需要重新调用该方法
-     * (等待的时间默认500毫秒，可以通过setMaxAnimFromWaiteTime(int)设置最大等待时间)
-     */
-    public void animaFrom(Info info) {
-        if (isInit) {
-            reset();
-
-            Info mine = getInfo();
-
-            float scaleX = info.mImgRect.width() / mine.mImgRect.width();
-            float scaleY = info.mImgRect.height() / mine.mImgRect.height();
-            float scale = scaleX < scaleY ? scaleX : scaleY;
-
-            float ocx = info.mRect.left + info.mRect.width() / 2;
-            float ocy = info.mRect.top + info.mRect.height() / 2;
-
-            float mcx = mine.mRect.left + mine.mRect.width() / 2;
-            float mcy = mine.mRect.top + mine.mRect.height() / 2;
-
-            mAnimaMatrix.reset();
-            // mAnimaMatrix.postTranslate(-mBaseRect.left, -mBaseRect.top);
-            mAnimaMatrix.postTranslate(ocx - mcx, ocy - mcy);
-            mAnimaMatrix.postScale(scale, scale, ocx, ocy);
-            mAnimaMatrix.postRotate(info.mDegrees, ocx, ocy);
-            executeTranslate();
-
-            mScaleCenter.set(ocx, ocy);
-            mRotateCenter.set(ocx, ocy);
-
-            mTranslate.withTranslate(0, 0, (int) -(ocx - mcx), (int) -(ocy - mcy));
-            mTranslate.withScale(scale, 1);
-            mTranslate.withRotate((int) info.mDegrees, 0);
-
-            if (info.mWidgetRect.width() < info.mImgRect.width() || info.mWidgetRect.height() < info.mImgRect.height()) {
-                float clipX = info.mWidgetRect.width() / info.mImgRect.width();
-                float clipY = info.mWidgetRect.height() / info.mImgRect.height();
-                clipX = clipX > 1 ? 1 : clipX;
-                clipY = clipY > 1 ? 1 : clipY;
-
-                ClipCalculate c = info.mScaleType == ScaleType.FIT_START ? new START() : info.mScaleType == ScaleType.FIT_END ? new END() : new OTHER();
-
-                mTranslate.withClip(clipX, clipY, 1 - clipX, 1 - clipY, mAnimaDuring / 3, c);
-
-                mTmpMatrix.setScale(clipX, clipY, (mImgRect.left + mImgRect.right) / 2, c.calculateTop());
-                mTmpMatrix.mapRect(mTranslate.mClipRect, mImgRect);
-                mClip = mTranslate.mClipRect;
-            }
-
-            mTranslate.start();
-        } else {
-            mFromInfo = info;
-            mInfoTime = System.currentTimeMillis();
-        }
-    }
-
-    public void animaTo(Info info, Runnable completeCallBack) {
-        if (isInit) {
-            mTranslate.stop();
-
-            mTranslateX = 0;
-            mTranslateY = 0;
-
-            float tcx = info.mRect.left + info.mRect.width() / 2;
-            float tcy = info.mRect.top + info.mRect.height() / 2;
-
-            mScaleCenter.set(mImgRect.left + mImgRect.width() / 2, mImgRect.top + mImgRect.height() / 2);
-            mRotateCenter.set(mScaleCenter);
-
-            // 将图片旋转回正常位置，用以计算
-            mAnimaMatrix.postRotate(-mDegrees, mScaleCenter.x, mScaleCenter.y);
-            mAnimaMatrix.mapRect(mImgRect, mBaseRect);
-
-            // 缩放
-            float scaleX = info.mImgRect.width() / mBaseRect.width();
-            float scaleY = info.mImgRect.height() / mBaseRect.height();
-            float scale = scaleX > scaleY ? scaleX : scaleY;
-
-            mAnimaMatrix.postRotate(mDegrees, mScaleCenter.x, mScaleCenter.y);
-            mAnimaMatrix.mapRect(mImgRect, mBaseRect);
-
-            mDegrees = mDegrees % 360;
-
-            mTranslate.withTranslate(0, 0, (int) (tcx - mScaleCenter.x), (int) (tcy - mScaleCenter.y));
-            mTranslate.withScale(mScale, scale);
-            mTranslate.withRotate((int) mDegrees, (int) info.mDegrees, mAnimaDuring * 2 / 3);
-
-            if (info.mWidgetRect.width() < info.mRect.width() || info.mWidgetRect.height() < info.mRect.height()) {
-                float clipX = info.mWidgetRect.width() / info.mRect.width();
-                float clipY = info.mWidgetRect.height() / info.mRect.height();
-                clipX = clipX > 1 ? 1 : clipX;
-                clipY = clipY > 1 ? 1 : clipY;
-
-                final float cx = clipX;
-                final float cy = clipY;
-                final ClipCalculate c = info.mScaleType == ScaleType.FIT_START ? new START() : info.mScaleType == ScaleType.FIT_END ? new END() : new OTHER();
-
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mTranslate.withClip(1, 1, -1 + cx, -1 + cy, mAnimaDuring / 2, c);
-                    }
-                }, mAnimaDuring / 2);
-            }
-
-            mCompleteCallBack = completeCallBack;
-            mTranslate.start();
-        }
-    }
-
     public void rotate(float degrees) {
         mDegrees += degrees;
-        int centerX = (int) (mWidgetRect.left + mWidgetRect.width() / 2);
-        int centerY = (int) (mWidgetRect.top + mWidgetRect.height() / 2);
+        int centerX = (int) (mCropRect.left + mCropRect.width() / 2);
+        int centerY = (int) (mCropRect.top + mCropRect.height() / 2);
 
-        mAnimaMatrix.postRotate(degrees, centerX, centerY);
+        mAnimMatrix.postRotate(degrees, centerX, centerY);
         executeTranslate();
     }
 
+    public Bitmap generateCropBitmap() {
+        if (originalBitmap == null) {
+            return null;
+        }
+        //水平平移像素点
+        float x = Math.abs(getTranslateX());
+        //垂直平移像素点
+        float y = Math.abs(getTranslateY());
+        //缩放比例
+        float scale = mScale;
+        //原图宽度(Glide压缩过的，Glide默认加载会减小大图的宽高)
+        int bw = originalBitmap.getWidth();
+        //原图高度(Glide压缩过的)
+        int bh = originalBitmap.getHeight();
+        //图片宽高比
+        float bRatio = bw * 1.00f / (bh * 1.00f);
 
-    public float getmTranslateX() {
-        return mImgRect.left;
+        float endW;
+        float endH;
+        float endX;
+        float endY;
+
+        float cropWidth = mCropRect.width();
+        float cropHeight = mCropRect.height();
+        float cropRatio = (cropWidth * 1.00f / (cropHeight * 1.00f));
+
+        //图片比例小于剪裁比例，以宽填满，高自适应，计算高
+        if (bRatio < cropRatio) {
+            endW = bw / scale;
+            endH = endW / cropRatio;
+            endX = bw * x / (cropWidth * scale * 1.00f);
+            endY = bw * y / (cropWidth * scale * 1.00f);
+        } else {
+            endH = bh / scale;
+            endW = cropRatio * endH;
+            endX = bh * x / (cropHeight * scale * 1.00f);
+            endY = bh * y / (cropHeight * scale * 1.00f);
+
+        }
+
+        if (endX + endW > bw) {
+            endX = bw - endW;
+            if (endX < 0) {
+                endX = 0;
+            }
+        }
+
+        if (endY + endH > bh) {
+            endY = bh - endH;
+            if (endY < 0) {
+                endY = 0;
+            }
+        }
+
+        Bitmap bitmap1 = null;
+        try {
+            bitmap1 = Bitmap.createBitmap(originalBitmap, (int) endX, (int) endY, (int) endW, (int) endH);
+        } catch (Exception ignored) {
+        }
+
+        return bitmap1;
     }
 
-    public float getmTranslateY() {
-        return mImgRect.top;
+
+    public float getTranslateX() {
+        return mImgRect.left - mCropRect.left;
     }
 
-    public float getmScale() {
-        if (mScale > mMaxScale) {
-            return mMaxScale;
+    public float getTranslateY() {
+        return mImgRect.top - mCropRect.top;
+    }
+
+    public float getScale() {
+        if (mScale <= 1) {
+            return 1;
         }
         return mScale;
     }

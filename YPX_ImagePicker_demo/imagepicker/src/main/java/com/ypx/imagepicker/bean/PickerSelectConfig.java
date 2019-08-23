@@ -15,7 +15,7 @@ public class PickerSelectConfig implements Serializable {
     private boolean isShowCamera = true;
     private boolean isShowVideo = true;
     private boolean isShowImage = true;
-    private boolean isLoadGif = true;
+    private boolean isLoadGif = false;
     private boolean isShowOriginalCheckBox;
     private boolean isCanEditPic;
     private boolean isPreview = true;
@@ -27,12 +27,14 @@ public class PickerSelectConfig implements Serializable {
      * 视频是否可以多选
      */
     private boolean isVideoSinglePick = true;
-    private int selectMode;
+    private int selectMode = ImageSelectMode.MODE_MULTI;
     private ArrayList<ImageItem> lastImageList = new ArrayList<>();
     private ArrayList<ImageItem> shieldImageList = new ArrayList<>();
 
     private int cropRatioX = 1;
     private int cropRatioY = 1;
+    private int cropRectMargin = 0;
+    private String cropSaveFilePath = "";
 
     public boolean isSinglePickImageOrVideoType() {
         return isSinglePickImageOrVideoType;
@@ -40,6 +42,22 @@ public class PickerSelectConfig implements Serializable {
 
     public void setSinglePickImageOrVideoType(boolean isSinglePickImageOrVideoType) {
         this.isSinglePickImageOrVideoType = isSinglePickImageOrVideoType;
+    }
+
+    public int getCropRectMargin() {
+        return cropRectMargin;
+    }
+
+    public void setCropRectMargin(int cropRectMargin) {
+        this.cropRectMargin = cropRectMargin;
+    }
+
+    public String getCropSaveFilePath() {
+        return cropSaveFilePath;
+    }
+
+    public void setCropSaveFilePath(String cropSaveFilePath) {
+        this.cropSaveFilePath = cropSaveFilePath;
     }
 
     public boolean isVideoSinglePick() {

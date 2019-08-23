@@ -10,12 +10,13 @@ import java.io.Serializable;
  */
 public class ImageItem implements Serializable {
     private static final long serialVersionUID = 3429291195776736078L;
-    private int id;
+    public long id;
     public String path;
     public int width;
     public int height;
     public long time;
     public String timeFormat;
+    public String mimeType;
 
     public long duration;
     public String durationFormat;
@@ -46,7 +47,15 @@ public class ImageItem implements Serializable {
         this.videoImageUri = videoImageUri;
     }
 
-    public int getId() {
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    public long getId() {
         return id;
     }
 
@@ -169,6 +178,22 @@ public class ImageItem implements Serializable {
             e.printStackTrace();
         }
         return super.equals(o);
+    }
+
+    public ImageItem copy(ImageItem item) {
+        ImageItem newItem = new ImageItem();
+        newItem.path = item.path;
+        newItem.isVideo = item.isVideo;
+        newItem.duration = item.duration;
+        newItem.height = item.height;
+        newItem.width = item.width;
+        newItem.isSelect = item.isSelect;
+        newItem.cropMode = item.cropMode;
+        newItem.cropUrl = item.cropUrl;
+        newItem.durationFormat = item.durationFormat;
+        newItem.id = item.id;
+        newItem.isPress = item.isPress;
+        return newItem;
     }
 
 }

@@ -1,26 +1,17 @@
 package com.ypx.imagepicker;
 
-import android.Manifest;
 import android.app.Application;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Environment;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.builder.CropPickerBuilder;
-import com.ypx.imagepicker.data.OnImagesLoadedListener;
-import com.ypx.imagepicker.data.impl.MediaDataSource;
-import com.ypx.imagepicker.data.impl.MediaObserver;
+import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.builder.MultiPickerBuilder;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
-import java.util.List;
 
 /**
  * Description: 图片加载启动类
@@ -37,8 +28,6 @@ public class ImagePicker {
     public static final String INTENT_KEY_PICKERRESULT = "pickerResult";
     //选择返回code
     public static final int REQ_PICKER_RESULT_CODE = 1433;
-
-    public static boolean isPreloadOk = false;
 
     /**
      * 图片剪裁的保存路径
@@ -88,9 +77,10 @@ public class ImagePicker {
      * 注册媒体监听器，用于捕获系统媒体文件发生变化
      *
      * @param application 应用application，可放入自定义Application中
+     * @deprecated
      */
     public static void registerMediaObserver(Application application) {
-        MediaObserver.instance.register(application);
+
     }
 
     /**
@@ -100,26 +90,16 @@ public class ImagePicker {
      * @param isLoadImage 是否预加载图片
      * @param isLoadVideo 是否预加载视频
      * @param isLoadGif   是否预加载GIF图
+     * @deprecated
      */
     public static void preload(FragmentActivity activity, boolean isLoadImage, boolean isLoadVideo, boolean isLoadGif) {
-        //没有文件访问权限，不预加载选择器
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        WeakReference<FragmentActivity> fragmentActivityWeakReference = new WeakReference<>(activity);
-        if (fragmentActivityWeakReference.get() == null) {
-            return;
-        }
-        MediaDataSource dataSource = new MediaDataSource(fragmentActivityWeakReference.get());
-        dataSource.setLoadVideo(isLoadVideo);
-        dataSource.setLoadImage(isLoadImage);
-        dataSource.setLoadGif(isLoadGif);
-        dataSource.provideMediaItems(new OnImagesLoadedListener() {
-            @Override
-            public void onImagesLoaded(List<ImageSet> imageSetList) {
-                isPreloadOk = true;
-            }
-        });
+
+    }
+
+    /**
+     * 清除缓存数据
+     */
+    public static void clearAllCache() {
+        MultiPickerData.instance.clear();
     }
 }

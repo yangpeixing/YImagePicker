@@ -2,8 +2,10 @@ package com.ypx.imagepicker.adapter.crop;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,10 +63,11 @@ public class CropSetAdapter extends RecyclerView.Adapter<CropSetAdapter.ViewHold
         } else {
             viewHolder.itemView.setBackground(context.getResources().getDrawable(R.drawable.picker_selector_list_item_bg));
         }
-        viewHolder.mTvCount.setText(imageSet.imageItems.size() + "");
+        viewHolder.mTvCount.setText(imageSet.count + "");
         viewHolder.mTvSetName.setText(imageSet.name);
         if (imageLoader != null) {
-            ImageItem imageItem = imageSet.imageItems.get(0);
+            ImageItem imageItem = new ImageItem();
+            imageItem.path = imageSet.coverPath;
             imageLoader.displayListImage(viewHolder.imageView, imageItem);
         }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {

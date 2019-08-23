@@ -21,6 +21,7 @@ import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.TakePhotoUtil;
+
 import java.util.List;
 
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.REQ_CAMERA;
@@ -46,6 +47,29 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         pickerUiConfig = presenter.getUiConfig(ctx);
     }
 
+    /**
+     * 模拟执行选中（取消选中）操作
+     *
+     * @param imageItem 当前item
+     */
+    public void preformCheckItem(ImageItem imageItem) {
+        if (onActionResult != null) {
+            onActionResult.onCheckItem(imageItem);
+        }
+    }
+
+    /**
+     * 模拟执行点击操作
+     *
+     * @param imageItem 当前item
+     * @param position  当前item的position
+     */
+    public void preformClickItem(ImageItem imageItem, int position) {
+        if (onActionResult != null) {
+            onActionResult.onClickItem(imageItem, position);
+        }
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -68,7 +92,7 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (itemViewType == ITEM_TYPE_CAMERA || item == null) {
             return;
         }
-        int index= selectConfig.isShowCamera() ? position - 1 : position;
+        int index = selectConfig.isShowCamera() ? position - 1 : position;
         ItemViewHolder holder = (ItemViewHolder) viewHolder;
         holder.getBaseItemView().bindData(item, this, index,
                 MultiPickerData.instance.getSelectImageList(), onActionResult);
@@ -154,7 +178,7 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             } else {
                 baseItemView = new WXItemView(context);
             }
-            baseItemView.initData(selectConfig, presenter,uiConfig);
+            baseItemView.initData(selectConfig, presenter, uiConfig);
             layout.addView(baseItemView);
         }
 
@@ -185,8 +209,19 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public interface OnActionResult {
-        void onClickItem(ImageItem item, int position);
+        /**
+         * 点击操作
+         *
+         * @param imageItem 当前item
+         * @param position  当前item的position
+         */
+        void onClickItem(ImageItem imageItem, int position);
 
-        void onCheckItem(ImageItem imageItem, boolean isChecked);
+        /**
+         * 执行选中（取消选中）操作
+         *
+         * @param imageItem 当前item
+         */
+        void onCheckItem(ImageItem imageItem);
     }
 }

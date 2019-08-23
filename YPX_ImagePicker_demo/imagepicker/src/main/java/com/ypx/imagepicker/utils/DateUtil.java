@@ -14,7 +14,7 @@ import java.util.Date;
 public class DateUtil {
 
     public static String getStrTime(long cc_time) {
-        if (cc_time < 1000000000) {
+        if (String.valueOf(cc_time).length() <= 10) {
             cc_time = cc_time * 1000L;
         }
         Date date = new Date(cc_time);

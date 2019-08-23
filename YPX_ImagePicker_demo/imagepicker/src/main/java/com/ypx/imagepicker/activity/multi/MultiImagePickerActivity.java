@@ -2,7 +2,10 @@ package com.ypx.imagepicker.activity.multi;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -11,10 +14,13 @@ import androidx.fragment.app.FragmentActivity;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.PickerSelectConfig;
+import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.launcher.ActivityLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
+import com.ypx.imagepicker.utils.StatusBarUtil;
+import com.ypx.imagepicker.utils.ViewSizeUtils;
 
 import java.util.ArrayList;
 
@@ -68,6 +74,18 @@ public class MultiImagePickerActivity extends FragmentActivity {
         if (selectConfig == null || presenter == null) {
             finish();
             return;
+        }
+        View mStatusBar = findViewById(R.id.mStatusBar);
+        PickerUiConfig uiConfig = presenter.getUiConfig(this);
+        if (uiConfig != null && uiConfig.isImmersionBar()) {
+            mStatusBar.setVisibility(View.VISIBLE);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mStatusBar.getLayoutParams();
+            params.height = StatusBarUtil.getStatusBarHeight(this);
+            mStatusBar.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
+            StatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
+                    StatusBarUtil.isDarkColor(uiConfig.getTitleBarBackgroundColor()));
+        } else {
+            mStatusBar.setVisibility(View.GONE);
         }
         fragment = ImagePicker.withMultiFragment(presenter)
                 .setPickerSelectConfig(selectConfig)

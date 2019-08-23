@@ -11,8 +11,12 @@ import java.util.List;
  * Date: 2019/2/21
  */
 public class ImageSet implements Serializable {
+    public static final String ID_ALL_MEDIA = "-1";
+    public static final String ID_ALL_VIDEO = "-2";
+    public String id;
     public String name;
-    public String path;
+    public String coverPath;
+    public int count;
     public ImageItem cover;
     public ArrayList<ImageItem> imageItems;
     public boolean isSelected = false;
@@ -23,8 +27,8 @@ public class ImageSet implements Serializable {
         if (this == o) {
             return true;
         }
-        if (this.name != null && other != null && other.name != null) {
-            return this.name.equals(other.name);
+        if (this.id != null && other != null && other.id != null) {
+            return this.id.equals(other.id);
         }
         return super.equals(o);
     }
@@ -32,12 +36,23 @@ public class ImageSet implements Serializable {
     public ImageSet copy() {
         ImageSet imageSet = new ImageSet();
         imageSet.name = this.name;
-        imageSet.path = this.path;
+        imageSet.coverPath = this.coverPath;
         imageSet.cover = this.cover;
         imageSet.isSelected = this.isSelected;
         imageSet.imageItems = new ArrayList<>();
-        imageSet.imageItems.addAll(this.imageItems);
+        for (ImageItem item : this.imageItems) {
+            ImageItem newItem = item.copy(item);
+            imageSet.imageItems.add(newItem);
+        }
         return imageSet;
+    }
+
+    public boolean isAllMedia() {
+        return id.equals(ID_ALL_MEDIA);
+    }
+
+    public boolean isAllVideo() {
+        return id.equals(ID_ALL_VIDEO);
     }
 
 }

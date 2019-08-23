@@ -1,5 +1,6 @@
 package com.ypx.imagepickerdemo;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -10,9 +11,11 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.ImageSelectMode;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepickerdemo.style.CustomImgPickerPresenter;
 import com.ypx.imagepickerdemo.style.RedBookCropPresenter;
@@ -56,6 +60,14 @@ public class MainActivity extends AppCompatActivity {
     private RadioButton mRbTakePhoto;
     private RadioGroup mRgOpenType;
     private CheckBox mCbPreviewCanEdit;
+    private TextView mCropX;
+    private SeekBar mXSeekBar;
+    private TextView mCropY;
+    private SeekBar mYSeekBar;
+    private TextView mCropMargin;
+    private SeekBar mMarginSeekBar;
+    private LinearLayout mCropSetLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +79,14 @@ public class MainActivity extends AppCompatActivity {
         ImagePicker.registerMediaObserver(getApplication());
         //预加载选择器，需要APP先申请存储权限，否则无效
         //设置预加载后，可实现快速打开选择器（毫秒级加载千张大图）
-        ImagePicker.preload(this, true, true, true);
+        // ImagePicker.preload(MainActivity.this, true, true, true);
+        mCbPreviewCanEdit.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ImagePicker.preload(MainActivity.this, true, true, true);
+            }
+        }, 1000);
+
     }
 
     private void initView() {
@@ -96,25 +115,78 @@ public class MainActivity extends AppCompatActivity {
         mRbTakePhoto = findViewById(R.id.rb_takePhoto);
         mRgOpenType = findViewById(R.id.rg_openType);
         mCbPreviewCanEdit = findViewById(R.id.cb_previewCanEdit);
+        mCropX = findViewById(R.id.mCropX);
+        mXSeekBar = findViewById(R.id.mXSeekBar);
+        mCropY = findViewById(R.id.mCropY);
+        mYSeekBar = findViewById(R.id.mYSeekBar);
+        mCropMargin = findViewById(R.id.mCropMargin);
+        mMarginSeekBar = findViewById(R.id.mMarginSeekBar);
+        mCropSetLayout = findViewById(R.id.mCropSetLayout);
 
         mRgStyle.setOnCheckedChangeListener(listener);
         mRgType.setOnCheckedChangeListener(listener);
         mRgOpenType.setOnCheckedChangeListener(listener);
+        mXSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
+        mYSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
+        mMarginSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
 
         mRbWeChat.setChecked(true);
         mRbAll.setChecked(true);
         mRbNew.setChecked(true);
         mRbMulti.setChecked(true);
 
+        mCropSetLayout.setVisibility(View.GONE);
+
         picList.clear();
         refreshGridLayout();
+
     }
+
+    @SuppressLint("DefaultLocale")
+    SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (seekBar == mXSeekBar) {
+                mCropX.setText(String.format("cropX: %d", progress));
+            } else if (seekBar == mYSeekBar) {
+                mCropY.setText(String.format("cropY: %d", progress));
+            } else if (seekBar == mMarginSeekBar) {
+                mCropMargin.setText(String.format("cropMargin: %d", progress));
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
 
     RadioGroup.OnCheckedChangeListener listener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             if (group == mRgOpenType) {
-                picList.clear();
+                if (checkedId == mRbMulti.getId()) {//多选
+                    mRbAll.setChecked(true);
+                    mRbAll.setEnabled(true);
+                    mRbVideoOnly.setEnabled(true);
+                    mRbImageOnly.setEnabled(true);
+                } else {
+                    mRbAll.setChecked(false);
+                    mRbImageOnly.setChecked(true);
+                    mRbAll.setEnabled(false);
+                    mRbVideoOnly.setEnabled(false);
+                    mRbImageOnly.setEnabled(false);
+                    if (checkedId == mRbCrop.getId()) {
+                        mCropSetLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        mCropSetLayout.setVisibility(View.GONE);
+                    }
+                }
                 refreshGridLayout();
                 return;
             }
@@ -212,6 +284,8 @@ public class MainActivity extends AppCompatActivity {
                 .setShieldList(mRbShield.isChecked() ? picList : null)
                 .setLastImageList(mRbSave.isChecked() ? picList : null)
                 .setPreview(!mCbClosePreview.isChecked())
+                .setSelectMode(mRbSingle.isChecked() ? ImageSelectMode.MODE_SINGLE :
+                        ImageSelectMode.MODE_MULTI)
                 .setMaxVideoDuration(120000)
                 .pick(this, new OnImagePickCompleteListener() {
                     @Override
@@ -230,7 +304,9 @@ public class MainActivity extends AppCompatActivity {
                 .setColumnCount(4)
                 .showCamera(mCbShowCamera.isChecked())
                 .showImage(true)
-                .setCropRatio(1, 1)
+                .setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress())
+                .cropRectMinMargin(dp(mMarginSeekBar.getProgress()))
+                .cropSaveFilePath(ImagePicker.cropPicSaveFilePath)
                 .crop(this, new OnImagePickCompleteListener() {
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {

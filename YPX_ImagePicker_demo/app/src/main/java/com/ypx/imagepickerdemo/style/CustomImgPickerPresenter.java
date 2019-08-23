@@ -68,7 +68,11 @@ public class CustomImgPickerPresenter implements IMultiPickerBindPresenter {
     @Override
     public void imageItemClick(Context context, ImageItem imageItem, ArrayList<ImageItem> selectImageList,
                                ArrayList<ImageItem> allSetImageList, MultiGridAdapter adapter) {
+        if (selectImageList == null || adapter == null) {
+            return;
+        }
         tip(context, "我是自定义的图片点击事件");
+        adapter.preformCheckItem(imageItem);
     }
 
 }

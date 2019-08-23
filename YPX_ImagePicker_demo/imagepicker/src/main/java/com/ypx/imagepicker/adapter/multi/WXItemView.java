@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.ImageSelectMode;
 import com.ypx.imagepicker.bean.PickerSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
@@ -73,7 +74,7 @@ public class WXItemView extends BaseItemView {
         if (presenter != null) {
             presenter.displayListImage(mIvThumb, item, getLayoutParams().height);
         }
-
+        mIvThumbCheck.setVisibility(View.VISIBLE);
         //如果是视频
         if (item.isVideo()) {
             mVideoLayout.setVisibility(View.VISIBLE);
@@ -85,6 +86,10 @@ public class WXItemView extends BaseItemView {
                 mVMasker.setBackgroundColor(Color.parseColor("#80FFFFFF"));
                 mIvThumb.setOnClickListener(null);
                 return;
+            }
+            //只能单选视频
+            if (selectConfig.isVideoSinglePick()) {
+                mIvThumbCheck.setVisibility(View.GONE);
             }
         } else {
             mVideoLayout.setVisibility(View.GONE);
@@ -109,13 +114,6 @@ public class WXItemView extends BaseItemView {
             mVMasker.setVisibility(View.VISIBLE);
             mVMasker.setBackgroundColor(Color.parseColor("#80FFFFFF"));
         } else {
-            if ((selectConfig.isVideoSinglePick() && item.isVideo())
-                    || selectConfig.getMaxCount() <= 1) {
-                mIvThumbCheck.setVisibility(View.GONE);
-            } else {
-                mIvThumbCheck.setVisibility(View.VISIBLE);
-            }
-
             //是否选中
             if (selectImageList != null && selectImageList.contains(item)) {
                 mIvThumbCheck.setChecked(true);
@@ -127,7 +125,11 @@ public class WXItemView extends BaseItemView {
             }
         }
 
-        mIvThumb.setOnClickListener(new View.OnClickListener() {
+        if (selectConfig.getMaxCount() <= 1 && selectConfig.getSelectMode() != ImageSelectMode.MODE_MULTI) {
+            mIvThumbCheck.setVisibility(View.GONE);
+        }
+
+        mIvThumb.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (onActionResult != null) {
@@ -137,13 +139,11 @@ public class WXItemView extends BaseItemView {
         });
 
 
-        mIvThumbCheck.setOnClickListener(new View.OnClickListener() {
+        mIvThumbCheck.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mIvThumbCheck.toggle();
                 if (onActionResult != null) {
-                    onActionResult.onCheckItem(item, mIvThumbCheck.isChecked());
-                    adapter.notifyDataSetChanged();
+                    onActionResult.onCheckItem(item);
                 }
             }
         });

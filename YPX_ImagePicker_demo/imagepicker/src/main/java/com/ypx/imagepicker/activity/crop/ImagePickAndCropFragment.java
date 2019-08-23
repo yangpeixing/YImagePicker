@@ -40,9 +40,10 @@ import com.ypx.imagepicker.adapter.crop.CropSetAdapter;
 import com.ypx.imagepicker.bean.ImageCropMode;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
+import com.ypx.imagepicker.bean.PickerSelectConfig;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.data.OnImagesLoadedListener;
-import com.ypx.imagepicker.data.impl.MediaDataSource;
+import com.ypx.imagepicker.data.impl.MediaItemsDataSource;
+import com.ypx.imagepicker.data.impl.MediaSetsDataSource;
 import com.ypx.imagepicker.helper.RecyclerViewTouchHelper;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.utils.CornerUtils;
@@ -78,8 +79,7 @@ import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_STO
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class ImagePickAndCropFragment extends Fragment implements
-        OnImagesLoadedListener, View.OnClickListener {
+public class ImagePickAndCropFragment extends Fragment implements View.OnClickListener {
     private TouchRecyclerView mGridImageRecyclerView;
     private RecyclerView mImageSetRecyclerView;
     private TextView mTvSetName;
@@ -170,6 +170,14 @@ public class ImagePickAndCropFragment extends Fragment implements
         }
     }
 
+    private PickerSelectConfig getConfig() {
+        PickerSelectConfig config = new PickerSelectConfig();
+        config.setShowImage(true);
+        config.setShowVideo(isShowVideo);
+        config.setLoadGif(false);
+        return config;
+    }
+
     /**
      * 加载图片数据
      */
@@ -181,12 +189,15 @@ public class ImagePickAndCropFragment extends Fragment implements
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_STORAGE);
         } else {
-            //异步加载图片数据\
-            MediaDataSource dataSource = new MediaDataSource(getActivity());
-            dataSource.setLoadVideo(isShowVideo);
-            dataSource.setLoadGif(false);
-            dataSource.setLoadImage(true);
-            dataSource.provideMediaItems(this);
+            //从媒体库拿到数据
+            MediaSetsDataSource.create(getActivity())
+                    .setMimeTypeSet(getConfig())
+                    .loadMediaSets(new MediaSetsDataSource.MediaSetProvider() {
+                        @Override
+                        public void providerMediaSets(ArrayList<ImageSet> imageSets) {
+                            loadImageSet(imageSets);
+                        }
+                    });
         }
     }
 
@@ -297,36 +308,24 @@ public class ImagePickAndCropFragment extends Fragment implements
         imageSetAdapter.setOnSelectImageSetListener(new CropSetAdapter.OnSelectImageSetListener() {
             @Override
             public void onSelectImageSet(int position) {
-                selectImageSet(position);
+                selectImageSet(position, true);
             }
         });
         mImageSetRecyclerView.setAdapter(imageSetAdapter);
         mImageSetRecyclerView.setVisibility(View.GONE);
     }
 
-    /**
-     * 图片信息加载回调
-     *
-     * @param imageSetList 图片文件夹列表
-     */
-    @Override
-    public void onImagesLoaded(List<ImageSet> imageSetList) {
-        if (this.imageSets.size() > 0 || imageSetList == null ||
-                imageSetList.size() <= 0) {
+
+    private void loadImageSet(List<ImageSet> imageSetList) {
+        if (imageSetList == null || imageSetList.size() == 0) {
             return;
         }
         this.imageSets.clear();
         this.imageSets.addAll(imageSetList);
         imageSetAdapter.notifyDataSetChanged();
-
-        mTvSetName.setText(imageSetList.get(0).name);
-        mTvSetName2.setText(imageSetList.get(0).name);
-
-        imageItems.clear();
-        imageItems.addAll(imageSetList.get(0).imageItems);
-        imageGridAdapter.notifyDataSetChanged();
-        pressImage(isShowCamera ? getFirstImage() + 1 : getFirstImage(), true);
+        selectImageSet(0, false);
     }
+
 
     private int getFirstImage() {
         for (int i = 0; i < imageItems.size(); i++) {
@@ -426,7 +425,7 @@ public class ImagePickAndCropFragment extends Fragment implements
      *
      * @param position 相册position
      */
-    private void selectImageSet(int position) {
+    private void selectImageSet(int position, boolean isTransit) {
         ImageSet imageSet = imageSets.get(position);
         if (imageSet == null) {
             return;
@@ -439,11 +438,51 @@ public class ImagePickAndCropFragment extends Fragment implements
 
         mTvSetName2.setText(imageSet.name);
         mTvSetName.setText(imageSet.name);
+        if (isTransit) {
+            toggleImageSet();
+        }
+        getImageItemsFromSet(imageSet);
+    }
+
+    private void getImageItemsFromSet(final ImageSet set) {
+        if (set.imageItems == null || set.imageItems.size() == 0) {
+            MediaItemsDataSource dataSource = MediaItemsDataSource.create(getActivity(), set)
+                    .setMimeTypeSet(getConfig());
+            dataSource.loadMediaItems(new MediaItemsDataSource.MediaItemProvider() {
+                @Override
+                public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
+                    set.imageItems = imageItems;
+                    loadImageItems(set);
+                    if (allVideoSet != null &&
+                            allVideoSet.imageItems != null
+                            && allVideoSet.imageItems.size() > 0
+                            && !imageSets.contains(allVideoSet)) {
+                        imageSets.add(1, allVideoSet);
+                        imageSetAdapter.notifyDataSetChanged();
+                    }
+                }
+            });
+            dataSource.setPreloadProvider(new MediaItemsDataSource.MediaItemPreloadProvider() {
+                @Override
+                public void providerMediaItems(ArrayList<ImageItem> imageItems) {
+                    set.imageItems = imageItems;
+                    loadImageItems(set);
+                }
+            });
+        } else {
+            loadImageItems(set);
+        }
+    }
+
+    private void loadImageItems(ImageSet set) {
         imageItems.clear();
-        imageItems.addAll(imageSet.imageItems);
+        imageItems.addAll(set.imageItems);
         imageGridAdapter.notifyDataSetChanged();
-        mGridImageRecyclerView.smoothScrollToPosition(0);
-        toggleImageSet();
+        int index = isShowCamera ? getFirstImage() + 1 : getFirstImage();
+        if (imageItems.size() > index && imageItems.get(index).isVideo()) {
+            return;
+        }
+        pressImage(index, true);
     }
 
     /**

@@ -7,6 +7,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.request.RequestOptions;
 import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerUiConfig;
@@ -33,7 +35,8 @@ public class WXImgPickerPresenter implements IMultiPickerBindPresenter {
 
     @Override
     public void displayPerViewImage(ImageView imageView, String url) {
-        Glide.with(imageView.getContext()).load(url).into(imageView);
+        Glide.with(imageView.getContext()).load(url).apply(new RequestOptions()
+                .format(DecodeFormat.PREFER_ARGB_8888)).into(imageView);
     }
 
     @Override
@@ -81,6 +84,10 @@ public class WXImgPickerPresenter implements IMultiPickerBindPresenter {
     @Override
     public void imageItemClick(Context context, ImageItem imageItem, ArrayList<ImageItem> selectImageList,
                                ArrayList<ImageItem> allSetImageList, MultiGridAdapter adapter) {
+        if (selectImageList == null || adapter == null) {
+            return;
+        }
         tip(context, "我是自定义的图片点击事件");
+        adapter.preformCheckItem(imageItem);
     }
 }

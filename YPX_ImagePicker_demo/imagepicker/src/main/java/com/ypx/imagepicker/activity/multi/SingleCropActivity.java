@@ -4,18 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.oginotihiro.cropview.CropView;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -24,9 +21,11 @@ import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.launcher.ActivityLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
+import com.ypx.imagepicker.utils.FileUtil;
 import com.ypx.imagepicker.utils.StatusBarUtil;
-import com.ypx.imagepicker.utils.TakePhotoUtil;
+import com.ypx.imagepicker.widget.CropImageView;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -39,10 +38,9 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * 截取头像
  */
 public class SingleCropActivity extends FragmentActivity {
-    private CropView cropView;
-    private String imagePath;
-    private Bitmap bmp = null;
+    private CropImageView cropView;
     private PickerUiConfig uiConfig;
+    private PickerSelectConfig selectConfig;
 
     public static void intentCrop(Activity context,
                                   IMultiPickerBindPresenter presenter,
@@ -71,14 +69,18 @@ public class SingleCropActivity extends FragmentActivity {
         setContentView(R.layout.picker_activity_crop);
         if (getIntent() != null && getIntent().hasExtra(INTENT_KEY_UI_CONFIG)) {
             IMultiPickerBindPresenter presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_UI_CONFIG);
-            PickerSelectConfig selectConfig = (PickerSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
+            selectConfig = (PickerSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
             uiConfig = presenter.getUiConfig(this);
-            imagePath = "file://" + getIntent().getStringExtra(INTENT_KEY_CURRENT_IMAGE);
-            cropView = findViewById(R.id.iv_pic);
+            String imagePath = "file://" + getIntent().getStringExtra(INTENT_KEY_CURRENT_IMAGE);
+            cropView = findViewById(R.id.cropView);
             setTitleBar();
-            Uri source = Uri.parse(imagePath);
-            cropView.of(source).withAspect(selectConfig.getCropRatioX(),
-                    selectConfig.getCropRatioY()).initialize(this);
+            cropView.enable(); // 启用图片缩放功能
+            cropView.setMaxScale(7.0f);
+            cropView.setRotateEnable(false);
+            cropView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            cropView.setCropMargin(selectConfig.getCropRectMargin());
+            presenter.displayPerViewImage(cropView, imagePath);
+            cropView.setCropRatio(selectConfig.getCropRatioX(), selectConfig.getCropRatioY());
         } else {
             finish();
         }
@@ -105,29 +107,21 @@ public class SingleCropActivity extends FragmentActivity {
         }
         tv_rightBtn.setBackground(uiConfig.getOkBtnSelectBackground());
         tv_rightBtn.setTextColor(uiConfig.getOkBtnSelectTextColor());
-        
+
         tv_rightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread() {
-                    public void run() {
-                        bmp = cropView.getOutput();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (bmp == null || imagePath == null) {
-                                    Toast.makeText(SingleCropActivity.this, "剪裁图片失败!", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                ImageItem item = new ImageItem();
-                                item.path = TakePhotoUtil.saveBitmapToPic(bmp);
-                                ArrayList<ImageItem> list = new ArrayList<>();
-                                list.add(item);
-                                notifyOnImagePickComplete(list);
-                            }
-                        });
-                    }
-                }.start();
+                if (cropView.isEditing()) {
+                    return;
+                }
+                Bitmap bitmap = cropView.generateCropBitmap();
+                File f = new File(selectConfig.getCropSaveFilePath(), "crop_" + System.currentTimeMillis() + ".jpg");
+                String cropUrl = FileUtil.saveBitmapToLocalWithJPEG(bitmap, f.getAbsolutePath());
+                ImageItem item = new ImageItem();
+                item.path = cropUrl;
+                ArrayList<ImageItem> list = new ArrayList<>();
+                list.add(item);
+                notifyOnImagePickComplete(list);
             }
         });
 

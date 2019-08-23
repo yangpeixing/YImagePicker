@@ -103,6 +103,18 @@ public class MultiImagePickerActivity extends FragmentActivity {
             finish();
             return;
         }
+        View mStatusBar = findViewById(R.id.mStatusBar);
+        PickerUiConfig uiConfig = presenter.getUiConfig(this);
+        if (uiConfig != null && uiConfig.isImmersionBar()) {
+            mStatusBar.setVisibility(View.VISIBLE);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mStatusBar.getLayoutParams();
+            params.height = StatusBarUtil.getStatusBarHeight(this);
+            mStatusBar.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
+            StatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
+                    StatusBarUtil.isDarkColor(uiConfig.getTitleBarBackgroundColor()));
+        } else {
+            mStatusBar.setVisibility(View.GONE);
+        }
         fragment = ImagePicker.withMultiFragment(presenter)
                 .setPickerSelectConfig(selectConfig)
                 .pickWithFragment();

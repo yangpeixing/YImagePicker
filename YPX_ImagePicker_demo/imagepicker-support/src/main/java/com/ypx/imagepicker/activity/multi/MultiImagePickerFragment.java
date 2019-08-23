@@ -198,12 +198,6 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
     };
 
     private void setUi() {
-        if (uiConfig.isImmersionBar()) {
-            StatusBarUtil.setStatusBar(mContext, Color.TRANSPARENT, true,
-                    StatusBarUtil.isDarkColor(uiConfig.getTitleBarBackgroundColor()));
-
-            mTitleLayout.setPadding(0, StatusBarUtil.getStatusBarHeight(mContext), 0, 0);
-        }
         mBckImg.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
         mBckImg.setColorFilter(uiConfig.getBackIconColor());
         mTitleLayout.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());

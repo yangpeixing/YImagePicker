@@ -5,17 +5,15 @@ import android.os.Bundle;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity;
-import com.ypx.imagepicker.activity.crop.ImagePickAndCropFragment;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerActivity;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerFragment;
 import com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSelectMode;
-import com.ypx.imagepicker.data.MultiPickerData;
-import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.bean.PickerSelectConfig;
+import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 
 import java.util.ArrayList;
 
@@ -43,8 +41,6 @@ public class MultiPickerBuilder {
     }
 
     public void pick(Activity context, final OnImagePickCompleteListener listener) {
-        pickerSelectConfig.setSelectMode(pickerSelectConfig.getMaxCount() > 1 ?
-                ImageSelectMode.MODE_MULTI : ImageSelectMode.MODE_SINGLE);
         MultiPickerData.instance.clear();
         if (pickerSelectConfig.getMaxCount() <= 0) {
             presenter.tip(context, context.getResources().getString(R.string.str_setcount));
@@ -95,15 +91,37 @@ public class MultiPickerBuilder {
 
 
     public MultiPickerBuilder setMaxCount(int selectLimit) {
-        if (selectLimit > 1) {
-            pickerSelectConfig.setSelectMode(ImageSelectMode.MODE_MULTI);
-        }
         pickerSelectConfig.setMaxCount(selectLimit);
+        return this;
+    }
+
+    public MultiPickerBuilder setSelectMode(int selectMode) {
+        pickerSelectConfig.setSelectMode(selectMode);
         return this;
     }
 
     public MultiPickerBuilder setMaxVideoDuration(long duration) {
         ImagePicker.MAX_VIDEO_DURATION = duration;
+        return this;
+    }
+
+    /**
+     * 设置剪裁最小间距，默认充满
+     *
+     * @param margin 间距
+     */
+    public MultiPickerBuilder cropRectMinMargin(int margin) {
+        pickerSelectConfig.setCropRectMargin(margin);
+        return this;
+    }
+
+    /**
+     * 设置剪裁图片保存路径
+     *
+     * @param path 路径+图片名字
+     */
+    public MultiPickerBuilder cropSaveFilePath(String path) {
+        pickerSelectConfig.setCropSaveFilePath(path);
         return this;
     }
 
@@ -116,7 +134,6 @@ public class MultiPickerBuilder {
         pickerSelectConfig.setLoadGif(showGif);
         return this;
     }
-
 
     public MultiPickerBuilder setColumnCount(int columnCount) {
         pickerSelectConfig.setColumnCount(columnCount);

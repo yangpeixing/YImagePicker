@@ -23,4 +23,5 @@
     <string name="str_video">视频选择</string>
     <string name="str_image">图片选择</string>
     <string name="str_limit">最多选择%d张图片</string>
+    <string name="str_loading">资源加载中,请稍后...</string>
 </resources>

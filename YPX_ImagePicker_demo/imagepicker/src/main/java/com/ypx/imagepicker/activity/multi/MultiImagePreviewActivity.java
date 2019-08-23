@@ -2,6 +2,7 @@ package com.ypx.imagepicker.activity.multi;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -31,10 +32,12 @@ import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.adapter.multi.MultiPreviewAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.PickerSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.data.impl.MediaItemsDataSource;
 import com.ypx.imagepicker.helper.PickerFileProvider;
 import com.ypx.imagepicker.helper.launcher.ActivityLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
@@ -51,13 +54,16 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_UI_CONFIG;
 
+/**
+ * 预览页面
+ */
 public class MultiImagePreviewActivity extends FragmentActivity {
     public static final String INTENT_KEY_PREVIEW_LIST = "previewList";
     public static final String INTENT_KEY_CAN_EDIT = "canEdit";
     private ViewPager mViewPager;
     private SuperCheckBox mCbSelected;
-    private ArrayList<ImageItem> mPreviewList;
-    private ArrayList<ImageItem> mImageList;
+    private ArrayList<ImageItem> mPreviewList = new ArrayList<>();
+    private ArrayList<ImageItem> mImageList = new ArrayList<>();
     private int mCurrentItemPosition = 0;
     private TextView mTvTitle;
     private TextView mTvRight;
@@ -113,24 +119,53 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         mCurrentItemPosition = getIntent().getIntExtra(INTENT_KEY_CURRENT_INDEX, 0);
         isCanEdit = getIntent().getBooleanExtra(INTENT_KEY_CAN_EDIT, false);
         mPreviewList = new ArrayList<>();
-        mPreviewList.clear();
-        if (getIntent().hasExtra(INTENT_KEY_PREVIEW_LIST)) {
-            mImageList = (ArrayList<ImageItem>) getIntent().getSerializableExtra(INTENT_KEY_PREVIEW_LIST);
-            mPreviewList.addAll(mImageList);
-        } else {
-            mImageList = MultiPickerData.instance.getCurrentImageSet().imageItems;
-            mPreviewList.addAll(MultiPickerData.instance.getSelectImageList());
-        }
-        for (ImageItem imageItem : mPreviewList) {
-            imageItem.setSelect(false);
-        }
-        if (mImageList == null || mImageList.size() == 0
-                || selectConfig == null || presenter == null) {
+        if (presenter == null) {
             finish();
             return;
         }
         uiConfig = presenter.getUiConfig(this);
+        if (uiConfig == null) {
+            finish();
+            return;
+        }
         initUI();
+        if (getIntent().hasExtra(INTENT_KEY_PREVIEW_LIST)) {
+            mImageList = (ArrayList<ImageItem>) getIntent().getSerializableExtra(INTENT_KEY_PREVIEW_LIST);
+            mPreviewList.addAll(mImageList);
+            init();
+        } else {
+            ImageSet imageSet = MultiPickerData.instance.getCurrentImageSet();
+            if (imageSet.imageItems != null && imageSet.imageItems.size() > 0
+                    && imageSet.imageItems.size() >= imageSet.count) {
+                mImageList = new ArrayList<>(imageSet.imageItems);
+                mPreviewList.addAll(MultiPickerData.instance.getSelectImageList());
+                init();
+                return;
+            }
+            final ProgressDialog dialog = ProgressDialog.show(this, null, getResources().getString(R.string.str_loading));
+            MediaItemsDataSource.create(this, imageSet)
+                    .setMimeTypeSet(selectConfig)
+                    .loadMediaItems(new MediaItemsDataSource.MediaItemProvider() {
+                        @Override
+                        public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
+                            dialog.dismiss();
+                            mImageList = new ArrayList<>(imageItems);
+                            mPreviewList.addAll(MultiPickerData.instance.getSelectImageList());
+                            init();
+                        }
+                    });
+        }
+
+    }
+
+    private void init() {
+        for (ImageItem imageItem : mPreviewList) {
+            imageItem.setSelect(false);
+        }
+        if (mImageList == null || mImageList.size() == 0) {
+            finish();
+            return;
+        }
         initPreviewRecyclerView();
         initViewPager();
         setListener();
@@ -225,6 +260,9 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         mTvRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (onDoubleClick()) {
+                    return;
+                }
                 setResult(RESULT_OK);
                 finish();
             }
@@ -497,4 +535,18 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         }
         return false;
     }
+
+    private long lastTime = 0L;
+
+    private boolean onDoubleClick() {
+        boolean flag = false;
+        long time = System.currentTimeMillis() - lastTime;
+
+        if (time > 500) {
+            flag = true;
+        }
+        lastTime = System.currentTimeMillis();
+        return !flag;
+    }
+
 }

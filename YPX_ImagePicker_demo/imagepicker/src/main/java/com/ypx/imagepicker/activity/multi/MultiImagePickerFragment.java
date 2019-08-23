@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -12,11 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -26,7 +23,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
@@ -39,17 +38,15 @@ import com.ypx.imagepicker.bean.PickerSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.data.OnImagesLoadedListener;
-import com.ypx.imagepicker.data.impl.MediaDataSource;
+import com.ypx.imagepicker.data.impl.MediaItemsDataSource;
+import com.ypx.imagepicker.data.impl.MediaSetsDataSource;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PermissionUtils;
-import com.ypx.imagepicker.utils.StatusBarUtil;
 import com.ypx.imagepicker.utils.TakePhotoUtil;
 import com.ypx.imagepicker.utils.ViewSizeUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
@@ -64,16 +61,16 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.REQ_CA
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class MultiImagePickerFragment extends Fragment implements OnImagesLoadedListener, View.OnClickListener, MultiGridAdapter.OnActionResult {
-    private List<ImageSet> imageSets;
-    private List<ImageItem> imageItems;
+public class MultiImagePickerFragment extends Fragment implements View.OnClickListener, MultiGridAdapter.OnActionResult {
+    private ArrayList<ImageSet> imageSets;
+    private ArrayList<ImageItem> imageItems;
 
     private RecyclerView mRecyclerView;
     private View v_masker;
     private Button btnDir;
     private TextView mTvTime;
     private MultiSetAdapter mImageSetAdapter;
-    private ListView mImageSetListView;
+    private RecyclerView mSetRecyclerView;
     private MultiGridAdapter mAdapter;
     private int currentSetIndex = 0;
 
@@ -109,6 +106,7 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
             return;
         }
 
+        ImagePicker.clearAllCache();
         if (selectConfig.getLastImageList() != null && selectConfig.getLastImageList().size() > 0) {
             MultiPickerData.instance.addAllImageItems(selectConfig.getLastImageList());
         }
@@ -118,9 +116,14 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
             TakePhotoUtil.takePhoto(mContext, REQ_CAMERA);
         } else {
             findView();
-            initAdapters();
             loadPicData();
         }
+    }
+
+    private OnImagePickCompleteListener onImagePickCompleteListener;
+
+    public void setOnImagePickCompleteListener(OnImagePickCompleteListener onImagePickCompleteListener) {
+        this.onImagePickCompleteListener = onImagePickCompleteListener;
     }
 
     private void dealWithData() {
@@ -138,7 +141,7 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
         v_masker = view.findViewById(R.id.v_masker);
         btnDir = view.findViewById(R.id.btn_dir);
         mRecyclerView = view.findViewById(R.id.mRecyclerView);
-        mImageSetListView = view.findViewById(R.id.lv_imagesets);
+        mSetRecyclerView = view.findViewById(R.id.mSetRecyclerView);
         mTvTime = view.findViewById(R.id.tv_time);
         mTvTime.setVisibility(View.GONE);
         mSetArrowImg = view.findViewById(R.id.mSetArrowImg);
@@ -148,6 +151,7 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
         mBottomLayout = view.findViewById(R.id.footer_panel);
         mBckImg = view.findViewById(R.id.iv_back);
         mTvPreview = view.findViewById(R.id.tv_preview);
+        initAdapters();
         setUi();
         setListener();
         refreshOKBtn();
@@ -160,12 +164,6 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
             mAdapter.refreshData(imageItems);
             refreshOKBtn();
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        MultiPickerData.instance.clear();
     }
 
     private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
@@ -198,12 +196,6 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
     };
 
     private void setUi() {
-        if (uiConfig.isImmersionBar()) {
-            StatusBarUtil.setStatusBar(mContext, Color.TRANSPARENT, true,
-                    StatusBarUtil.isDarkColor(uiConfig.getTitleBarBackgroundColor()));
-
-            mTitleLayout.setPadding(0, StatusBarUtil.getStatusBarHeight(mContext), 0, 0);
-        }
         mBckImg.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
         mBckImg.setColorFilter(uiConfig.getBackIconColor());
         mTitleLayout.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
@@ -214,7 +206,7 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
             mTvRight.setPadding(0, 0, 0, 0);
         }
 
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mImageSetListView.getLayoutParams();
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mSetRecyclerView.getLayoutParams();
         int height = (int) (getResources().getDisplayMetrics().heightPixels / 4f);
         if (uiConfig.getPickStyle() == PickerUiConfig.PICK_STYLE_BOTTOM) {
             mBottomLayout.setVisibility(View.VISIBLE);
@@ -256,13 +248,12 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
         mTvPreview.setOnClickListener(this);
         mRecyclerView.addOnScrollListener(onScrollListener);
         mBckImg.setOnClickListener(this);
-        mImageSetListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mImageSetAdapter.setSetSelectCallBack(new MultiSetAdapter.SetSelectCallBack() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectImageSet(position);
+            public void selectImageSet(ImageSet set, int pos) {
+                selectImageFromSet(pos, true);
             }
         });
-
     }
 
 
@@ -270,13 +261,19 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
      * 初始化相关adapter
      */
     private void initAdapters() {
+        mSetRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mImageSetAdapter = new MultiSetAdapter(mContext, presenter);
+        mSetRecyclerView.setAdapter(mImageSetAdapter);
         mImageSetAdapter.refreshData(imageSets);
-        mImageSetListView.setAdapter(mImageSetAdapter);
 
         mAdapter = new MultiGridAdapter(mContext, new ArrayList<ImageItem>(), selectConfig, presenter);
+        mAdapter.setHasStableIds(true);
         mAdapter.setOnActionResult(this);
         layoutManager = new GridLayoutManager(mContext, selectConfig.getColumnCount());
+        if (mRecyclerView.getItemAnimator() instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+            mRecyclerView.getItemAnimator().setChangeDuration(0);// 通过设置动画执行时间为0来解决闪烁问题
+        }
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -292,11 +289,14 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
             }
         } else {
             //从媒体库拿到数据
-            MediaDataSource dataSource = new MediaDataSource(mContext);
-            dataSource.setLoadImage(selectConfig.isShowImage());
-            dataSource.setLoadGif(selectConfig.isLoadGif());
-            dataSource.setLoadVideo(selectConfig.isShowVideo());
-            dataSource.provideMediaItems(this);
+            MediaSetsDataSource.create(getActivity())
+                    .setMimeTypeSet(selectConfig)
+                    .loadMediaSets(new MediaSetsDataSource.MediaSetProvider() {
+                        @Override
+                        public void providerMediaSets(ArrayList<ImageSet> imageSets) {
+                            loadImageSet(imageSets);
+                        }
+                    });
         }
     }
 
@@ -305,56 +305,76 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
      *
      * @param position 位置
      */
-    private void selectImageSet(final int position) {
+    private void selectImageFromSet(final int position, boolean isTransit) {
         this.currentSetIndex = position;
-        this.imageItems = imageSets.get(position).imageItems;
-        MultiPickerData.instance.setCurrentImageSet(imageSets.get(position));
-        showOrHideImageSetList();
-        mImageSetAdapter.setSelectIndex(currentSetIndex);
-        ImageSet imageSet = imageSets.get(position);
-        if (null != imageSet) {
-            mAdapter.refreshData(imageSet.imageItems);
-            btnDir.setText(imageSet.name);
-            mTvTitle.setText(imageSet.name);
+        final ImageSet set = imageSets.get(currentSetIndex);
+        MultiPickerData.instance.setCurrentImageSet(set);
+        if (isTransit) {
+            showOrHideImageSetList();
         }
-        mRecyclerView.smoothScrollToPosition(0);
+        mImageSetAdapter.setSelectIndex(currentSetIndex);
+        if (set.imageItems == null || set.imageItems.size() == 0) {
+            MediaItemsDataSource dataSource = MediaItemsDataSource.create(getActivity(), set).setMimeTypeSet(selectConfig);
+            dataSource.loadMediaItems(new MediaItemsDataSource.MediaItemProvider() {
+                @Override
+                public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
+                    set.imageItems = imageItems;
+                    loadImageItems(set);
+                    if (allVideoSet != null &&
+                            allVideoSet.imageItems != null
+                            && allVideoSet.imageItems.size() > 0
+                            && !imageSets.contains(allVideoSet)) {
+                        imageSets.add(1, allVideoSet);
+                        mImageSetAdapter.refreshData(imageSets);
+                    }
+                }
+            });
+            dataSource.setPreloadProvider(new MediaItemsDataSource.MediaItemPreloadProvider() {
+                @Override
+                public void providerMediaItems(ArrayList<ImageItem> imageItems) {
+                    set.imageItems = imageItems;
+                    loadImageItems(set);
+                }
+            });
+        } else {
+            loadImageItems(set);
+        }
     }
 
     /**
      * 显示或隐藏图片文件夹选项列表
      */
     private void showOrHideImageSetList() {
-        if (mImageSetListView.getVisibility() == View.GONE) {
+        if (mSetRecyclerView.getVisibility() == View.GONE) {
             mSetArrowImg.setRotation(180);
             v_masker.setVisibility(View.VISIBLE);
-            mImageSetListView.setVisibility(View.VISIBLE);
-            mImageSetListView.setAnimation(AnimationUtils.loadAnimation(mContext,
+            mSetRecyclerView.setVisibility(View.VISIBLE);
+            mSetRecyclerView.setAnimation(AnimationUtils.loadAnimation(mContext,
                     uiConfig.isBottomStyle() ? R.anim.picker_show2bottom : R.anim.picker_anim_in));
-            int index = mImageSetAdapter.getSelectIndex();
-            index = index == 0 ? index : index - 1;
-            mImageSetListView.setSelection(index);
         } else {
             mSetArrowImg.setRotation(0);
             v_masker.setVisibility(View.GONE);
-            mImageSetListView.setVisibility(View.GONE);
-            mImageSetListView.setAnimation(AnimationUtils.loadAnimation(mContext,
+            mSetRecyclerView.setVisibility(View.GONE);
+            mSetRecyclerView.setAnimation(AnimationUtils.loadAnimation(mContext,
                     uiConfig.isBottomStyle() ? R.anim.picker_hide2bottom : R.anim.picker_anim_up));
         }
     }
 
-    @Override
-    public void onImagesLoaded(List<ImageSet> imageSetList) {
+    private void loadImageSet(ArrayList<ImageSet> imageSetList) {
         if (imageSetList == null || imageSetList.size() == 0) {
             btnDir.setText("无媒体文件");
             return;
         }
         this.imageSets = imageSetList;
-        this.imageItems = imageSetList.get(currentSetIndex).imageItems;
-        MultiPickerData.instance.setCurrentImageSet(imageSets.get(currentSetIndex));
+        mImageSetAdapter.refreshData(imageSets);
+        selectImageFromSet(0, false);
+    }
+
+    private void loadImageItems(ImageSet set) {
+        this.imageItems = set.imageItems;
         btnDir.setText(imageSets.get(currentSetIndex).name);
         mTvTitle.setText(imageSets.get(currentSetIndex).name);
         mAdapter.refreshData(imageItems);
-        mImageSetAdapter.refreshData(imageSets);
     }
 
     @Override
@@ -362,10 +382,10 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
         if (v == btnDir || v == v_masker) {
             showOrHideImageSetList();
         } else if (v == mTvRight) {
-            if (isEmpty()) {
+            if (isEmpty() || onDoubleClick()) {
                 return;
             }
-            notifyOnImagePickComplete(MultiPickerData.instance.getSelectImageList());
+            notifyOnImagePickComplete(new ArrayList<>(MultiPickerData.instance.getSelectImageList()));
         } else if (v == mBckImg) {
             mContext.onBackPressed();
         } else if (v == mTvTitle || v == mSetArrowImg) {
@@ -399,11 +419,15 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
      *
      * @param list 选中图片列表
      */
-    private void notifyOnImagePickComplete(List<ImageItem> list) {
-        Intent intent = new Intent();
-        intent.putExtra(ImagePicker.INTENT_KEY_PICKERRESULT, (Serializable) list);
-        mContext.setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
-        mContext.finish();
+    private void notifyOnImagePickComplete(ArrayList<ImageItem> list) {
+        if (onImagePickCompleteListener != null) {
+            onImagePickCompleteListener.onImagePickComplete(list);
+        } else {
+            Intent intent = new Intent();
+            intent.putExtra(ImagePicker.INTENT_KEY_PICKERRESULT, (Serializable) list);
+            mContext.setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
+            mContext.finish();
+        }
     }
 
     /**
@@ -422,7 +446,7 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
                 TakePhotoUtil.refreshGalleryAddPic(mContext);
                 ImageItem item = new ImageItem();
                 item.path = TakePhotoUtil.mCurrentPhotoPath;
-                List<ImageItem> list = new ArrayList<>();
+                ArrayList<ImageItem> list = new ArrayList<>();
                 list.add(item);
                 notifyOnImagePickComplete(list);
             }
@@ -435,7 +459,7 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
      * @return 当前文件夹是否打开
      */
     public boolean isImageSetShow() {
-        if (mImageSetListView != null && mImageSetListView.getVisibility() == View.VISIBLE) {
+        if (mSetRecyclerView != null && mSetRecyclerView.getVisibility() == View.VISIBLE) {
             showOrHideImageSetList();
             return true;
         }
@@ -474,7 +498,8 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
 
     @SuppressLint("DefaultLocale")
     private void refreshOKBtn() {
-        if (selectConfig.getSelectMode() != ImageSelectMode.MODE_MULTI) {
+        if (selectConfig.getMaxCount() == 1 &&
+                selectConfig.getSelectMode() != ImageSelectMode.MODE_MULTI) {
             mTvRight.setVisibility(View.GONE);
             return;
         }
@@ -501,47 +526,50 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
 
     @Override
     public void onClickItem(ImageItem item, int position) {
+        //在屏蔽列表中
         if (selectConfig.isShieldItem(item)) {
             presenter.tip(getContext(), getResources().getString(R.string.str_shield));
             return;
         }
 
         mRecyclerView.setTag(item);
-        switch (selectConfig.getSelectMode()) {
-            //多选情况下，点击跳转预览
-            case ImageSelectMode.MODE_MULTI:
-                //如果只能选择一个是视频，且当前是视频的时候直接返回
-                if (selectConfig.isVideoSinglePick() && item.isVideo()) {
-                    ArrayList<ImageItem> list = new ArrayList<>();
-                    list.add(item);
-                    notifyOnImagePickComplete(list);
-                    return;
-                }
-                //打开了预览，则跳转预览
-                if (selectConfig.isPreview()) {
-                    ImageSet imageSet = imageSets.get(currentSetIndex);
-                    MultiPickerData.instance.setCurrentImageSet(imageSet);
-                    intentPreview(position, null);
-                } else {
-                    presenter.imageItemClick(mContext, item, MultiPickerData.instance.getSelectImageList()
-                            , imageSets.get(currentSetIndex).imageItems, mAdapter);
-                }
-                break;
-            //单选情况下，点击直接返回
-            case ImageSelectMode.MODE_SINGLE:
-                List<ImageItem> list2 = new ArrayList<>();
-                list2.add(item);
-                notifyOnImagePickComplete(list2);
-                break;
-            //剪裁情况下，点击跳转剪裁
-            case ImageSelectMode.MODE_CROP:
-                intentCrop(item.path);
-                break;
+
+        //如果只能选择一个视频，且当前是视频的时候直接返回
+        if (selectConfig.isVideoSinglePick() && item.isVideo()) {
+            ArrayList<ImageItem> list = new ArrayList<>();
+            list.add(item);
+            notifyOnImagePickComplete(list);
+            return;
+        }
+
+        //剪裁模式下，直接跳转剪裁
+        if (selectConfig.getSelectMode() == ImageSelectMode.MODE_CROP) {
+            intentCrop(item.path);
+            return;
+        }
+
+        //多选情况下，如果选择数量大于1个时，则要么执行预览，要么执行自定义点击操作
+        if (selectConfig.getMaxCount() > 1 || selectConfig.getSelectMode() == ImageSelectMode.MODE_MULTI) {
+            //打开了预览，则跳转预览，否则执行自定义的点击操作
+            if (selectConfig.isPreview()) {
+                intentPreview(position, null);
+            } else {
+                presenter.imageItemClick(mContext, item, MultiPickerData.instance.getSelectImageList()
+                        , imageItems, mAdapter);
+            }
+            return;
+        }
+
+        //单选模式下且选择数量只有一个时，直接回调出去
+        if (selectConfig.getSelectMode() == ImageSelectMode.MODE_SINGLE && selectConfig.getMaxCount() <= 1) {
+            ArrayList<ImageItem> list2 = new ArrayList<>();
+            list2.add(item);
+            notifyOnImagePickComplete(list2);
         }
     }
 
     @Override
-    public void onCheckItem(ImageItem imageItem, boolean isChecked) {
+    public void onCheckItem(ImageItem imageItem) {
         if (!MultiPickerData.instance.hasItem(imageItem) &&
                 MultiPickerData.instance.isOverLimit(selectConfig.getMaxCount())) {
             presenter.tip(getContext(), String.format(Objects.requireNonNull(getContext())
@@ -549,14 +577,15 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
                     selectConfig.getMaxCount()));
             return;
         }
-        if (isChecked) {
-            MultiPickerData.instance.addImageItem(imageItem);
-        } else {
+        if (MultiPickerData.instance.hasItem(imageItem)) {
             MultiPickerData.instance.removeImageItem(imageItem);
             if (selectConfig.isLastItem(imageItem)) {
                 selectConfig.getLastImageList().remove(imageItem);
             }
+        } else {
+            MultiPickerData.instance.addImageItem(imageItem);
         }
+        mAdapter.notifyDataSetChanged();
         refreshOKBtn();
     }
 
@@ -578,4 +607,18 @@ public class MultiImagePickerFragment extends Fragment implements OnImagesLoaded
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+    private long lastTime = 0L;
+
+    private boolean onDoubleClick() {
+        boolean flag = false;
+        long time = System.currentTimeMillis() - lastTime;
+
+        if (time > 500) {
+            flag = true;
+        }
+        lastTime = System.currentTimeMillis();
+        return !flag;
+    }
+
 }

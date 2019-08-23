@@ -29,6 +29,22 @@ public enum MultiPickerData {
         currentImageSet = null;
     }
 
+    private List<notifyCurrentImageSetChanged> changedList = new ArrayList<>();
+
+    public interface notifyCurrentImageSetChanged {
+        void onChanged(ImageSet set);
+    }
+
+    public void addNotifyCurrentImageSetChanged(notifyCurrentImageSetChanged changed) {
+        changedList.add(changed);
+    }
+
+    public void removeNotifyCurrentImageSetChanged(notifyCurrentImageSetChanged changed) {
+        if (changed != null && changedList != null && changedList.size() > 0) {
+            changedList.remove(changed);
+        }
+    }
+
     public ImageSet getCurrentImageSet() {
         if (currentImageSet == null) {
             currentImageSet = new ImageSet();
@@ -39,6 +55,11 @@ public enum MultiPickerData {
     public void setCurrentImageSet(ImageSet mCurrentImageSet) {
         if (mCurrentImageSet == null) {
             return;
+        }
+        if (changedList != null && changedList.size() > 0) {
+            for (notifyCurrentImageSetChanged changed : changedList) {
+                changed.onChanged(mCurrentImageSet);
+            }
         }
         currentImageSet = mCurrentImageSet;
     }
