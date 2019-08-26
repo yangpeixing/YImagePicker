@@ -4,18 +4,18 @@
 [apk体验地址](https://www.pgyer.com/Wfhb)
 
 ## 全局配置
+ [ ![Download](https://api.bintray.com/packages/yangpeixing/ypxImagePicker/imagepicker_androidx/images/download.svg) ](https://bintray.com/yangpeixing/ypxImagePicker/imagepicker_androidx/_latestVersion)
 
  - **引用方式：**
- [ ![Download](https://api.bintray.com/packages/yangpeixing/ypxImagePicker/imagepicker_androidx/images/download.svg) ](https://bintray.com/yangpeixing/ypxImagePicker/imagepicker_androidx/_latestVersion)
 - androidx版本：
 
 	```java
-	implementation 'com.ypx.imagepicker:ypxImagePicker:3.2.1'
+	implementation 'com.ypx.imagepicker:ypxImagePicker:2.3.1'
 	```
-- support版本(未发布jcenter,所以需要maven仓库指定)：
+- support版本：
 
 	```java
-	implementation 'com.ypx.imagepicker:imagepicker_support:3.2.1'
+	implementation 'com.ypx.imagepicker:imagepicker_support:2.3.1'
  	```
 
 
