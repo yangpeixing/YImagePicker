@@ -9,7 +9,7 @@
 - androidx版本：
 
 	```java
-	implementation 'com.ypx.imagepicker:ypxImagePicker:2.1.2'
+	implementation 'com.ypx.imagepicker:ypxImagePicker:2.3.1'
 	```
 - support版本(未发布jcenter,所以需要maven仓库指定)：
 
@@ -17,25 +17,14 @@
 	```java
 	allprojects {
     repositories {
-        google()
-        jcenter()
+        ...
         maven { url "https://dl.bintray.com/yangpeixing/ypxImagePicker/" }
-    	}
+           }
 	}   
 	```
  2. app的build.gradle添加如下依赖：
 	```java
-	implementation 'com.ypx.imagepicker:imagepicker_support:2.1.2'
-	```
-	
- - **全局配置：**
- 
-	```java
-	 //注册媒体文件观察者，可放入Application或首页中                      
-	ImagePicker.registerMediaObserver(getApplication());
-	//预加载选择器，需要APP先申请存储权限，否则无效                          
-	//设置预加载后，可实现快速打开选择器                      
-	ImagePicker.preload(this, true, true, false);       
+	implementation 'com.ypx.imagepicker:imagepicker_support:2.3.1'
 	```
 
 ## 效果图集
@@ -97,6 +86,11 @@ MultiImagePickerFragment fragment = ImagePicker.withMultiFragment(new WXImgPicke
 				.setMaxCount(9)//设置最大选择数量      
               	...//省略以上若干属性
                 .pickWithFragment();
+fragment.setOnImagePickCompleteListener(new OnImagePickCompleteListener() {
+                    @Override
+                    public void onImagePickComplete(ArrayList<ImageItem> items) {
+		    }
+                });
                                                          
 ```
  - **单张剪裁 —— 支持自定义剪裁比例**
@@ -105,7 +99,9 @@ MultiImagePickerFragment fragment = ImagePicker.withMultiFragment(new WXImgPicke
 // 以及一些交互逻辑，实现自IMultiPickerBindPresenter接口                                   
 ImagePicker.withMulti(new WXImgPickerPresenter())                            
        	...//省略以上所有公共属性                                              
-        .setCropRatio(1, 1)//设置剪裁比例   1：1                                       
+        .setCropRatio(1, 1)//设置剪裁比例   1：1  
+	.cropSaveFilePath("剪裁图片保存地址")
+        .cropRectMinMargin(dp(50))//设置剪裁边框间距
         //调用剪裁                                                              
         .crop(this, new OnImagePickCompleteListener() {                      
             @Override                                                        
@@ -138,8 +134,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
 ImagePicker.withMulti(new WXImgPickerPresenter()).takePhoto(this, new OnImagePickCompleteListener() {
     @Override                                                                                        
     public void onImagePickComplete(ArrayList<ImageItem> imageItems) {                               
-        //处理拍照回调                                                                                                                                                                   
-    }                                                                                                
+        //处理拍照回调                                                                                                                        }                                                                                                
 });                                                                                                  
 ```
  
