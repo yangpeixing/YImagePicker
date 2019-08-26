@@ -342,13 +342,12 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
 ```
 ## 相关问题
 
- - **小红书剪裁框架暂且不支持UI自定义**
+ - **小红书剪裁框架暂且不支持UI自定义，暂不支持视频直接预览，后期会迭代**
  - **微信选择框架暂不支持图片高级编辑，后期会加入**
  - **小红书剪裁框架中，输出的图片全部是View所截出来的，所以宽高取决于屏幕宽度，其实这样是不对的，应该根据原图密度来截取原始图片区域，而不应该是截取View,不过经测试，View截取的图片质量挺高，所以暂未兼容原图截取。本库中有CropHelper类已经处理了原图截取的方法，赞只支持填充模式下原图截取，留白模式后期优化。**
+ - **剪裁暂不支持图片旋转**
 
 
-## 鸣谢
-本项目微信选择器中剪裁使用的是github上[cropView](https://github.com/oginotihiro/cropview)控件，在此感谢作者！
 本库来源于mars App,想要体验城市最新的吃喝玩乐，欢迎读者下载体验mars!
 
 [本库Github地址:https://github.com/yangpeixing/YPXImagePicker](https://github.com/yangpeixing/YPXImagePicker)
