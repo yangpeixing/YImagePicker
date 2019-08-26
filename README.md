@@ -6,6 +6,7 @@
 ## 全局配置
 
  - **引用方式：**
+ [ ![Download](https://api.bintray.com/packages/yangpeixing/ypxImagePicker/imagepicker_androidx/images/download.svg) ](https://bintray.com/yangpeixing/ypxImagePicker/imagepicker_androidx/_latestVersion)
 - androidx版本：
 
 	```java
