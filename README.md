@@ -4,14 +4,13 @@
 [apk体验地址](https://www.pgyer.com/Wfhb)
 
 ## 引用方式
- [ ![Download](https://api.bintray.com/packages/yangpeixing/ypxImagePicker/imagepicker_androidx/images/download.svg) ](https://bintray.com/yangpeixing/ypxImagePicker/imagepicker_androidx/_latestVersion)
  
-- androidx版本：
+- androidx版本： [ ![Download](https://api.bintray.com/packages/yangpeixing/ypxImagePicker/imagepicker_androidx/images/download.svg) ](https://bintray.com/yangpeixing/ypxImagePicker/imagepicker_androidx/_latestVersion)
 
 	```java
 	implementation 'com.ypx.imagepicker:ypxImagePicker:2.3.1'
 	```
-- support版本：
+- support版本：[ ![Download](https://api.bintray.com/packages/yangpeixing/ypxImagePicker/imagepicker_support/images/download.svg) ](https://bintray.com/yangpeixing/ypxImagePicker/imagepicker_support/_latestVersion)
 
 	```java
 	implementation 'com.ypx.imagepicker:imagepicker_support:2.3.1'
