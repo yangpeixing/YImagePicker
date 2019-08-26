@@ -13,13 +13,12 @@
 	```
 - support版本(未发布jcenter,所以需要maven仓库指定)：
 
- 1. 在Project的build.gradle添加bintray仓库地址：
 	```java
 	//Project的build.gradle文件中添加bintray仓库地址：
-    repositories {
-        ...
-        maven { url "https://dl.bintray.com/yangpeixing/ypxImagePicker/" }
-    }
+   	 repositories {
+       	      ...
+              maven { url "https://dl.bintray.com/yangpeixing/ypxImagePicker/" }
+    	}
 	//app的build.gradle添加如下依赖：
 	implementation 'com.ypx.imagepicker:imagepicker_support:3.2.1'
 	```
