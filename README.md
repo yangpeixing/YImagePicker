@@ -15,7 +15,7 @@
 
 	```java
 	implementation 'com.ypx.imagepicker:imagepicker_support:3.2.1'
-    }
+ 	```
 
 
 ## 效果图集
