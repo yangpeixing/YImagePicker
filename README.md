@@ -3,10 +3,9 @@
 
 [apk体验地址](https://www.pgyer.com/Wfhb)
 
-## 全局配置
+## 引用方式
  [ ![Download](https://api.bintray.com/packages/yangpeixing/ypxImagePicker/imagepicker_androidx/images/download.svg) ](https://bintray.com/yangpeixing/ypxImagePicker/imagepicker_androidx/_latestVersion)
-
- - **引用方式：**
+ 
 - androidx版本：
 
 	```java
