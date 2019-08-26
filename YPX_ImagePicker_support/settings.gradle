@@ -1,0 +1,5 @@
+include ':app', ':imagepicker-support'
+
+//include ':imagepicker-support'
+//
+//project(':imagepicker-support').projectDir = new File('E:/github_project/YPX_ImagePicker/YPX_ImagePicker_demo/imagepicker-support')

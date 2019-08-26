@@ -1,0 +1,1243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+  </component>
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_LOG_LEVEL" value="error" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
+    <option name="TOOL_WINDOW_REGEXP_FILTER" value="false" />
+  </component>
+  <component name="AvailableLibraryUpdateStorage">
+    <last-search-timestamp>1564037788697</last-search-timestamp>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4666e9e5-2ef7-4924-910c-5acf9c5b4014" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/.idea/caches/gradle_models.ser" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/release/app-release.apk" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/release/output.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/.idea/runConfigurations.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/proguard-rules.pro" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/androidTest/java/com/example/imagepicker_support/ExampleInstrumentedTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/java/com/example/imagepicker_support/MainActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/java/com/example/imagepicker_support/style/CustomImgPickerPresenter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/java/com/example/imagepicker_support/style/CustomPickerItem.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/java/com/example/imagepicker_support/style/RedBookCropPresenter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/java/com/example/imagepicker_support/style/WXImgPickerPresenter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/layout/a_layout_pic_select.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/layout/activity_second.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/layout/item_custom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-xhdpi/ypx_pic_selected.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-xhdpi/ypx_pic_unselected.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-xxhdpi/add_pic.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-xxhdpi/image_close.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/drawable-v24/ic_launcher_foreground.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/drawable/ic_launcher_background.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/layout/a_layout_pic_select.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/layout/activity_main.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/layout/activity_second.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/layout/item_custom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-hdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-mdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-xhdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-xhdpi/ypx_pic_selected.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-xhdpi/ypx_pic_unselected.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-xxhdpi/add_pic.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-xxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-xxhdpi/image_close.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/mipmap-xxxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/values/colors.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/values/strings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/res/values/styles.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/app/src/test/java/com/example/imagepicker_support/ExampleUnitTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/gradle.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/gradlew" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/gradlew.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/MimeType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/data/impl/MediaItemsDataSource.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/data/impl/MediaItemsLoader.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/data/impl/MediaSetsDataSource.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/data/impl/MediaSetsLoader.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/CropImageView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/browseimage/Info.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/browseimage/OnRotateListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/.idea/runConfigurations.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/proguard-rules.pro" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/proguard-rules.pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/release/app-release.apk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/release/output.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/CropInfoManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/java/com/ypx/imagepickerdemo/CropInfoManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/java/com/ypx/imagepickerdemo/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/MarsCropActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/java/com/ypx/imagepickerdemo/MarsCropActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/style/CustomImgPickerPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/java/com/ypx/imagepickerdemo/style/CustomImgPickerPresenter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/style/CustomPickerItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/java/com/ypx/imagepickerdemo/style/CustomPickerItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/style/RedBookCropPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/java/com/ypx/imagepickerdemo/style/RedBookCropPresenter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/style/WXImgPickerPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/java/com/ypx/imagepickerdemo/style/WXImgPickerPresenter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/a_layout_pic_select.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/layout/a_layout_pic_select.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_crop.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/layout/activity_crop.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_second.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/layout/activity_second.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_custom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/layout/item_custom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/picker_crop_close.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-xhdpi/picker_crop_close.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/picker_crop_ok.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-xhdpi/picker_crop_ok.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ypx_pic_selected.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-xhdpi/ypx_pic_selected.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ypx_pic_unselected.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-xhdpi/ypx_pic_unselected.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/add_pic.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-xxhdpi/add_pic.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/image_close.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-xxhdpi/image_close.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/gradlew" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/gradlew.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/generate.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/generate.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/proguard-rules.pro" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/proguard-rules.pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/ImagePicker.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/ImagePicker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePreviewActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePreviewActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/multi/SingleCropActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/multi/SingleCropActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/crop/CropGridAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/crop/CropGridAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/crop/CropSetAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/crop/CropSetAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/multi/BaseItemView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/multi/BaseItemView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/multi/MultiGridAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/multi/MultiGridAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/multi/MultiPreviewAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/multi/MultiPreviewAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/multi/MultiSetAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/multi/MultiSetAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/multi/WXItemView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/adapter/multi/WXItemView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/ImageCropMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageCropMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/ImageItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/ImageItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/ImageSelectMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageSelectMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/ImageSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/ImageSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/PickerSelectConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/PickerSelectConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/PickerUiConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/bean/PickerUiConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/builder/CropPickerBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/builder/CropPickerBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/builder/MultiPickerBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/builder/MultiPickerBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/data/DataSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/data/DataSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/data/MultiPickerData.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/data/MultiPickerData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/data/OnImagePickCompleteListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/data/OnImagePickCompleteListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/data/OnImagesLoadedListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/data/OnImagesLoadedListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/data/impl/MediaDataSource.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/data/impl/MediaObserver.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/data/impl/VideoDataSource.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/helper/CropHelper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/helper/PickerFileProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/helper/PickerFileProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/helper/RecyclerViewTouchHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/helper/RecyclerViewTouchHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/helper/launcher/ActivityLauncher.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/helper/launcher/PLauncher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/helper/launcher/RouterFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/helper/launcher/RouterFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/helper/launcher/RouterFragmentV4.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/helper/launcher/PRouterV4.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/presenter/ICropPickerBindPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/presenter/ICropPickerBindPresenter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/presenter/IMultiPickerBindPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/presenter/IMultiPickerBindPresenter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/CornerUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/utils/CornerUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/DateUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/PDateUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/FileUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/PFileUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/PermissionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/PPermissionUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/StatusBarUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/PStatusBarUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/TakePhotoUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/PTakePhotoUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/ViewSizeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/utils/ViewSizeUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/CheckImageView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/CheckImageView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/ShowTypeImageView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/ShowTypeImageView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/SuperCheckBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/widget/SuperCheckBox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/TouchRecyclerView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/TouchRecyclerView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/browseimage/Info.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/browseimage/PicBrowseImageView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/browseimage/PicBrowseImageView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/browseimage/RotateGestureDetector.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/browseimage/RotateGestureDetector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/anim/picker_anim_in.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/anim/picker_anim_in.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/anim/picker_anim_up.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/anim/picker_anim_up.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/anim/picker_fade_in.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/anim/picker_fade_in.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/anim/picker_fade_out.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/anim/picker_fade_out.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/anim/picker_hide2bottom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/anim/picker_hide2bottom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/anim/picker_show2bottom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/anim/picker_show2bottom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/anim/picker_show2top.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/anim/picker_show2top.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/anim/picker_top_in.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/anim/picker_top_in.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/anim/picker_top_out.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/anim/picker_top_out.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/drawable/picker_selector_list_item_bg.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/drawable/picker_selector_list_item_bg.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/drawable/picker_wechat_okbtn_select.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/drawable/picker_wechat_okbtn_select.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/drawable/picker_wechat_okbtn_unselect.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/drawable/picker_wechat_okbtn_unselect.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_activity_crop.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_activity_crop.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_activity_fragment_wrapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_activity_fragment_wrapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_activity_image_pre.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_activity_image_pre.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_activity_imagepick.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_activity_imagepick.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_activity_images_grid.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_activity_images_grid.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_activity_selectpicandcrop.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_activity_selectpicandcrop.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_default_titlebar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_default_titlebar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_grid_item_camera.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_grid_item_camera.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_image_grid_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_image_grid_item.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_image_grid_item_root.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_image_grid_item_root.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_item_iamgeset.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_item_iamgeset.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_item_imagegrid.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_item_imagegrid.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/layout/picker_list_item_folder.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_list_item_folder.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_arrow_down.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_arrow_down.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_ic_camera.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_ic_camera.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_back_black.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_back_black.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_close_black.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_close_black.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_fill.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_fill.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_fit.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_fit.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_full.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_full.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_haswhite.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_haswhite.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_item_photo.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_item_photo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_unselect.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_unselect.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_video.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_video.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_item_video.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_item_video.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_item_video_mask.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_item_video_mask.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_text_indicator.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_text_indicator.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_wechat_select.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_wechat_select.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_wechat_unselect.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/picker_wechat_unselect.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/mipmap-xxhdpi/pricker_drop_down_checked.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/mipmap-xxhdpi/pricker_drop_down_checked.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker-support/src/main/res/xml/picker_file_paths.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/xml/picker_file_paths.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/generate.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/generate.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/proguard-rules.pro" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/proguard-rules.pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/ImagePicker.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/ImagePicker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePreviewActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePreviewActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/SingleCropActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/SingleCropActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/crop/CropGridAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/adapter/crop/CropGridAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/crop/CropSetAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/adapter/crop/CropSetAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/BaseItemView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/BaseItemView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/MultiGridAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/MultiGridAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/MultiPreviewAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/MultiPreviewAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/MultiSetAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/MultiSetAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/WXItemView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/WXItemView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageCropMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/ImageCropMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageSelectMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/ImageSelectMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/MimeType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/bean/MimeType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/PickerSelectConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/bean/PickerSelectConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/PickerUiConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/bean/PickerUiConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/builder/CropPickerBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/builder/CropPickerBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/builder/MultiPickerBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/builder/MultiPickerBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/DataSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/data/DataSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/MultiPickerData.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/data/MultiPickerData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/OnImagePickCompleteListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/data/OnImagePickCompleteListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/OnImagesLoadedListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/data/OnImagesLoadedListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaItemsDataSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaItemsDataSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaItemsLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaItemsLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaSetsDataSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaSetsDataSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaSetsLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaSetsLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/helper/CropHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/helper/CropHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/helper/PickerFileProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/helper/PickerFileProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/helper/RecyclerViewTouchHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/helper/RecyclerViewTouchHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/helper/launcher/ActivityLauncher.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/helper/launcher/ActivityLauncher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/helper/launcher/RouterFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/helper/launcher/PRouter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/helper/launcher/RouterFragmentV4.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/helper/launcher/RouterFragmentV4.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/presenter/ICropPickerBindPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/presenter/ICropPickerBindPresenter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/presenter/IMultiPickerBindPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/presenter/IMultiPickerBindPresenter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/CornerUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/PCornerUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/DateUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/utils/DateUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/FileUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/utils/FileUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/PermissionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/utils/PermissionUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/StatusBarUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/utils/StatusBarUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/TakePhotoUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/utils/TakePhotoUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/ViewSizeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/utils/PViewSizeUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/CheckImageView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/widget/CheckImageView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/CropImageView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/widget/CropImageView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/ShowTypeImageView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/widget/ShowTypeImageView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/SuperCheckBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/java/com/ypx/imagepicker/widget/SuperCheckBox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/TouchRecyclerView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/widget/TouchRecyclerView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/browseimage/Info.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/widget/browseimage/Info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/browseimage/OnRotateListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/widget/browseimage/OnRotateListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/browseimage/PicBrowseImageView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/widget/browseimage/PicBrowseImageView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/browseimage/RotateGestureDetector.java" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/widget/browseimage/RotateGestureDetector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/anim/picker_anim_in.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/anim/picker_anim_in.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/anim/picker_anim_up.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/anim/picker_anim_up.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/anim/picker_fade_in.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/anim/picker_fade_in.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/anim/picker_fade_out.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/anim/picker_fade_out.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/anim/picker_hide2bottom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/anim/picker_hide2bottom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/anim/picker_show2bottom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/anim/picker_show2bottom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/anim/picker_show2top.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/anim/picker_show2top.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/anim/picker_top_in.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/anim/picker_top_in.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/anim/picker_top_out.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/anim/picker_top_out.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/drawable/picker_selector_list_item_bg.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/drawable/picker_selector_list_item_bg.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/drawable/picker_wechat_okbtn_select.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/drawable/picker_wechat_okbtn_select.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/drawable/picker_wechat_okbtn_unselect.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/drawable/picker_wechat_okbtn_unselect.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_activity_crop.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_activity_crop.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_activity_fragment_wrapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_activity_fragment_wrapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_activity_image_pre.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_activity_image_pre.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_activity_imagepick.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_activity_imagepick.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_activity_images_grid.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_activity_images_grid.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_activity_selectpicandcrop.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_activity_selectpicandcrop.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_default_titlebar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/layout/picker_default_titlebar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_grid_item_camera.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_grid_item_camera.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_image_grid_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_image_grid_item.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_image_grid_item_root.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_image_grid_item_root.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_item_iamgeset.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_item_iamgeset.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_item_imagegrid.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_item_imagegrid.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_list_item_folder.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/layout/picker_list_item_folder.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_arrow_down.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_arrow_down.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_ic_camera.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_ic_camera.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_back_black.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_back_black.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_close_black.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_close_black.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_fill.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_fill.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_fit.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_fit.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_full.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_full.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_haswhite.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_haswhite.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_item_photo.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_item_photo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_unselect.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_unselect.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_icon_video.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_icon_video.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_item_video.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_item_video.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_item_video_mask.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_item_video_mask.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_text_indicator.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_text_indicator.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_wechat_select.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_wechat_select.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/picker_wechat_unselect.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/picker_wechat_unselect.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/mipmap-xxhdpi/pricker_drop_down_checked.png" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/mipmap-xxhdpi/pricker_drop_down_checked.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/imagepicker/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagepicker/src/main/res/xml/picker_file_paths.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_support/imagepicker-support/src/main/res/xml/picker_file_paths.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../YPX_ImagePicker_androidx/settings.gradle" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/.gradle/" />
+    <ignored path="$PROJECT_DIR$/build/classes/" />
+    <ignored path="$PROJECT_DIR$/imagepicker/build/generated/not_namespaced_r_class_sources/" />
+    <ignored path="$PROJECT_DIR$/imagepicker/build/generated/source/r/" />
+    <ignored path="$PROJECT_DIR$/imagepicker/build/intermediates/aapt_friendly_merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/imagepicker/build/intermediates/check_manifest_result/" />
+    <ignored path="$PROJECT_DIR$/imagepicker/build/intermediates/library_manifest/" />
+    <ignored path="$PROJECT_DIR$/imagepicker/build/intermediates/merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/imagepicker/build/outputs/" />
+    <ignored path="$PROJECT_DIR$/imagepicker/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/" />
+    <ignored path="$PROJECT_DIR$/imagepicker/build/intermediates/javac/debugUnitTest/compileDebugUnitTestJavaWithJavac/classes/" />
+    <ignored path="$PROJECT_DIR$/app/build/generated/not_namespaced_r_class_sources/" />
+    <ignored path="$PROJECT_DIR$/app/build/generated/source/r/" />
+    <ignored path="$PROJECT_DIR$/app/build/intermediates/apk_list/" />
+    <ignored path="$PROJECT_DIR$/app/build/intermediates/bundle_manifest/" />
+    <ignored path="$PROJECT_DIR$/app/build/intermediates/check_manifest_result/" />
+    <ignored path="$PROJECT_DIR$/app/build/intermediates/compatible_screen_manifest/" />
+    <ignored path="$PROJECT_DIR$/app/build/intermediates/instant_app_manifest/" />
+    <ignored path="$PROJECT_DIR$/app/build/intermediates/instant_run_merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/app/build/intermediates/merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/app/build/intermediates/metadata_feature_manifest/" />
+    <ignored path="$PROJECT_DIR$/app/build/intermediates/prebuild/" />
+    <ignored path="$PROJECT_DIR$/app/build/outputs/" />
+    <ignored path="$PROJECT_DIR$/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/" />
+    <ignored path="$PROJECT_DIR$/app/build/intermediates/javac/debugUnitTest/compileDebugUnitTestJavaWithJavac/classes/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$/app">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/imagepicker">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/imagepicker-support">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="YPX_ImagePicker_demo" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="YPX_ImagePicker_demo" type="f1a62948:ProjectNode" />
+                <item name=":imagepicker" type="2d1252cf:ModuleNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="YPX_ImagePicker_demo" type="f1a62948:ProjectNode" />
+                <item name=":imagepicker" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="YPX_ImagePicker_demo" type="f1a62948:ProjectNode" />
+                <item name=":imagepicker" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="upload" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Gradle Kotlin DSL Settings" />
+        <option value="Singleton" />
+        <option value="layoutResourceFile_vertical" />
+        <option value="Class" />
+        <option value="Enum" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>mObserver</find>
+      <find>mCursor</find>
+      <find>allSetList</find>
+      <find>getInf</find>
+      <find>mScaleCenter</find>
+      <find>mLastTranslateX</find>
+      <find>mHalfBaseRectWidth</find>
+      <find>mBaseRect</find>
+      <find>mBaseMatrix</find>
+      <find>up</find>
+      <find>mScale</find>
+      <find>mImgRect</find>
+      <find>isRestore</find>
+      <find>executeTranslate</find>
+      <find>getScaleTy</find>
+      <find>SelectionSpec.getInstance().</find>
+      <find>isVideo</find>
+      <find>deal</find>
+      <find>mSetRecyclerView</find>
+      <find>setCrop</find>
+      <find>- dp(40)</find>
+      <find>setC</find>
+      <find>init</find>
+      <find>mSource</find>
+      <find>mImageList</find>
+      <find>imageGridAdapter</find>
+      <find>setCr</find>
+      <find>mTvRight</find>
+      <find>lastTime</find>
+      <find>mDegrees</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>mTvTitle</replace>
+      <replace>mBckImg</replace>
+      <replace>mTitleLayout</replace>
+      <replace>context</replace>
+      <replace>mContext</replace>
+      <replace>uiConfig</replace>
+      <replace>mItemImage</replace>
+      <replace>30dp</replace>
+      <replace>mGridLayout</replace>
+      <replace>mCbVideoSingle</replace>
+      <replace>,</replace>
+    </replaceStrings>
+  </component>
+  <component name="GenerateSignedApkSettings">
+    <option name="KEY_STORE_PATH" value="C:\Users\ypx\Desktop\picker.jks" />
+    <option name="KEY_ALIAS" value="key0" />
+    <option name="REMEMBER_PASSWORDS" value="true" />
+    <option name="BUILD_TARGET_KEY" value="apk" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaDataSourceNew.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/ImageSetDataSource.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/MimeType.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/AlbumLoader.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/AlbumMediaLoader.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/ImageSetsLoader.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/ImageItemsLoader.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaSetDataSource.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/DateUtil.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaItemDataSource.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageSet.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaSetsDataSource.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaItemsLoader.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/crop/CropSetAdapter.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropFragment.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/crop/CropGridAdapter.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageItem.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaItemsDataSource.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/ImagePicker.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/MultiSetAdapter.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaSetsLoader.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/browseimage/CropImageView.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/builder/MultiPickerBuilder.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_activity_crop.xml" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/MultiPickerData.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_default_titlebar.xml" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/presenter/IMultiPickerBindPresenter.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePreviewActivity.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/browseimage/PicBrowseImageView.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/WXItemView.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/style/WXImgPickerPresenter.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/style/CustomImgPickerPresenter.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/style/CustomPickerItem.java" />
+        <option value="$PROJECT_DIR$/app/build.gradle" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/browseimage/Info.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/SingleCropActivity.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/CropImageView.java" />
+        <option value="$PROJECT_DIR$/imagepicker-support/generate.gradle" />
+        <option value="$PROJECT_DIR$/imagepicker/generate.gradle" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerActivity.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerFragment.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/BaseItemView.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/MultiPreviewAdapter.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageCropMode.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/PickerSelectConfig.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/MultiGridAdapter.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/TakePhotoUtil.java" />
+        <option value="$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_activity_images_grid.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/MainActivity.java" />
+        <option value="$PROJECT_DIR$/settings.gradle" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="width" value="1920" />
+    <option name="height" value="1040" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope">
+        <subPane subId="Scope 'Default Changelist'; set:Default Changelist; class com.intellij.packageDependencies.ChangeListScope">
+          <expand>
+            <path>
+              <item name="YPX_ImagePicker_demo" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="YPX_ImagePicker_demo" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="AndroidView">
+        <subPane>
+          <expand>
+            <path>
+              <item name="YPX_ImagePicker_demo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="YPX_ImagePicker_demo" type="58d84e3e:PackageViewProjectNode" />
+              <item name="imagePicker" type="616d4139:PackageViewModuleNode" />
+            </path>
+            <path>
+              <item name="YPX_ImagePicker_demo" type="58d84e3e:PackageViewProjectNode" />
+              <item name="imagePicker" type="616d4139:PackageViewModuleNode" />
+              <item name="com.ypx.imagepicker" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="YPX_ImagePicker_demo" type="58d84e3e:PackageViewProjectNode" />
+              <item name="imagePicker" type="616d4139:PackageViewModuleNode" />
+              <item name="com.ypx.imagepicker" type="1f31426a:PackageElementNode" />
+              <item name="builder" type="1f31426a:PackageElementNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="ProjectPane" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ExportApk.ApkPath" value="E:\github_project\YPX_ImagePicker\YPX_ImagePicker_demo\app" />
+    <property name="ExportApk.BuildVariants" value="release" />
+    <property name="ExportApk.SignV1" value="true" />
+    <property name="ExportApk.SignV2" value="true" />
+    <property name="device.picker.selection" value="43f736e0" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/imagepicker/src/main/java/com" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ImagePicker_support" />
+    <property name="project.structure.last.edited" value="Dependencies" />
+    <property name="project.structure.proportion" value="0.17" />
+    <property name="project.structure.side.proportion" value="0.34983498" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\github_project\YPX_ImagePicker\YPX_ImagePicker_demo\app\src\main\res\layout" />
+      <recent name="E:\github_project\YPX_ImagePicker\YPX_ImagePicker_demo\imagepicker\src\main\res\layout" />
+      <recent name="E:\github_project\YPX_ImagePicker\YPX_ImagePicker_demo\imagepicker\src\main\java\com\ypx\imagepicker\widget" />
+      <recent name="E:\github_project\YPX_ImagePicker\YPX_ImagePicker_demo\imagepicker\src\main\java\com\ypx\imagepicker\utils" />
+      <recent name="E:\github_project\YPX_ImagePicker\YPX_ImagePicker_demo\imagepicker\src\main\java\com\ypx\imagepicker\bean" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.ypx.imagepicker.widget" />
+      <recent name="com.ypx.imagepicker.activity.multi" />
+      <recent name="com.ypx.imagepicker.adapter.multi" />
+      <recent name="com.ypx.imagepicker.widget.browseimage" />
+      <recent name="com.ypx.imagepicker.builder" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\github_project\YPX_ImagePicker\YPX_ImagePicker_demo\app\src\main\res\mipmap-xhdpi" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Gradle.E:/github_project/YPX_ImagePicker/YPX_ImagePicker_demo/imagepicker [uploadArchives]">
+    <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <module name="app" />
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Hybrid>
+      <Java />
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Sample Java Methods" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="E:/github_project/YPX_ImagePicker/YPX_ImagePicker_demo/imagepicker [bintrayUpload]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/imagepicker" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="bintrayUpload" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="E:/github_project/YPX_ImagePicker/YPX_ImagePicker_demo/imagepicker [generateRelease]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/imagepicker" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="generateRelease" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="E:/github_project/YPX_ImagePicker/YPX_ImagePicker_demo/imagepicker [install]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/imagepicker" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="install" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="E:/github_project/YPX_ImagePicker/YPX_ImagePicker_demo/imagepicker [uploadArchives]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/imagepicker" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="uploadArchives" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="E:/github_project/YPX_ImagePicker/YPX_ImagePicker_demo/imagepicker-support [uploadArchives]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/imagepicker-support" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="uploadArchives" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.E:/github_project/YPX_ImagePicker/YPX_ImagePicker_demo/imagepicker-support [uploadArchives]" />
+        <item itemvalue="Gradle.E:/github_project/YPX_ImagePicker/YPX_ImagePicker_demo/imagepicker [uploadArchives]" />
+        <item itemvalue="Gradle.E:/github_project/YPX_ImagePicker/YPX_ImagePicker_demo/imagepicker [generateRelease]" />
+        <item itemvalue="Gradle.E:/github_project/YPX_ImagePicker/YPX_ImagePicker_demo/imagepicker [bintrayUpload]" />
+        <item itemvalue="Gradle.E:/github_project/YPX_ImagePicker/YPX_ImagePicker_demo/imagepicker [install]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4666e9e5-2ef7-4924-910c-5acf9c5b4014" name="Default Changelist" comment="" />
+      <created>1555898209364</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1555898209364</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1920" height="1040" extended-state="0" />
+    <layout>
+      <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
+      <window_info id="Build Variants" order="1" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="2" sideWeight="0.84430176" visible="true" weight="0.29731184" />
+      <window_info id="Structure" order="3" sideWeight="0.15544872" side_tool="true" weight="0.29731184" />
+      <window_info id="Image Layers" order="4" />
+      <window_info id="Designer" order="5" />
+      <window_info id="Resources Explorer" order="6" />
+      <window_info id="Capture Tool" order="7" />
+      <window_info id="Favorites" order="8" side_tool="true" />
+      <window_info anchor="bottom" x="97" y="587" width="1719" height="519" id="Logcat" order="0" sideWeight="0.61451614" side_tool="true" visible="true" weight="0.24503312" />
+      <window_info anchor="bottom" id="Android Profiler" order="1" weight="0.3289183" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49892473" weight="0.24944812" />
+      <window_info anchor="bottom" id="TODO" order="3" weight="0.3289183" />
+      <window_info anchor="bottom" id="Debug" order="4" sideWeight="0.3311828" weight="0.29690948" />
+      <window_info anchor="bottom" id="Terminal" order="5" sideWeight="0.49946237" weight="0.3289183" />
+      <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.50107527" side_tool="true" weight="0.3598234" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3289183" />
+      <window_info anchor="bottom" id="Build" order="8" sideWeight="0.38548386" visible="true" weight="0.24503312" />
+      <window_info anchor="bottom" id="Find" order="9" sideWeight="0.17150538" weight="0.3896247" />
+      <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" weight="0.17688172" />
+      <window_info anchor="right" id="Capture Analysis" order="1" />
+      <window_info anchor="right" id="Gradle" order="2" weight="0.24086021" />
+      <window_info anchor="right" id="Theme Preview" order="3" />
+      <window_info anchor="right" id="Palette&#9;" order="4" />
+      <window_info anchor="right" id="Preview" order="5" weight="0.28494623" />
+    </layout>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="watch">
+      <expression>
+        <expression-string>item.time</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/imagepicker/generate.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="17" column="1" lean-forward="true" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="305">
+          <caret line="64" column="51" selection-start-line="64" selection-start-column="51" selection-end-line="64" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker-support/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="239">
+          <caret line="27" column="17" lean-forward="true" selection-start-line="27" selection-start-column="17" selection-end-line="27" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2640">
+          <caret line="139" lean-forward="true" selection-start-line="27" selection-start-column="3" selection-end-line="139" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="945" lean-forward="true" selection-start-line="82" selection-start-column="1" selection-end-line="945" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePreviewActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="552" lean-forward="true" selection-start-line="60" selection-end-line="552" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/SingleCropActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="143" lean-forward="true" selection-start-line="40" selection-end-line="143" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/crop/CropGridAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="241" lean-forward="true" selection-start-line="35" selection-end-line="241" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/crop/CropSetAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="102" lean-forward="true" selection-start-line="28" selection-end-line="102" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageSelectMode.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageSet.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/PickerUiConfig.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/PickerSelectConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="16" column="39" lean-forward="true" selection-start-line="16" selection-start-column="39" selection-end-line="16" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/BaseItemView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="26" column="22" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/MultiGridAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="227" lean-forward="true" selection-start-line="35" selection-end-line="227" />
+          <folding>
+            <element signature="e#3712#3713#0" expanded="true" />
+            <element signature="e#3743#3744#0" expanded="true" />
+            <element signature="e#5529#5745#0" expanded="true" />
+            <element signature="e#5744#5745#0" expanded="true" />
+            <element signature="e#6633#6634#0" expanded="true" />
+            <element signature="e#6676#6677#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/MultiPreviewAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="85" lean-forward="true" selection-start-line="23" selection-end-line="85" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/WXItemView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="152" lean-forward="true" selection-start-line="28" selection-end-line="152" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageItem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="11">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/bean/ImageCropMode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/builder/MultiPickerBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="28" column="13" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/builder/CropPickerBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="21" column="23" lean-forward="true" selection-start-line="21" selection-start-column="23" selection-end-line="21" selection-end-column="23" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/impl/MediaItemsDataSource.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="31" column="13" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/data/DataSource.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="8" column="17" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/helper/RecyclerViewTouchHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="21" column="13" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/helper/CropHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/presenter/IMultiPickerBindPresenter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="453">
+          <caret line="64" column="70" selection-start-line="64" selection-start-column="70" selection-end-line="64" selection-end-column="70" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/presenter/ICropPickerBindPresenter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="17" column="17" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/ViewSizeUtils.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/StatusBarUtil.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/FileUtil.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/PermissionUtils.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/DateUtil.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/ShowTypeImageView.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/SuperCheckBox.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/TouchRecyclerView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/TakePhotoUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/utils/CornerUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="154">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/browseimage/Info.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="24" column="47" selection-start-line="24" selection-start-column="47" selection-end-line="24" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/widget/CheckImageView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/ImagePicker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="105" selection-start-line="22" selection-end-line="105" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/adapter/multi/MultiSetAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="30" column="87" selection-start-line="30" selection-end-line="30" selection-end-column="87" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_activity_images_grid.xml">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="16" column="43" selection-start-line="16" selection-start-column="43" selection-end-line="16" selection-end-column="43" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_activity_crop.xml">
+      <provider editor-type-id="text-editor" />
+      <provider selected="true" editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="63" column="13" selection-start-line="63" selection-start-column="13" selection-end-line="63" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePickerActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="319">
+          <caret line="74" column="49" selection-start-line="74" selection-start-column="49" selection-end-line="74" selection-end-column="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/res/layout/picker_activity_fragment_wrapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="6" column="20" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="20" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imagepicker/src/main/res/values/colors.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="412" column="5" selection-start-line="412" selection-start-column="5" selection-end-line="412" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
+      <provider editor-type-id="text-editor" />
+      <provider selected="true" editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/ypx/imagepickerdemo/style/CustomImgPickerPresenter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="23" column="13" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/settings.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="30" selection-start-column="30" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
