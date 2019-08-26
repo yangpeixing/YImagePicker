@@ -39,10 +39,10 @@ import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.impl.MediaItemsDataSource;
 import com.ypx.imagepicker.helper.PickerFileProvider;
-import com.ypx.imagepicker.helper.launcher.ActivityLauncher;
+import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.utils.StatusBarUtil;
-import com.ypx.imagepicker.utils.ViewSizeUtils;
+import com.ypx.imagepicker.utils.PStatusBarUtil;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.widget.SuperCheckBox;
 import com.ypx.imagepicker.widget.browseimage.PicBrowseImageView;
 
@@ -92,7 +92,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         intent.putExtra(INTENT_KEY_UI_CONFIG, presenter);
         intent.putExtra(INTENT_KEY_CURRENT_INDEX, currentPos);
         intent.putExtra(INTENT_KEY_CAN_EDIT, listener != null);
-        ActivityLauncher.init(context).startActivityForResult(intent, new ActivityLauncher.Callback() {
+        PLauncher.init(context).startActivityForResult(intent, new PLauncher.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode == RESULT_OK && listener != null) {
@@ -221,10 +221,10 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         mBottomBar = findViewById(R.id.bottom_bar);
 
         if (uiConfig.isImmersionBar()) {
-            StatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
-                    StatusBarUtil.isDarkColor(uiConfig.getTitleBarBackgroundColor()));
+            PStatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
+                    PStatusBarUtil.isDarkColor(uiConfig.getTitleBarBackgroundColor()));
 
-            mTitleBar.setPadding(0, StatusBarUtil.getStatusBarHeight(this), 0, 0);
+            mTitleBar.setPadding(0, PStatusBarUtil.getStatusBarHeight(this), 0, 0);
         }
 
         ImageView iv_back = findViewById(R.id.iv_back);
@@ -452,7 +452,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
 
             ImageView mVideoImg = new ImageView(getContext());
             mVideoImg.setImageDrawable(getResources().getDrawable(R.mipmap.picker_icon_video));
-            RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewSizeUtils.dp(getContext(), 80), ViewSizeUtils.dp(getContext(), 80));
+            RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(PViewSizeUtils.dp(getContext(), 80), PViewSizeUtils.dp(getContext(), 80));
             mVideoImg.setLayoutParams(params1);
             params1.addRule(RelativeLayout.CENTER_IN_PARENT);
             layout.addView(mVideoImg, params1);

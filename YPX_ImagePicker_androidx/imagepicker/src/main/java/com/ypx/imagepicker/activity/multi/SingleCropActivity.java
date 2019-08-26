@@ -19,10 +19,10 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.helper.launcher.ActivityLauncher;
+import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.utils.FileUtil;
-import com.ypx.imagepicker.utils.StatusBarUtil;
+import com.ypx.imagepicker.utils.PFileUtil;
+import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.widget.CropImageView;
 
 import java.io.File;
@@ -51,7 +51,7 @@ public class SingleCropActivity extends FragmentActivity {
         intent.putExtra(INTENT_KEY_UI_CONFIG, presenter);
         intent.putExtra(INTENT_KEY_SELECT_CONFIG, config);
         intent.putExtra(INTENT_KEY_CURRENT_IMAGE, path);
-        ActivityLauncher.init(context).startActivityForResult(intent, new ActivityLauncher.Callback() {
+        PLauncher.init(context).startActivityForResult(intent, new PLauncher.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode == ImagePicker.REQ_PICKER_RESULT_CODE &&
@@ -92,10 +92,10 @@ public class SingleCropActivity extends FragmentActivity {
         TextView tv_rightBtn = findViewById(R.id.tv_rightBtn);
         ImageView iv_back = findViewById(R.id.iv_back);
         if (uiConfig.isImmersionBar()) {
-            StatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
-                    StatusBarUtil.isDarkColor(uiConfig.getTitleBarBackgroundColor()));
+            PStatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
+                    PStatusBarUtil.isDarkColor(uiConfig.getTitleBarBackgroundColor()));
 
-            top_bar.setPadding(0, StatusBarUtil.getStatusBarHeight(this), 0, 0);
+            top_bar.setPadding(0, PStatusBarUtil.getStatusBarHeight(this), 0, 0);
         }
         iv_back.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
         top_bar.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
@@ -116,7 +116,7 @@ public class SingleCropActivity extends FragmentActivity {
                 }
                 Bitmap bitmap = cropView.generateCropBitmap();
                 File f = new File(selectConfig.getCropSaveFilePath(), "crop_" + System.currentTimeMillis() + ".jpg");
-                String cropUrl = FileUtil.saveBitmapToLocalWithJPEG(bitmap, f.getAbsolutePath());
+                String cropUrl = PFileUtil.saveBitmapToLocalWithJPEG(bitmap, f.getAbsolutePath());
                 ImageItem item = new ImageItem();
                 item.path = cropUrl;
                 ArrayList<ImageItem> list = new ArrayList<>();

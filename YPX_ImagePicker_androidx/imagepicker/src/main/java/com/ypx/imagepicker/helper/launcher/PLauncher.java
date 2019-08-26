@@ -12,45 +12,45 @@ import androidx.fragment.app.FragmentManager;
  * <p>
  * Created by XiaoFeng on 2018/9/5.
  */
-public class ActivityLauncher {
+public class PLauncher {
 
-    private static final String TAG = "ActivityLauncher";
+    private static final String TAG = "PLauncher";
     private Context mContext;
     /**
      * V4兼容包下的Fragment
      */
-    private RouterFragmentV4 mRouterFragmentV4;
+    private PRouterV4 mRouterFragmentV4;
     /**
      * 标准SDK下的Fragment
      */
-    private RouterFragment mRouterFragment;
+    private PRouter mRouterFragment;
 
-    public static ActivityLauncher init(Fragment fragment) {
+    public static PLauncher init(Fragment fragment) {
         return init(fragment.getActivity());
     }
 
-    public static ActivityLauncher init(FragmentActivity activity) {
-        return new ActivityLauncher(activity);
+    public static PLauncher init(FragmentActivity activity) {
+        return new PLauncher(activity);
     }
 
-    public static ActivityLauncher init(Activity activity) {
-        return new ActivityLauncher(activity);
+    public static PLauncher init(Activity activity) {
+        return new PLauncher(activity);
     }
 
-    private ActivityLauncher(FragmentActivity activity) {
+    private PLauncher(FragmentActivity activity) {
         mContext = activity;
         mRouterFragmentV4 = getRouterFragmentV4(activity);
     }
 
-    private ActivityLauncher(Activity activity) {
+    private PLauncher(Activity activity) {
         mContext = activity;
         mRouterFragment = getRouterFragment(activity);
     }
 
-    private RouterFragmentV4 getRouterFragmentV4(FragmentActivity activity) {
-        RouterFragmentV4 routerFragment = findRouterFragmentV4(activity);
+    private PRouterV4 getRouterFragmentV4(FragmentActivity activity) {
+        PRouterV4 routerFragment = findRouterFragmentV4(activity);
         if (routerFragment == null) {
-            routerFragment = RouterFragmentV4.newInstance();
+            routerFragment = PRouterV4.newInstance();
             FragmentManager fragmentManager = activity.getSupportFragmentManager();
             fragmentManager
                     .beginTransaction()
@@ -61,14 +61,14 @@ public class ActivityLauncher {
         return routerFragment;
     }
 
-    private RouterFragmentV4 findRouterFragmentV4(FragmentActivity activity) {
-        return (RouterFragmentV4) activity.getSupportFragmentManager().findFragmentByTag(TAG);
+    private PRouterV4 findRouterFragmentV4(FragmentActivity activity) {
+        return (PRouterV4) activity.getSupportFragmentManager().findFragmentByTag(TAG);
     }
 
-    private RouterFragment getRouterFragment(Activity activity) {
-        RouterFragment routerFragment = findRouterFragment(activity);
+    private PRouter getRouterFragment(Activity activity) {
+        PRouter routerFragment = findRouterFragment(activity);
         if (routerFragment == null) {
-            routerFragment = RouterFragment.newInstance();
+            routerFragment = PRouter.newInstance();
             android.app.FragmentManager fragmentManager = activity.getFragmentManager();
             fragmentManager
                     .beginTransaction()
@@ -79,8 +79,8 @@ public class ActivityLauncher {
         return routerFragment;
     }
 
-    private RouterFragment findRouterFragment(Activity activity) {
-        return (RouterFragment) activity.getFragmentManager().findFragmentByTag(TAG);
+    private PRouter findRouterFragment(Activity activity) {
+        return (PRouter) activity.getFragmentManager().findFragmentByTag(TAG);
     }
 
     public void startActivityForResult(Class<?> clazz, Callback callback) {

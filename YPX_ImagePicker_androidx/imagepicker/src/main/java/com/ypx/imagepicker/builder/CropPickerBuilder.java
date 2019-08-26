@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.bean.ImageCropMode;
 import com.ypx.imagepicker.ImagePicker;
@@ -11,8 +12,7 @@ import com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity;
 import com.ypx.imagepicker.activity.crop.ImagePickAndCropFragment;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.helper.launcher.ActivityLauncher;
-import com.ypx.imagepicker.utils.FileUtil;
+import com.ypx.imagepicker.utils.PFileUtil;
 
 import java.util.ArrayList;
 
@@ -67,7 +67,7 @@ public class CropPickerBuilder {
         }
         this.firstImageItem = new ImageItem();
         firstImageItem.setCropUrl(firstImageUrl);
-        int[] imageSize = FileUtil.getImageWidthHeight(firstImageUrl);
+        int[] imageSize = PFileUtil.getImageWidthHeight(firstImageUrl);
         firstImageItem.width = imageSize[0];
         firstImageItem.height = imageSize[1];
 
@@ -130,7 +130,7 @@ public class CropPickerBuilder {
     }
 
     public void pick(Activity activity, final OnImagePickCompleteListener listener) {
-        ActivityLauncher.init(activity).startActivityForResult(getIntent(activity), new ActivityLauncher.Callback() {
+        PLauncher.init(activity).startActivityForResult(getIntent(activity), new PLauncher.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (data != null && data.hasExtra(ImagePicker.INTENT_KEY_PICKERRESULT)

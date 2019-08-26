@@ -8,7 +8,7 @@ import android.graphics.drawable.StateListDrawable;
 /**
  * Utils to get corner drawable
  */
-public class CornerUtils {
+public class PCornerUtils {
     public static Drawable cornerDrawable(final int bgColor, float cornerradius) {
         final GradientDrawable bg = new GradientDrawable();
         bg.setCornerRadius(cornerradius);

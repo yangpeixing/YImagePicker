@@ -46,11 +46,11 @@ import com.ypx.imagepicker.data.impl.MediaItemsDataSource;
 import com.ypx.imagepicker.data.impl.MediaSetsDataSource;
 import com.ypx.imagepicker.helper.RecyclerViewTouchHelper;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
-import com.ypx.imagepicker.utils.CornerUtils;
-import com.ypx.imagepicker.utils.FileUtil;
-import com.ypx.imagepicker.utils.PermissionUtils;
-import com.ypx.imagepicker.utils.TakePhotoUtil;
-import com.ypx.imagepicker.utils.ViewSizeUtils;
+import com.ypx.imagepicker.utils.PCornerUtils;
+import com.ypx.imagepicker.utils.PFileUtil;
+import com.ypx.imagepicker.utils.PPermissionUtils;
+import com.ypx.imagepicker.utils.PTakePhotoUtil;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.widget.TouchRecyclerView;
 import com.ypx.imagepicker.widget.browseimage.PicBrowseImageView;
 
@@ -217,7 +217,7 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
         stateBtn = mContentView.findViewById(R.id.stateBtn);
         mGridImageRecyclerView = mContentView.findViewById(R.id.mRecyclerView);
         mImageSetRecyclerView = mContentView.findViewById(R.id.mImageSetRecyclerView);
-        mTvFullOrFit.setBackground(CornerUtils.cornerDrawable(Color.parseColor("#80000000"), dp(15)));
+        mTvFullOrFit.setBackground(PCornerUtils.cornerDrawable(Color.parseColor("#80000000"), dp(15)));
         mContentView.findViewById(R.id.mBackImg).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -240,7 +240,7 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
         mTvNext.setEnabled(false);
         mTvNext.setTextColor(Color.parseColor("#B0B0B0"));
         mTvSelectNum.setVisibility(View.GONE);
-        mTvSelectNum.setBackground(CornerUtils.cornerDrawable(getResources().getColor(R.color.picker_theme_color), dp(10)));
+        mTvSelectNum.setBackground(PCornerUtils.cornerDrawable(getResources().getColor(R.color.picker_theme_color), dp(10)));
         //防止点击穿透
         mCropLayout.setClickable(true);
         titleBar.setClickable(true);
@@ -248,8 +248,8 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
         maskView.setAlpha(0f);
         maskView.setVisibility(View.GONE);
         //初始化相关尺寸信息
-        mCropSize = ViewSizeUtils.getScreenWidth(getActivity());
-        ViewSizeUtils.setViewSize(mCropLayout, mCropSize, 1.0f);
+        mCropSize = PViewSizeUtils.getScreenWidth(getActivity());
+        PViewSizeUtils.setViewSize(mCropLayout, mCropSize, 1.0f);
         touchHelper = RecyclerViewTouchHelper.create(mGridImageRecyclerView)
                 .setTopView(topView)
                 .setMaskView(maskView)
@@ -629,8 +629,8 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
     @SuppressLint("ObjectAnimatorBinding")
     private void animCropView(final PicBrowseImageView view, boolean isShowAnim, final int endWidth, final int endHeight) {
         if (isShowAnim) {
-            final int startWidth = ViewSizeUtils.getViewWidth(mCropView);
-            final int startHeight = ViewSizeUtils.getViewHeight(mCropView);
+            final int startWidth = PViewSizeUtils.getViewWidth(mCropView);
+            final int startHeight = PViewSizeUtils.getViewHeight(mCropView);
             ObjectAnimator anim = ObjectAnimator.ofFloat(this, "translationY", 0.0f, 1.0f);
             anim.setDuration(200);
             anim.setInterpolator(new DecelerateInterpolator());
@@ -638,14 +638,14 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     float ratio = (Float) animation.getAnimatedValue();
-                    ViewSizeUtils.setViewSize(view, (int) ((endWidth - startWidth) * ratio + startWidth),
+                    PViewSizeUtils.setViewSize(view, (int) ((endWidth - startWidth) * ratio + startWidth),
                             ((int) ((endHeight - startHeight) * ratio + startHeight)));
                     view.setImageDrawable(view.getDrawable());
                 }
             });
             anim.start();
         } else {
-            ViewSizeUtils.setViewSize(view, endWidth, endHeight);
+            PViewSizeUtils.setViewSize(view, endWidth, endHeight);
         }
     }
 
@@ -795,7 +795,7 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
         for (ImageItem imageItem : selectList) {
             View view = cropViewList.get(imageItem);
             File f = new File(mCropPicsCacheFilePath, "crop_" + System.currentTimeMillis() + ".jpg");
-            String cropUrl = FileUtil.saveBitmapToLocalWithJPEG(view, f.getAbsolutePath());
+            String cropUrl = PFileUtil.saveBitmapToLocalWithJPEG(view, f.getAbsolutePath());
             imageItem.setCropUrl(cropUrl);
             imageItem.setCropMode(cropMode);
             imageItem.setSelect(false);
@@ -839,7 +839,7 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
         } else {
-            TakePhotoUtil.takePhoto(getActivity(), REQ_CAMERA);
+            PTakePhotoUtil.takePhoto(getActivity(), REQ_CAMERA);
         }
     }
 
@@ -851,7 +851,7 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
             return;
         }
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(TakePhotoUtil.mCurrentPhotoPath);
+        File f = new File(PTakePhotoUtil.mCurrentPhotoPath);
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         getActivity().sendBroadcast(mediaScanIntent);
@@ -889,11 +889,11 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
 
     public void onTakePhotoResult(int requestCode, int resultCode) {
         if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {
-            if (!TextUtils.isEmpty(TakePhotoUtil.mCurrentPhotoPath)) {
+            if (!TextUtils.isEmpty(PTakePhotoUtil.mCurrentPhotoPath)) {
                 refreshGalleryAddPic();
-                ImageItem item = new ImageItem(TakePhotoUtil.mCurrentPhotoPath, System.currentTimeMillis());
-                item.width = FileUtil.getImageWidthHeight(TakePhotoUtil.mCurrentPhotoPath)[0];
-                item.height = FileUtil.getImageWidthHeight(TakePhotoUtil.mCurrentPhotoPath)[1];
+                ImageItem item = new ImageItem(PTakePhotoUtil.mCurrentPhotoPath, System.currentTimeMillis());
+                item.width = PFileUtil.getImageWidthHeight(PTakePhotoUtil.mCurrentPhotoPath)[0];
+                item.height = PFileUtil.getImageWidthHeight(PTakePhotoUtil.mCurrentPhotoPath)[1];
                 imageItems.add(0, item);
                 if (imageSets != null && imageSets.size() > 0 && imageSets.get(0).imageItems != null) {
                     imageSets.get(0).imageItems.add(0, item);
@@ -911,14 +911,14 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
                 //申请成功，可以拍照
                 pressImage(0, true);
             } else {
-                PermissionUtils.create(getContext()).showSetPermissionDialog(getString(R.string.picker_str_camerapermisson));
+                PPermissionUtils.create(getContext()).showSetPermissionDialog(getString(R.string.picker_str_camerapermisson));
             }
         } else if (requestCode == REQ_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //申请成功，可以拍照
                 loadImageData();
             } else {
-                PermissionUtils.create(getContext()).showSetPermissionDialog(getString(R.string.picker_str_storagepermisson));
+                PPermissionUtils.create(getContext()).showSetPermissionDialog(getString(R.string.picker_str_storagepermisson));
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

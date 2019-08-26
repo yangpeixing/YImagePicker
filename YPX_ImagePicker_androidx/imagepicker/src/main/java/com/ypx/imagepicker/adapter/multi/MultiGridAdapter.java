@@ -20,7 +20,7 @@ import com.ypx.imagepicker.bean.PickerSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.utils.TakePhotoUtil;
+import com.ypx.imagepicker.utils.PTakePhotoUtil;
 
 import java.util.List;
 
@@ -157,7 +157,7 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             tv_camera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    TakePhotoUtil.takePhoto((Activity) v.getContext(), REQ_CAMERA);
+                    PTakePhotoUtil.takePhoto((Activity) v.getContext(), REQ_CAMERA);
                 }
             });
         }

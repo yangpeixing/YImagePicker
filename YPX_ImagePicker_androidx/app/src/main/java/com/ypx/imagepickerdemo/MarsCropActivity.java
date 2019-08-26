@@ -16,9 +16,9 @@ import com.bumptech.glide.Glide;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.helper.CropHelper;
-import com.ypx.imagepicker.helper.launcher.ActivityLauncher;
-import com.ypx.imagepicker.utils.FileUtil;
-import com.ypx.imagepicker.utils.StatusBarUtil;
+import com.ypx.imagepicker.helper.launcher.PLauncher;
+import com.ypx.imagepicker.utils.PFileUtil;
+import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.widget.CropImageView;
 import com.ypx.imagepicker.widget.browseimage.Info;
 
@@ -49,7 +49,7 @@ public class MarsCropActivity extends FragmentActivity implements View.OnClickLi
     public static void intent(Activity activity, ImageItem imageItem, final ImageCropResult result) {
         Intent intent = new Intent(activity, MarsCropActivity.class);
         intent.putExtra(KEY_IMAGE_ITEM, imageItem);
-        ActivityLauncher.init(activity).startActivityForResult(intent, new ActivityLauncher.Callback() {
+        PLauncher.init(activity).startActivityForResult(intent, new PLauncher.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (result != null && data != null && data.hasExtra(KEY_IMAGE_ITEM)) {
@@ -62,7 +62,7 @@ public class MarsCropActivity extends FragmentActivity implements View.OnClickLi
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true, false);
+        PStatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true, false);
         setContentView(R.layout.activity_crop);
         if (getIntent().hasExtra(KEY_IMAGE_ITEM)) {
             imageItem = (ImageItem) getIntent().getSerializableExtra(KEY_IMAGE_ITEM);
@@ -171,7 +171,7 @@ public class MarsCropActivity extends FragmentActivity implements View.OnClickLi
         if (!isOrig) {
             Bitmap bitmap = CropHelper.cropViewToBitmap(mCropImg, mCropImg.getCropWidth(), mCropImg.getCropHeight());
             File f = new File(ImagePicker.cropPicSaveFilePath, "crop_" + System.currentTimeMillis() + ".jpg");
-            String cropUrl = FileUtil.saveBitmapToLocalWithJPEG(bitmap, f.getAbsolutePath());
+            String cropUrl = PFileUtil.saveBitmapToLocalWithJPEG(bitmap, f.getAbsolutePath());
             imageItem.setCropUrl(cropUrl);
         } else {
             imageItem.setCropUrl(imageItem.path);

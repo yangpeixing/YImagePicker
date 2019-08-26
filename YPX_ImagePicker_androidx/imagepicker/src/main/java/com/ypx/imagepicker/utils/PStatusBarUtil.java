@@ -1,18 +1,16 @@
 package com.ypx.imagepicker.utils;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.DisplayCutout;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 
 import java.lang.reflect.Method;
 
-public class StatusBarUtil {
+public class PStatusBarUtil {
 
     /**
      * 是否有刘海屏
@@ -185,7 +183,7 @@ public class StatusBarUtil {
             statusBarHeight = result;
             return result;
         } catch (Exception e) {
-            return ViewSizeUtils.dp(activity, 20);
+            return PViewSizeUtils.dp(activity, 20);
         }
     }
 }

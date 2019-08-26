@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -16,7 +15,7 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerSelectConfig;
-import com.ypx.imagepicker.utils.DateUtil;
+import com.ypx.imagepicker.utils.PDateUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -107,11 +106,11 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                         item.duration = getLong(cursor, MediaStore.Video.Media.DURATION);
                         item.setVideo(MimeType.isVideo(item.mimeType));
                         if (item.duration > 0) {
-                            item.durationFormat = DateUtil.getVideoDuration(item.duration);
+                            item.durationFormat = PDateUtil.getVideoDuration(item.duration);
                         }
                         item.time = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATE_MODIFIED));
                         if (item.time > 0) {
-                            item.timeFormat = DateUtil.getStrTime(item.time);
+                            item.timeFormat = PDateUtil.getStrTime(item.time);
                         }
 
                         if (set.isAllMedia() && isLoadVideo && isLoadImage) {

@@ -2,13 +2,11 @@ package com.ypx.imagepicker.adapter.crop;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +18,8 @@ import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.utils.CornerUtils;
-import com.ypx.imagepicker.utils.ViewSizeUtils;
+import com.ypx.imagepicker.utils.PCornerUtils;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 
 import java.util.List;
 
@@ -104,12 +102,12 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
                 viewHolder.mTvDuration.setVisibility(View.GONE);
                 viewHolder.v_select.setVisibility(View.VISIBLE);
                 if (imageItem.isPress()) {
-                    ViewSizeUtils.setViewMargin(viewHolder.imageView, dp(2));
+                    PViewSizeUtils.setViewMargin(viewHolder.imageView, dp(2));
                     viewHolder.rootView.setBackgroundColor(context.getResources().getColor(R.color.picker_theme_color));
                     viewHolder.v_mask.setVisibility(View.VISIBLE);
                     viewHolder.v_mask.setBackgroundColor(context.getResources().getColor(R.color.picker_theme_color));
                 } else {
-                    ViewSizeUtils.setViewMargin(viewHolder.imageView, dp(1));
+                    PViewSizeUtils.setViewMargin(viewHolder.imageView, dp(1));
                     viewHolder.rootView.setBackgroundColor(Color.parseColor("#F0F0F0"));
                     viewHolder.v_mask.setVisibility(View.GONE);
                 }
@@ -128,7 +126,7 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
                     for (int t = 0; t < selectList.size(); t++) {
                         if (imageItem.equals(selectList.get(t))) {
                             imageItem.setSelectIndex(t);
-                            viewHolder.mTvIndex.setBackground(CornerUtils.cornerDrawableAndStroke(
+                            viewHolder.mTvIndex.setBackground(PCornerUtils.cornerDrawableAndStroke(
                                     context.getResources().getColor(R.color.picker_theme_color), dp(12), dp(1), Color.WHITE));
                             viewHolder.mTvIndex.setText(String.format("%d", imageItem.getSelectIndex() + 1));
                             return;
@@ -180,8 +178,8 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
             rootView = itemView.findViewById(R.id.rootView);
             mTvDuration = itemView.findViewById(R.id.mTvDuration);
             context = imageView.getContext();
-            ViewSizeUtils.setViewSize(rootView, (ViewSizeUtils.getScreenWidth(context) - ViewSizeUtils.dp(context, 10)) / 4, 1.0f);
-            ViewSizeUtils.setViewSize(v_mask, (ViewSizeUtils.getScreenWidth(context) - ViewSizeUtils.dp(context, 6)) / 4, 1.0f);
+            PViewSizeUtils.setViewSize(rootView, (PViewSizeUtils.getScreenWidth(context) - PViewSizeUtils.dp(context, 10)) / 4, 1.0f);
+            PViewSizeUtils.setViewSize(v_mask, (PViewSizeUtils.getScreenWidth(context) - PViewSizeUtils.dp(context, 6)) / 4, 1.0f);
         }
 
         public void showCamera() {

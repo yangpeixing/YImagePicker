@@ -3,7 +3,6 @@ package com.ypx.imagepicker.activity.crop;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -14,7 +13,7 @@ import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.utils.StatusBarUtil;
+import com.ypx.imagepicker.utils.PStatusBarUtil;
 
 import java.util.ArrayList;
 
@@ -44,8 +43,8 @@ public class ImagePickAndCropActivity extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        if (StatusBarUtil.hasNotchInScreen(this)) {
-            StatusBarUtil.setStatusBar(this, Color.parseColor("#F6F6F6"),
+        if (PStatusBarUtil.hasNotchInScreen(this)) {
+            PStatusBarUtil.setStatusBar(this, Color.parseColor("#F6F6F6"),
                     false, true);
         } else {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

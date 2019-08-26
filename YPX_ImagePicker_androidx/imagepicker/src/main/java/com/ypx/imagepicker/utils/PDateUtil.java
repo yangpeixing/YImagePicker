@@ -11,7 +11,7 @@ import java.util.Date;
  * 功能：时间转化工具类
  * 产权：南京婚尚信息技术
  */
-public class DateUtil {
+public class PDateUtil {
 
     public static String getStrTime(long cc_time) {
         if (String.valueOf(cc_time).length() <= 10) {

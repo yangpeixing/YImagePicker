@@ -15,7 +15,7 @@ import java.lang.ref.WeakReference;
  * Author: peixing.yang
  * Date: 2018/12/24-15:40
  */
-final public class ViewSizeUtils {
+final public class PViewSizeUtils {
     public static void setViewSize(View view, int width, int height) {
         WeakReference<View> viewWeakReference = new WeakReference<>(view);
         if (viewWeakReference.get() != null) {

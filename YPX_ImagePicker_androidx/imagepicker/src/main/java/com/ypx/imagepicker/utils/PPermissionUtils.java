@@ -19,14 +19,14 @@ import com.ypx.imagepicker.BuildConfig;
  * Author: peixing.yang
  * Date: 2019/3/1
  */
-public class PermissionUtils {
+public class PPermissionUtils {
     private Context context;
 
-    public static PermissionUtils create(Context context) {
-        return new PermissionUtils(context);
+    public static PPermissionUtils create(Context context) {
+        return new PPermissionUtils(context);
     }
 
-    public PermissionUtils(Context context) {
+    public PPermissionUtils(Context context) {
         this.context = context;
     }
 

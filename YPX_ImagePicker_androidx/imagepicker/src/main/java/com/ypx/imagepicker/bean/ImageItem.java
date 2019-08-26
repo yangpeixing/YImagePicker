@@ -11,27 +11,29 @@ import java.io.Serializable;
 public class ImageItem implements Serializable {
     private static final long serialVersionUID = 3429291195776736078L;
     public long id;
-    public String path;
     public int width;
     public int height;
     public long time;
-    public String timeFormat;
     public String mimeType;
-
+    public String timeFormat;
     public long duration;
     public String durationFormat;
     public String videoImageUri;
-    private boolean isVideo = false;
 
+    // 加入滤镜后的原图图片地址,如果无滤镜返回原图地址
+    public String imageFilterPath = "";
+    // 原图地址
+    public String path;
+    // 剪裁后的图片地址（从 imageFilterPath 计算出来，已经带了滤镜）
+    private String cropUrl;
+
+    private boolean isVideo = false;
     private boolean isSelect = false;
     private boolean isPress = false;
     private int selectIndex = -1;
-
     private int cropMode = ImageCropMode.ImageScale_FILL;
-    private String cropUrl;
 
     public ImageItem() {
-
     }
 
     public String getVideoImageUri() {
@@ -41,18 +43,33 @@ public class ImageItem implements Serializable {
         return videoImageUri;
     }
 
+    public String getImageFilterPath() {
+        if (imageFilterPath == null || imageFilterPath.length() == 0) {
+            return path;
+        }
+        return imageFilterPath;
+    }
+
+    public void setImageFilterPath(String imageFilterPath) {
+        this.imageFilterPath = imageFilterPath;
+    }
+
     public ImageItem(String path, long duration, String videoImageUri) {
         this.path = path;
         this.duration = duration;
         this.videoImageUri = videoImageUri;
     }
 
-    public String getMimeType() {
-        return mimeType;
+    public String getLastImageFilterPath() {
+        return imageFilterPath;
     }
 
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public long getId() {
@@ -127,6 +144,14 @@ public class ImageItem implements Serializable {
         this.timeFormat = timeFormat;
     }
 
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
     public ImageItem(String path, long time) {
         this.path = path;
         this.time = time;
@@ -187,12 +212,12 @@ public class ImageItem implements Serializable {
         newItem.duration = item.duration;
         newItem.height = item.height;
         newItem.width = item.width;
-        newItem.isSelect = item.isSelect;
         newItem.cropMode = item.cropMode;
         newItem.cropUrl = item.cropUrl;
         newItem.durationFormat = item.durationFormat;
         newItem.id = item.id;
-        newItem.isPress = item.isPress;
+        newItem.isPress = false;
+        newItem.isSelect = false;
         return newItem;
     }
 

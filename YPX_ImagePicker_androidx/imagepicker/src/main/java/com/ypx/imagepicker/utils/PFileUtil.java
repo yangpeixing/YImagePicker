@@ -16,7 +16,7 @@ import java.io.IOException;
  * Author:ypx
  * Description:
  */
-public class FileUtil {
+public class PFileUtil {
     public static int[] getImageWidthHeight(String path) {
         try {
             BitmapFactory.Options options = new BitmapFactory.Options();

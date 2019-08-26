@@ -12,17 +12,17 @@ import java.util.Random;
  *
  * Created by XiaoFeng on 2018/9/5.
  */
-public class RouterFragmentV4 extends Fragment {
+public class PRouterV4 extends Fragment {
 
-    private SparseArray<ActivityLauncher.Callback> mCallbacks = new SparseArray<>();
+    private SparseArray<PLauncher.Callback> mCallbacks = new SparseArray<>();
     private Random mCodeGenerator = new Random();
 
-    public RouterFragmentV4() {
+    public PRouterV4() {
         // Required empty public constructor
     }
 
-    public static RouterFragmentV4 newInstance() {
-        return new RouterFragmentV4();
+    public static PRouterV4 newInstance() {
+        return new PRouterV4();
     }
 
     @Override
@@ -31,7 +31,7 @@ public class RouterFragmentV4 extends Fragment {
         setRetainInstance(true);
     }
 
-    public void startActivityForResult(Intent intent, ActivityLauncher.Callback callback) {
+    public void startActivityForResult(Intent intent, PLauncher.Callback callback) {
         int requestCode = makeRequestCode();
         mCallbacks.put(requestCode, callback);
         startActivityForResult(intent, requestCode);
@@ -55,7 +55,7 @@ public class RouterFragmentV4 extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ActivityLauncher.Callback callback = mCallbacks.get(requestCode);
+        PLauncher.Callback callback = mCallbacks.get(requestCode);
         mCallbacks.remove(requestCode);
         if (callback != null) {
             callback.onActivityResult(resultCode, data);

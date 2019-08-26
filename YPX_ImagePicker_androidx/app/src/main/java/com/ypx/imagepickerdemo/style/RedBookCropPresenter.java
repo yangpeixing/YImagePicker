@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
-import com.ypx.imagepicker.utils.ViewSizeUtils;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 
 /**
  * Description: 小红书样式
@@ -39,7 +39,7 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
         textView.setGravity(Gravity.CENTER);
         textView.setTextColor(Color.WHITE);
         textView.setBackgroundColor(Color.RED);
-        textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewSizeUtils.dp(context, 50)));
+        textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, PViewSizeUtils.dp(context, 50)));
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

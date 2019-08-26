@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
-import com.ypx.imagepicker.utils.ViewSizeUtils;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.widget.TouchRecyclerView;
 
 
@@ -181,7 +181,7 @@ public class RecyclerViewTouchHelper {
         }
         int lineCount = count % 4 == 0 ? count / 4 : count / 4 + 1;
         return lineCount * itemHeight + recyclerView.getPaddingBottom() >
-                ViewSizeUtils.getScreenHeight(recyclerView.getContext()) - stickHeight;
+                PViewSizeUtils.getScreenHeight(recyclerView.getContext()) - stickHeight;
     }
 
 
@@ -315,6 +315,6 @@ public class RecyclerViewTouchHelper {
     }
 
     public int dp(int dp) {
-        return ViewSizeUtils.dp(recyclerView.getContext(), dp);
+        return PViewSizeUtils.dp(recyclerView.getContext(), dp);
     }
 }

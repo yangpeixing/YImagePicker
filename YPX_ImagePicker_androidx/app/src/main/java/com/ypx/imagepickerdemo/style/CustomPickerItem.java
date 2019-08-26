@@ -18,8 +18,8 @@ import com.ypx.imagepicker.bean.ImageSelectMode;
 import com.ypx.imagepicker.bean.PickerSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.utils.CornerUtils;
-import com.ypx.imagepicker.utils.ViewSizeUtils;
+import com.ypx.imagepicker.utils.PCornerUtils;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepickerdemo.R;
 
 import java.util.ArrayList;
@@ -57,12 +57,12 @@ public class CustomPickerItem extends BaseItemView {
         mTvIndex = view.findViewById(R.id.mTvIndex);
         mTvDuration = view.findViewById(R.id.mTvDuration);
         mRectView = view.findViewById(R.id.mRectView);
-        mRectView.setBackground(CornerUtils.cornerDrawableAndStroke(Color.TRANSPARENT, 0, dp(1.5f), Color.WHITE));
+        mRectView.setBackground(PCornerUtils.cornerDrawableAndStroke(Color.TRANSPARENT, 0, dp(1.5f), Color.WHITE));
 
-        stokeDrawable = CornerUtils.cornerDrawableAndStroke(
+        stokeDrawable = PCornerUtils.cornerDrawableAndStroke(
                 getContext().getResources().getColor(R.color.picker_theme_color),
                 dp(12), dp(1), Color.WHITE);
-        maskDrawable = CornerUtils.cornerDrawableAndStroke(Color.parseColor("#80859D7B"),
+        maskDrawable = PCornerUtils.cornerDrawableAndStroke(Color.parseColor("#80859D7B"),
                 0, dp(2), getResources().getColor(R.color.picker_theme_color));
     }
 
@@ -82,11 +82,11 @@ public class CustomPickerItem extends BaseItemView {
         presenter.displayListImage(mItemImage, imageItem, 0);
 
         if (imageItem.getWidthHeightType() == 1) {//宽图
-            ViewSizeUtils.setViewSize(mRectView, dp(12), dp(8));
+            PViewSizeUtils.setViewSize(mRectView, dp(12), dp(8));
         } else if (imageItem.getWidthHeightType() == -1) {//高图
-            ViewSizeUtils.setViewSize(mRectView, dp(8), dp(12));
+            PViewSizeUtils.setViewSize(mRectView, dp(8), dp(12));
         } else {
-            ViewSizeUtils.setViewSize(mRectView, dp(10), dp(10));
+            PViewSizeUtils.setViewSize(mRectView, dp(10), dp(10));
         }
 
         //在屏蔽列表中

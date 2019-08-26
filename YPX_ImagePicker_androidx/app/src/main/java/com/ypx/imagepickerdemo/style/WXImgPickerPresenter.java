@@ -13,8 +13,8 @@ import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.utils.CornerUtils;
-import com.ypx.imagepicker.utils.ViewSizeUtils;
+import com.ypx.imagepicker.utils.PCornerUtils;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepickerdemo.R;
 
 import java.util.ArrayList;
@@ -58,9 +58,9 @@ public class WXImgPickerPresenter implements IMultiPickerBindPresenter {
         config.setTitleBarGravity(Gravity.START);
         config.setTitleColor(Color.BLACK);
         //设置标题栏右上角完成按钮选中和未选中样式，以及文字颜色
-        int r = ViewSizeUtils.dp(context, 2);
-        config.setOkBtnSelectBackground(CornerUtils.cornerDrawable(Color.parseColor("#09C768"), r));
-        config.setOkBtnUnSelectBackground(CornerUtils.cornerDrawable(Color.parseColor("#B4ECCE"), r));
+        int r = PViewSizeUtils.dp(context, 2);
+        config.setOkBtnSelectBackground(PCornerUtils.cornerDrawable(Color.parseColor("#09C768"), r));
+        config.setOkBtnUnSelectBackground(PCornerUtils.cornerDrawable(Color.parseColor("#B4ECCE"), r));
         config.setOkBtnSelectTextColor(Color.WHITE);
         config.setOkBtnUnSelectTextColor(Color.parseColor("#50ffffff"));
         config.setOkBtnText("完成");

@@ -41,9 +41,9 @@ import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.impl.MediaItemsDataSource;
 import com.ypx.imagepicker.data.impl.MediaSetsDataSource;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.utils.PermissionUtils;
-import com.ypx.imagepicker.utils.TakePhotoUtil;
-import com.ypx.imagepicker.utils.ViewSizeUtils;
+import com.ypx.imagepicker.utils.PPermissionUtils;
+import com.ypx.imagepicker.utils.PTakePhotoUtil;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -113,7 +113,7 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
 
         uiConfig = presenter.getUiConfig(mContext);
         if (selectConfig.getSelectMode() == ImageSelectMode.MODE_TAKEPHOTO) {
-            TakePhotoUtil.takePhoto(mContext, REQ_CAMERA);
+            PTakePhotoUtil.takePhoto(mContext, REQ_CAMERA);
         } else {
             findView();
             loadPicData();
@@ -210,8 +210,8 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
         int height = (int) (getResources().getDisplayMetrics().heightPixels / 4f);
         if (uiConfig.getPickStyle() == PickerUiConfig.PICK_STYLE_BOTTOM) {
             mBottomLayout.setVisibility(View.VISIBLE);
-            v_masker.setPadding(0, 0, 0, ViewSizeUtils.dp(mContext, 51));
-            mRecyclerView.setPadding(0, 0, 0, ViewSizeUtils.dp(mContext, 51));
+            v_masker.setPadding(0, 0, 0, PViewSizeUtils.dp(mContext, 51));
+            mRecyclerView.setPadding(0, 0, 0, PViewSizeUtils.dp(mContext, 51));
             params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             params.bottomMargin = mRecyclerView.getPaddingBottom();
             params.topMargin = height;
@@ -438,14 +438,14 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
      */
     public void onTakePhotoResult(int requestCode, int resultCode) {
         if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {//拍照返回
-            if (!TextUtils.isEmpty(TakePhotoUtil.mCurrentPhotoPath)) {
+            if (!TextUtils.isEmpty(PTakePhotoUtil.mCurrentPhotoPath)) {
                 if (selectConfig.getSelectMode() == ImageSelectMode.MODE_CROP) {
-                    intentCrop(TakePhotoUtil.mCurrentPhotoPath);
+                    intentCrop(PTakePhotoUtil.mCurrentPhotoPath);
                     return;
                 }
-                TakePhotoUtil.refreshGalleryAddPic(mContext);
+                PTakePhotoUtil.refreshGalleryAddPic(mContext);
                 ImageItem item = new ImageItem();
-                item.path = TakePhotoUtil.mCurrentPhotoPath;
+                item.path = PTakePhotoUtil.mCurrentPhotoPath;
                 ArrayList<ImageItem> list = new ArrayList<>();
                 list.add(item);
                 notifyOnImagePickComplete(list);
@@ -594,15 +594,15 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
         if (requestCode == REQ_CAMERA) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //申请成功，可以拍照
-                TakePhotoUtil.takePhoto(mContext, REQ_CAMERA);
+                PTakePhotoUtil.takePhoto(mContext, REQ_CAMERA);
             } else {
-                PermissionUtils.create(mContext).showSetPermissionDialog(getString(R.string.picker_str_camerapermisson));
+                PPermissionUtils.create(mContext).showSetPermissionDialog(getString(R.string.picker_str_camerapermisson));
             }
         } else if (requestCode == REQ_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 loadPicData();
             } else {
-                PermissionUtils.create(mContext).showSetPermissionDialog(getString(R.string.picker_str_storagepermisson));
+                PPermissionUtils.create(mContext).showSetPermissionDialog(getString(R.string.picker_str_storagepermisson));
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
