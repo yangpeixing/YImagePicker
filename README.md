@@ -1,7 +1,8 @@
 ## 关于YPXImagePicker
 本库内部集成了微信的图片选择器、小红书多图剪裁选择器两种图片选择器。采用切入式fragment代替传统的onActivityForResult，更方便的拿到回调数据，并且支持跨进程回调，大大减少了不必要的冗余代码，从而增加开发效率！本Module与app主项目采用序列化接口方式实现实现模块化解耦，调用框架前需要实现交互层Presenter接口，比如指定固定的图片加载框架（Glide、Picasso等）以及一些定制性UI样式、业务逻辑等。本库已投入多个商业项目的使用，稳定可靠，持续迭代！
 
-[apk体验地址](https://www.pgyer.com/Wfhb)
+[apk体验地址]
+(https://www.pgyer.com/app/qrcode/Wfhb)
 
 ## 引用方式
  
