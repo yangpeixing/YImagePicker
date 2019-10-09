@@ -21,10 +21,6 @@ public enum MultiPickerData {
     private ImageSet currentImageSet = new ImageSet();
 
     public void clear() {
-        for (ImageItem imageItem : selectImgs) {
-            imageItem.setSelect(false);
-            imageItem.setPress(false);
-        }
         selectImgs.clear();
         currentImageSet = null;
     }

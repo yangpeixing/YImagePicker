@@ -68,7 +68,7 @@ public class CropSetAdapter extends RecyclerView.Adapter<CropSetAdapter.ViewHold
         if (imageLoader != null) {
             ImageItem imageItem = new ImageItem();
             imageItem.path = imageSet.coverPath;
-            imageLoader.displayListImage(viewHolder.imageView, imageItem);
+            imageLoader.displayListImage(viewHolder.imageView, imageItem, viewHolder.imageView.getMeasuredHeight());
         }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

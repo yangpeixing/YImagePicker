@@ -2,7 +2,6 @@ package com.ypx.imagepicker.utils;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,8 +12,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 
 import androidx.core.content.ContextCompat;
-
-import com.ypx.imagepicker.helper.PickerFileProvider;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -67,8 +64,8 @@ public class PTakePhotoUtil {
                 imageUri = Uri.fromFile(new File(mCurrentPhotoPath));
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             } else {
-                imageUri = PickerFileProvider.getUriForFile(activity,activity
-                        .getApplication().getPackageName() + ".picker.fileprovider",new File(mCurrentPhotoPath));
+                imageUri = PickerFileProvider.getUriForFile(activity, activity
+                        .getApplication().getPackageName() + ".picker.fileprovider", new File(mCurrentPhotoPath));
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             }
         }
@@ -169,6 +166,9 @@ public class PTakePhotoUtil {
      * 刷新相册
      */
     public static void refreshGalleryAddPic(Context context) {
+        if (context == null) {
+            return;
+        }
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(mCurrentPhotoPath);
         Uri contentUri = Uri.fromFile(f);

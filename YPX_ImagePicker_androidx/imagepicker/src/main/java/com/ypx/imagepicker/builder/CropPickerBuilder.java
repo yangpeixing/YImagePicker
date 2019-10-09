@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.ypx.imagepicker.bean.CropSelectConfig;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.bean.ImageCropMode;
@@ -23,29 +24,24 @@ import java.util.ArrayList;
  * Date: 2019/2/28
  */
 public class CropPickerBuilder {
-    private int maxCount = 9;
-    private ImageItem firstImageItem = null;
-    private boolean isShowBottomView = false;
-    private boolean isShowDraft = false;
-    private boolean isShowCamera = false;
-    private boolean isShowVideo = false;
-    private boolean isStartDirect;
+    private CropSelectConfig selectConfig;
     private ICropPickerBindPresenter imageLoaderProvider;
-    private OnImagePickCompleteListener imageListener;
 
     public CropPickerBuilder(ICropPickerBindPresenter imageLoaderProvider) {
         this.imageLoaderProvider = imageLoaderProvider;
+        this.selectConfig = new CropSelectConfig();
     }
 
     public CropPickerBuilder setFirstImageItem(ImageItem firstImageItem) {
         if (firstImageItem != null && firstImageItem.width > 0 && firstImageItem.height > 0) {
-            this.firstImageItem = firstImageItem;
+            selectConfig.setFirstImageItem(firstImageItem);
         }
         return this;
     }
 
-    public CropPickerBuilder setImageListener(OnImagePickCompleteListener imageListener) {
-        this.imageListener = imageListener;
+
+    public CropPickerBuilder withSelectConfig(CropSelectConfig selectConfig) {
+        this.selectConfig = selectConfig;
         return this;
     }
 
@@ -54,7 +50,6 @@ public class CropPickerBuilder {
         return this;
     }
 
-
     /**
      * 在没有指定setFirstImageItem时，使用这个方法传入当前的第一张剪裁图片url,
      * 会生成一个新的FirstImageItem，其剪裁模式根据图片宽高决定，如果已经指定了FirstImageItem，则该方法无效
@@ -62,10 +57,10 @@ public class CropPickerBuilder {
      * @param firstImageUrl 第一张建材后的图片
      */
     public CropPickerBuilder setFirstImageUrl(String firstImageUrl) {
-        if (firstImageUrl == null || firstImageUrl.length() == 0 || firstImageItem != null) {
+        if (firstImageUrl == null || firstImageUrl.length() == 0 || selectConfig.hasFirstImageItem()) {
             return this;
         }
-        this.firstImageItem = new ImageItem();
+        ImageItem firstImageItem = new ImageItem();
         firstImageItem.setCropUrl(firstImageUrl);
         int[] imageSize = PFileUtil.getImageWidthHeight(firstImageUrl);
         firstImageItem.width = imageSize[0];
@@ -80,57 +75,66 @@ public class CropPickerBuilder {
     }
 
     public CropPickerBuilder setMaxCount(int maxCount) {
-        this.maxCount = maxCount;
+        selectConfig.setMaxCount(maxCount);
         return this;
     }
 
+    public CropPickerBuilder setVideoSinglePick(boolean isSinglePick) {
+        selectConfig.setVideoSinglePick(isSinglePick);
+        return this;
+    }
+
+    /**
+     * @deprecated
+     */
     public CropPickerBuilder showBottomView(boolean isShowBottomView) {
-        this.isShowBottomView = isShowBottomView;
         return this;
     }
 
+    /**
+     * @deprecated
+     */
     public CropPickerBuilder showDraftDialog(boolean isShowDraft) {
-        this.isShowDraft = isShowDraft;
         return this;
     }
 
     public CropPickerBuilder showCamera(boolean isShowCamera) {
-        this.isShowCamera = isShowCamera;
+        selectConfig.setShowCamera(isShowCamera);
+        return this;
+    }
+
+    public CropPickerBuilder showGif(boolean showGif) {
+        selectConfig.setLoadGif(showGif);
         return this;
     }
 
     public CropPickerBuilder showVideo(boolean isShowVideo) {
-        this.isShowVideo = isShowVideo;
+        selectConfig.setShowVideo(isShowVideo);
         return this;
     }
 
+    public CropPickerBuilder showImage(boolean isShowImage) {
+        selectConfig.setShowImage(isShowImage);
+        return this;
+    }
+
+    /**
+     * @deprecated
+     */
     public CropPickerBuilder startDirect(boolean isShowDraft) {
-        this.isShowDraft = isShowDraft;
         return this;
     }
 
     public CropPickerBuilder setCropPicSaveFilePath(String cropPicSaveFilePath) {
-        ImagePicker.cropPicSaveFilePath = cropPicSaveFilePath;
+        selectConfig.setCropSaveFilePath(cropPicSaveFilePath);
         return this;
     }
 
-    private Intent getIntent(Activity activity) {
-        Intent intent = new Intent(activity, ImagePickAndCropActivity.class);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_IMAGELOADER, imageLoaderProvider);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_MAXSELECTEDCOUNT, maxCount);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_FIRSTIMAGEITEM, firstImageItem);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_CROPPICSAVEFILEPATH, ImagePicker.cropPicSaveFilePath);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWBOTTOMVIEW, isShowBottomView);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWDRAFTDIALOG, isShowDraft);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWCAMERA, isShowCamera);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWVIDEO, isShowVideo);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_STARTDIRECT, isStartDirect);
-        return intent;
-
-    }
-
     public void pick(Activity activity, final OnImagePickCompleteListener listener) {
-        PLauncher.init(activity).startActivityForResult(getIntent(activity), new PLauncher.Callback() {
+        Intent intent = new Intent(activity, ImagePickAndCropActivity.class);
+        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_DATA_PRESENTER, imageLoaderProvider);
+        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SELECT_CONFIG, selectConfig);
+        PLauncher.init(activity).startActivityForResult(intent, new PLauncher.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (data != null && data.hasExtra(ImagePicker.INTENT_KEY_PICKERRESULT)
@@ -142,25 +146,17 @@ public class CropPickerBuilder {
         });
     }
 
-
     private Bundle getFragmentArguments() {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ImagePickAndCropActivity.INTENT_KEY_IMAGELOADER, imageLoaderProvider);
-        bundle.putInt(ImagePickAndCropActivity.INTENT_KEY_MAXSELECTEDCOUNT, maxCount);
-        bundle.putSerializable(ImagePickAndCropActivity.INTENT_KEY_FIRSTIMAGEITEM, firstImageItem);
-        bundle.putString(ImagePickAndCropActivity.INTENT_KEY_CROPPICSAVEFILEPATH, ImagePicker.cropPicSaveFilePath);
-        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWBOTTOMVIEW, isShowBottomView);
-        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWDRAFTDIALOG, isShowDraft);
-        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWCAMERA, isShowCamera);
-        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWVIDEO, isShowVideo);
-        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_STARTDIRECT, isStartDirect);
+        bundle.putSerializable(ImagePickAndCropActivity.INTENT_KEY_DATA_PRESENTER, imageLoaderProvider);
+        bundle.putSerializable(ImagePickAndCropActivity.INTENT_KEY_SELECT_CONFIG, selectConfig);
         return bundle;
     }
 
-    public ImagePickAndCropFragment pickWithFragment() {
+    public ImagePickAndCropFragment pickWithFragment(OnImagePickCompleteListener imageListener) {
         ImagePickAndCropFragment mFragment = new ImagePickAndCropFragment();
         mFragment.setArguments(getFragmentArguments());
-        mFragment.setImageListener(imageListener);
+        mFragment.setOnImagePickCompleteListener(imageListener);
         return mFragment;
     }
 }

@@ -2,9 +2,9 @@ package com.ypx.imagepicker.presenter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.view.View;
 import android.widget.ImageView;
 
+import com.ypx.imagepicker.bean.CropUiConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 
 import java.io.Serializable;
@@ -17,13 +17,19 @@ import java.io.Serializable;
  */
 public interface ICropPickerBindPresenter extends Serializable {
 
-    void displayListImage(ImageView imageView, ImageItem item);
+    void displayListImage(ImageView imageView, ImageItem item, int size);
 
-    void displayCropImage(ImageView imageView, String url);
+    void displayCropImage(ImageView imageView, ImageItem item);
 
-    View getBottomView(Context context);
+    /**
+     * 设置ui显示样式
+     *
+     * @param context 上下文
+     * @return PickerUiConfig
+     */
+    CropUiConfig getUiConfig(Context context);
 
-    void showDraftDialog(Context context);
+    void overMaxCountTip(Context context, int maxCount, String defaultTip);
 
-    void clickVideo(Activity activity, ImageItem imageItem, boolean startDirect);
+    void clickVideo(Activity activity, ImageItem imageItem);
 }

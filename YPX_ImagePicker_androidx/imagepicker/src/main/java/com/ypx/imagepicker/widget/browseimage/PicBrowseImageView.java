@@ -1,5 +1,6 @@
 package com.ypx.imagepicker.widget.browseimage;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,12 +16,15 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
+
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 
 
 /**
@@ -1356,6 +1360,32 @@ public class PicBrowseImageView extends ImageView {
             return mMaxScale;
         }
         return mScale;
+    }
+
+    public void changeSize(boolean isAnim, final int endWidth, final int endHeight) {
+        if (isAnim) {
+            final int startWidth = PViewSizeUtils.getViewWidth(this);
+            final int startHeight = PViewSizeUtils.getViewHeight(this);
+            ValueAnimator anim = ValueAnimator.ofFloat(0.0f, 1.0f).setDuration(200);
+            anim.setInterpolator(new DecelerateInterpolator());
+            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float ratio = (Float) animation.getAnimatedValue();
+                    ViewGroup.LayoutParams params = getLayoutParams();
+                    params.width = (int) ((endWidth - startWidth) * ratio + startWidth);
+                    params.height = (int) ((endHeight - startHeight) * ratio + startHeight);
+                    setLayoutParams(params);
+                    setImageDrawable(getDrawable());
+                }
+            });
+            anim.start();
+        } else {
+            ViewGroup.LayoutParams params = getLayoutParams();
+            params.width = endWidth;
+            params.height = endHeight;
+            setLayoutParams(params);
+        }
     }
 
     public int dp(float dp) {

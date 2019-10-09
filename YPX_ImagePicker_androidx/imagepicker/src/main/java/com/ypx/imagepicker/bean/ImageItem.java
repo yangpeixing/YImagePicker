@@ -92,6 +92,14 @@ public class ImageItem implements Serializable {
         isVideo = video;
     }
 
+    public boolean isGif() {
+        return MimeType.isGif(mimeType);
+    }
+
+    public boolean isLongImage() {
+        return getWidthHeightRatio() > 5 || getWidthHeightRatio() < 0.2;
+    }
+
     public boolean isVideo() {
         return isVideo;
     }

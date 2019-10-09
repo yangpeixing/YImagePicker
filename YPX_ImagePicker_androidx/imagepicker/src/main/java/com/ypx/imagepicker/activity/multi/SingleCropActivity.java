@@ -16,7 +16,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.PickerSelectConfig;
+import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
@@ -40,11 +40,11 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
 public class SingleCropActivity extends FragmentActivity {
     private CropImageView cropView;
     private PickerUiConfig uiConfig;
-    private PickerSelectConfig selectConfig;
+    private MultiSelectConfig selectConfig;
 
     public static void intentCrop(Activity context,
                                   IMultiPickerBindPresenter presenter,
-                                  PickerSelectConfig config,
+                                  MultiSelectConfig config,
                                   String path,
                                   final OnImagePickCompleteListener listener) {
         Intent intent = new Intent(context, SingleCropActivity.class);
@@ -69,7 +69,7 @@ public class SingleCropActivity extends FragmentActivity {
         setContentView(R.layout.picker_activity_crop);
         if (getIntent() != null && getIntent().hasExtra(INTENT_KEY_UI_CONFIG)) {
             IMultiPickerBindPresenter presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_UI_CONFIG);
-            selectConfig = (PickerSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
+            selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
             uiConfig = presenter.getUiConfig(this);
             String imagePath = "file://" + getIntent().getStringExtra(INTENT_KEY_CURRENT_IMAGE);
             cropView = findViewById(R.id.cropView);

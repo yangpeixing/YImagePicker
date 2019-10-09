@@ -33,12 +33,12 @@ import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.adapter.multi.MultiPreviewAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.bean.PickerSelectConfig;
+import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.impl.MediaItemsDataSource;
-import com.ypx.imagepicker.helper.PickerFileProvider;
+import com.ypx.imagepicker.utils.PickerFileProvider;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
@@ -69,7 +69,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     private TextView mTvRight;
     private ViewGroup mTitleBar;
     private RelativeLayout mBottomBar;
-    private PickerSelectConfig selectConfig;
+    private MultiSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
     private PickerUiConfig uiConfig;
 
@@ -78,7 +78,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     private boolean isCanEdit = false;
 
     public static void preview(Activity context,
-                               PickerSelectConfig selectConfig,
+                               MultiSelectConfig selectConfig,
                                IMultiPickerBindPresenter presenter,
                                final boolean isPickerJump,
                                final ArrayList<ImageItem> previewList,
@@ -114,7 +114,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             finish();
             return;
         }
-        selectConfig = (PickerSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
+        selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
         presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_UI_CONFIG);
         mCurrentItemPosition = getIntent().getIntExtra(INTENT_KEY_CURRENT_INDEX, 0);
         isCanEdit = getIntent().getBooleanExtra(INTENT_KEY_CAN_EDIT, false);
@@ -357,6 +357,10 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         ImageItem imageItem = mImageList.get(position);
         notifyPreviewList(imageItem);
         resetBtnOKBtn();
+        if (selectConfig.isShieldItem(imageItem)) {
+            mCbSelected.setVisibility(View.GONE);
+            return;
+        }
         if (imageItem.duration > ImagePicker.MAX_VIDEO_DURATION) {
             mCbSelected.setVisibility(View.GONE);
             return;

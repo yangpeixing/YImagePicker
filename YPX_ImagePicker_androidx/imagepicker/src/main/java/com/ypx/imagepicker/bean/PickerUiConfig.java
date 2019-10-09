@@ -2,7 +2,6 @@ package com.ypx.imagepicker.bean;
 
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.adapter.multi.BaseItemView;
 

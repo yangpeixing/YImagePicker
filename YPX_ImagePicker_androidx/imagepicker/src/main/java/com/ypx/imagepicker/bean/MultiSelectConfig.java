@@ -1,6 +1,5 @@
 package com.ypx.imagepicker.bean;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -9,13 +8,8 @@ import java.util.ArrayList;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class PickerSelectConfig implements Serializable {
-    private int maxCount = -1;
+public class MultiSelectConfig extends BaseSelectConfig {
     private int columnCount = 4;
-    private boolean isShowCamera = true;
-    private boolean isShowVideo = true;
-    private boolean isShowImage = true;
-    private boolean isLoadGif = false;
     private boolean isShowOriginalCheckBox;
     private boolean isCanEditPic;
     private boolean isPreview = true;
@@ -23,11 +17,7 @@ public class PickerSelectConfig implements Serializable {
      * 图片和视频只能选择一个
      */
     private boolean isSinglePickImageOrVideoType = true;
-    /**
-     * 视频是否可以多选
-     */
-    private boolean isVideoSinglePick = true;
-    private int selectMode = ImageSelectMode.MODE_MULTI;
+    private int selectMode = SelectMode.MODE_MULTI;
     private ArrayList<ImageItem> lastImageList = new ArrayList<>();
     private ArrayList<ImageItem> shieldImageList = new ArrayList<>();
 
@@ -59,15 +49,6 @@ public class PickerSelectConfig implements Serializable {
     public void setCropSaveFilePath(String cropSaveFilePath) {
         this.cropSaveFilePath = cropSaveFilePath;
     }
-
-    public boolean isVideoSinglePick() {
-        return isVideoSinglePick;
-    }
-
-    public void setVideoSinglePick(boolean isVideoSinglePick) {
-        this.isVideoSinglePick = isVideoSinglePick;
-    }
-
     public boolean isPreview() {
         return isPreview;
     }
@@ -76,24 +57,8 @@ public class PickerSelectConfig implements Serializable {
         isPreview = preview;
     }
 
-    public boolean isLoadGif() {
-        return isLoadGif;
-    }
-
-    public void setLoadGif(boolean loadGif) {
-        isLoadGif = loadGif;
-    }
-
     public int getCropRatioX() {
         return cropRatioX;
-    }
-
-    public boolean isShowImage() {
-        return isShowImage;
-    }
-
-    public void setShowImage(boolean showImage) {
-        isShowImage = showImage;
     }
 
     public void setCropRatio(int x, int y) {
@@ -122,14 +87,6 @@ public class PickerSelectConfig implements Serializable {
         this.lastImageList = lastImageList;
     }
 
-    public boolean isShowVideo() {
-        return isShowVideo;
-    }
-
-    public void setShowVideo(boolean showVideo) {
-        isShowVideo = showVideo;
-    }
-
     public int getSelectMode() {
         return selectMode;
     }
@@ -138,28 +95,12 @@ public class PickerSelectConfig implements Serializable {
         this.selectMode = selectMode;
     }
 
-    public int getMaxCount() {
-        return maxCount;
-    }
-
-    public void setMaxCount(int maxCount) {
-        this.maxCount = maxCount;
-    }
-
     public int getColumnCount() {
         return columnCount;
     }
 
     public void setColumnCount(int columnCount) {
         this.columnCount = columnCount;
-    }
-
-    public boolean isShowCamera() {
-        return isShowCamera;
-    }
-
-    public void setShowCamera(boolean showCamera) {
-        isShowCamera = showCamera;
     }
 
     public boolean isShowOriginalCheckBox() {

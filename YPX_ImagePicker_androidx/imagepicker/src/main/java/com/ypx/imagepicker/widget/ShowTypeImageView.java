@@ -14,17 +14,13 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.WindowManager;
 import android.widget.ImageView;
-
-import androidx.annotation.Nullable;
-
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 
-
 /**
- * 作者：yangpeixing on 2017/12/7 16:40
- * 功能：可以根据宽高和类型动态显示长图和gif图标签
- * 产权：南京婚尚信息技术
+ * 可以根据宽高和类型动态显示长图和gif图标签
+ * <p>
+ * yangpeixing on 2017/12/7 16:40
  */
 @SuppressLint("AppCompatCustomView")
 public class ShowTypeImageView extends ImageView {
@@ -122,7 +118,7 @@ public class ShowTypeImageView extends ImageView {
         switch (imageType) {
             case TYPE_VIDEO:
                 if (videoBitmap != null) {
-                    canvas.drawRect(0,0,width,height,mMaskPaint);
+                    canvas.drawRect(0, 0, width, height, mMaskPaint);
                     canvas.drawBitmap(videoBitmap, (width - videoBitmap.getWidth()) >> 1,
                             (height - videoBitmap.getHeight()) >> 1, mBitmapPaint);
                 }
@@ -160,31 +156,22 @@ public class ShowTypeImageView extends ImageView {
         return (int) (spValue * fontScale + 0.5f);
     }
 
-
     public void setImageCountTip(String imageCountTip) {
         this.imageCountTip = imageCountTip;
         this.imageType = TYPE_IMAGECOUNT;
         invalidate();
     }
 
-    @Override
-    public void setImageBitmap(Bitmap bm) {
-        super.setImageBitmap(bm);
-        if (bm.getHeight() > bm.getWidth() * 3 && bm.getHeight() > getScreenHeight() * 1.5f) {
-            setType(TYPE_LONG);
-        }
-    }
 
-    public void setTypeWithUrlAndSize(ImageItem imageItem) {
+    public void setTypeFromImage(ImageItem imageItem) {
         if (imageType == TYPE_IMAGECOUNT) {
             return;
         }
         if (imageItem.isVideo()) {
             setType(TYPE_VIDEO);
-        } else if (imageItem.path != null && imageItem.path.contains(".gif")) {
+        } else if (imageItem.isGif()) {
             setType(TYPE_GIF);
-        } else if (imageItem.height > imageItem.width * 3 &&
-                imageItem.height > getScreenHeight() * 1.5f) {
+        } else if (imageItem.isLongImage()) {
             setType(TYPE_LONG);
         } else {
             setType(TYPE_NONE);

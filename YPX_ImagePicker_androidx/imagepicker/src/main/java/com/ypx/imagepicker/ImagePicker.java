@@ -45,31 +45,12 @@ public class ImagePicker {
     }
 
     /**
-     * 小红书样式剪裁fragment形式
-     *
-     * @param bindPresenter 数据交互类
-     */
-    public static CropPickerBuilder withCropFragment(ICropPickerBindPresenter bindPresenter) {
-        return new CropPickerBuilder(bindPresenter);
-    }
-
-    /**
      * 微信样式多选
      *
      * @param iMultiPickerBindPresenter 选择器UI提供者
      * @return 微信样式多选
      */
     public static MultiPickerBuilder withMulti(IMultiPickerBindPresenter iMultiPickerBindPresenter) {
-        return new MultiPickerBuilder(iMultiPickerBindPresenter);
-    }
-
-    /**
-     * 微信样式多选
-     *
-     * @param iMultiPickerBindPresenter 选择器UI提供者
-     * @return 微信样式多选
-     */
-    public static MultiPickerBuilder withMultiFragment(IMultiPickerBindPresenter iMultiPickerBindPresenter) {
         return new MultiPickerBuilder(iMultiPickerBindPresenter);
     }
 

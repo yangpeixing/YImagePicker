@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.PickerSelectConfig;
+import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
@@ -36,11 +36,11 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int ITEM_TYPE_CAMERA = 0;
     private static final int ITEM_TYPE_NORMAL = 1;
     private List<ImageItem> images;
-    private PickerSelectConfig selectConfig;
+    private MultiSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
     private PickerUiConfig pickerUiConfig;
 
-    public MultiGridAdapter(Context ctx, List<ImageItem> images, PickerSelectConfig selectConfig, IMultiPickerBindPresenter presenter) {
+    public MultiGridAdapter(Context ctx, List<ImageItem> images, MultiSelectConfig selectConfig, IMultiPickerBindPresenter presenter) {
         this.images = images;
         this.selectConfig = selectConfig;
         this.presenter = presenter;
@@ -138,7 +138,7 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     static class CameraViewHolder extends RecyclerView.ViewHolder {
         private TextView tv_camera;
 
-        CameraViewHolder(@NonNull View itemView, PickerSelectConfig selectConfig, PickerUiConfig uiConfig) {
+        CameraViewHolder(@NonNull View itemView, MultiSelectConfig selectConfig, PickerUiConfig uiConfig) {
             super(itemView);
             Context context = itemView.getContext();
             tv_camera = itemView.findViewById(R.id.tv_camera);
@@ -168,7 +168,7 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private Context context;
         private BaseItemView baseItemView;
 
-        ItemViewHolder(@NonNull View itemView, PickerSelectConfig selectConfig, IMultiPickerBindPresenter presenter) {
+        ItemViewHolder(@NonNull View itemView, MultiSelectConfig selectConfig, IMultiPickerBindPresenter presenter) {
             super(itemView);
             context = itemView.getContext();
             RelativeLayout layout = itemView.findViewById(R.id.mRoot);

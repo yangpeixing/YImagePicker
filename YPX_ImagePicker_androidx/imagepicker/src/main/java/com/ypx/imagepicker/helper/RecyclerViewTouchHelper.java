@@ -3,9 +3,11 @@ package com.ypx.imagepicker.helper;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
@@ -147,7 +149,7 @@ public class RecyclerViewTouchHelper {
                     return;
                 }
                 if (isScrollTopView) {
-                    transitTopWithAnim(!isRecyclerViewCanScrollOverScreen(), -1);
+                    transitTopWithAnim(!isRecyclerViewCanScrollOverScreen(), -1, true);
                 } else {
                     if (isTopViewStick && !isTopViewFullShow()) {
                         reset();
@@ -280,7 +282,10 @@ public class RecyclerViewTouchHelper {
      * @param scrollToPosition 滑动到制定的位置
      */
     @SuppressLint("ObjectAnimatorBinding")
-    public void transitTopWithAnim(boolean isFocusShow, final int scrollToPosition) {
+    public void transitTopWithAnim(boolean isFocusShow, final int scrollToPosition, boolean isShowTransit) {
+        if (!isShowTransit) {
+            return;
+        }
         if (isTopViewFullShow()) {
             return;
         }

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="30ceb860-7ee0-4302-befa-be154c816da4" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../.idea/codeStyles/Project.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/caches/gradle_models.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/ypx/imagepickerdemo/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/ypx/imagepickerdemo/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/ypx/imagepickerdemo/style/RedBookCropPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/ypx/imagepickerdemo/style/RedBookCropPresenter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/activity/crop/ImagePickAndCropFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePreviewActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/activity/multi/MultiImagePreviewActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/adapter/crop/CropGridAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/adapter/crop/CropGridAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/adapter/crop/CropSetAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/adapter/crop/CropSetAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/adapter/multi/MultiPreviewAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/adapter/multi/MultiPreviewAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/adapter/multi/WXItemView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/adapter/multi/WXItemView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/bean/ImageItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/bean/ImageItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/bean/PickerSelectConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/bean/PickerSelectConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/bean/PickerUiConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/bean/PickerUiConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/builder/CropPickerBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/builder/CropPickerBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/data/MultiPickerData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/data/MultiPickerData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/presenter/ICropPickerBindPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/presenter/ICropPickerBindPresenter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/widget/ShowTypeImageView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ypx/imagepicker/widget/ShowTypeImageView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/picker_item_imagegrid.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/picker_item_imagegrid.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../YPX_ImagePicker_support/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../../YPX_ImagePicker_support/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../YPX_ImagePicker_support/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../../YPX_ImagePicker_support/build.gradle" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="testRunner" value="GRADLE" />
+    <option name="delegatedBuild" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="width" value="1920" />
+    <option name="height" value="1040" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="AndroidView" />
+      <pane id="Scope" />
+      <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="android.sdk.path" value="E:/sdk" />
+    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="30ceb860-7ee0-4302-befa-be154c816da4" name="Default Changelist" comment="" />
+      <created>1568873839119</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1568873839119</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1920" height="1040" extended-state="0" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" visible="true" weight="0.3295699" />
+      <window_info id="Structure" side_tool="true" />
+      <window_info id="Build Variants" side_tool="true" />
+      <window_info id="Image Layers" />
+      <window_info id="Designer" />
+      <window_info id="Resources Explorer" />
+      <window_info id="Capture Tool" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info id="Captures" order="0" weight="0.25" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="TODO" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Build" visible="true" weight="0.3289183" />
+      <window_info anchor="right" id="Capture Analysis" />
+      <window_info anchor="right" id="Gradle" />
+      <window_info anchor="right" id="Theme Preview" />
+      <window_info anchor="right" id="Palette&#9;" />
+    </layout>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

@@ -1,18 +1,21 @@
 package com.ypx.imagepicker.builder;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerActivity;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerFragment;
 import com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.ImageSelectMode;
-import com.ypx.imagepicker.bean.PickerSelectConfig;
+import com.ypx.imagepicker.bean.SelectMode;
+import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 
 import java.util.ArrayList;
@@ -27,22 +30,22 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * Date: 2018/9/19 16:56
  */
 public class MultiPickerBuilder {
-    private PickerSelectConfig pickerSelectConfig;
+    private MultiSelectConfig multiSelectConfig;
     private IMultiPickerBindPresenter presenter;
 
     public MultiPickerBuilder(IMultiPickerBindPresenter presenter) {
         this.presenter = presenter;
-        this.pickerSelectConfig = new PickerSelectConfig();
+        this.multiSelectConfig = new MultiSelectConfig();
     }
 
-    public MultiPickerBuilder setPickerSelectConfig(PickerSelectConfig config) {
-        this.pickerSelectConfig = config;
+    public MultiPickerBuilder withMultiSelectConfig(MultiSelectConfig config) {
+        this.multiSelectConfig = config;
         return this;
     }
 
     public void pick(Activity context, final OnImagePickCompleteListener listener) {
         MultiPickerData.instance.clear();
-        if (pickerSelectConfig.getMaxCount() <= 0) {
+        if (multiSelectConfig.getMaxCount() <= 0) {
             presenter.tip(context, context.getResources().getString(R.string.str_setcount));
             return;
         }
@@ -58,13 +61,13 @@ public class MultiPickerBuilder {
         setLastImageList(null);
         setPreview(false);
         MultiPickerData.instance.clear();
-        pickerSelectConfig.setSelectMode(ImageSelectMode.MODE_CROP);
+        multiSelectConfig.setSelectMode(SelectMode.MODE_CROP);
         dealIntent(context, listener);
     }
 
 
     public void takePhoto(Activity context, OnImagePickCompleteListener listener) {
-        pickerSelectConfig.setSelectMode(ImageSelectMode.MODE_TAKEPHOTO);
+        multiSelectConfig.setSelectMode(SelectMode.MODE_TAKEPHOTO);
         MultiPickerData.instance.clear();
         dealIntent(context, listener);
     }
@@ -76,7 +79,7 @@ public class MultiPickerBuilder {
         }
         MultiPickerData.instance.clear();
         MultiImagePreviewActivity.preview(context,
-                pickerSelectConfig,
+                multiSelectConfig,
                 presenter,
                 context instanceof MultiImagePickerActivity,
                 transitArray(imageList),
@@ -84,19 +87,30 @@ public class MultiPickerBuilder {
                 listener);
     }
 
-
     private void dealIntent(Activity activity, final OnImagePickCompleteListener listener) {
-        MultiImagePickerActivity.intent(activity, pickerSelectConfig, presenter, listener);
+        Intent intent = new Intent(activity, MultiImagePickerActivity.class);
+        intent.putExtra(MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG, multiSelectConfig);
+        intent.putExtra(MultiImagePickerActivity.INTENT_KEY_UI_CONFIG, presenter);
+        PLauncher.init(activity).startActivityForResult(intent, new PLauncher.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode == ImagePicker.REQ_PICKER_RESULT_CODE &&
+                        data.hasExtra(ImagePicker.INTENT_KEY_PICKERRESULT) && listener != null) {
+                    ArrayList list = (ArrayList) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKERRESULT);
+                    listener.onImagePickComplete(list);
+                }
+            }
+        });
     }
 
 
     public MultiPickerBuilder setMaxCount(int selectLimit) {
-        pickerSelectConfig.setMaxCount(selectLimit);
+        multiSelectConfig.setMaxCount(selectLimit);
         return this;
     }
 
     public MultiPickerBuilder setSelectMode(int selectMode) {
-        pickerSelectConfig.setSelectMode(selectMode);
+        multiSelectConfig.setSelectMode(selectMode);
         return this;
     }
 
@@ -111,7 +125,7 @@ public class MultiPickerBuilder {
      * @param margin 间距
      */
     public MultiPickerBuilder cropRectMinMargin(int margin) {
-        pickerSelectConfig.setCropRectMargin(margin);
+        multiSelectConfig.setCropRectMargin(margin);
         return this;
     }
 
@@ -121,50 +135,50 @@ public class MultiPickerBuilder {
      * @param path 路径+图片名字
      */
     public MultiPickerBuilder cropSaveFilePath(String path) {
-        pickerSelectConfig.setCropSaveFilePath(path);
+        multiSelectConfig.setCropSaveFilePath(path);
         return this;
     }
 
     public MultiPickerBuilder showVideo(boolean showVideo) {
-        pickerSelectConfig.setShowVideo(showVideo);
+        multiSelectConfig.setShowVideo(showVideo);
         return this;
     }
 
     public MultiPickerBuilder showGif(boolean showGif) {
-        pickerSelectConfig.setLoadGif(showGif);
+        multiSelectConfig.setLoadGif(showGif);
         return this;
     }
 
     public MultiPickerBuilder setColumnCount(int columnCount) {
-        pickerSelectConfig.setColumnCount(columnCount);
+        multiSelectConfig.setColumnCount(columnCount);
         return this;
     }
 
     public MultiPickerBuilder setPreview(boolean isPreview) {
-        pickerSelectConfig.setPreview(isPreview);
+        multiSelectConfig.setPreview(isPreview);
         return this;
     }
 
 
     public MultiPickerBuilder showCamera(boolean showCamera) {
-        pickerSelectConfig.setShowCamera(showCamera);
+        multiSelectConfig.setShowCamera(showCamera);
         return this;
     }
 
     public MultiPickerBuilder setSinglePickImageOrVideoType(boolean isSinglePickImageOrVideoType) {
-        pickerSelectConfig.setSinglePickImageOrVideoType(isSinglePickImageOrVideoType);
+        multiSelectConfig.setSinglePickImageOrVideoType(isSinglePickImageOrVideoType);
         return this;
     }
 
 
     public MultiPickerBuilder setVideoSinglePick(boolean isVideoSinglePick) {
-        pickerSelectConfig.setVideoSinglePick(isVideoSinglePick);
+        multiSelectConfig.setVideoSinglePick(isVideoSinglePick);
         return this;
     }
 
 
     public MultiPickerBuilder showImage(boolean showImage) {
-        pickerSelectConfig.setShowImage(showImage);
+        multiSelectConfig.setShowImage(showImage);
         return this;
     }
 
@@ -172,7 +186,7 @@ public class MultiPickerBuilder {
         if (imageList == null || imageList.size() == 0) {
             return this;
         }
-        pickerSelectConfig.setShieldImageList(transitArray(imageList));
+        multiSelectConfig.setShieldImageList(transitArray(imageList));
         return this;
     }
 
@@ -180,12 +194,12 @@ public class MultiPickerBuilder {
         if (imageList == null || imageList.size() == 0) {
             return this;
         }
-        pickerSelectConfig.setLastImageList(transitArray(imageList));
+        multiSelectConfig.setLastImageList(transitArray(imageList));
         return this;
     }
 
     public MultiPickerBuilder setCropRatio(int x, int y) {
-        pickerSelectConfig.setCropRatio(x, y);
+        multiSelectConfig.setCropRatio(x, y);
         return this;
     }
 
@@ -209,14 +223,15 @@ public class MultiPickerBuilder {
 
     private Bundle getFragmentArguments() {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(INTENT_KEY_SELECT_CONFIG, pickerSelectConfig);
+        bundle.putSerializable(INTENT_KEY_SELECT_CONFIG, multiSelectConfig);
         bundle.putSerializable(INTENT_KEY_UI_CONFIG, presenter);
         return bundle;
     }
 
-    public MultiImagePickerFragment pickWithFragment() {
+    public MultiImagePickerFragment pickWithFragment(OnImagePickCompleteListener completeListener) {
         MultiImagePickerFragment mFragment = new MultiImagePickerFragment();
         mFragment.setArguments(getFragmentArguments());
+        mFragment.setOnImagePickCompleteListener(completeListener);
         return mFragment;
     }
 }

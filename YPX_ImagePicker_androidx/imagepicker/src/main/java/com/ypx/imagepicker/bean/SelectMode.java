@@ -6,7 +6,7 @@ package com.ypx.imagepicker.bean;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public interface ImageSelectMode {
+public interface SelectMode {
     int MODE_SINGLE = 0;
     int MODE_MULTI = 1;
     int MODE_TAKEPHOTO = 2;
