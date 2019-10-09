@@ -1,6 +1,5 @@
 ## 关于YPXImagePicker
  [ ![androidx](https://api.bintray.com/packages/yangpeixing/ypxImagePicker/imagepicker_androidx/images/download.svg) ](https://bintray.com/yangpeixing/ypxImagePicker/imagepicker_androidx/_latestVersion)
-[ ![support](https://api.bintray.com/packages/yangpeixing/ypxImagePicker/imagepicker_support/images/download.svg) ](https://bintray.com/yangpeixing/ypxImagePicker/imagepicker_support/_latestVersion)
 
 YPXImagePicker内部集成了微信的图片选择器、小红书样式的多图剪裁选择器、图片和视频预览、图片自定义比例剪裁等功能。
 
