@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.widget.TouchRecyclerView;
 
@@ -147,7 +148,7 @@ public class RecyclerViewTouchHelper {
                     return;
                 }
                 if (isScrollTopView) {
-                    transitTopWithAnim(!isRecyclerViewCanScrollOverScreen(), -1);
+                    transitTopWithAnim(!isRecyclerViewCanScrollOverScreen(), -1, true);
                 } else {
                     if (isTopViewStick && !isTopViewFullShow()) {
                         reset();
@@ -280,7 +281,10 @@ public class RecyclerViewTouchHelper {
      * @param scrollToPosition 滑动到制定的位置
      */
     @SuppressLint("ObjectAnimatorBinding")
-    public void transitTopWithAnim(boolean isFocusShow, final int scrollToPosition) {
+    public void transitTopWithAnim(boolean isFocusShow, final int scrollToPosition, boolean isShowTransit) {
+        if (!isShowTransit) {
+            return;
+        }
         if (isTopViewFullShow()) {
             return;
         }

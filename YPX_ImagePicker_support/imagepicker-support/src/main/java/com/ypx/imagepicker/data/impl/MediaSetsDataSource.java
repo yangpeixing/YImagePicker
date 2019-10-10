@@ -9,10 +9,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
-
+import com.ypx.imagepicker.bean.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
-import com.ypx.imagepicker.bean.PickerSelectConfig;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.Set;
 
 
 /**
- * Description: 媒体数据
+ * Description: 媒体文件夹数据
  * <p>
  * Author: peixing.yang
  * Date: 2019/4/11
@@ -35,7 +34,7 @@ public class MediaSetsDataSource implements LoaderManager.LoaderCallbacks<Cursor
 
     private Set<MimeType> mimeTypeSet = MimeType.ofAll();
 
-    public MediaSetsDataSource setMimeTypeSet(PickerSelectConfig config) {
+    public MediaSetsDataSource setMimeTypeSet(BaseSelectConfig config) {
         isLoadImage = config.isShowImage();
         isLoadVideo = config.isShowVideo();
 
@@ -76,25 +75,25 @@ public class MediaSetsDataSource implements LoaderManager.LoaderCallbacks<Cursor
         if (context == null) {
             return null;
         }
-        return MediaSetsLoader.newInstance(context, mimeTypeSet,isLoadVideo,isLoadImage);
+        return MediaSetsLoader.newInstance(context, mimeTypeSet, isLoadVideo, isLoadImage);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
-        Context context = mContext.get();
+        FragmentActivity context = mContext.get();
         if (context == null) {
             return;
         }
         ArrayList<ImageSet> imageSetList = new ArrayList<>();
-        if (cursor.moveToFirst()) {
+        if (!context.isDestroyed() && cursor.moveToFirst() && !cursor.isClosed()) {
             do {
                 ImageSet imageSet = new ImageSet();
-                imageSet.id = cursor.getString(cursor.getColumnIndex("bucket_id"));
-                imageSet.name = cursor.getString(cursor.getColumnIndex("bucket_display_name"));
-                imageSet.coverPath = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
-                imageSet.count = cursor.getInt(cursor.getColumnIndex("count"));
+                imageSet.id = getString(cursor, "bucket_id");
+                imageSet.name = getString(cursor, "bucket_display_name");
+                imageSet.coverPath = getString(cursor, MediaStore.MediaColumns.DATA);
+                imageSet.count = getInt(cursor, "count");
                 imageSetList.add(imageSet);
-            } while (cursor.moveToNext());
+            } while (!context.isDestroyed() && cursor.moveToNext() && !cursor.isClosed());
         }
 
         if (mediaSetProvider != null) {
@@ -116,4 +115,34 @@ public class MediaSetsDataSource implements LoaderManager.LoaderCallbacks<Cursor
         void providerMediaSets(ArrayList<ImageSet> imageSets);
     }
 
+    private long getLong(Cursor data, String text) {
+        int index = hasColumn(data, text);
+        if (index != -1) {
+            return data.getLong(index);
+        } else {
+            return 0;
+        }
+    }
+
+    private int getInt(Cursor data, String text) {
+        int index = hasColumn(data, text);
+        if (index != -1) {
+            return data.getInt(index);
+        } else {
+            return 0;
+        }
+    }
+
+    private String getString(Cursor data, String text) {
+        int index = hasColumn(data, text);
+        if (index != -1) {
+            return data.getString(index);
+        } else {
+            return "";
+        }
+    }
+
+    private int hasColumn(Cursor data, String id) {
+        return data.getColumnIndex(id);
+    }
 }

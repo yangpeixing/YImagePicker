@@ -36,7 +36,7 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
      * 加载剪裁区域里的图片
      *
      * @param imageView imageView
-     * @param item 当前图片信息
+     * @param item      当前图片信息
      */
     @Override
     public void displayCropImage(ImageView imageView, ImageItem item) {
@@ -64,6 +64,8 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
         config.setGapIconID(R.mipmap.picker_icon_haswhite);
         //设置填充图标
         config.setFillIconID(R.mipmap.picker_icon_fill);
+        //设置视频暂停图标
+        config.setVideoPauseIconID(R.mipmap.video_play_small);
         //设置返回按钮颜色
         config.setBackIconColor(Color.WHITE);
         //设置剪裁区域颜色

@@ -3,6 +3,7 @@ package com.ypx.imagepicker.adapter.crop;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,11 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.bean.CropSelectConfig;
+import com.ypx.imagepicker.bean.CropUiConfig;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 
@@ -32,35 +34,42 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
     private List<ImageItem> datas;
     private List<ImageItem> selectList;
     private Context context;
-    private boolean isShowCamera;
-    private boolean isVideoShowMask;
-    private ICropPickerBindPresenter bindingProvider;
+    private CropSelectConfig selectConfig;
+    private ICropPickerBindPresenter presenter;
     private OnSelectImageListener mOnSelectImage;
     private OnPressImageListener mOnPressImageListener;
+    private Drawable maskDrawable;
+    private Drawable stokeDrawable;
+    private CropUiConfig uiConfig;
 
     public interface OnSelectImageListener {
         /**
-         * @param position
+         * @param position item索引
          */
         void onSelectImage(int position);
     }
 
     public interface OnPressImageListener {
         /**
-         * @param position
-         * @param isShowTransit
+         * @param position      item索引
+         * @param isShowTransit 是否需要完全显示剪裁view
          */
         void onPressImage(final int position, boolean isShowTransit);
     }
 
-    public CropGridAdapter(Context context, boolean isShowCamera, boolean isVideoShowMask, List<ImageItem> data,
-                           List<ImageItem> selectList, ICropPickerBindPresenter imageLoader) {
+    public CropGridAdapter(Context context, CropSelectConfig selectConfig, List<ImageItem> data,
+                           List<ImageItem> selectList, ICropPickerBindPresenter presenter, CropUiConfig uiConfig) {
         this.context = context;
-        this.isShowCamera = isShowCamera;
-        this.isVideoShowMask = isVideoShowMask;
+        this.selectConfig = selectConfig;
         this.datas = data;
         this.selectList = selectList;
-        this.bindingProvider = imageLoader;
+        this.presenter = presenter;
+        this.uiConfig = uiConfig;
+
+        int themeColor = uiConfig.getThemeColor();
+        int halfColor = Color.argb(100, Color.red(themeColor), Color.green(themeColor), Color.blue(themeColor));
+        maskDrawable = PCornerUtils.cornerDrawableAndStroke(halfColor, 0, dp(2), themeColor);
+        stokeDrawable = PCornerUtils.cornerDrawableAndStroke(themeColor, dp(12), dp(1), Color.WHITE);
     }
 
     public void setOnSelectImageSet(OnSelectImageListener mOnSelectImageSet) {
@@ -85,71 +94,27 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
     @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
-        if (i == 0 && isShowCamera) {
-            viewHolder.showCamera();
+        if (i == 0 && selectConfig.isShowCamera()) {
+            viewHolder.iv_camera.setVisibility(View.VISIBLE);
+            viewHolder.imageView.setVisibility(View.GONE);
+            viewHolder.mVSelect.setVisibility(View.GONE);
+            viewHolder.mTvIndex.setVisibility(View.GONE);
+            viewHolder.mVMask.setVisibility(View.GONE);
+            viewHolder.itemView.setTag(null);
+            viewHolder.bindListener();
         } else {
-            final ImageItem imageItem = datas.get(isShowCamera ? i - 1 : i);
+            viewHolder.iv_camera.setVisibility(View.GONE);
+            viewHolder.imageView.setVisibility(View.VISIBLE);
+            ImageItem imageItem = datas.get(selectConfig.isShowCamera() ? i - 1 : i);
             viewHolder.loadImage(imageItem);
-            if (imageItem.isVideo()) {
-                viewHolder.showVideo(imageItem, selectList.size() > 0 || isVideoShowMask ||
-                        imageItem.duration > ImagePicker.MAX_VIDEO_DURATION);
-            } else {
-                viewHolder.mTvIndex.setVisibility(View.VISIBLE);
-                viewHolder.iv_camera.setVisibility(View.GONE);
-                viewHolder.imageView.setVisibility(View.VISIBLE);
-                viewHolder.mTvDuration.setVisibility(View.GONE);
-                viewHolder.v_select.setVisibility(View.VISIBLE);
-                if (imageItem.isPress()) {
-                    PViewSizeUtils.setViewMargin(viewHolder.imageView, dp(2));
-                    viewHolder.rootView.setBackgroundColor(context.getResources().getColor(R.color.picker_theme_color));
-                    viewHolder.v_mask.setVisibility(View.VISIBLE);
-                    viewHolder.v_mask.setBackgroundColor(context.getResources().getColor(R.color.picker_theme_color));
-                } else {
-                    PViewSizeUtils.setViewMargin(viewHolder.imageView, dp(1));
-                    viewHolder.rootView.setBackgroundColor(Color.parseColor("#F0F0F0"));
-                    viewHolder.v_mask.setVisibility(View.GONE);
-                }
-
-                viewHolder.v_select.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (null != mOnSelectImage) {
-                            mOnSelectImage.onSelectImage(viewHolder.getAdapterPosition());
-                        }
-                    }
-                });
-
-                //如果当前item在选中列表里
-                if (selectList != null && selectList.size() > 0) {
-                    for (int t = 0; t < selectList.size(); t++) {
-                        if (imageItem.equals(selectList.get(t))) {
-                            imageItem.setSelectIndex(t);
-                            viewHolder.mTvIndex.setBackground(PCornerUtils.cornerDrawableAndStroke(
-                                    context.getResources().getColor(R.color.picker_theme_color), dp(12), dp(1), Color.WHITE));
-                            viewHolder.mTvIndex.setText(String.format("%d", imageItem.getSelectIndex() + 1));
-                            return;
-                        }
-                    }
-                }
-
-                viewHolder.mTvIndex.setText("");
-                viewHolder.mTvIndex.setBackground(context.getResources().getDrawable(R.mipmap.picker_icon_unselect));
-            }
+            viewHolder.bindListener();
+            viewHolder.bindData(imageItem);
         }
-
-        viewHolder.rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (null != mOnPressImageListener) {
-                    mOnPressImageListener.onPressImage(viewHolder.getAdapterPosition(), true);
-                }
-            }
-        });
     }
 
     @Override
     public int getItemCount() {
-        return isShowCamera ? datas.size() + 1 : datas.size();
+        return selectConfig.isShowCamera() ? datas.size() + 1 : datas.size();
     }
 
     public int dp(float dp) {
@@ -158,80 +123,126 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        private Context context;
         private ImageView imageView;
         private ImageView iv_camera;
         private RelativeLayout rootView;
-        private View v_mask, v_select;
+        private View mVMask, mVSelect;
         private TextView mTvIndex;
         private TextView mTvDuration;
 
         ViewHolder(View itemView) {
             super(itemView);
             mTvIndex = itemView.findViewById(R.id.mTvIndex);
-            v_mask = itemView.findViewById(R.id.v_mask);
-            v_select = itemView.findViewById(R.id.v_select);
+            mVMask = itemView.findViewById(R.id.v_mask);
+            mVSelect = itemView.findViewById(R.id.v_select);
             imageView = itemView.findViewById(R.id.iv_image);
             iv_camera = itemView.findViewById(R.id.iv_camera);
             rootView = itemView.findViewById(R.id.rootView);
             mTvDuration = itemView.findViewById(R.id.mTvDuration);
             context = imageView.getContext();
-            PViewSizeUtils.setViewSize(rootView, (PViewSizeUtils.getScreenWidth(context) - PViewSizeUtils.dp(context, 10)) / 4, 1.0f);
-            PViewSizeUtils.setViewSize(v_mask, (PViewSizeUtils.getScreenWidth(context) - PViewSizeUtils.dp(context, 6)) / 4, 1.0f);
+            int width = (PViewSizeUtils.getScreenWidth(context) - PViewSizeUtils.dp(context, 10)) / 4;
+            PViewSizeUtils.setViewSize(rootView, width, 1.0f);
+            PViewSizeUtils.setViewSize(mVMask, width, 1.0f);
+            iv_camera.setImageDrawable(itemView.getContext().getResources().getDrawable(uiConfig.getCameraIconID()));
+            iv_camera.setBackgroundColor(uiConfig.getCameraBackgroundColor());
         }
 
-        public void showCamera() {
-            iv_camera.setVisibility(View.VISIBLE);
-            imageView.setVisibility(View.GONE);
-            v_mask.setVisibility(View.GONE);
-            mTvIndex.setVisibility(View.GONE);
-            rootView.setBackgroundColor(Color.parseColor("#F0F0F0"));
-            itemView.setTag(null);
-        }
-
-        public void showVideo(ImageItem imageItem, boolean isShowMask) {
-            mTvDuration.setVisibility(View.VISIBLE);
-            mTvDuration.setText(imageItem.getDurationFormat());
-            v_select.setVisibility(View.GONE);
-            mTvIndex.setVisibility(View.GONE);
-
-            iv_camera.setVisibility(View.GONE);
-            imageView.setVisibility(View.VISIBLE);
-            if (isShowMask) {
-                v_mask.setVisibility(View.VISIBLE);
-                v_mask.setBackgroundColor(Color.WHITE);
-            } else {
-                v_mask.setVisibility(View.GONE);
-            }
-            loadImage(imageItem);
-
-//            if (imageItem.videoImageUri == null || imageItem.videoImageUri.length() == 0) {
-//                String thumbPath = "";
-//                MediaStore.Video.Thumbnails.getThumbnail(itemView.getContext().getContentResolver(), imageItem.getId(), MediaStore.Video.Thumbnails.MICRO_KIND, null);
-//                String[] projection = {MediaStore.Video.Thumbnails._ID, MediaStore.Video.Thumbnails.DATA};
-//                Cursor cursor = itemView.getContext().getContentResolver().query(MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI
-//                        , projection
-//                        , MediaStore.Video.Thumbnails.VIDEO_ID + "=?"
-//                        , new String[]{imageItem.getId() + ""}
-//                        , null);
-//
-//                while (cursor.moveToNext()) {
-//                    thumbPath = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Thumbnails.DATA));
-//                    imageItem.videoImageUri = thumbPath;
-//                    loadImage(imageItem);
-//                }
-//                cursor.close();
-//            } else {
-//                loadImage(imageItem);
-//            }
-        }
-
-        public void loadImage(ImageItem imageItem) {
+        void loadImage(ImageItem imageItem) {
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            String path = imageItem.path;
-            if (null != bindingProvider) {
-                bindingProvider.displayListImage(imageView, imageItem);
+            if (null != presenter) {
+                presenter.displayListImage(imageView, imageItem, rootView.getMeasuredWidth());
             }
+        }
+
+        void bindListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (null != mOnPressImageListener) {
+                        mOnPressImageListener.onPressImage(getAdapterPosition(), true);
+                    }
+                }
+            });
+
+            mVSelect.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (null != mOnSelectImage) {
+                        mOnSelectImage.onSelectImage(getAdapterPosition());
+                    }
+                }
+            });
+        }
+
+        @SuppressLint("DefaultLocale")
+        void bindData(ImageItem imageItem) {
+            mVMask.setVisibility(View.GONE);
+            if (imageItem.isVideo()) {
+                mTvDuration.setVisibility(View.VISIBLE);
+                mTvDuration.setText(imageItem.getDurationFormat());
+                //如果当前选中列表的第一个item不是视频,或者该视频超过最大时长选择，则需要置灰该视频item
+                if (selectConfig.hasFirstImageItem() || (selectList != null && selectList.size() > 0 && !selectList.get(0).isVideo()) ||
+                        imageItem.duration > ImagePicker.MAX_VIDEO_DURATION) {
+                    mVMask.setVisibility(View.VISIBLE);
+                    mVMask.setBackgroundColor(Color.parseColor("#80FFFFFF"));
+                    itemView.setOnClickListener(null);
+                    hideCheckBox();
+                    return;
+                } else {
+                    if (selectConfig.isVideoSinglePick()) {
+                        hideCheckBox();
+                    } else {
+                        showCheckBox();
+                    }
+                }
+            } else {
+                mTvDuration.setVisibility(View.GONE);
+                //如果当前选中列表的第一个item是视频，则需要置灰该图片item
+                if (selectConfig.hasFirstVideoItem() ||
+                        (selectList != null && selectList.size() > 0 && selectList.get(0).isVideo())) {
+                    mVMask.setVisibility(View.VISIBLE);
+                    mVMask.setBackgroundColor(Color.parseColor("#80FFFFFF"));
+                    itemView.setOnClickListener(null);
+                    hideCheckBox();
+                    return;
+                } else {
+                    showCheckBox();
+                }
+            }
+
+            //选中item时添加边框和蒙层
+            if (imageItem.isPress()) {
+                //如果视频单选，
+                if (imageItem.isVideo() && selectConfig.isVideoSinglePick()) {
+                    mVMask.setVisibility(View.GONE);
+                } else {
+                    mVMask.setVisibility(View.VISIBLE);
+                    mVMask.setBackground(maskDrawable);
+                }
+            }
+
+            //如果当前item在选中列表里
+            if (selectList != null) {
+                int index = selectList.indexOf(imageItem);
+                if (index >= 0) {
+                    mTvIndex.setText(String.format("%d", index + 1));
+                    mTvIndex.setBackground(stokeDrawable);
+                } else {
+                    mTvIndex.setBackground(itemView.getContext().getResources().
+                            getDrawable(uiConfig.getUnSelectIconID()));
+                    mTvIndex.setText("");
+                }
+            }
+        }
+
+        void showCheckBox() {
+            mTvIndex.setVisibility(View.VISIBLE);
+            mVSelect.setVisibility(View.VISIBLE);
+        }
+
+        void hideCheckBox() {
+            mTvIndex.setVisibility(View.GONE);
+            mVSelect.setVisibility(View.GONE);
         }
     }
 }

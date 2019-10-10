@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity;
 import com.ypx.imagepicker.activity.crop.ImagePickAndCropFragment;
+import com.ypx.imagepicker.bean.CropSelectConfig;
 import com.ypx.imagepicker.bean.ImageCropMode;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
@@ -23,37 +24,13 @@ import java.util.ArrayList;
  * Date: 2019/2/28
  */
 public class CropPickerBuilder {
-    private int maxCount = 9;
-    private ImageItem firstImageItem = null;
-    private boolean isShowBottomView = false;
-    private boolean isShowDraft = false;
-    private boolean isShowCamera = false;
-    private boolean isShowVideo = false;
-    private boolean isStartDirect;
-    private ICropPickerBindPresenter imageLoaderProvider;
-    private OnImagePickCompleteListener imageListener;
+    private CropSelectConfig selectConfig;
+    private ICropPickerBindPresenter presenter;
 
-    public CropPickerBuilder(ICropPickerBindPresenter imageLoaderProvider) {
-        this.imageLoaderProvider = imageLoaderProvider;
+    public CropPickerBuilder(ICropPickerBindPresenter presenter) {
+        this.presenter = presenter;
+        this.selectConfig = new CropSelectConfig();
     }
-
-    public CropPickerBuilder setFirstImageItem(ImageItem firstImageItem) {
-        if (firstImageItem != null && firstImageItem.width > 0 && firstImageItem.height > 0) {
-            this.firstImageItem = firstImageItem;
-        }
-        return this;
-    }
-
-    public CropPickerBuilder setImageListener(OnImagePickCompleteListener imageListener) {
-        this.imageListener = imageListener;
-        return this;
-    }
-
-    public CropPickerBuilder setMaxVideoDuration(long duration) {
-        ImagePicker.MAX_VIDEO_DURATION = duration;
-        return this;
-    }
-
 
     /**
      * 在没有指定setFirstImageItem时，使用这个方法传入当前的第一张剪裁图片url,
@@ -62,105 +39,150 @@ public class CropPickerBuilder {
      * @param firstImageUrl 第一张建材后的图片
      */
     public CropPickerBuilder setFirstImageUrl(String firstImageUrl) {
-        if (firstImageUrl == null || firstImageUrl.length() == 0 || firstImageItem != null) {
+        if (firstImageUrl == null || firstImageUrl.length() == 0 || selectConfig.hasFirstImageItem()) {
             return this;
         }
-        this.firstImageItem = new ImageItem();
+        ImageItem firstImageItem = new ImageItem();
         firstImageItem.setCropUrl(firstImageUrl);
         int[] imageSize = PFileUtil.getImageWidthHeight(firstImageUrl);
         firstImageItem.width = imageSize[0];
         firstImageItem.height = imageSize[1];
 
         if (firstImageItem.getWidthHeightType() == 0) {
-            firstImageItem.setCropMode(ImageCropMode.CropViewScale_FILL);
+            firstImageItem.setCropMode(ImageCropMode.CropViewScale_FULL);
         } else {
             firstImageItem.setCropMode(ImageCropMode.CropViewScale_FIT);
         }
         return this;
     }
 
+
+    /**
+     * @param firstImageItem 设置之前选择的第一个item,用于指定默认剪裁模式,如果当前item是图片，
+     *                       则强制所有图片剪裁模式为当前图片比例，如果当前item是视频，
+     *                       则强制只能选择视频
+     */
+    public CropPickerBuilder setFirstImageItem(ImageItem firstImageItem) {
+        if (firstImageItem != null) {
+            if (firstImageItem.isVideo() || (firstImageItem.width > 0 && firstImageItem.height > 0)) {
+                selectConfig.setFirstImageItem(firstImageItem);
+            }
+        }
+        return this;
+    }
+
+
+    /**
+     * @param selectConfig 选择配置项
+     */
+    public CropPickerBuilder withSelectConfig(CropSelectConfig selectConfig) {
+        this.selectConfig = selectConfig;
+        return this;
+    }
+
+    /**
+     * @param duration 设置视频可选择的最大时长
+     */
+    public CropPickerBuilder setMaxVideoDuration(long duration) {
+        ImagePicker.MAX_VIDEO_DURATION = duration;
+        return this;
+    }
+
+    /**
+     * @param maxCount 选中数量限制
+     */
     public CropPickerBuilder setMaxCount(int maxCount) {
-        this.maxCount = maxCount;
+        selectConfig.setMaxCount(maxCount);
         return this;
     }
 
-    public CropPickerBuilder showBottomView(boolean isShowBottomView) {
-        this.isShowBottomView = isShowBottomView;
+    /**
+     * @param isSinglePick 是否单选视频，如果设置为true，则点击item会走presenter的clickVideo方法，
+     *                     设置为false,则触发视频多选和预览模式
+     */
+    public CropPickerBuilder setVideoSinglePick(boolean isSinglePick) {
+        selectConfig.setVideoSinglePick(isSinglePick);
         return this;
     }
 
-    public CropPickerBuilder showDraftDialog(boolean isShowDraft) {
-        this.isShowDraft = isShowDraft;
-        return this;
-    }
-
+    /**
+     * @param isShowCamera 是否显示拍照item
+     */
     public CropPickerBuilder showCamera(boolean isShowCamera) {
-        this.isShowCamera = isShowCamera;
+        selectConfig.setShowCamera(isShowCamera);
         return this;
     }
 
+    /**
+     * @param showGif 是否显示GIF
+     */
+    public CropPickerBuilder showGif(boolean showGif) {
+        selectConfig.setLoadGif(showGif);
+        return this;
+    }
+
+    /**
+     * @param isShowVideo 是否加载视频
+     */
     public CropPickerBuilder showVideo(boolean isShowVideo) {
-        this.isShowVideo = isShowVideo;
+        selectConfig.setShowVideo(isShowVideo);
         return this;
     }
 
-    public CropPickerBuilder startDirect(boolean isShowDraft) {
-        this.isShowDraft = isShowDraft;
+    /**
+     * @param isShowImage 是否加载图片
+     */
+    public CropPickerBuilder showImage(boolean isShowImage) {
+        selectConfig.setShowImage(isShowImage);
         return this;
     }
 
+    /**
+     * @param cropPicSaveFilePath 剪裁图片的默认保存路径
+     */
     public CropPickerBuilder setCropPicSaveFilePath(String cropPicSaveFilePath) {
-        ImagePicker.cropPicSaveFilePath = cropPicSaveFilePath;
+        selectConfig.setCropSaveFilePath(cropPicSaveFilePath);
         return this;
     }
 
-    private Intent getIntent(Activity activity) {
-        Intent intent = new Intent(activity, ImagePickAndCropActivity.class);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_IMAGELOADER, imageLoaderProvider);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_MAXSELECTEDCOUNT, maxCount);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_FIRSTIMAGEITEM, firstImageItem);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_CROPPICSAVEFILEPATH, ImagePicker.cropPicSaveFilePath);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWBOTTOMVIEW, isShowBottomView);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWDRAFTDIALOG, isShowDraft);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWCAMERA, isShowCamera);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SHOWVIDEO, isShowVideo);
-        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_STARTDIRECT, isStartDirect);
-        return intent;
-
-    }
-
+    /**
+     * 页面直接调用剪裁器
+     *
+     * @param activity 调用者
+     * @param listener 图片视频选择回调
+     */
     public void pick(Activity activity, final OnImagePickCompleteListener listener) {
-        PLauncher.init(activity).startActivityForResult(getIntent(activity), new PLauncher.Callback() {
+        Intent intent = new Intent(activity, ImagePickAndCropActivity.class);
+        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_DATA_PRESENTER, presenter);
+        intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SELECT_CONFIG, selectConfig);
+        PLauncher.init(activity).startActivityForResult(intent, new PLauncher.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
-                if (data != null && data.hasExtra(ImagePicker.INTENT_KEY_PICKERRESULT)
+                if (data != null && data.hasExtra(ImagePicker.INTENT_KEY_PICKER_RESULT)
                         && resultCode == ImagePicker.REQ_PICKER_RESULT_CODE && listener != null) {
-                    ArrayList list = (ArrayList) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKERRESULT);
+                    ArrayList list = (ArrayList) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKER_RESULT);
                     listener.onImagePickComplete(list);
                 }
             }
         });
     }
 
-
     private Bundle getFragmentArguments() {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ImagePickAndCropActivity.INTENT_KEY_IMAGELOADER, imageLoaderProvider);
-        bundle.putInt(ImagePickAndCropActivity.INTENT_KEY_MAXSELECTEDCOUNT, maxCount);
-        bundle.putSerializable(ImagePickAndCropActivity.INTENT_KEY_FIRSTIMAGEITEM, firstImageItem);
-        bundle.putString(ImagePickAndCropActivity.INTENT_KEY_CROPPICSAVEFILEPATH, ImagePicker.cropPicSaveFilePath);
-        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWBOTTOMVIEW, isShowBottomView);
-        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWDRAFTDIALOG, isShowDraft);
-        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWCAMERA, isShowCamera);
-        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_SHOWVIDEO, isShowVideo);
-        bundle.putBoolean(ImagePickAndCropActivity.INTENT_KEY_STARTDIRECT, isStartDirect);
+        bundle.putSerializable(ImagePickAndCropActivity.INTENT_KEY_DATA_PRESENTER, presenter);
+        bundle.putSerializable(ImagePickAndCropActivity.INTENT_KEY_SELECT_CONFIG, selectConfig);
         return bundle;
     }
 
-    public ImagePickAndCropFragment pickWithFragment() {
+    /**
+     * fragment构建
+     *
+     * @param imageListener 图片视频选择回调
+     */
+    public ImagePickAndCropFragment pickWithFragment(OnImagePickCompleteListener imageListener) {
         ImagePickAndCropFragment mFragment = new ImagePickAndCropFragment();
         mFragment.setArguments(getFragmentArguments());
-        mFragment.setImageListener(imageListener);
+        mFragment.setOnImagePickCompleteListener(imageListener);
         return mFragment;
     }
 }

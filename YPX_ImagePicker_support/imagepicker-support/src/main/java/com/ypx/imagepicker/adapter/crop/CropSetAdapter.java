@@ -9,11 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
+import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 
 import java.util.List;
 
@@ -66,7 +65,7 @@ public class CropSetAdapter extends RecyclerView.Adapter<CropSetAdapter.ViewHold
         if (imageLoader != null) {
             ImageItem imageItem = new ImageItem();
             imageItem.path = imageSet.coverPath;
-            imageLoader.displayListImage(viewHolder.imageView, imageItem);
+            imageLoader.displayListImage(viewHolder.imageView, imageItem, viewHolder.imageView.getMeasuredHeight());
         }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

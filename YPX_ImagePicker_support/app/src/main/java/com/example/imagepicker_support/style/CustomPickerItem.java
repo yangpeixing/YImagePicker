@@ -16,8 +16,10 @@ import com.ypx.imagepicker.adapter.multi.BaseItemView;
 import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSelectMode;
+import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
+import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
@@ -32,7 +34,7 @@ import java.util.ArrayList;
 public class CustomPickerItem extends BaseItemView {
     private ImageView mItemImage;
     private IMultiPickerBindPresenter presenter;
-    private PickerSelectConfig selectConfig;
+    private MultiSelectConfig selectConfig;
     private View mVMask;
     private View mVSelect;
     private TextView mTvIndex;
@@ -67,7 +69,7 @@ public class CustomPickerItem extends BaseItemView {
     }
 
     @Override
-    public void initData(PickerSelectConfig selectConfig, IMultiPickerBindPresenter presenter, PickerUiConfig uiConfig) {
+    public void initData(MultiSelectConfig selectConfig, IMultiPickerBindPresenter presenter, PickerUiConfig uiConfig) {
         super.initData(selectConfig, presenter, uiConfig);
         this.presenter = presenter;
         this.selectConfig = selectConfig;
@@ -138,7 +140,7 @@ public class CustomPickerItem extends BaseItemView {
         }
 
         //只有在多选模式下才能显示选择框
-        if (selectConfig.getSelectMode() == ImageSelectMode.MODE_MULTI || selectConfig.getMaxCount() > 1) {
+        if (selectConfig.getSelectMode() == SelectMode.MODE_MULTI || selectConfig.getMaxCount() > 1) {
             mTvIndex.setVisibility(View.VISIBLE);
             mVSelect.setVisibility(View.VISIBLE);
         } else {

@@ -11,11 +11,12 @@ import android.support.v4.content.Loader;
 
 
 import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.bean.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
-import com.ypx.imagepicker.bean.PickerSelectConfig;
 import com.ypx.imagepicker.utils.PDateUtil;
+import com.ypx.imagepicker.utils.PFileUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -38,7 +39,8 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
 
     private Set<MimeType> mimeTypeSet = MimeType.ofAll();
 
-    public MediaItemsDataSource setMimeTypeSet(PickerSelectConfig config) {
+    public MediaItemsDataSource setMimeTypeSet(BaseSelectConfig config) {
+
         mimeTypeSet = MimeType.ofAll();
         if (!config.isShowImage()) {
             mimeTypeSet.removeAll(MimeType.ofImage());
@@ -85,32 +87,41 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, final Cursor cursor) {
-
         final FragmentActivity context = mContext.get();
         if (context == null) {
             return;
         }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 final ArrayList<ImageItem> imageItems = new ArrayList<>();
                 ArrayList<ImageItem> allVideoItems = new ArrayList<>();
-                if (cursor.moveToFirst()) {
+                if (!context.isDestroyed() && cursor.moveToFirst() && !cursor.isClosed()) {
                     do {
                         ImageItem item = new ImageItem();
                         item.id = getLong(cursor, MediaStore.Files.FileColumns._ID);
-                        item.mimeType = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
-                        item.path = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
-                        item.width = cursor.getInt(cursor.getColumnIndex(MediaStore.Files.FileColumns.WIDTH));
-                        item.height = cursor.getInt(cursor.getColumnIndex(MediaStore.Files.FileColumns.HEIGHT));
+                        item.mimeType = getString(cursor, MediaStore.MediaColumns.MIME_TYPE);
+                        item.path = getString(cursor, MediaStore.Files.FileColumns.DATA);
+                        item.width = getInt(cursor, MediaStore.Files.FileColumns.WIDTH);
+                        item.height = getInt(cursor, MediaStore.Files.FileColumns.HEIGHT);
                         item.duration = getLong(cursor, MediaStore.Video.Media.DURATION);
                         item.setVideo(MimeType.isVideo(item.mimeType));
+                        if (item.path == null || item.path.length() == 0) {
+                            continue;
+                        }
                         if (item.duration > 0) {
                             item.durationFormat = PDateUtil.getVideoDuration(item.duration);
                         }
-                        item.time = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATE_MODIFIED));
+                        item.time = getLong(cursor, MediaStore.Files.FileColumns.DATE_MODIFIED);
                         if (item.time > 0) {
                             item.timeFormat = PDateUtil.getStrTime(item.time);
+                        }
+
+                        if (item.width == 0 || item.height == 0) {
+                            int[] size = PFileUtil.getImageWidthHeight(item.path);
+                            item.width = size[0];
+                            item.height = size[1];
                         }
 
                         if (set.isAllMedia() && isLoadVideo && isLoadImage) {
@@ -123,8 +134,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                         if (preloadProvider != null && imageItems.size() == 40) {
                             notifyPreloadItem(context, imageItems);
                         }
-
-                    } while (!context.isDestroyed() && cursor.moveToNext());
+                    } while (!context.isDestroyed() && cursor.moveToNext() && !cursor.isClosed());
                 }
 
                 ImageSet allVideoSet = null;
@@ -197,6 +207,24 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
             return data.getLong(index);
         } else {
             return 0;
+        }
+    }
+
+    private int getInt(Cursor data, String text) {
+        int index = hasColumn(data, text);
+        if (index != -1) {
+            return data.getInt(index);
+        } else {
+            return 0;
+        }
+    }
+
+    private String getString(Cursor data, String text) {
+        int index = hasColumn(data, text);
+        if (index != -1) {
+            return data.getString(index);
+        } else {
+            return "";
         }
     }
 

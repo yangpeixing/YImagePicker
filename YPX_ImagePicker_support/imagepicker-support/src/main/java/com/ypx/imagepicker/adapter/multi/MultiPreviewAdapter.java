@@ -6,8 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
-
 import com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
@@ -48,7 +46,7 @@ public class MultiPreviewAdapter extends RecyclerView.Adapter<MultiPreviewAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         final ImageItem imageItem = previewList.get(position);
-        holder.imageView.setTypeWithUrlAndSize(imageItem);
+        holder.imageView.setTypeFromImage(imageItem);
         holder.imageView.setSelect(imageItem.isSelect(), presenter.getUiConfig(context).getThemeColor());
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override

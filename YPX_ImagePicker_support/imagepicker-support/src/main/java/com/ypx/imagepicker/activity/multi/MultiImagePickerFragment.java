@@ -1,16 +1,11 @@
 package com.ypx.imagepicker.activity.multi;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,28 +24,27 @@ import android.widget.TextView;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.activity.PBaseLoaderFragment;
 import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.adapter.multi.MultiSetAdapter;
+import com.ypx.imagepicker.bean.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.ImageSelectMode;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.bean.PickerSelectConfig;
+import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
+import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.data.impl.MediaItemsDataSource;
-import com.ypx.imagepicker.data.impl.MediaSetsDataSource;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.utils.PPermissionUtils;
 import com.ypx.imagepicker.utils.PTakePhotoUtil;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_STORAGE;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_UI_CONFIG;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.REQ_CAMERA;
@@ -61,8 +55,8 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.REQ_CA
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class MultiImagePickerFragment extends Fragment implements View.OnClickListener, MultiGridAdapter.OnActionResult {
-    private ArrayList<ImageSet> imageSets;
+public class MultiImagePickerFragment extends PBaseLoaderFragment implements View.OnClickListener, MultiGridAdapter.OnActionResult {
+    private List<ImageSet> imageSets;
     private ArrayList<ImageItem> imageItems;
 
     private RecyclerView mRecyclerView;
@@ -82,7 +76,7 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
     private ViewGroup mTitleLayout;
     private RelativeLayout mBottomLayout;
 
-    private PickerSelectConfig selectConfig;
+    private MultiSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
     private PickerUiConfig uiConfig;
     private FragmentActivity mContext;
@@ -100,9 +94,15 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mContext = getActivity();
-        dealWithData();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            selectConfig = (MultiSelectConfig) bundle.getSerializable(INTENT_KEY_SELECT_CONFIG);
+            presenter = (IMultiPickerBindPresenter) bundle.getSerializable(INTENT_KEY_UI_CONFIG);
+        }
         if (selectConfig == null || presenter == null) {
-            mContext.finish();
+            if (mContext != null) {
+                mContext.finish();
+            }
             return;
         }
 
@@ -112,11 +112,11 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
         }
 
         uiConfig = presenter.getUiConfig(mContext);
-        if (selectConfig.getSelectMode() == ImageSelectMode.MODE_TAKEPHOTO) {
-            PTakePhotoUtil.takePhoto(mContext, REQ_CAMERA);
+        if (selectConfig.getSelectMode() == SelectMode.MODE_TAKEPHOTO) {
+            takePhoto();
         } else {
             findView();
-            loadPicData();
+            loadMediaSets();
         }
     }
 
@@ -124,14 +124,6 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
 
     public void setOnImagePickCompleteListener(OnImagePickCompleteListener onImagePickCompleteListener) {
         this.onImagePickCompleteListener = onImagePickCompleteListener;
-    }
-
-    private void dealWithData() {
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            selectConfig = (PickerSelectConfig) bundle.getSerializable(INTENT_KEY_SELECT_CONFIG);
-            presenter = (IMultiPickerBindPresenter) bundle.getSerializable(INTENT_KEY_UI_CONFIG);
-        }
     }
 
     /**
@@ -152,7 +144,7 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
         mBckImg = view.findViewById(R.id.iv_back);
         mTvPreview = view.findViewById(R.id.tv_preview);
         initAdapters();
-        setUi();
+        initUI();
         setListener();
         refreshOKBtn();
     }
@@ -195,7 +187,7 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
         }
     };
 
-    private void setUi() {
+    private void initUI() {
         mBckImg.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
         mBckImg.setColorFilter(uiConfig.getBackIconColor());
         mTitleLayout.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
@@ -279,28 +271,6 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
     }
 
     /**
-     * 异步加载图片数据
-     */
-    private void loadPicData() {
-        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= 23) {
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_STORAGE);
-            }
-        } else {
-            //从媒体库拿到数据
-            MediaSetsDataSource.create(getActivity())
-                    .setMimeTypeSet(selectConfig)
-                    .loadMediaSets(new MediaSetsDataSource.MediaSetProvider() {
-                        @Override
-                        public void providerMediaSets(ArrayList<ImageSet> imageSets) {
-                            loadImageSet(imageSets);
-                        }
-                    });
-        }
-    }
-
-    /**
      * 选择图片文件夹
      *
      * @param position 位置
@@ -313,32 +283,7 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
             showOrHideImageSetList();
         }
         mImageSetAdapter.setSelectIndex(currentSetIndex);
-        if (set.imageItems == null || set.imageItems.size() == 0) {
-            MediaItemsDataSource dataSource = MediaItemsDataSource.create(getActivity(), set).setMimeTypeSet(selectConfig);
-            dataSource.loadMediaItems(new MediaItemsDataSource.MediaItemProvider() {
-                @Override
-                public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
-                    set.imageItems = imageItems;
-                    loadImageItems(set);
-                    if (allVideoSet != null &&
-                            allVideoSet.imageItems != null
-                            && allVideoSet.imageItems.size() > 0
-                            && !imageSets.contains(allVideoSet)) {
-                        imageSets.add(1, allVideoSet);
-                        mImageSetAdapter.refreshData(imageSets);
-                    }
-                }
-            });
-            dataSource.setPreloadProvider(new MediaItemsDataSource.MediaItemPreloadProvider() {
-                @Override
-                public void providerMediaItems(ArrayList<ImageItem> imageItems) {
-                    set.imageItems = imageItems;
-                    loadImageItems(set);
-                }
-            });
-        } else {
-            loadImageItems(set);
-        }
+        loadMediaItemsFromSet(set);
     }
 
     /**
@@ -358,23 +303,6 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
             mSetRecyclerView.setAnimation(AnimationUtils.loadAnimation(mContext,
                     uiConfig.isBottomStyle() ? R.anim.picker_hide2bottom : R.anim.picker_anim_up));
         }
-    }
-
-    private void loadImageSet(ArrayList<ImageSet> imageSetList) {
-        if (imageSetList == null || imageSetList.size() == 0) {
-            btnDir.setText("无媒体文件");
-            return;
-        }
-        this.imageSets = imageSetList;
-        mImageSetAdapter.refreshData(imageSets);
-        selectImageFromSet(0, false);
-    }
-
-    private void loadImageItems(ImageSet set) {
-        this.imageItems = set.imageItems;
-        btnDir.setText(imageSets.get(currentSetIndex).name);
-        mTvTitle.setText(imageSets.get(currentSetIndex).name);
-        mAdapter.refreshData(imageItems);
     }
 
     @Override
@@ -424,9 +352,44 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
             onImagePickCompleteListener.onImagePickComplete(list);
         } else {
             Intent intent = new Intent();
-            intent.putExtra(ImagePicker.INTENT_KEY_PICKERRESULT, (Serializable) list);
+            intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, (Serializable) list);
             mContext.setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
             mContext.finish();
+        }
+    }
+
+    @Override
+    protected BaseSelectConfig getSelectConfig() {
+        return selectConfig;
+    }
+
+    @Override
+    protected void loadMediaSetsComplete(List<ImageSet> imageSetList) {
+        if (imageSetList == null || imageSetList.size() == 0) {
+            btnDir.setText("无媒体文件");
+            return;
+        }
+        this.imageSets = imageSetList;
+        mImageSetAdapter.refreshData(imageSets);
+        selectImageFromSet(0, false);
+    }
+
+    @Override
+    protected void loadMediaItemsComplete(ImageSet set) {
+        this.imageItems = set.imageItems;
+        btnDir.setText(imageSets.get(currentSetIndex).name);
+        mTvTitle.setText(imageSets.get(currentSetIndex).name);
+        mAdapter.refreshData(imageItems);
+    }
+
+    @Override
+    protected void refreshAllVideoSet(ImageSet allVideoSet) {
+        if (allVideoSet != null &&
+                allVideoSet.imageItems != null
+                && allVideoSet.imageItems.size() > 0
+                && !imageSets.contains(allVideoSet)) {
+            imageSets.add(1, allVideoSet);
+            mImageSetAdapter.notifyDataSetChanged();
         }
     }
 
@@ -436,10 +399,11 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
      * @param requestCode 请求码
      * @param resultCode  返回码
      */
+    @Override
     public void onTakePhotoResult(int requestCode, int resultCode) {
         if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {//拍照返回
             if (!TextUtils.isEmpty(PTakePhotoUtil.mCurrentPhotoPath)) {
-                if (selectConfig.getSelectMode() == ImageSelectMode.MODE_CROP) {
+                if (selectConfig.getSelectMode() == SelectMode.MODE_CROP) {
                     intentCrop(PTakePhotoUtil.mCurrentPhotoPath);
                     return;
                 }
@@ -453,12 +417,8 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
         }
     }
 
-    /**
-     * 当前文件夹是否打开
-     *
-     * @return 当前文件夹是否打开
-     */
-    public boolean isImageSetShow() {
+    @Override
+    public boolean onBackPressed() {
         if (mSetRecyclerView != null && mSetRecyclerView.getVisibility() == View.VISIBLE) {
             showOrHideImageSetList();
             return true;
@@ -495,11 +455,10 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
                 });
     }
 
-
     @SuppressLint("DefaultLocale")
     private void refreshOKBtn() {
         if (selectConfig.getMaxCount() == 1 &&
-                selectConfig.getSelectMode() != ImageSelectMode.MODE_MULTI) {
+                selectConfig.getSelectMode() != SelectMode.MODE_MULTI) {
             mTvRight.setVisibility(View.GONE);
             return;
         }
@@ -543,13 +502,13 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
         }
 
         //剪裁模式下，直接跳转剪裁
-        if (selectConfig.getSelectMode() == ImageSelectMode.MODE_CROP) {
+        if (selectConfig.getSelectMode() == SelectMode.MODE_CROP) {
             intentCrop(item.path);
             return;
         }
 
         //多选情况下，如果选择数量大于1个时，则要么执行预览，要么执行自定义点击操作
-        if (selectConfig.getMaxCount() > 1 || selectConfig.getSelectMode() == ImageSelectMode.MODE_MULTI) {
+        if (selectConfig.getMaxCount() > 1 || selectConfig.getSelectMode() == SelectMode.MODE_MULTI) {
             //打开了预览，则跳转预览，否则执行自定义的点击操作
             if (selectConfig.isPreview()) {
                 intentPreview(position, null);
@@ -561,7 +520,7 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
         }
 
         //单选模式下且选择数量只有一个时，直接回调出去
-        if (selectConfig.getSelectMode() == ImageSelectMode.MODE_SINGLE && selectConfig.getMaxCount() <= 1) {
+        if (selectConfig.getSelectMode() == SelectMode.MODE_SINGLE && selectConfig.getMaxCount() <= 1) {
             ArrayList<ImageItem> list2 = new ArrayList<>();
             list2.add(item);
             notifyOnImagePickComplete(list2);
@@ -588,37 +547,4 @@ public class MultiImagePickerFragment extends Fragment implements View.OnClickLi
         mAdapter.notifyDataSetChanged();
         refreshOKBtn();
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQ_CAMERA) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //申请成功，可以拍照
-                PTakePhotoUtil.takePhoto(mContext, REQ_CAMERA);
-            } else {
-                PPermissionUtils.create(mContext).showSetPermissionDialog(getString(R.string.picker_str_camerapermisson));
-            }
-        } else if (requestCode == REQ_STORAGE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                loadPicData();
-            } else {
-                PPermissionUtils.create(mContext).showSetPermissionDialog(getString(R.string.picker_str_storagepermisson));
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    private long lastTime = 0L;
-
-    private boolean onDoubleClick() {
-        boolean flag = false;
-        long time = System.currentTimeMillis() - lastTime;
-
-        if (time > 500) {
-            flag = true;
-        }
-        lastTime = System.currentTimeMillis();
-        return !flag;
-    }
-
 }

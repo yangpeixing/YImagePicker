@@ -17,6 +17,7 @@
 package com.ypx.imagepicker.bean;
 
 
+
 import android.support.v4.util.ArraySet;
 
 import java.util.Arrays;
@@ -30,7 +31,6 @@ import java.util.Set;
  * Good example of mime types Android supports:
  * https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/media/java/android/media/MediaFile.java
  */
-@SuppressWarnings("unused")
 public enum MimeType {
 
     // ============== images ==============

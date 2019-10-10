@@ -10,10 +10,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
-
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.PickerSelectConfig;
+import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 
@@ -48,7 +46,7 @@ public abstract class BaseItemView extends LinearLayout {
         initView(view);
     }
 
-    public void initData(PickerSelectConfig selectConfig, IMultiPickerBindPresenter presenter, PickerUiConfig uiConfig) {
+    public void initData(MultiSelectConfig selectConfig, IMultiPickerBindPresenter presenter, PickerUiConfig uiConfig) {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         params.height = getScreenWidth() / selectConfig.getColumnCount() - dp(2);
@@ -66,7 +64,7 @@ public abstract class BaseItemView extends LinearLayout {
 
     protected int dp(float dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                 dp, getContext().getResources().getDisplayMetrics());
+                dp, getContext().getResources().getDisplayMetrics());
     }
 
     protected int getScreenWidth() {

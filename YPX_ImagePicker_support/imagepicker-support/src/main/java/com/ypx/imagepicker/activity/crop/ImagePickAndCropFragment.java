@@ -1,20 +1,8 @@
 package com.ypx.imagepicker.activity.crop;
 
-import android.Manifest;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,55 +10,43 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
-import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.activity.PBaseLoaderFragment;
 import com.ypx.imagepicker.adapter.crop.CropGridAdapter;
 import com.ypx.imagepicker.adapter.crop.CropSetAdapter;
+import com.ypx.imagepicker.bean.BaseSelectConfig;
+import com.ypx.imagepicker.bean.CropSelectConfig;
+import com.ypx.imagepicker.bean.CropUiConfig;
 import com.ypx.imagepicker.bean.ImageCropMode;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.bean.PickerSelectConfig;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.data.impl.MediaItemsDataSource;
-import com.ypx.imagepicker.data.impl.MediaSetsDataSource;
+import com.ypx.imagepicker.helper.CropViewContainerHelper;
 import com.ypx.imagepicker.helper.RecyclerViewTouchHelper;
+import com.ypx.imagepicker.helper.VideoViewContainerHelper;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PFileUtil;
-import com.ypx.imagepicker.utils.PPermissionUtils;
 import com.ypx.imagepicker.utils.PTakePhotoUtil;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
+import com.ypx.imagepicker.widget.CropImageView;
 import com.ypx.imagepicker.widget.TouchRecyclerView;
-import com.ypx.imagepicker.widget.browseimage.PicBrowseImageView;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_CROPPICSAVEFILEPATH;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_FIRSTIMAGEITEM;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_IMAGELOADER;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_MAXSELECTEDCOUNT;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_SHOWBOTTOMVIEW;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_SHOWCAMERA;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_SHOWDRAFTDIALOG;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_SHOWVIDEO;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_STARTDIRECT;
+import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_DATA_PRESENTER;
+import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_SELECT_CONFIG;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_CAMERA;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_STORAGE;
 
 
 /**
@@ -79,58 +55,54 @@ import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_STO
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class ImagePickAndCropFragment extends Fragment implements View.OnClickListener {
+public class ImagePickAndCropFragment extends PBaseLoaderFragment implements View.OnClickListener,
+        CropSetAdapter.OnSelectImageSetListener,
+        CropGridAdapter.OnPressImageListener,
+        CropGridAdapter.OnSelectImageListener {
     private TouchRecyclerView mGridImageRecyclerView;
     private RecyclerView mImageSetRecyclerView;
     private TextView mTvSetName;
-    private TextView mTvSetName2;
-    private TextView mTvFullOrFit;
+    private TextView mTvFullOrGap;
     private TextView mTvNext;
     private TextView mTvSelectNum;
     private ImageView mArrowImg;
-    private PicBrowseImageView mCropView;
+    private RelativeLayout titleBar;
+    private CropImageView mCropView;
     private ImageButton stateBtn;
-    private LinearLayout mCroupContainer;
+    private ImageView mBackImg;
+    private FrameLayout mCropContainer;
     private LinearLayout mInvisibleContainer;
     private View maskView;
-    private ImageItem lastPressImageItem;
     private CropGridAdapter imageGridAdapter;
     private CropSetAdapter imageSetAdapter;
     private List<ImageSet> imageSets = new ArrayList<>();
     private List<ImageItem> imageItems = new ArrayList<>();
-
     private int mCropSize;
     private int pressImageIndex = 0;
     //滑动辅助类
     private RecyclerViewTouchHelper touchHelper;
     //选中图片列表
     private List<ImageItem> selectList = new ArrayList<>();
-    //存储已选择的剪裁View
-    private HashMap<ImageItem, PicBrowseImageView> cropViewList = new HashMap<>();
-
     //图片加载提供者
-    private ICropPickerBindPresenter bindingProvider;
-    //最大选中数量
-    private int maxCount = 0;
-    //默认剪裁模式
-    private int cropMode = ImageCropMode.CropViewScale_FILL;
-    //之前操作后选中的第一张图片
-    private ImageItem firstSelectedImageItem = null;
-    //是否显示底部自定义View
-    private boolean isShowBottomView = false;
-    private boolean isShowDraftDialog = false;
-    private boolean isShowCamera = false;
-    private boolean isShowVideo = false;
-    // 编辑图片后是否直接启动
-    private boolean startDirect = true;
-    //剪裁后图片存储的路径
-    private String mCropPicsCacheFilePath;
+    private ICropPickerBindPresenter presenter;
+    //选择配置项
+    private CropSelectConfig selectConfig;
+    // 默认剪裁模式：充满
+    private int cropMode = ImageCropMode.CropViewScale_FULL;
     private ImageItem currentImageItem;
     private View mContentView;
     // fragment 形式调用的图片选中回调
     private OnImagePickCompleteListener imageListener;
+    //剪裁view或videoView填充辅助类
+    private CropViewContainerHelper cropViewContainerHelper;
+    private VideoViewContainerHelper videoViewContainerHelper;
+    //UI配置类
+    private CropUiConfig uiConfig;
 
-    public void setImageListener(OnImagePickCompleteListener imageListener) {
+    /**
+     * @param imageListener 选择回调监听
+     */
+    public void setOnImagePickCompleteListener(OnImagePickCompleteListener imageListener) {
         this.imageListener = imageListener;
     }
 
@@ -145,102 +117,53 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
         super.onViewCreated(view, savedInstanceState);
         dealWithIntentData();
         initView();
+        initUI();
         initGridImagesAndImageSets();
-        loadImageData();
-    }
-
-    private void dealWithIntentData() {
-        Bundle argu = getArguments();
-        if (null != argu) {
-            bindingProvider = (ICropPickerBindPresenter) argu.getSerializable(INTENT_KEY_IMAGELOADER);
-            maxCount = argu.getInt(INTENT_KEY_MAXSELECTEDCOUNT, 9);
-            firstSelectedImageItem = (ImageItem) argu.getSerializable(INTENT_KEY_FIRSTIMAGEITEM);
-            if (firstSelectedImageItem != null) {
-                cropMode = firstSelectedImageItem.getCropMode();
-            }
-            isShowBottomView = argu.getBoolean(INTENT_KEY_SHOWBOTTOMVIEW, false);
-            mCropPicsCacheFilePath = argu.getString(INTENT_KEY_CROPPICSAVEFILEPATH);
-            isShowDraftDialog = argu.getBoolean(INTENT_KEY_SHOWDRAFTDIALOG, false);
-            isShowCamera = argu.getBoolean(INTENT_KEY_SHOWCAMERA, false);
-            isShowVideo = argu.getBoolean(INTENT_KEY_SHOWVIDEO, false);
-            startDirect = argu.getBoolean(INTENT_KEY_STARTDIRECT, true);
-        }
-        if (isShowDraftDialog && bindingProvider != null) {
-            bindingProvider.showDraftDialog(getContext());
-        }
-    }
-
-    private PickerSelectConfig getConfig() {
-        PickerSelectConfig config = new PickerSelectConfig();
-        config.setShowImage(true);
-        config.setShowVideo(isShowVideo);
-        config.setLoadGif(false);
-        return config;
+        loadMediaSets();
     }
 
     /**
-     * 加载图片数据
+     * 处理传递数据
      */
-    private void loadImageData() {
-        if (getActivity() == null) {
-            return;
-        }
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_STORAGE);
-        } else {
-            //从媒体库拿到数据
-            MediaSetsDataSource.create(getActivity())
-                    .setMimeTypeSet(getConfig())
-                    .loadMediaSets(new MediaSetsDataSource.MediaSetProvider() {
-                        @Override
-                        public void providerMediaSets(ArrayList<ImageSet> imageSets) {
-                            loadImageSet(imageSets);
-                        }
-                    });
+    private void dealWithIntentData() {
+        Bundle arguments = getArguments();
+        if (null != arguments) {
+            presenter = (ICropPickerBindPresenter) arguments.getSerializable(INTENT_KEY_DATA_PRESENTER);
+            selectConfig = (CropSelectConfig) arguments.getSerializable(INTENT_KEY_SELECT_CONFIG);
         }
     }
 
+    /**
+     * 初始化界面
+     */
     private void initView() {
         mTvSetName = mContentView.findViewById(R.id.mTvSetName);
-        mTvSetName2 = mContentView.findViewById(R.id.mTvSetName2);
-        mTvFullOrFit = mContentView.findViewById(R.id.mTvFullOrFit);
+        mTvFullOrGap = mContentView.findViewById(R.id.mTvFullOrGap);
         mTvNext = mContentView.findViewById(R.id.mTvNext);
         mTvSelectNum = mContentView.findViewById(R.id.mTvSelectNum);
         mArrowImg = mContentView.findViewById(R.id.mArrowImg);
         maskView = mContentView.findViewById(R.id.v_mask);
-        mCroupContainer = mContentView.findViewById(R.id.mCroupContainer);
+        mCropContainer = mContentView.findViewById(R.id.mCroupContainer);
         mInvisibleContainer = mContentView.findViewById(R.id.mInvisibleContainer);
         RelativeLayout topView = mContentView.findViewById(R.id.topView);
-        RelativeLayout titleBar = mContentView.findViewById(R.id.titleBar);
+        titleBar = mContentView.findViewById(R.id.titleBar);
         RelativeLayout mCropLayout = mContentView.findViewById(R.id.mCropLayout);
         stateBtn = mContentView.findViewById(R.id.stateBtn);
         mGridImageRecyclerView = mContentView.findViewById(R.id.mRecyclerView);
         mImageSetRecyclerView = mContentView.findViewById(R.id.mImageSetRecyclerView);
-        mTvFullOrFit.setBackground(PCornerUtils.cornerDrawable(Color.parseColor("#80000000"), dp(15)));
-        mContentView.findViewById(R.id.mBackImg).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onBackPressed()) {
-                    return;
-                }
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
-            }
-        });
+        mTvFullOrGap.setBackground(PCornerUtils.cornerDrawable(Color.parseColor("#80000000"), dp(15)));
         //初始化监听
+        mBackImg = mContentView.findViewById(R.id.mBackImg);
+        mBackImg.setOnClickListener(this);
         stateBtn.setOnClickListener(this);
         mTvSetName.setOnClickListener(this);
-        mTvSetName2.setOnClickListener(this);
         maskView.setOnClickListener(this);
         mTvNext.setOnClickListener(this);
-        mTvFullOrFit.setOnClickListener(this);
+        mTvFullOrGap.setOnClickListener(this);
         //未选中状态时，下一步制灰
         mTvNext.setEnabled(false);
         mTvNext.setTextColor(Color.parseColor("#B0B0B0"));
         mTvSelectNum.setVisibility(View.GONE);
-        mTvSelectNum.setBackground(PCornerUtils.cornerDrawable(getResources().getColor(R.color.picker_theme_color), dp(10)));
         //防止点击穿透
         mCropLayout.setClickable(true);
         titleBar.setClickable(true);
@@ -250,29 +173,40 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
         //初始化相关尺寸信息
         mCropSize = PViewSizeUtils.getScreenWidth(getActivity());
         PViewSizeUtils.setViewSize(mCropLayout, mCropSize, 1.0f);
+        //recyclerView和topView的联动效果辅助类
         touchHelper = RecyclerViewTouchHelper.create(mGridImageRecyclerView)
                 .setTopView(topView)
                 .setMaskView(maskView)
                 .setCanScrollHeight(mCropSize)
                 .setStickHeight(dp(50))
                 .build();
-
-        if (isShowBottomView && bindingProvider != null &&
-                bindingProvider.getBottomView(getContext()) != null) {
-            LinearLayout mBottomViewLayout = mContentView.findViewById(R.id.mBottomViewLayout);
-            mBottomViewLayout.removeAllViews();
-            final View view = bindingProvider.getBottomView(getContext());
-            mBottomViewLayout.addView(view);
-            view.post(new Runnable() {
-                @Override
-                public void run() {
-                    mGridImageRecyclerView.setPadding(mGridImageRecyclerView.getPaddingStart(),
-                            mGridImageRecyclerView.getPaddingTop(),
-                            mGridImageRecyclerView.getPaddingEnd(), view.getHeight() + dp(5));
-                    mImageSetRecyclerView.setPadding(0, mImageSetRecyclerView.getPaddingTop(), 0, view.getHeight());
-                }
-            });
+        //剪裁控件辅助类
+        cropViewContainerHelper = new CropViewContainerHelper(mCropContainer);
+        //视频控件辅助类
+        videoViewContainerHelper = new VideoViewContainerHelper();
+        //指定默认剪裁模式
+        if (selectConfig.hasFirstImageItem()) {
+            cropMode = selectConfig.getFirstImageItem().getCropMode();
         }
+    }
+
+    /**
+     * 初始化自定义样式
+     */
+    private void initUI() {
+        uiConfig = presenter.getUiConfig(getActivity());
+        if (uiConfig == null) {
+            uiConfig = new CropUiConfig();
+        }
+        mBackImg.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
+        mBackImg.setColorFilter(uiConfig.getBackIconColor());
+        titleBar.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
+        mCropContainer.setBackgroundColor(uiConfig.getCropViewBackgroundColor());
+        mTvSetName.setTextColor(uiConfig.getTitleTextColor());
+        mArrowImg.setColorFilter(uiConfig.getTitleTextColor());
+        mTvSelectNum.setBackground(PCornerUtils.cornerDrawable(uiConfig.getNextBtnSelectedTextColor(), dp(10)));
+        mGridImageRecyclerView.setBackgroundColor(uiConfig.getGridBackgroundColor());
+        mTvNext.setText(uiConfig.getNextBtnText());
     }
 
     /**
@@ -281,59 +215,22 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
     private void initGridImagesAndImageSets() {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4);
         mGridImageRecyclerView.setLayoutManager(gridLayoutManager);
-        imageGridAdapter = new CropGridAdapter(getContext(), isShowCamera,
-                firstSelectedImageItem != null,
-                imageItems, selectList, bindingProvider);
+        imageGridAdapter = new CropGridAdapter(mContentView.getContext(), selectConfig, imageItems, selectList, presenter, uiConfig);
         imageGridAdapter.setHasStableIds(true);
-        imageGridAdapter.setOnPressImageListener(new CropGridAdapter.OnPressImageListener() {
-            @Override
-            public void onPressImage(int position, boolean isShowTransit) {
-                pressImage(position, isShowTransit);
-            }
-        });
-        imageGridAdapter.setOnSelectImageSet(new CropGridAdapter.OnSelectImageListener() {
-            @Override
-            public void onSelectImage(int position) {
-                selectImage(position);
-            }
-        });
         mGridImageRecyclerView.setAdapter(imageGridAdapter);
-        if (mGridImageRecyclerView.getItemAnimator() instanceof DefaultItemAnimator) {
-            ((DefaultItemAnimator) mGridImageRecyclerView.getItemAnimator()).
-                    setSupportsChangeAnimations(false);
-        }
         //初始化文件夹列表
         mImageSetRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        imageSetAdapter = new CropSetAdapter(getContext(), imageSets, bindingProvider);
-        imageSetAdapter.setOnSelectImageSetListener(new CropSetAdapter.OnSelectImageSetListener() {
-            @Override
-            public void onSelectImageSet(int position) {
-                selectImageSet(position, true);
-            }
-        });
+        imageSetAdapter = new CropSetAdapter(getContext(), imageSets, presenter);
         mImageSetRecyclerView.setAdapter(imageSetAdapter);
         mImageSetRecyclerView.setVisibility(View.GONE);
+        imageSetAdapter.setOnSelectImageSetListener(this);
+        imageGridAdapter.setOnPressImageListener(this);
+        imageGridAdapter.setOnSelectImageSet(this);
     }
 
-
-    private void loadImageSet(List<ImageSet> imageSetList) {
-        if (imageSetList == null || imageSetList.size() == 0) {
-            return;
-        }
-        this.imageSets.clear();
-        this.imageSets.addAll(imageSetList);
-        imageSetAdapter.notifyDataSetChanged();
-        selectImageSet(0, false);
-    }
-
-
-    private int getFirstImage() {
-        for (int i = 0; i < imageItems.size(); i++) {
-            if (!imageItems.get(i).isVideo()) {
-                return i;
-            }
-        }
-        return 0;
+    @Override
+    public void onSelectImageSet(int position) {
+        selectImageSet(position, true);
     }
 
     @Override
@@ -343,56 +240,86 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
         }
         if (view == stateBtn) {
             fullOrFit();
-        } else if (view == mTvSetName || view == mTvSetName2) {
+        } else if (view == mTvSetName) {
             toggleImageSet();
         } else if (view == maskView) {
-            touchHelper.transitTopWithAnim(true, pressImageIndex);
+            touchHelper.transitTopWithAnim(true, pressImageIndex, true);
         } else if (view == mTvNext) {
             next();
-        } else if (view == mTvFullOrFit) {
-            fullOrWhiteSpace();
+        } else if (view == mTvFullOrGap) {
+            fullOrGap();
+        } else if (view.getId() == R.id.mBackImg) {
+            if (onBackPressed()) {
+                return;
+            }
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
         }
     }
+
+    private ImageItem lastPressItem;
 
     /**
      * 点击图片
      *
      * @param position 图片位置
      */
-    private void pressImage(final int position, boolean isShowTransit) {
-        if (isShowCamera && position == 0) {
+    @Override
+    public void onPressImage(final int position, boolean isShowTransit) {
+        if (selectConfig.isShowCamera() && position == 0) {
             takePhoto();
             return;
         }
         if (position < 0) {
             return;
         }
-        pressImageIndex = isShowCamera ? position - 1 : position;
-        currentImageItem = imageItems.get(pressImageIndex);
-        if (currentImageItem.isVideo()) {
-            if (selectList.size() > 0 || firstSelectedImageItem != null ||
-                    currentImageItem.duration > ImagePicker.MAX_VIDEO_DURATION) {
-                return;
-            }
-            if (bindingProvider != null) {
-                bindingProvider.clickVideo(getActivity(), currentImageItem, startDirect);
-            }
+        //得到当前选中的item索引
+        pressImageIndex = selectConfig.isShowCamera() ? position - 1 : position;
+        //防止数组越界
+        if (imageItems == null || imageItems.size() == 0 ||
+                imageItems.size() <= pressImageIndex) {
             return;
         }
-        if (lastPressImageItem != null &&
-                lastPressImageItem != currentImageItem) {
-            lastPressImageItem.setPress(false);
+        currentImageItem = imageItems.get(pressImageIndex);
+        if (lastPressItem != null) {
+            //如果当前选中的item和上一次选中的一致，则不处理
+            if (lastPressItem.equals(currentImageItem)) {
+                return;
+            }
+            //取消上次选中
+            lastPressItem.setPress(false);
         }
         currentImageItem.setPress(true);
-        imageGridAdapter.notifyDataSetChanged();
-        if (lastPressImageItem != currentImageItem) {
+        //当前选中视频
+        if (currentImageItem.isVideo()) {
+            //如果当前视频只支持单选的话，执行presenter的clickVideo方法
+            if (selectConfig.isVideoSinglePick()) {
+                if (presenter != null) {
+                    presenter.clickVideo(getActivity(), currentImageItem);
+                }
+            } else {
+                //执行预览视频操作
+                videoViewContainerHelper.loadVideoView(mCropContainer, currentImageItem, presenter,uiConfig);
+                checkStateBtn();
+            }
+        } else {
+            //加载图片
             loadCropView();
+            checkStateBtn();
+            if (mTvFullOrGap.getVisibility() == View.VISIBLE) {
+                if (mTvFullOrGap.getText().toString().equals(getString(R.string.picker_str_haswhite))) {
+                    mCropView.setBackgroundColor(Color.TRANSPARENT);
+                } else {
+                    mCropView.setBackgroundColor(Color.WHITE);
+                }
+            } else {
+                mCropView.setBackgroundColor(Color.TRANSPARENT);
+            }
         }
-        if (isShowTransit) {
-            touchHelper.transitTopWithAnim(true, position);
-        }
-        checkStateBtn();
-        lastPressImageItem = currentImageItem;
+        imageGridAdapter.notifyDataSetChanged();
+        touchHelper.transitTopWithAnim(true, position, isShowTransit);
+        lastPressItem = currentImageItem;
     }
 
     /**
@@ -400,21 +327,20 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
      *
      * @param position 图片索引
      */
-    private void selectImage(final int position) {
+    @Override
+    public void onSelectImage(int position) {
         if (position < 0) {
             return;
         }
-        ImageItem selectImageItem = imageItems.get(isShowCamera ? position - 1 : position);
-        if (selectImageItem.isSelect()) {
-            selectImageItem.setSelect(false);
+        ImageItem selectImageItem = imageItems.get(selectConfig.isShowCamera() ? position - 1 : position);
+        if (selectList.contains(selectImageItem)) {
             removeImageItemFromCropViewList(selectImageItem);
             checkStateBtn();
         } else {
             if (isOverMaxCount()) {
                 return;
             }
-            selectImageItem.setSelect(true);
-            pressImage(position, false);
+            onPressImage(position, false);
             addImageItemToCropViewList(selectImageItem);
         }
         imageGridAdapter.notifyDataSetChanged();
@@ -435,105 +361,29 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
         }
         imageSet.isSelected = true;
         imageSetAdapter.notifyDataSetChanged();
-
-        mTvSetName2.setText(imageSet.name);
         mTvSetName.setText(imageSet.name);
         if (isTransit) {
             toggleImageSet();
         }
-        getImageItemsFromSet(imageSet);
-    }
-
-    private void getImageItemsFromSet(final ImageSet set) {
-        if (set.imageItems == null || set.imageItems.size() == 0) {
-            MediaItemsDataSource dataSource = MediaItemsDataSource.create(getActivity(), set)
-                    .setMimeTypeSet(getConfig());
-            dataSource.loadMediaItems(new MediaItemsDataSource.MediaItemProvider() {
-                @Override
-                public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
-                    set.imageItems = imageItems;
-                    loadImageItems(set);
-                    if (allVideoSet != null &&
-                            allVideoSet.imageItems != null
-                            && allVideoSet.imageItems.size() > 0
-                            && !imageSets.contains(allVideoSet)) {
-                        imageSets.add(1, allVideoSet);
-                        imageSetAdapter.notifyDataSetChanged();
-                    }
-                }
-            });
-            dataSource.setPreloadProvider(new MediaItemsDataSource.MediaItemPreloadProvider() {
-                @Override
-                public void providerMediaItems(ArrayList<ImageItem> imageItems) {
-                    set.imageItems = imageItems;
-                    loadImageItems(set);
-                }
-            });
-        } else {
-            loadImageItems(set);
-        }
-    }
-
-    private void loadImageItems(ImageSet set) {
-        imageItems.clear();
-        imageItems.addAll(set.imageItems);
-        imageGridAdapter.notifyDataSetChanged();
-        int index = isShowCamera ? getFirstImage() + 1 : getFirstImage();
-        if (imageItems.size() > index && imageItems.get(index).isVideo()) {
-            return;
-        }
-        pressImage(index, true);
+        loadMediaItemsFromSet(imageSet);
     }
 
     /**
      * 加载剪裁view
      */
     private void loadCropView() {
-        if (cropViewList.containsKey(currentImageItem) && cropViewList.get(currentImageItem) != null) {
-            mCropView = cropViewList.get(currentImageItem);
-        } else {
-            mCropView = new PicBrowseImageView(getContext());
-            mCropView.setBackgroundColor(Color.WHITE);
-            mCropView.setLayoutParams(new LinearLayout.LayoutParams(mCropSize, mCropSize));
-            //设置剪裁view的属性
-            mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            mCropView.enable(); // 启用图片缩放功能
-            mCropView.setMaxScale(7.0f);
-            if (bindingProvider != null) {
-                bindingProvider.displayCropImage(mCropView, currentImageItem.path);
-            }
-        }
-        mCropView.setOnImageLoadListener(new PicBrowseImageView.onImageLoadListener() {
-            @Override
-            public void onImageLoaded(float w, float h) {
-                if (w > 0 && currentImageItem.width != (int) w) {
-                    currentImageItem.width = (int) w;
-                }
-                if (h > 0 && currentImageItem.height != (int) h) {
-                    currentImageItem.height = (int) h;
-                }
-            }
-        });
-        mCroupContainer.removeAllViews();
-        if (mCropView.getParent() != null) {
-            ((ViewGroup) mCropView.getParent()).removeView(mCropView);
-        }
-        mCroupContainer.addView(mCropView);
+        mCropView = cropViewContainerHelper.loadCropView(getContext(), currentImageItem, mCropSize, presenter);
         resetCropViewSize(mCropView, false);
     }
 
     /**
      * 添加当前图片信息到选中列表
      */
-    @SuppressLint("DefaultLocale")
     private void addImageItemToCropViewList(ImageItem imageItem) {
         if (!selectList.contains(imageItem)) {
             selectList.add(imageItem);
         }
-
-        if (!cropViewList.containsKey(imageItem)) {
-            cropViewList.put(imageItem, mCropView);
-        }
+        cropViewContainerHelper.addCropView(mCropView, imageItem);
         refreshSelectCount();
     }
 
@@ -542,21 +392,30 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
      */
     private void removeImageItemFromCropViewList(ImageItem imageItem) {
         selectList.remove(imageItem);
-        cropViewList.remove(imageItem);
+        cropViewContainerHelper.removeCropView(imageItem);
         refreshSelectCount();
     }
 
-    @SuppressLint("DefaultLocale")
+    /**
+     * 刷新选中数量
+     */
     private void refreshSelectCount() {
         if (selectList.size() == 0) {
             mTvNext.setEnabled(false);
-            mTvNext.setTextColor(Color.parseColor("#B0B0B0"));
+            mTvNext.setTextColor(uiConfig.getNextBtnUnSelectTextColor());
+            mTvNext.setBackground(uiConfig.getNextBtnUnSelectBackground());
             mTvSelectNum.setVisibility(View.GONE);
         } else {
             mTvNext.setEnabled(true);
-            mTvNext.setTextColor(getResources().getColor(R.color.picker_theme_color));
-            mTvSelectNum.setVisibility(View.VISIBLE);
-            mTvSelectNum.setText(String.format("%d", selectList.size()));
+            mTvNext.setTextColor(uiConfig.getNextBtnSelectedTextColor());
+            mTvNext.setBackground(uiConfig.getNextBtnSelectedBackground());
+            if (uiConfig.getNextBtnSelectedBackground() == null) {
+                mTvNext.setPadding(0, dp(4), dp(10), dp(4));
+            }
+            if (uiConfig.isShowNextCount()) {
+                mTvSelectNum.setVisibility(View.VISIBLE);
+                mTvSelectNum.setText(String.valueOf(selectList.size()));
+            }
         }
     }
 
@@ -564,14 +423,20 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
      * 检测显示填充、留白、充满和自适应图标
      */
     private void checkStateBtn() {
+        //选中的第一个item是视频，则隐藏所有按钮
+        if (currentImageItem.isVideo()) {
+            stateBtn.setVisibility(View.GONE);
+            mTvFullOrGap.setVisibility(View.GONE);
+            return;
+        }
         //方形图，什么都不显示
         if (currentImageItem.getWidthHeightType() == 0) {
             stateBtn.setVisibility(View.GONE);
-            mTvFullOrFit.setVisibility(View.GONE);
+            mTvFullOrGap.setVisibility(View.GONE);
             return;
         }
         //如果已经存在了第一张选中图
-        if (firstSelectedImageItem != null) {
+        if (selectConfig.hasFirstImageItem()) {
             stateBtn.setVisibility(View.GONE);
             setImageScaleState();
             return;
@@ -582,31 +447,31 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
             //如果当前选中item就是第一个图片，显示stateBtn
             if (currentImageItem == selectList.get(0)) {
                 stateBtn.setVisibility(View.VISIBLE);
-                mTvFullOrFit.setVisibility(View.GONE);
+                mTvFullOrGap.setVisibility(View.GONE);
                 mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 currentImageItem.setCropMode(cropMode);
             } else {
-                //如果当前选中item不是第一张图片，显示mTvFullOrFit
+                //如果当前选中item不是第一张图片，显示mTvFullOrGap
                 stateBtn.setVisibility(View.GONE);
                 setImageScaleState();
             }
         } else {//没有选中图片
             stateBtn.setVisibility(View.VISIBLE);
-            mTvFullOrFit.setVisibility(View.GONE);
+            mTvFullOrGap.setVisibility(View.GONE);
         }
     }
 
     /**
      * 重置剪裁宽高大小
      */
-    private void resetCropViewSize(PicBrowseImageView view, boolean isShowAnim) {
+    private void resetCropViewSize(CropImageView view, boolean isShowAnim) {
         int height = mCropSize;
         int width = mCropSize;
         if (cropMode == ImageCropMode.CropViewScale_FIT) {
             ImageItem firstImageItem;
             //如果已经存在第一张图，则按照第一张图的剪裁模式改变大小
-            if (firstSelectedImageItem != null) {
-                firstImageItem = firstSelectedImageItem;
+            if (selectConfig.hasFirstImageItem()) {
+                firstImageItem = selectConfig.getFirstImageItem();
             } else {
                 //没有已经存在的第一张图信息，则获取选中的第一张图的剪裁模式作为全局的剪裁模式
                 if (selectList.size() > 0) {
@@ -620,45 +485,20 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
             //如果是高图，宽*3/4
             width = firstImageItem.getWidthHeightType() < 0 ? ((mCropSize * 3) / 4) : mCropSize;
         }
-        animCropView(view, isShowAnim, width, height);
+        view.changeSize(isShowAnim, width, height);
     }
 
-    /**
-     * 动画设置cropView的尺寸
-     */
-    @SuppressLint("ObjectAnimatorBinding")
-    private void animCropView(final PicBrowseImageView view, boolean isShowAnim, final int endWidth, final int endHeight) {
-        if (isShowAnim) {
-            final int startWidth = PViewSizeUtils.getViewWidth(mCropView);
-            final int startHeight = PViewSizeUtils.getViewHeight(mCropView);
-            ObjectAnimator anim = ObjectAnimator.ofFloat(this, "translationY", 0.0f, 1.0f);
-            anim.setDuration(200);
-            anim.setInterpolator(new DecelerateInterpolator());
-            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    float ratio = (Float) animation.getAnimatedValue();
-                    PViewSizeUtils.setViewSize(view, (int) ((endWidth - startWidth) * ratio + startWidth),
-                            ((int) ((endHeight - startHeight) * ratio + startHeight)));
-                    view.setImageDrawable(view.getDrawable());
-                }
-            });
-            anim.start();
-        } else {
-            PViewSizeUtils.setViewSize(view, endWidth, endHeight);
-        }
-    }
 
     /**
      * 第一张图片剪裁区域充满或者自适应（是剪裁区域，不是图片填充和留白）
      */
     private void fullOrFit() {
         if (cropMode == ImageCropMode.CropViewScale_FIT) {
-            cropMode = ImageCropMode.CropViewScale_FILL;
-            stateBtn.setImageDrawable(getResources().getDrawable(R.mipmap.picker_icon_fit));
+            cropMode = ImageCropMode.CropViewScale_FULL;
+            stateBtn.setImageDrawable(getResources().getDrawable(uiConfig.getFitIconID()));
         } else {
             cropMode = ImageCropMode.CropViewScale_FIT;
-            stateBtn.setImageDrawable(getResources().getDrawable(R.mipmap.picker_icon_fill));
+            stateBtn.setImageDrawable(getResources().getDrawable(uiConfig.getFullIconID()));
         }
         if (currentImageItem != null) {
             currentImageItem.setCropMode(cropMode);
@@ -667,59 +507,37 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
         mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         resetCropViewSize(mCropView, true);
         //以下是重置所有选中图片剪裁模式
-        mInvisibleContainer.removeAllViews();
-        mInvisibleContainer.setVisibility(View.VISIBLE);
-        for (ImageItem imageItem : selectList) {
-            if (imageItem == currentImageItem) {
-                continue;
-            }
-            PicBrowseImageView picBrowseImageView = cropViewList.get(imageItem);
-            if (picBrowseImageView != null) {
-                mInvisibleContainer.addView(picBrowseImageView);
-                resetCropViewSize(picBrowseImageView, false);
-                if (cropMode == ImageCropMode.CropViewScale_FIT) {
-                    imageItem.setCropMode(ImageCropMode.ImageScale_FILL);
-                    picBrowseImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                }
-                cropViewList.put(imageItem, picBrowseImageView);
-            }
-        }
-        mInvisibleContainer.setVisibility(View.INVISIBLE);
+        cropViewContainerHelper.refreshAllState(currentImageItem, selectList, mInvisibleContainer,
+                cropMode == ImageCropMode.CropViewScale_FIT,
+                new CropViewContainerHelper.ResetSizeExecutor() {
+                    @Override
+                    public void resetAllCropViewSize(CropImageView view) {
+                        resetCropViewSize(view, false);
+                    }
+                });
     }
 
     /**
-     * 填充状态
+     * 设置留白还是填充
      */
-    private void setHasWhiteSpaceState() {
-        mTvFullOrFit.setText(R.string.picker_str_full);
-        mTvFullOrFit.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.mipmap.picker_icon_full), null, null, null);
-    }
-
-    /**
-     * 留白状态
-     */
-    private void setImageViewScaleFull() {
-        mTvFullOrFit.setText(R.string.picker_str_haswhite);
-        mTvFullOrFit.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.mipmap.picker_icon_haswhite), null, null, null);
-    }
-
     private void setImageScaleState() {
         //如果当前模式为自适应模式
         if (cropMode == ImageCropMode.CropViewScale_FIT) {
             //如果当前图片和第一张选中图片的宽高类型一样，则不显示留白和充满
-            mTvFullOrFit.setVisibility(View.GONE);
-        } else {//如果第一张图为充满模式，则不论宽高比（除正方形外），都显示留白和充满
-            mTvFullOrFit.setVisibility(View.VISIBLE);
+            mTvFullOrGap.setVisibility(View.GONE);
+        } else {
+            //如果第一张图为充满模式，则不论宽高比（除正方形外），都显示留白和充满
+            mTvFullOrGap.setVisibility(View.VISIBLE);
             //如果当前已选中该图片，则恢复选择时的填充和留白状态
-            if (currentImageItem.isSelect()) {
+            if (selectList.contains(currentImageItem)) {
                 if (currentImageItem.getCropMode() == ImageCropMode.ImageScale_FILL) {
-                    setImageViewScaleFull();
-                } else if (currentImageItem.getCropMode() == ImageCropMode.ImageScale_FIT) {
-                    setHasWhiteSpaceState();
+                    fullState();
+                } else if (currentImageItem.getCropMode() == ImageCropMode.ImageScale_GAP) {
+                    gapState();
                 }
             } else {
                 //否则都按照默认填充的模式，显示留白提示
-                setImageViewScaleFull();
+                fullState();
                 currentImageItem.setCropMode(ImageCropMode.ImageScale_FILL);
                 mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             }
@@ -729,132 +547,76 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
     /**
      * 充满或者留白
      */
-    private void fullOrWhiteSpace() {
+    private void fullOrGap() {
+        //留白
         if (currentImageItem.getCropMode() == ImageCropMode.ImageScale_FILL) {
-            //留白
-            currentImageItem.setCropMode(ImageCropMode.ImageScale_FIT);
+            currentImageItem.setCropMode(ImageCropMode.ImageScale_GAP);
             mCropView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            setHasWhiteSpaceState();
+            gapState();
         } else {
             //充满
             currentImageItem.setCropMode(ImageCropMode.ImageScale_FILL);
             mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            setImageViewScaleFull();
+            fullState();
         }
         resetCropViewSize(mCropView, false);
+    }
+
+    /**
+     * 留白情况下，显示充满状态
+     */
+    private void gapState() {
+        mTvFullOrGap.setText(R.string.picker_str_full);
+        cropViewContainerHelper.setBackgroundColor(Color.WHITE);
+        mTvFullOrGap.setCompoundDrawablesWithIntrinsicBounds(getResources().
+                getDrawable(uiConfig.getFillIconID()), null, null, null);
+    }
+
+    /**
+     * 充满情况下，显示留白状态
+     */
+    private void fullState() {
+        mTvFullOrGap.setText(R.string.picker_str_haswhite);
+        cropViewContainerHelper.setBackgroundColor(Color.TRANSPARENT);
+        mTvFullOrGap.setCompoundDrawablesWithIntrinsicBounds(getResources().
+                getDrawable(uiConfig.getGapIconID()), null, null, null);
     }
 
     /**
      * 切换文件夹选择
      */
     private void toggleImageSet() {
-        if (mImageSetRecyclerView.getVisibility() == View.VISIBLE) {
-            mImageSetRecyclerView.setVisibility(View.GONE);
-            mArrowImg.setRotation(0);
-            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.picker_anim_up);
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    ((ViewGroup) mTvSetName2.getParent()).setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            mImageSetRecyclerView.setAnimation(animation);
-        } else {
-            mArrowImg.setRotation(180);
-            mImageSetRecyclerView.setVisibility(View.VISIBLE);
-            ((ViewGroup) mTvSetName2.getParent()).setVisibility(View.VISIBLE);
-            mImageSetRecyclerView.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picker_anim_in));
-        }
+        boolean isVisible = mImageSetRecyclerView.getVisibility() == View.VISIBLE;
+        mImageSetRecyclerView.setVisibility(isVisible ? View.GONE : View.VISIBLE);
+        mArrowImg.setRotation(isVisible ? 0 : 180);
+        mImageSetRecyclerView.startAnimation(AnimationUtils.loadAnimation(getContext(),
+                isVisible ? R.anim.picker_anim_up : R.anim.picker_anim_in));
     }
 
     /**
      * 点击下一步
      */
     private void next() {
-        if (mCropView.isShowLine()) {
+        if (mCropView.isEditing()) {
             return;
         }
-        if (currentImageItem.isSelect()
+        if (selectList.contains(currentImageItem)
                 && (mCropView.getDrawable() == null ||
-                mCropView.getImgRect().height() == 0 ||
-                mCropView.getImgRect().width() == 0)) {
+                mCropView.getDrawable().getIntrinsicHeight() == 0 ||
+                mCropView.getDrawable().getIntrinsicWidth() == 0)) {
             Toast.makeText(getActivity(), getString(R.string.wait_for_load), Toast.LENGTH_SHORT).show();
             return;
         }
-        ArrayList<ImageItem> cropUrlList = new ArrayList<>();
-        for (ImageItem imageItem : selectList) {
-            View view = cropViewList.get(imageItem);
-            File f = new File(mCropPicsCacheFilePath, "crop_" + System.currentTimeMillis() + ".jpg");
-            String cropUrl = PFileUtil.saveBitmapToLocalWithJPEG(view, f.getAbsolutePath());
-            imageItem.setCropUrl(cropUrl);
-            imageItem.setCropMode(cropMode);
-            imageItem.setSelect(false);
-            imageItem.setPress(false);
-            cropUrlList.add(imageItem);
-        }
-
-        if (null != imageListener) {
-            imageListener.onImagePickComplete(cropUrlList);
-        }
-    }
-
-
-    /**
-     * 清空缓存数据选中状态
-     */
-    private void clearData() {
-        for (ImageItem imageItem : selectList) {
-            imageItem.setPress(false);
-            imageItem.setSelect(false);
-        }
-        if (lastPressImageItem != null) {
-            lastPressImageItem.setSelect(false);
-            lastPressImageItem.setPress(false);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        clearData();
-    }
-
-    /**
-     * 拍照
-     */
-    private void takePhoto() {
-        if (isOverMaxCount() || getActivity() == null) {
-            return;
-        }
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
+        //如果当前选择的都是视频
+        if (selectList.size() > 0 && selectList.get(0).isVideo() && !selectConfig.isVideoSinglePick()) {
+            imageListener.onImagePickComplete((ArrayList<ImageItem>) selectList);
         } else {
-            PTakePhotoUtil.takePhoto(getActivity(), REQ_CAMERA);
+            ArrayList<ImageItem> cropUrlList = cropViewContainerHelper.
+                    generateCropUrls(selectList, selectConfig.getCropSaveFilePath(), cropMode);
+            if (null != imageListener) {
+                imageListener.onImagePickComplete(cropUrlList);
+            }
         }
-    }
-
-    /**
-     * 刷新相册
-     */
-    private void refreshGalleryAddPic() {
-        if (getActivity() == null) {
-            return;
-        }
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(PTakePhotoUtil.mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        getActivity().sendBroadcast(mediaScanIntent);
     }
 
     /**
@@ -863,70 +625,81 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
      * @return true:超过
      */
     private boolean isOverMaxCount() {
-        if (selectList.size() >= maxCount) {
-            showTipDialog(String.format(getString(R.string.picker_str_selectmaxcount), maxCount));
+        if (selectList.size() >= selectConfig.getMaxCount()) {
+            String tip = String.format(getString(R.string.picker_str_selectmaxcount), selectConfig.getMaxCount());
+            if (presenter != null) {
+                presenter.overMaxCountTip(getContext(), selectConfig.getMaxCount(), tip);
+            } else {
+                Toast.makeText(getContext(), tip, Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
         return false;
     }
 
-    private void showTipDialog(String msg) {
-        if (getActivity() == null) {
+    @Override
+    protected void takePhoto() {
+        if (isOverMaxCount()) {
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(msg);
-        builder.setPositiveButton(R.string.picker_str_isee,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        super.takePhoto();
     }
 
-    public void onTakePhotoResult(int requestCode, int resultCode) {
-        if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {
-            if (!TextUtils.isEmpty(PTakePhotoUtil.mCurrentPhotoPath)) {
-                refreshGalleryAddPic();
-                ImageItem item = new ImageItem(PTakePhotoUtil.mCurrentPhotoPath, System.currentTimeMillis());
-                item.width = PFileUtil.getImageWidthHeight(PTakePhotoUtil.mCurrentPhotoPath)[0];
-                item.height = PFileUtil.getImageWidthHeight(PTakePhotoUtil.mCurrentPhotoPath)[1];
-                imageItems.add(0, item);
-                if (imageSets != null && imageSets.size() > 0 && imageSets.get(0).imageItems != null) {
-                    imageSets.get(0).imageItems.add(0, item);
-                }
-                selectImage(isShowCamera ? 1 : 0);
-                imageGridAdapter.notifyDataSetChanged();
-            }
-        }
+
+    @Override
+    protected BaseSelectConfig getSelectConfig() {
+        return selectConfig;
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQ_CAMERA) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //申请成功，可以拍照
-                pressImage(0, true);
-            } else {
-                PPermissionUtils.create(getContext()).showSetPermissionDialog(getString(R.string.picker_str_camerapermisson));
-            }
-        } else if (requestCode == REQ_STORAGE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //申请成功，可以拍照
-                loadImageData();
-            } else {
-                PPermissionUtils.create(getContext()).showSetPermissionDialog(getString(R.string.picker_str_storagepermisson));
+    protected void loadMediaSetsComplete(List<ImageSet> imageSetList) {
+        if (imageSetList == null || imageSetList.size() == 0) {
+            return;
+        }
+        this.imageSets.clear();
+        this.imageSets.addAll(imageSetList);
+        imageSetAdapter.notifyDataSetChanged();
+        selectImageSet(0, false);
+    }
+
+    @Override
+    protected void loadMediaItemsComplete(ImageSet set) {
+        imageItems.clear();
+        if (set.imageItems != null && set.imageItems.size() > 0) {
+            imageItems.addAll(set.imageItems);
+            imageGridAdapter.notifyDataSetChanged();
+            int firstImageIndex = getFirstImage();
+            int index = selectConfig.isShowCamera() ? firstImageIndex + 1 : firstImageIndex;
+            onPressImage(index, true);
+        }
+    }
+
+    private int getFirstImage() {
+        if (selectConfig.isVideoSinglePick()) {
+            for (int i = 0; i < imageItems.size(); i++) {
+                if (!imageItems.get(i).isVideo()) {
+                    return i;
+                }
             }
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        return 0;
+    }
+
+    @Override
+    protected void refreshAllVideoSet(ImageSet allVideoSet) {
+        if (allVideoSet != null &&
+                allVideoSet.imageItems != null
+                && allVideoSet.imageItems.size() > 0
+                && !imageSets.contains(allVideoSet)) {
+            imageSets.add(1, allVideoSet);
+            imageSetAdapter.notifyDataSetChanged();
+        }
     }
 
     /**
      * 相册选择是否打开
      */
+    @Override
     public boolean onBackPressed() {
         if (mImageSetRecyclerView.getVisibility() == View.VISIBLE) {
             toggleImageSet();
@@ -935,11 +708,46 @@ public class ImagePickAndCropFragment extends Fragment implements View.OnClickLi
         return false;
     }
 
-    final public int dp(float dp) {
-        if (getActivity() == null || getContext() == null) {
-            return 0;
+    @Override
+    public void onTakePhotoResult(int requestCode, int resultCode) {
+        if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {
+            if (!TextUtils.isEmpty(PTakePhotoUtil.mCurrentPhotoPath)) {
+                PTakePhotoUtil.refreshGalleryAddPic(getContext());
+                ImageItem item = new ImageItem(PTakePhotoUtil.mCurrentPhotoPath, System.currentTimeMillis());
+                item.width = PFileUtil.getImageWidthHeight(PTakePhotoUtil.mCurrentPhotoPath)[0];
+                item.height = PFileUtil.getImageWidthHeight(PTakePhotoUtil.mCurrentPhotoPath)[1];
+                imageItems.add(0, item);
+                if (imageSets != null && imageSets.size() > 0 && imageSets.get(0).imageItems != null) {
+                    imageSets.get(0).imageItems.add(0, item);
+                }
+                onSelectImage(selectConfig.isShowCamera() ? 1 : 0);
+                imageGridAdapter.notifyDataSetChanged();
+            }
         }
-        float density = getResources().getDisplayMetrics().density;
-        return (int) (dp * density + 0.5);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //将VideoView所占用的资源释放掉
+        if (videoViewContainerHelper != null) {
+            videoViewContainerHelper.onDestroy();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (videoViewContainerHelper != null) {
+            videoViewContainerHelper.onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (videoViewContainerHelper != null) {
+            videoViewContainerHelper.onPause();
+        }
     }
 }

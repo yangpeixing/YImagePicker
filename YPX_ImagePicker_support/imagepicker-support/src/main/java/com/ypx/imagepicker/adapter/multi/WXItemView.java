@@ -11,9 +11,9 @@ import android.widget.TextView;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.ImageSelectMode;
-import com.ypx.imagepicker.bean.PickerSelectConfig;
+import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
+import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.widget.CheckImageView;
 import com.ypx.imagepicker.widget.ShowTypeImageView;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * Description: 微信样式item
  */
 public class WXItemView extends BaseItemView {
-    private PickerSelectConfig selectConfig;
+    private MultiSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
     private ShowTypeImageView mIvThumb;
     private View mVMasker;
@@ -39,7 +39,7 @@ public class WXItemView extends BaseItemView {
     }
 
     @Override
-    public void initData(PickerSelectConfig selectConfig, IMultiPickerBindPresenter presenter, PickerUiConfig uiConfig) {
+    public void initData(MultiSelectConfig selectConfig, IMultiPickerBindPresenter presenter, PickerUiConfig uiConfig) {
         super.initData(selectConfig, presenter, uiConfig);
         this.selectConfig = selectConfig;
         this.presenter = presenter;
@@ -93,7 +93,7 @@ public class WXItemView extends BaseItemView {
             }
         } else {
             mVideoLayout.setVisibility(View.GONE);
-            mIvThumb.setTypeWithUrlAndSize(item);
+            mIvThumb.setTypeFromImage(item);
         }
 
         //如果只能选择图片或视频的一种，当选中一种类型时，把另一种置灰
@@ -125,7 +125,7 @@ public class WXItemView extends BaseItemView {
             }
         }
 
-        if (selectConfig.getMaxCount() <= 1 && selectConfig.getSelectMode() != ImageSelectMode.MODE_MULTI) {
+        if (selectConfig.getMaxCount() <= 1 && selectConfig.getSelectMode() != SelectMode.MODE_MULTI) {
             mIvThumbCheck.setVisibility(View.GONE);
         }
 
@@ -137,7 +137,6 @@ public class WXItemView extends BaseItemView {
                 }
             }
         });
-
 
         mIvThumbCheck.setOnClickListener(new OnClickListener() {
             @Override

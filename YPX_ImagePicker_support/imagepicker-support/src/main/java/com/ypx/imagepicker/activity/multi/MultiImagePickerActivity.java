@@ -1,6 +1,5 @@
 package com.ypx.imagepicker.activity.multi;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,17 +7,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.RelativeLayout;
-
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.bean.PickerSelectConfig;
+import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
-import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -28,31 +26,11 @@ import java.util.ArrayList;
  * Date: 2019/2/21
  */
 public class MultiImagePickerActivity extends FragmentActivity {
-    public static final String INTENT_KEY_SELECT_CONFIG = "PickerSelectConfig";
+    public static final String INTENT_KEY_SELECT_CONFIG = "MultiSelectConfig";
     public static final String INTENT_KEY_UI_CONFIG = "IMultiPickerBindPresenter";
     public static final String INTENT_KEY_CURRENT_INDEX = "currentIndex";
     public static final String INTENT_KEY_CURRENT_IMAGE = "currentImage";
     public static final int REQ_CAMERA = 1431;
-
-    public static void intent(Activity activity,
-                              PickerSelectConfig selectConfig,
-                              IMultiPickerBindPresenter presenter,
-                              final OnImagePickCompleteListener listener) {
-        Intent intent = new Intent(activity, MultiImagePickerActivity.class);
-        intent.putExtra(MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG, selectConfig);
-        intent.putExtra(MultiImagePickerActivity.INTENT_KEY_UI_CONFIG, presenter);
-        PLauncher.init(activity).startActivityForResult(intent, new PLauncher.Callback() {
-            @Override
-            public void onActivityResult(int resultCode, Intent data) {
-                if (resultCode == ImagePicker.REQ_PICKER_RESULT_CODE &&
-                        data.hasExtra(ImagePicker.INTENT_KEY_PICKERRESULT) && listener != null) {
-                    ArrayList list = (ArrayList) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKERRESULT);
-                    listener.onImagePickComplete(list);
-                    MultiPickerData.instance.clear();
-                }
-            }
-        });
-    }
 
     private MultiImagePickerFragment fragment;
 
@@ -65,7 +43,7 @@ public class MultiImagePickerActivity extends FragmentActivity {
             finish();
             return;
         }
-        PickerSelectConfig selectConfig = (PickerSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
+        MultiSelectConfig selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
         IMultiPickerBindPresenter presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_UI_CONFIG);
         if (selectConfig == null || presenter == null) {
             finish();
@@ -83,9 +61,18 @@ public class MultiImagePickerActivity extends FragmentActivity {
         } else {
             mStatusBar.setVisibility(View.GONE);
         }
-        fragment = ImagePicker.withMultiFragment(presenter)
-                .setPickerSelectConfig(selectConfig)
-                .pickWithFragment();
+
+        fragment = ImagePicker.withMulti(presenter)
+                .withMultiSelectConfig(selectConfig)
+                .pickWithFragment(new OnImagePickCompleteListener() {
+                    @Override
+                    public void onImagePickComplete(ArrayList<ImageItem> items) {
+                        Intent intent = new Intent();
+                        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, (Serializable) items);
+                        setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
+                        finish();
+                    }
+                });
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment)
@@ -95,11 +82,10 @@ public class MultiImagePickerActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if (fragment != null && fragment.isImageSetShow()) {
+        if (fragment != null && fragment.onBackPressed()) {
             return;
         }
         super.onBackPressed();
-        MultiPickerData.instance.clear();
     }
 
     @Override

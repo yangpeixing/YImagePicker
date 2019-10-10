@@ -23,6 +23,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
@@ -30,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.widget.browseimage.Info;
 import com.ypx.imagepicker.widget.browseimage.OnRotateListener;
 import com.ypx.imagepicker.widget.browseimage.RotateGestureDetector;
@@ -401,7 +403,6 @@ public class CropImageView extends ImageView {
         }
     }
 
-
     private void initCenterCrop() {
         float scaleX = mCropRect.width() / mImgRect.width();
         float scaleY = mCropRect.height() / mImgRect.height();
@@ -570,28 +571,28 @@ public class CropImageView extends ImageView {
         if (cropAnim == null) {
             cropAnim = ObjectAnimator.ofFloat(0.0F, 1.0F).setDuration(400);
             cropAnim.setInterpolator(new DecelerateInterpolator());
+            cropAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float value = (float) animation.getAnimatedValue();
+                    mCropRect.left = (finalLeft - oldLeft) * value + oldLeft;
+                    mCropRect.top = (finalTop - oldTop) * value + oldTop;
+                    mCropRect.right = (finalRight - oldRight) * value + oldRight;
+                    mCropRect.bottom = (finalBottom - oldBottom) * value + oldBottom;
+                    isShowLine = value < 1.0f;
+                    initBase();
+                    invalidate();
+                }
+            });
+            cropAnim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    initBase();
+                    invalidate();
+                }
+            });
         }
-        cropAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (float) animation.getAnimatedValue();
-                mCropRect.left = (finalLeft - oldLeft) * value + oldLeft;
-                mCropRect.top = (finalTop - oldTop) * value + oldTop;
-                mCropRect.right = (finalRight - oldRight) * value + oldRight;
-                mCropRect.bottom = (finalBottom - oldBottom) * value + oldBottom;
-                isShowLine = value < 1.0f;
-                initBase();
-                invalidate();
-            }
-        });
-        cropAnim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                initBase();
-                invalidate();
-            }
-        });
         cropAnim.start();
     }
 
@@ -662,35 +663,54 @@ public class CropImageView extends ImageView {
         canvas.drawLine(x + w, y, x + w, y + lineWidth, cropStrokePaint);
         canvas.drawLine(x + w, y + h, x + w - lineWidth, y + h, cropStrokePaint);
         canvas.drawLine(x + w, y + h, x + w, y + h - lineWidth, cropStrokePaint);
+    }
 
+    private boolean isShowImageRectLine = false;
+    private boolean canShowTouchLine = true;
+
+    public void setShowImageRectLine(boolean showImageRectLine) {
+        isShowImageRectLine = showImageRectLine;
+        invalidate();
+    }
+
+    public void setCanShowTouchLine(boolean canShowTouchLine) {
+        this.canShowTouchLine = canShowTouchLine;
+        invalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (aspectY <= 0 || aspectX <= 0) {
-            return;
-        }
-        int w = (int) mCropRect.width();
-        int h = (int) mCropRect.height();
-        int left = (int) mCropRect.left;
-        int top = (int) mCropRect.top;
-
-        drawStrokeLine(canvas);
-
-        if (isShowLine) {
+        if (isShowLine && canShowTouchLine) {
+            int left, top, right, bottom, w, h;
+            if (isShowImageRectLine) {
+                left = mImgRect.left > mCropRect.left ? (int) mImgRect.left : (int) mCropRect.left;
+                top = (int) mImgRect.top > mCropRect.top ? (int) mImgRect.top : (int) mCropRect.top;
+                right = mImgRect.right < mCropRect.right ? (int) mImgRect.right : (int) mCropRect.right;
+                bottom = mImgRect.bottom < mCropRect.bottom ? (int) mImgRect.bottom : (int) mCropRect.bottom;
+                w = right - left;
+                h = bottom - top;
+            } else {
+                w = (int) mCropRect.width();
+                h = (int) mCropRect.height();
+                left = (int) mCropRect.left;
+                top = (int) mCropRect.top;
+            }
             canvas.drawLine(left + w / 3.0f, top, left + w / 3.0f, h + top, linePaint);
             canvas.drawLine(left + w * 2 / 3.0f, top, left + w * 2 / 3.0f, h + top, linePaint);
             canvas.drawLine(left, top + h / 3.0f, left + w, top + h / 3.0f, linePaint);
             canvas.drawLine(left, top + h * 2 / 3.0f, left + w, top + h * 2 / 3.0f, linePaint);
         }
 
+        if (aspectY <= 0 || aspectX <= 0) {
+            return;
+        }
+        drawStrokeLine(canvas);
         getDrawingRect(viewDrawingRect);
         path.reset();
         path.addRect(mCropRect.left, mCropRect.top, mCropRect.right, mCropRect.bottom, Path.Direction.CW);
         canvas.clipPath(path, android.graphics.Region.Op.DIFFERENCE);
         canvas.drawRect(viewDrawingRect, maskPaint);
-
         canvas.drawPath(path, cropRectPaint);
     }
 
@@ -1437,7 +1457,6 @@ public class CropImageView extends ImageView {
         return bitmap1;
     }
 
-
     public float getTranslateX() {
         return mImgRect.left - mCropRect.left;
     }
@@ -1456,5 +1475,31 @@ public class CropImageView extends ImageView {
     public int dp(float dp) {
         float density = getContext().getResources().getDisplayMetrics().density;
         return (int) (dp * density + 0.5);
+    }
+
+    public void changeSize(boolean isAnim, final int endWidth, final int endHeight) {
+        if (isAnim) {
+            final int startWidth = PViewSizeUtils.getViewWidth(this);
+            final int startHeight = PViewSizeUtils.getViewHeight(this);
+            ValueAnimator anim = ValueAnimator.ofFloat(0.0f, 1.0f).setDuration(200);
+            anim.setInterpolator(new DecelerateInterpolator());
+            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float ratio = (Float) animation.getAnimatedValue();
+                    ViewGroup.LayoutParams params = getLayoutParams();
+                    params.width = (int) ((endWidth - startWidth) * ratio + startWidth);
+                    params.height = (int) ((endHeight - startHeight) * ratio + startHeight);
+                    setLayoutParams(params);
+                    setImageDrawable(getDrawable());
+                }
+            });
+            anim.start();
+        } else {
+            ViewGroup.LayoutParams params = getLayoutParams();
+            params.width = endWidth;
+            params.height = endHeight;
+            setLayoutParams(params);
+        }
     }
 }

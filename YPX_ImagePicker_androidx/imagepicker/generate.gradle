@@ -2,11 +2,11 @@
 apply plugin: 'maven'
 
 //声明你的包名
-def groupId = 'com.ypx.imagepicker'
+def groupId = 'com.ypx.yimagepicker'
 //声明模块名称
-def artifactId = 'ypxImagePicker'
+def artifactId = 'androidx'
 //要发布的版本号
-def version = '2.4'
+def version = '2.4.1'
 
 def localReleaseDest = "${buildDir}/release/${version}"
 

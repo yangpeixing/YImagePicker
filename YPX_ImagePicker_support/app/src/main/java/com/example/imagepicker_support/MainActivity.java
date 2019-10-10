@@ -27,6 +27,7 @@ import com.example.imagepicker_support.style.WXImgPickerPresenter;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSelectMode;
+import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 
 import java.util.ArrayList;
@@ -73,19 +74,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-
-        //注册媒体文件观察者，可放入Application或首页中
-        ImagePicker.registerMediaObserver(getApplication());
-        //预加载选择器，需要APP先申请存储权限，否则无效
-        //设置预加载后，可实现快速打开选择器（毫秒级加载千张大图）
-        // ImagePicker.preload(MainActivity.this, true, true, true);
-        mCbPreviewCanEdit.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ImagePicker.preload(MainActivity.this, true, true, true);
-            }
-        }, 1000);
-
     }
 
     private void initView() {
@@ -192,9 +180,9 @@ public class MainActivity extends AppCompatActivity {
             mCbVideoSingle.setEnabled(true);
             mCbImageOrVideoMix.setEnabled(true);
             if (checkedId == mRbRedBook.getId()) {
-                mCbShowGif.setVisibility(View.GONE);
+                mCbShowGif.setVisibility(View.VISIBLE);
                 mCbClosePreview.setVisibility(View.GONE);
-                mCbVideoSingle.setVisibility(View.GONE);
+                mCbVideoSingle.setVisibility(View.VISIBLE);
                 mCbImageOrVideoMix.setVisibility(View.GONE);
                 mTvSelectListTitle.setVisibility(View.GONE);
                 ((ViewGroup) mRbNew.getParent()).setVisibility(View.GONE);
@@ -247,20 +235,30 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    private void redBookPick() {
+    private void redBookPick(int count) {
+        if (mRbSave.isChecked()) {
+            count = 9;
+        }
         ImagePicker.withCrop(new RedBookCropPresenter())
-                .setMaxCount(9)
+                .setMaxCount(count)
                 .showCamera(mCbShowCamera.isChecked())
+                .showImage(!mRbVideoOnly.isChecked())
                 .showVideo(!mRbImageOnly.isChecked())
-                .showBottomView(false)
-                .showDraftDialog(false)
+                .showGif(!mCbShowGif.isChecked())
+                .setVideoSinglePick(mCbVideoSingle.isChecked())
+                .setCropPicSaveFilePath(ImagePicker.cropPicSaveFilePath)
+                .setFirstImageItem(picList != null && picList.size() > 0 ? picList.get(0) : null)
                 .pick(this, new OnImagePickCompleteListener() {
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {
                         for (ImageItem imageItem : items) {
-                            imageItem.path = imageItem.getCropUrl();
+                            if (!imageItem.isVideo()) {
+                                imageItem.path = imageItem.getCropUrl();
+                            }
                         }
-                        picList.clear();
+                        if (mRbSave.isChecked()) {
+                            picList.clear();
+                        }
                         picList.addAll(items);
                         refreshGridLayout();
                     }
@@ -283,8 +281,8 @@ public class MainActivity extends AppCompatActivity {
                 .setShieldList(mRbShield.isChecked() ? picList : null)
                 .setLastImageList(mRbSave.isChecked() ? picList : null)
                 .setPreview(!mCbClosePreview.isChecked())
-                .setSelectMode(mRbSingle.isChecked() ? ImageSelectMode.MODE_SINGLE :
-                        ImageSelectMode.MODE_MULTI)
+                .setSelectMode(mRbSingle.isChecked() ? SelectMode.MODE_SINGLE :
+                        SelectMode.MODE_MULTI)
                 .setMaxVideoDuration(120000)
                 .pick(this, new OnImagePickCompleteListener() {
                     @Override
@@ -330,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startPick() {
         if (mRbRedBook.isChecked()) {
-            redBookPick();
+            redBookPick(9 - picList.size());
         } else {
             if (mRbCrop.isChecked()) {
                 crop();

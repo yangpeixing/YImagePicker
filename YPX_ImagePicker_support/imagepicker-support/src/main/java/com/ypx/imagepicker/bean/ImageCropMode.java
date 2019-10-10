@@ -10,7 +10,7 @@ public class ImageCropMode {
     /**
      * 填充模式，按照图片宽度填充到容器(屏幕)宽度
      */
-    public static int CropViewScale_FILL = -5;
+    public static int CropViewScale_FULL = -5;
     /**
      * 自适应模式，按照图片高度自适应容器高度
      */
@@ -23,5 +23,5 @@ public class ImageCropMode {
     /**
      * imageView图片显示模式 留白
      */
-    public static int ImageScale_FIT = -8;
+    public static int ImageScale_GAP = -8;
 }

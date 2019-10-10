@@ -8,11 +8,6 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 
-/**
- * 作者：yangpeixing on 2018/10/16 15:28
- * 功能：选择框
- * 产权：南京婚尚信息技术
- */
 @SuppressLint("AppCompatCustomView")
 public class CheckImageView extends ImageView {
     private int unSelectIconId;

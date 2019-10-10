@@ -301,7 +301,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
                 }
             } else {
                 //执行预览视频操作
-                videoViewContainerHelper.loadVideoView(mCropContainer, currentImageItem, presenter);
+                videoViewContainerHelper.loadVideoView(mCropContainer, currentImageItem, presenter, uiConfig);
                 checkStateBtn();
             }
         } else {
