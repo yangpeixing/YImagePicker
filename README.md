@@ -149,7 +149,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter()).takePhoto(this, new OnImagePic
 });                                                                                                  
 ```
  
- -**自定义presenter交互 —— 支持图片文件夹列表弹入方向、支持图片item自定义**
+ - **自定义presenter交互 —— 支持图片文件夹列表弹入方向、支持图片item自定义**
 ```java
 /**
  * 作者：yangpeixing on 2018/9/26 15:57
@@ -408,10 +408,8 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
 本库来源于mars App,想要体验城市最新的吃喝玩乐，欢迎读者下载体验mars!
 
 
-
-
-
-Github地址：[https://github.com/yangpeixing/YPXImagePicker](https://github.com/yangpeixing/YPXImagePicker)（你的star就是我前进的动力~🌹）
 作者：[calorYang](https://blog.csdn.net/qq_16674697)
-email：313930500@qq.com
+邮箱：313930500@qq.com
+微信：calor0616
 
+**你的star就是我前进的动力~🌹**
