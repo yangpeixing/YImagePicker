@@ -1,10 +1,6 @@
 package com.ypx.imagepicker;
 
-import android.app.Application;
 import android.os.Environment;
-
-import androidx.fragment.app.FragmentActivity;
-
 import com.ypx.imagepicker.builder.CropPickerBuilder;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
@@ -25,7 +21,7 @@ public class ImagePicker {
      */
     public static long MAX_VIDEO_DURATION = 120000;
     //选择返回的key
-    public static final String INTENT_KEY_PICKERRESULT = "pickerResult";
+    public static final String INTENT_KEY_PICKER_RESULT = "pickerResult";
     //选择返回code
     public static final int REQ_PICKER_RESULT_CODE = 1433;
 
@@ -52,29 +48,6 @@ public class ImagePicker {
      */
     public static MultiPickerBuilder withMulti(IMultiPickerBindPresenter iMultiPickerBindPresenter) {
         return new MultiPickerBuilder(iMultiPickerBindPresenter);
-    }
-
-    /**
-     * 注册媒体监听器，用于捕获系统媒体文件发生变化
-     *
-     * @param application 应用application，可放入自定义Application中
-     * @deprecated
-     */
-    public static void registerMediaObserver(Application application) {
-
-    }
-
-    /**
-     * 预加载选择器媒体文件
-     *
-     * @param activity    预加载的activity
-     * @param isLoadImage 是否预加载图片
-     * @param isLoadVideo 是否预加载视频
-     * @param isLoadGif   是否预加载GIF图
-     * @deprecated
-     */
-    public static void preload(FragmentActivity activity, boolean isLoadImage, boolean isLoadVideo, boolean isLoadGif) {
-
     }
 
     /**

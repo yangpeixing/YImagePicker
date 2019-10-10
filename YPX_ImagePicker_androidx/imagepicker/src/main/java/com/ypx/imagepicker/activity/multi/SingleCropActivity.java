@@ -55,8 +55,8 @@ public class SingleCropActivity extends FragmentActivity {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode == ImagePicker.REQ_PICKER_RESULT_CODE &&
-                        data.hasExtra(ImagePicker.INTENT_KEY_PICKERRESULT) && listener != null) {
-                    ArrayList list = (ArrayList) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKERRESULT);
+                        data.hasExtra(ImagePicker.INTENT_KEY_PICKER_RESULT) && listener != null) {
+                    ArrayList list = (ArrayList) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKER_RESULT);
                     listener.onImagePickComplete(list);
                 }
             }
@@ -135,7 +135,7 @@ public class SingleCropActivity extends FragmentActivity {
 
     private void notifyOnImagePickComplete(ArrayList<ImageItem> list) {
         Intent intent = new Intent();
-        intent.putExtra(ImagePicker.INTENT_KEY_PICKERRESULT, (Serializable) list);
+        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, (Serializable) list);
         setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
         finish();
     }

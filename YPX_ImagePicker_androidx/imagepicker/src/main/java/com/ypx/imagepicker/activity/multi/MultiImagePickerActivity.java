@@ -70,7 +70,7 @@ public class MultiImagePickerActivity extends FragmentActivity {
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {
                         Intent intent = new Intent();
-                        intent.putExtra(ImagePicker.INTENT_KEY_PICKERRESULT, (Serializable) items);
+                        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, (Serializable) items);
                         setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
                         finish();
                     }

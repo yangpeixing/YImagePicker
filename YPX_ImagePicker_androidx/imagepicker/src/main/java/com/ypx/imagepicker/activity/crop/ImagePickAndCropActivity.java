@@ -50,14 +50,16 @@ public class ImagePickAndCropActivity extends FragmentActivity {
             finish();
             return;
         }
-
-        ICropPickerBindPresenter presenter = (ICropPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_DATA_PRESENTER);
-        CropSelectConfig selectConfig = (CropSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
+        //获取相关配置信息
+        ICropPickerBindPresenter presenter = (ICropPickerBindPresenter) getIntent().
+                getSerializableExtra(INTENT_KEY_DATA_PRESENTER);
+        CropSelectConfig selectConfig = (CropSelectConfig) getIntent().
+                getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
         if (presenter == null || selectConfig == null) {
             finish();
             return;
         }
-
+        //刘海屏幕需要适配状态栏颜色
         if (PStatusBarUtil.hasNotchInScreen(this)) {
             CropUiConfig cropUiConfig = presenter.getUiConfig(this);
             if (cropUiConfig == null) {
@@ -70,18 +72,18 @@ public class ImagePickAndCropActivity extends FragmentActivity {
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
+        //fragment构建
         mFragment = ImagePicker.withCrop(presenter).
                 withSelectConfig(selectConfig).
                 pickWithFragment(new OnImagePickCompleteListener() {
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {
                         Intent intent = new Intent();
-                        intent.putExtra(ImagePicker.INTENT_KEY_PICKERRESULT, items);
+                        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, items);
                         setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
                         finish();
                     }
                 });
-
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, mFragment)

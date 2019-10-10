@@ -144,7 +144,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         mBckImg = view.findViewById(R.id.iv_back);
         mTvPreview = view.findViewById(R.id.tv_preview);
         initAdapters();
-        setUi();
+        initUI();
         setListener();
         refreshOKBtn();
     }
@@ -187,7 +187,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         }
     };
 
-    private void setUi() {
+    private void initUI() {
         mBckImg.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
         mBckImg.setColorFilter(uiConfig.getBackIconColor());
         mTitleLayout.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
@@ -352,7 +352,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
             onImagePickCompleteListener.onImagePickComplete(list);
         } else {
             Intent intent = new Intent();
-            intent.putExtra(ImagePicker.INTENT_KEY_PICKERRESULT, (Serializable) list);
+            intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, (Serializable) list);
             mContext.setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
             mContext.finish();
         }

@@ -145,13 +145,18 @@
             <TextView
                 android:id="@+id/mTvNext"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="10dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_centerVertical="true"
                 android:gravity="center"
                 android:text="下一步"
                 android:textColor="#859D7B"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
         </RelativeLayout>
 
 

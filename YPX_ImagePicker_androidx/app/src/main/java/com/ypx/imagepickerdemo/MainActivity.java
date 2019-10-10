@@ -74,18 +74,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-
-        //注册媒体文件观察者，可放入Application或首页中
-        ImagePicker.registerMediaObserver(getApplication());
-        //预加载选择器，需要APP先申请存储权限，否则无效
-        //设置预加载后，可实现快速打开选择器（毫秒级加载千张大图）
-        // ImagePicker.preload(MainActivity.this, true, true, true);
-        mCbPreviewCanEdit.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ImagePicker.preload(MainActivity.this, true, true, true);
-            }
-        }, 1000);
     }
 
     private void initView() {
@@ -260,8 +248,6 @@ public class MainActivity extends AppCompatActivity {
                 .setVideoSinglePick(mCbVideoSingle.isChecked())
                 .setCropPicSaveFilePath(ImagePicker.cropPicSaveFilePath)
                 .setFirstImageItem(picList != null && picList.size() > 0 ? picList.get(0) : null)
-                .showBottomView(false)
-                .showDraftDialog(false)
                 .pick(this, new OnImagePickCompleteListener() {
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {

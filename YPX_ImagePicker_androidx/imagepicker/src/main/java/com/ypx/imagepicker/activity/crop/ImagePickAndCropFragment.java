@@ -89,7 +89,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
     //选择配置项
     private CropSelectConfig selectConfig;
     // 默认剪裁模式：充满
-    private int cropMode = ImageCropMode.CropViewScale_FILL;
+    private int cropMode = ImageCropMode.CropViewScale_FULL;
     private ImageItem currentImageItem;
     private View mContentView;
     // fragment 形式调用的图片选中回调
@@ -97,9 +97,12 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
     //剪裁view或videoView填充辅助类
     private CropViewContainerHelper cropViewContainerHelper;
     private VideoViewContainerHelper videoViewContainerHelper;
-
+    //UI配置类
     private CropUiConfig uiConfig;
 
+    /**
+     * @param imageListener 选择回调监听
+     */
     public void setOnImagePickCompleteListener(OnImagePickCompleteListener imageListener) {
         this.imageListener = imageListener;
     }
@@ -120,6 +123,9 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         loadMediaSets();
     }
 
+    /**
+     * 处理传递数据
+     */
     private void dealWithIntentData() {
         Bundle arguments = getArguments();
         if (null != arguments) {
@@ -128,6 +134,9 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         }
     }
 
+    /**
+     * 初始化界面
+     */
     private void initView() {
         mTvSetName = mContentView.findViewById(R.id.mTvSetName);
         mTvFullOrGap = mContentView.findViewById(R.id.mTvFullOrGap);
@@ -165,16 +174,26 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         //初始化相关尺寸信息
         mCropSize = PViewSizeUtils.getScreenWidth(getActivity());
         PViewSizeUtils.setViewSize(mCropLayout, mCropSize, 1.0f);
+        //recyclerView和topView的联动效果辅助类
         touchHelper = RecyclerViewTouchHelper.create(mGridImageRecyclerView)
                 .setTopView(topView)
                 .setMaskView(maskView)
                 .setCanScrollHeight(mCropSize)
                 .setStickHeight(dp(50))
                 .build();
+        //剪裁控件辅助类
         cropViewContainerHelper = new CropViewContainerHelper(mCropContainer);
+        //视频控件辅助类
         videoViewContainerHelper = new VideoViewContainerHelper();
+        //指定默认剪裁模式
+        if (selectConfig.hasFirstImageItem()) {
+            cropMode = selectConfig.getFirstImageItem().getCropMode();
+        }
     }
 
+    /**
+     * 初始化自定义样式
+     */
     private void initUI() {
         uiConfig = presenter.getUiConfig(getActivity());
         if (uiConfig == null) {
@@ -188,6 +207,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         mArrowImg.setColorFilter(uiConfig.getTitleTextColor());
         mTvSelectNum.setBackground(PCornerUtils.cornerDrawable(uiConfig.getNextBtnSelectedTextColor(), dp(10)));
         mGridImageRecyclerView.setBackgroundColor(uiConfig.getGridBackgroundColor());
+        mTvNext.setText(uiConfig.getNextBtnText());
     }
 
     /**
@@ -255,30 +275,37 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         if (position < 0) {
             return;
         }
-
+        //得到当前选中的item索引
         pressImageIndex = selectConfig.isShowCamera() ? position - 1 : position;
+        //防止数组越界
         if (imageItems == null || imageItems.size() == 0 ||
                 imageItems.size() <= pressImageIndex) {
             return;
         }
         currentImageItem = imageItems.get(pressImageIndex);
         if (lastPressItem != null) {
+            //如果当前选中的item和上一次选中的一致，则不处理
             if (lastPressItem.equals(currentImageItem)) {
                 return;
             }
+            //取消上次选中
             lastPressItem.setPress(false);
         }
         currentImageItem.setPress(true);
+        //当前选中视频
         if (currentImageItem.isVideo()) {
+            //如果当前视频只支持单选的话，执行presenter的clickVideo方法
             if (selectConfig.isVideoSinglePick()) {
                 if (presenter != null) {
                     presenter.clickVideo(getActivity(), currentImageItem);
                 }
             } else {
+                //执行预览视频操作
                 videoViewContainerHelper.loadVideoView(mCropContainer, currentImageItem, presenter);
                 checkStateBtn();
             }
         } else {
+            //加载图片
             loadCropView();
             checkStateBtn();
             if (mTvFullOrGap.getVisibility() == View.VISIBLE) {
@@ -370,16 +397,26 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         refreshSelectCount();
     }
 
+    /**
+     * 刷新选中数量
+     */
     private void refreshSelectCount() {
         if (selectList.size() == 0) {
             mTvNext.setEnabled(false);
             mTvNext.setTextColor(uiConfig.getNextBtnUnSelectTextColor());
+            mTvNext.setBackground(uiConfig.getNextBtnUnSelectBackground());
             mTvSelectNum.setVisibility(View.GONE);
         } else {
             mTvNext.setEnabled(true);
             mTvNext.setTextColor(uiConfig.getNextBtnSelectedTextColor());
-            mTvSelectNum.setVisibility(View.VISIBLE);
-            mTvSelectNum.setText(String.valueOf(selectList.size()));
+            mTvNext.setBackground(uiConfig.getNextBtnSelectedBackground());
+            if (uiConfig.getNextBtnSelectedBackground() == null) {
+                mTvNext.setPadding(0, dp(4), dp(10), dp(4));
+            }
+            if (uiConfig.isShowNextCount()) {
+                mTvSelectNum.setVisibility(View.VISIBLE);
+                mTvSelectNum.setText(String.valueOf(selectList.size()));
+            }
         }
     }
 
@@ -458,7 +495,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
      */
     private void fullOrFit() {
         if (cropMode == ImageCropMode.CropViewScale_FIT) {
-            cropMode = ImageCropMode.CropViewScale_FILL;
+            cropMode = ImageCropMode.CropViewScale_FULL;
             stateBtn.setImageDrawable(getResources().getDrawable(uiConfig.getFitIconID()));
         } else {
             cropMode = ImageCropMode.CropViewScale_FIT;
@@ -489,13 +526,14 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         if (cropMode == ImageCropMode.CropViewScale_FIT) {
             //如果当前图片和第一张选中图片的宽高类型一样，则不显示留白和充满
             mTvFullOrGap.setVisibility(View.GONE);
-        } else {//如果第一张图为充满模式，则不论宽高比（除正方形外），都显示留白和充满
+        } else {
+            //如果第一张图为充满模式，则不论宽高比（除正方形外），都显示留白和充满
             mTvFullOrGap.setVisibility(View.VISIBLE);
             //如果当前已选中该图片，则恢复选择时的填充和留白状态
             if (selectList.contains(currentImageItem)) {
                 if (currentImageItem.getCropMode() == ImageCropMode.ImageScale_FILL) {
                     fullState();
-                } else if (currentImageItem.getCropMode() == ImageCropMode.ImageScale_FIT) {
+                } else if (currentImageItem.getCropMode() == ImageCropMode.ImageScale_GAP) {
                     gapState();
                 }
             } else {
@@ -513,10 +551,11 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
     private void fullOrGap() {
         //留白
         if (currentImageItem.getCropMode() == ImageCropMode.ImageScale_FILL) {
-            currentImageItem.setCropMode(ImageCropMode.ImageScale_FIT);
+            currentImageItem.setCropMode(ImageCropMode.ImageScale_GAP);
             mCropView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             gapState();
-        } else {//充满
+        } else {
+            //充满
             currentImageItem.setCropMode(ImageCropMode.ImageScale_FILL);
             mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             fullState();
@@ -569,6 +608,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
             Toast.makeText(getActivity(), getString(R.string.wait_for_load), Toast.LENGTH_SHORT).show();
             return;
         }
+        //如果当前选择的都是视频
         if (selectList.size() > 0 && selectList.get(0).isVideo() && !selectConfig.isVideoSinglePick()) {
             imageListener.onImagePickComplete((ArrayList<ImageItem>) selectList);
         } else {
