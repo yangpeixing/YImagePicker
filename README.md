@@ -1,27 +1,20 @@
 ## 关于YImagePicker 
 [ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=2.4.1) ](https://bintray.com/yangpeixing/yimagepicker/androidx/2.4.1/link)
- - **支持无缝切换小红书剪裁样式并自定义UI**
- - **支持微信、马蜂窝、知乎等多个不同风格样式定制**
- - **支持图片直接预览和编辑预览（排序、删除）**
- - **支持单图自定义比例剪裁**
- - **支持视频、图片、GIF图等不同类型混合加载**
- - **支持视频图片混合单选或多选**
- - **小红书剪裁样式支持视频预览**
- - **微信样式支持指定单一类型选择（图片、视频）**
- - **微信样式支持多次选择状态保存**
- - **微信样式支持指定某些媒体文件不可选择**
- - **选择结果直接回调，拒绝配置ActivityForResult，哪里调用哪里处理结果**
- - **轻量级，aar大小300K，无so库，无任何第三方依赖**
- - **支持androidx和support**
- - **永久维护**
+ - 支持无缝切换小红书剪裁样式并自定义UI
+ - 支持微信、马蜂窝、知乎等多个不同风格样式定制
+ - 支持图片直接预览和编辑预览（排序、删除）
+ - 支持单图自定义比例剪裁
+ - 支持视频、图片、GIF图等不同类型混合加载
+ - 支持视频图片混合单选或多选
+ - 小红书剪裁样式支持视频预览
+ - 微信样式支持指定单一类型选择（图片、视频）
+ - 微信样式支持多次选择状态保存
+ - 微信样式支持指定某些媒体文件不可选择
+ - 选择结果直接回调，拒绝配置ActivityForResult，哪里调用哪里处理结果
+ - 轻量级，aar大小300K，无so库，无任何第三方依赖
+ - 支持androidx和support
+ - 永久维护
 
-## 核心原理
-YImagePicker与主项目通过presenter进行交互与解耦，presenter采用序列化接口的方式实现。回调采用嵌入fragment的方式实现，类似于Glide或RxPermisson.原理上还是使用OnActivityResult,但无需再配置requestCode并且支持跨进程回调。
-
-小红书样式需要实现：ICropPickerBindPresenter
-微信样式需要实现：IMultiPickerBindPresenter
-
-[apk体验地址](https://www.pgyer.com/Wfhb)
 
 ## 引入依赖
 **androidx版本：**
@@ -34,6 +27,13 @@ implementation 'com.ypx.yimagepicker:androidx:2.4.1'
 implementation 'com.ypx.yimagepicker:support:2.4.1'
 ```
 
+## 核心原理
+YImagePicker与主项目通过presenter进行交互与解耦，presenter采用序列化接口的方式实现。回调采用嵌入fragment的方式实现，类似于Glide或RxPermisson.原理上还是使用OnActivityResult,但无需再配置requestCode并且支持跨进程回调。
+
+小红书样式需要实现：ICropPickerBindPresenter
+微信样式需要实现：IMultiPickerBindPresenter
+
+[apk体验地址](https://www.pgyer.com/Wfhb)
 
 ## 效果图集
  - de'mo效果
