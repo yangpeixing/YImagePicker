@@ -1,60 +1,14 @@
-
-language: android
-jdk: oraclejdk8
-
-env:
-  global:
-    # wait up to 10 minutes for adb to connect to emulator
-    - ADB_INSTALL_TIMEOUT=10
-
+language: android  
 android:
   components:
-    # Uncomment the lines below if you want to
-    # use the latest revision of Android SDK Tools
-    - platform-tools
     - tools
-
-    # The BuildTools version used by your project
-    - build-tools-26.0.2
-
-    # The SDK version used to compile your project
-    - android-26
-    - extra
-    # Additional components
-    - extra-google-google_play_services
-    - extra-google-m2repository
+    - build-tools-23.0.2
+    - android-23
     - extra-android-m2repository
     - extra-android-support
 
-    # Specify at least one system image,
-    # if you need to run emulator(s) during your tests
-    # - sys-img-armeabi-v7a-android-24
+before_install:
+  - chmod +x gradlew
 
-  licenses:
-    - 'android-sdk-preview-license-52d11cd2'
-    - 'android-sdk-license-.+'
-    - 'google-gdk-license-.+'
-
-# start Android emulator
-
-bedfore_install:
-  - yes | sdkmanager "platforms;android-22"
-  - ./gradlew build connectedCheck
-  - chmod +x ./gradlew
-
-before_script:
-  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
-
-notifications:
-  email: true
-
-cache:
-  directories:
-    - $HOME/.m2
-    - $HOME/.gradle
-    - $HOME/.android
-    - ${TRAVIS_BUILD_DIR}/gradle/caches/
-    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
+script:  
+  - ./gradlew assembleRelease
