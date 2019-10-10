@@ -1,4 +1,5 @@
-## YImagePicker
+## 关于YImagePicker 
+[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=2.4.1) ](https://bintray.com/yangpeixing/yimagepicker/androidx/2.4.1/link)
  - **支持无缝切换小红书剪裁样式并自定义UI**
  - **支持微信、马蜂窝、知乎等多个不同风格样式定制**
  - **支持图片直接预览和编辑预览（排序、删除）**
@@ -23,12 +24,12 @@ YImagePicker与主项目通过presenter进行交互与解耦，presenter采用�
 [apk体验地址](https://www.pgyer.com/Wfhb)
 
 ## 引入依赖
-**androidx版本：**[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=2.4.1) ](https://bintray.com/yangpeixing/yimagepicker/androidx/2.4.1/link)
+**androidx版本：**
 
 ```java
 implementation 'com.ypx.yimagepicker:androidx:2.4.1'
 ```
-**support版本：**[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/support/images/download.svg?version=2.4.1) ](https://bintray.com/yangpeixing/yimagepicker/support/2.4.1/link)
+**support版本：**
 ```java
 implementation 'com.ypx.yimagepicker:support:2.4.1'
 ```
@@ -148,7 +149,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter()).takePhoto(this, new OnImagePic
 });                                                                                                  
 ```
  
- - **自定义presenter交互 —— 支持图片文件夹列表弹入方向、支持图片item自定义 **
+ -**自定义presenter交互 —— 支持图片文件夹列表弹入方向、支持图片item自定义**
 ```java
 /**
  * 作者：yangpeixing on 2018/9/26 15:57
