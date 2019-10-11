@@ -1,4 +1,4 @@
-package com.ypx.imagepicker.data.impl;
+package com.ypx.imagepicker.data;
 
 import android.content.Context;
 import android.database.Cursor;

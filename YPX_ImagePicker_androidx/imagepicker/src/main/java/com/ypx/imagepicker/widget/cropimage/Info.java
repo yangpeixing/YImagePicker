@@ -1,4 +1,4 @@
-package com.ypx.imagepicker.widget.browseimage;
+package com.ypx.imagepicker.widget.cropimage;
 
 import android.graphics.PointF;
 import android.graphics.RectF;

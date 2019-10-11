@@ -144,11 +144,12 @@ public class PStatusBarUtil {
                 }
             }
         } else {
-            activity.getWindow().setStatusBarColor(Color.parseColor("#B0B0B0"));
             if (isFullScreen) {
+                activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
                 option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
             } else {
+                activity.getWindow().setStatusBarColor(bgColor);
                 option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
             }
         }

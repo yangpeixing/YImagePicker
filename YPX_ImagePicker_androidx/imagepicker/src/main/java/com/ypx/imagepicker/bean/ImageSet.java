@@ -2,7 +2,6 @@ package com.ypx.imagepicker.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Description: 文件夹信息

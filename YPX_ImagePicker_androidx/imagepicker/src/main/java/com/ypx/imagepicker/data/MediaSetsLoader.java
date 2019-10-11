@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ypx.imagepicker.data.impl;
+package com.ypx.imagepicker.data;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -22,7 +22,6 @@ import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import androidx.loader.content.CursorLoader;
 

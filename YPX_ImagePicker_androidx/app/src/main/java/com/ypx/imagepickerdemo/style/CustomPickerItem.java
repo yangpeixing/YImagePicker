@@ -60,10 +60,10 @@ public class CustomPickerItem extends BaseItemView {
         mRectView.setBackground(PCornerUtils.cornerDrawableAndStroke(Color.TRANSPARENT, 0, dp(1.5f), Color.WHITE));
 
         stokeDrawable = PCornerUtils.cornerDrawableAndStroke(
-                getContext().getResources().getColor(R.color.picker_theme_color),
+                Color.parseColor("#859D7B"),
                 dp(12), dp(1), Color.WHITE);
         maskDrawable = PCornerUtils.cornerDrawableAndStroke(Color.parseColor("#80859D7B"),
-                0, dp(2), getResources().getColor(R.color.picker_theme_color));
+                0, dp(2), Color.parseColor("#859D7B"));
     }
 
     @Override

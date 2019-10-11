@@ -61,12 +61,12 @@ public class ImagePickAndCropActivity extends FragmentActivity {
         }
         //刘海屏幕需要适配状态栏颜色
         if (PStatusBarUtil.hasNotchInScreen(this)) {
-            CropUiConfig cropUiConfig = presenter.getUiConfig(this);
-            if (cropUiConfig == null) {
-                cropUiConfig = new CropUiConfig();
+            CropUiConfig uiConfig = presenter.getUiConfig(this);
+            if (uiConfig == null) {
+                uiConfig = new CropUiConfig();
             }
-            PStatusBarUtil.setStatusBar(this, cropUiConfig.getTitleBarBackgroundColor(),
-                    false, true);
+            PStatusBarUtil.setStatusBar(this, uiConfig.getTitleBarBackgroundColor(),
+                    false,   PStatusBarUtil.isDarkColor(uiConfig.getTitleBarBackgroundColor()));
         } else {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);

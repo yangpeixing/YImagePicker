@@ -49,7 +49,7 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
     public CropUiConfig getUiConfig(Context context) {
         CropUiConfig config = new CropUiConfig();
         //设置主题色，包含选中样式的圆形背景色和边框色
-        config.setThemeColor(Color.RED);
+        config.setThemeColor(Color.parseColor("#ff2442"));
         //设置item未选中图标
         config.setUnSelectIconID(R.mipmap.picker_icon_unselect);
         //设置相机图标
@@ -65,7 +65,7 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
         //设置填充图标
         config.setFillIconID(R.mipmap.picker_icon_fill);
         //设置视频暂停图标
-        config.setVideoPauseIconID(R.mipmap.video_play_small);
+        config.setVideoPauseIconID(R.mipmap.picker_icon_video);
         //设置返回按钮颜色
         config.setBackIconColor(Color.WHITE);
         //设置剪裁区域颜色
@@ -83,9 +83,9 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
         //设置item列表背景色
         config.setGridBackgroundColor(Color.BLACK);
         //设置下一步按钮未选中时背景drawable
-        config.setNextBtnUnSelectBackground(PCornerUtils.cornerDrawable(Color.parseColor("#B0B0B0"), PViewSizeUtils.dp(context, 30)));
+        config.setNextBtnUnSelectBackground(PCornerUtils.cornerDrawable(Color.parseColor("#50B0B0B0"), PViewSizeUtils.dp(context, 30)));
         //设置下一步按钮选中时背景drawable
-        config.setNextBtnSelectedBackground(PCornerUtils.cornerDrawable(Color.RED, PViewSizeUtils.dp(context, 30)));
+        config.setNextBtnSelectedBackground(PCornerUtils.cornerDrawable(Color.parseColor("#ff2442"), PViewSizeUtils.dp(context, 30)));
         //设置是否显示下一步数量提示
         config.setShowNextCount(false);
         //设置下一步按钮文字

@@ -1,7 +1,5 @@
 package com.ypx.imagepicker.bean;
 
-import com.ypx.imagepicker.ImagePicker;
-
 import java.io.Serializable;
 import java.util.Set;
 

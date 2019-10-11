@@ -8,7 +8,6 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
-
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;

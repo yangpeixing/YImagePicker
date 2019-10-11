@@ -5,7 +5,7 @@
 
     <include layout="@layout/picker_default_titlebar" />
 
-    <com.ypx.imagepicker.widget.CropImageView
+    <com.ypx.imagepicker.widget.cropimage.CropImageView
         android:id="@+id/cropView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -37,14 +37,14 @@ import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.data.impl.MediaItemsDataSource;
+import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.utils.PickerFileProvider;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
+import com.ypx.imagepicker.widget.cropimage.CropImageView;
 import com.ypx.imagepicker.widget.SuperCheckBox;
-import com.ypx.imagepicker.widget.browseimage.PicBrowseImageView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -442,12 +442,13 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             }
             url = imageItem.path;
             layout = new RelativeLayout(getContext());
-            PicBrowseImageView imageView = new PicBrowseImageView(getActivity());
+            CropImageView imageView = new CropImageView(getActivity());
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             imageView.setBackgroundColor(0xff000000);
             // 启用图片缩放功能
             imageView.enable();
-            imageView.setShowLine(false);
+            imageView.setShowImageRectLine(false);
+            imageView.setCanShowTouchLine(false);
             imageView.setMaxScale(7.0f);
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             imageView.setLayoutParams(params);

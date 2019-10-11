@@ -11,8 +11,8 @@ import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.data.impl.MediaItemsDataSource;
-import com.ypx.imagepicker.data.impl.MediaSetsDataSource;
+import com.ypx.imagepicker.data.MediaItemsDataSource;
+import com.ypx.imagepicker.data.MediaSetsDataSource;
 import com.ypx.imagepicker.utils.PPermissionUtils;
 import com.ypx.imagepicker.utils.PTakePhotoUtil;
 

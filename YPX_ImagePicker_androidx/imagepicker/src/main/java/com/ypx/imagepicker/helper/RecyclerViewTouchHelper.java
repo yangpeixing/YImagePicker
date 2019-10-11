@@ -261,8 +261,7 @@ public class RecyclerViewTouchHelper {
         if (scrollY == 0) {
             return;
         }
-        @SuppressLint("ObjectAnimatorBinding")
-        ObjectAnimator anim = ObjectAnimator.ofFloat(this, "translationY", 0.0f, 1.0f);
+        ValueAnimator anim = ValueAnimator.ofFloat(0.0f, 1.0f);
         anim.setDuration(500);
         anim.setInterpolator(new AccelerateDecelerateInterpolator());
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -281,7 +280,6 @@ public class RecyclerViewTouchHelper {
      * @param isFocusShow      是否强制完全展示
      * @param scrollToPosition 滑动到制定的位置
      */
-    @SuppressLint("ObjectAnimatorBinding")
     public void transitTopWithAnim(boolean isFocusShow, final int scrollToPosition, boolean isShowTransit) {
         if (!isShowTransit) {
             return;
@@ -294,7 +292,7 @@ public class RecyclerViewTouchHelper {
         final int endTop = (isFocusShow || (startTop > -stickHeight / 2)) ? 0 : -canScrollHeight;
         final int startPadding = recyclerView.getPaddingTop();
         final float startAlpha = maskView.getAlpha();
-        ObjectAnimator anim = ObjectAnimator.ofFloat(this, "translationY", 0.0f, 1.0f);
+        ValueAnimator anim = ValueAnimator.ofFloat(0.0f, 1.0f);
         anim.setDuration(300);
         anim.setInterpolator(new AccelerateDecelerateInterpolator());
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {

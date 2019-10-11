@@ -23,7 +23,7 @@ import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PFileUtil;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
-import com.ypx.imagepicker.widget.CropImageView;
+import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 import java.io.File;
 import java.io.Serializable;

@@ -46,8 +46,8 @@ public class VideoViewContainerHelper {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             params2.gravity = Gravity.CENTER;
             pauseImg.setLayoutParams(params2);
-            pauseImg.setVisibility(View.GONE);
         }
+        pauseImg.setVisibility(View.GONE);
         parent.removeAllViews();
         parent.addView(videoView);
         parent.addView(previewImg);

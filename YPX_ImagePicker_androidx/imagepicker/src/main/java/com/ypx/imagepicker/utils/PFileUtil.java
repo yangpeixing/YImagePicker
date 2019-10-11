@@ -92,7 +92,6 @@ public class PFileUtil {
     public static Bitmap getViewBitmap(View view) {
         view.measure(View.MeasureSpec.makeMeasureSpec(view.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(view.getMeasuredHeight(), View.MeasureSpec.EXACTLY));
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache(true);
