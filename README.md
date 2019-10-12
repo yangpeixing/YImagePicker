@@ -38,30 +38,30 @@ YImagePicker与主项目通过presenter进行交互与解耦，presenter采用�
 ### 效果图集
  - demo效果
  
- <img src="https://img-blog.csdnimg.cn/20191012110326691.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
+![demo效果](https://app-screenshot.pgyer.com/image/view/app_screenshots/3957d904273e547143955ca993bbf7ae-528)
 
  - 小红书样式
 
-<img src="https://img-blog.csdnimg.cn/20191012110550617.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
-<img src="https://img-blog.csdnimg.cn/20191012110616310.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
-<img src="https://img-blog.csdnimg.cn/20191012110801796.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
+![小红书样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/fc09bb8d2ac27b91820593430469cc17-528)
+![小红书样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/87b43cb9ef8f40377bc3910b3ad3737b-528)
+![小红书样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/daf41cb9f9a54c3c9879555ddf4ec8c8-528)
 
  - 微信样式
  
- <img src="https://img-blog.csdnimg.cn/20191012110856974.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
- <img src="https://img-blog.csdnimg.cn/20191012110918334.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
- <img src="https://img-blog.csdnimg.cn/20191012110951368.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
+![微信样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/fad19096a28cec65094f6120c154b47f-528)
+![微信样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/21145d344498c57954704bde3e0e7dfc-528)
+![微信样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/2cb198df6739d1a9f91d9ee60ec3c29f-528)
 
  - 自定义样式
  
- <img src="https://img-blog.csdnimg.cn/20191012111018751.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
- <img src="https://img-blog.csdnimg.cn/20191012111041908.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
+![自定义样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/211fb0209f7f8ef7bef6d9ea9939656a-528)
+![自定义样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/57a62bcc84844400878fdb343cf762e8-528)
  
 
  - 自定义比例剪裁
  
- <img src="https://img-blog.csdnimg.cn/20191012111132271.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
- <img src="https://img-blog.csdnimg.cn/20191012111117469.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
+ ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/15483adb087360ff49e831cb988adce1-528)
+ ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/c32921bd346904cec77b7fea919afb56-528)
 
  
 ### 微信图片选择
