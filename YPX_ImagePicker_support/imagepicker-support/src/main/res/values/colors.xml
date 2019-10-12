@@ -2,7 +2,6 @@
 <resources>
     <color name="press">#F0F0F0</color>
     <color name="normal">#FFFFFF</color>
-    <color name="picker_theme_color">#859D7B</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

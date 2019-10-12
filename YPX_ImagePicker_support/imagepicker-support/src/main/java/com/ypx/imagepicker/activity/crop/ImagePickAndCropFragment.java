@@ -178,7 +178,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
                 .setTopView(topView)
                 .setMaskView(maskView)
                 .setCanScrollHeight(mCropSize)
-                .setStickHeight(dp(50))
+                .setStickHeight(dp(55))
                 .build();
         //剪裁控件辅助类
         cropViewContainerHelper = new CropViewContainerHelper(mCropContainer);

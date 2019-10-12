@@ -15,9 +15,7 @@ import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.adapter.multi.BaseItemView;
 import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.ImageSelectMode;
 import com.ypx.imagepicker.bean.MultiSelectConfig;
-import com.ypx.imagepicker.bean.PickerSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
@@ -62,10 +60,10 @@ public class CustomPickerItem extends BaseItemView {
         mRectView.setBackground(PCornerUtils.cornerDrawableAndStroke(Color.TRANSPARENT, 0, dp(1.5f), Color.WHITE));
 
         stokeDrawable = PCornerUtils.cornerDrawableAndStroke(
-                getContext().getResources().getColor(R.color.picker_theme_color),
+                Color.parseColor("#859D7B"),
                 dp(12), dp(1), Color.WHITE);
         maskDrawable = PCornerUtils.cornerDrawableAndStroke(Color.parseColor("#80859D7B"),
-                0, dp(2), getResources().getColor(R.color.picker_theme_color));
+                0, dp(2), Color.parseColor("#859D7B"));
     }
 
     @Override

@@ -19,6 +19,7 @@ import com.ypx.imagepicker.utils.PViewSizeUtils;
 
 import java.util.ArrayList;
 
+
 /**
  * Description:<br> 多选选择器数据绑定类
  *

@@ -101,6 +101,7 @@ public class SingleCropActivity extends FragmentActivity {
         top_bar.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
         iv_back.setColorFilter(uiConfig.getBackIconColor());
         tv_title.setTextColor(uiConfig.getTitleColor());
+        tv_title.setText(R.string.str_crop);
         ((LinearLayout) findViewById(R.id.mTitleRoot)).setGravity(uiConfig.getTitleBarGravity());
         if (uiConfig.getOkBtnSelectBackground() == null) {
             tv_rightBtn.setPadding(0, 0, 0, 0);

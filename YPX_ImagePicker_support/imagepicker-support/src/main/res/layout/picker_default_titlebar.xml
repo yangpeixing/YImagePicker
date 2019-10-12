@@ -23,7 +23,7 @@
             android:gravity="center_vertical"
             android:maxWidth="165dp"
             android:maxLines="1"
-            android:text="图片剪裁"
+            android:text="图片预览"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
@@ -55,7 +55,6 @@
             android:layout_gravity="bottom"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="11dp"
-            android:background="@drawable/picker_wechat_okbtn_unselect"
             android:gravity="center"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"

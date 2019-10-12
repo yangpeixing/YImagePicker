@@ -37,7 +37,7 @@ public class CustomImgPickerPresenter implements IMultiPickerBindPresenter {
     public PickerUiConfig getUiConfig(Context context) {
         PickerUiConfig config = new PickerUiConfig();
         config.setImmersionBar(true);
-        config.setThemeColor(context.getResources().getColor(R.color.picker_theme_color));
+        config.setThemeColor(Color.parseColor("#859D7B"));
         //标题栏模式，从标题栏选择相册
         config.setPickStyle(PickerUiConfig.PICK_STYLE_TITLE);
 
@@ -49,9 +49,9 @@ public class CustomImgPickerPresenter implements IMultiPickerBindPresenter {
 
         config.setBottomBarBackgroundColor(Color.parseColor("#f0F6F6F6"));
         //设置预览页面底部文字颜色，防止和背景色撞色看不到文字
-        config.setBottomPreviewTextColor(context.getResources().getColor(R.color.picker_theme_color));
+        config.setBottomPreviewTextColor(Color.parseColor("#859D7B"));
 
-        config.setOkBtnSelectTextColor(context.getResources().getColor(R.color.picker_theme_color));
+        config.setOkBtnSelectTextColor(Color.parseColor("#859D7B"));
         config.setOkBtnUnSelectTextColor(Color.parseColor("#50859D7B"));
         config.setOkBtnText("下一步");
 
