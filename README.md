@@ -143,7 +143,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
             }                                                                
         });                                                                  
 ```
-#### 预览 —— 预览 —— 支持普通预览和编辑预览
+#### 预览 —— 支持普通预览和编辑预览
 ```java
   //预览数据源，只接受ArrayList<String> 和ArrayList<ImageItem> 两种泛型                          
 ArrayList<String> imageList = new ArrayList<>();                                 
