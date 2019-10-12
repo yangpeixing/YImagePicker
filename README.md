@@ -54,14 +54,15 @@ YImagePicker与主项目通过presenter进行交互与解耦，presenter采用�
 
  - 自定义样式
  
-![自定义样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/211fb0209f7f8ef7bef6d9ea9939656a-528)
-![自定义样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/57a62bcc84844400878fdb343cf762e8-528)
+![自定义样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/44b8fdecff62aa20eb51b4f54cfec30a-528)
+![自定义样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/57a62bcc84844400878fdb343cf762e8-528) 
  
 
  - 自定义比例剪裁
  
  ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/15483adb087360ff49e831cb988adce1-528)
  ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/c32921bd346904cec77b7fea919afb56-528)
+
 
  
 ### 微信图片选择
