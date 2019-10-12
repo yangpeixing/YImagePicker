@@ -69,7 +69,7 @@ YImagePicker与主项目通过presenter进行交互与解耦，presenter采用�
 ### 微信图片选择
 支持视频、GIF、长图选择，支持单张多比例剪裁，支持多图预览、编辑、以及调序，支持直接拍照。调用前请按照demo实现IMultiPickerBindPresenter 接口          
 
- - **多图/单图选择—— 支持视频和图片单一选择模式**
+ #### 单选/多选—— 支持视频和图片单一选择模式
 ```java
 //微信样式多选，WXImgPickerPresenter为用户自定义的微信显示样式，                                  
 // 以及一些交互逻辑，实现自IMultiPickerBindPresenter接口                                   
@@ -126,7 +126,7 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
 });
                                                          
 ```
- - **单张剪裁 —— 支持自定义剪裁比例**
+#### 单张剪裁 —— 支持自定义剪裁比例
 ```java
 //微信样式多选，WXImgPickerPresenter为用户自定义的微信显示样式，                                  
 // 以及一些交互逻辑，实现自IMultiPickerBindPresenter接口                                   
@@ -143,7 +143,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
             }                                                                
         });                                                                  
 ```
- - **预览 —— 支持普通预览和预览编辑（调序、删除）**
+#### 预览 —— 预览 —— 支持普通预览和编辑预览
 ```java
   //预览数据源，只接受ArrayList<String> 和ArrayList<ImageItem> 两种泛型                          
 ArrayList<String> imageList = new ArrayList<>();                                 
@@ -161,7 +161,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
         });                                                                      
 ```
 
- - **拍照**
+#### 拍照
 ```java
   //直接调用拍照                                                                                             
 ImagePicker.withMulti(new WXImgPickerPresenter()).takePhoto(this, new OnImagePickCompleteListener() {
@@ -172,7 +172,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter()).takePhoto(this, new OnImagePic
 });                                                                                                  
 ```
  
- - **自定义presenter交互 —— 支持图片文件夹列表弹入方向、支持图片item自定义**
+#### 自定义UI和presenter交互 —— 支持item自定义和文件夹列表弹入方向
 ```java
 /**
  * 作者：yangpeixing on 2018/9/26 15:57
@@ -248,7 +248,7 @@ public class WXImgPickerPresenter implements IMultiPickerBindPresenter {
 ### 小红书图片剪裁选择      
 高仿小红书图片剪裁框架，支持视频以及多图剪裁、支持fragment样式侵入
 
- - **Activity直接调用**
+#### Activity直接调用
 ```java
 //调用小红书剪裁回调的imageItems里，imageItem.path是原图，                                    
 // imageItem.getCropUrl()才是剪裁后的图片                                             
@@ -274,7 +274,8 @@ ImagePicker.withCrop(new RedBookCropPresenter())
             }                                                                 
         });                                                                                                                                               
 ```
- - **Fragment嵌套调用**
+
+#### Fragment嵌套调用
 
 ```java
 //调用小红书剪裁回调的imageItems里，imageItem.path是原图，                                                  
@@ -306,8 +307,7 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
 }                                                                                                                                               
 ```
 
-
- - **自定义Presenter交互**
+#### 自定义UI和Presenter交互
 ```java
 /**
  - Description: 小红书样式框架数据绑定
