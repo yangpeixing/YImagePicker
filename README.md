@@ -6,12 +6,13 @@
  - 支持单图自定义比例剪裁
  - 支持视频、图片、GIF图等不同类型混合加载
  - 支持视频图片混合单选或多选
+ - 支持高清预览超长图、超大图，图片放大效果胜过微信
  - 小红书剪裁样式支持视频预览
  - 微信样式支持指定单一类型选择（图片、视频）
  - 微信样式支持多次选择状态保存
  - 微信样式支持指定某些媒体文件不可选择
- - 选择结果直接回调，拒绝配置ActivityForResult，哪里调用哪里处理结果
- - 轻量级，aar大小300K，无so库，无任何第三方依赖
+ - 选择结果直接回调，拒绝配置ActivityForResult+requestCode，即调用即处理
+ - 轻量级，aar大小不超过300K，无so库，无任何第三方依赖
  - 支持androidx和support
  - 永久维护
 
@@ -20,11 +21,11 @@
 **androidx版本：**
 
 ```java
-implementation 'com.ypx.yimagepicker:androidx:2.4.1'
+implementation 'com.ypx.yimagepicker:androidx:2.4.2'
 ```
 **support版本：**
 ```java
-implementation 'com.ypx.yimagepicker:support:2.4.1'
+implementation 'com.ypx.yimagepicker:support:2.4.2'
 ```
 
 ### 核心原理
@@ -36,29 +37,29 @@ YImagePicker与主项目通过presenter进行交互与解耦，presenter采用�
 [apk体验地址](https://www.pgyer.com/Wfhb)
 
 ### 效果图集
- - demo效果
+ - **demo效果**
  
 ![demo效果](https://app-screenshot.pgyer.com/image/view/app_screenshots/3957d904273e547143955ca993bbf7ae-528)
 
- - 小红书样式
+ - **小红书样式**
 
 ![小红书样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/fc09bb8d2ac27b91820593430469cc17-528)
 ![小红书样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/87b43cb9ef8f40377bc3910b3ad3737b-528)
 ![小红书样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/daf41cb9f9a54c3c9879555ddf4ec8c8-528)
 
- - 微信样式
+ - **微信样式**
  
 ![微信样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/fad19096a28cec65094f6120c154b47f-528)
 ![微信样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/21145d344498c57954704bde3e0e7dfc-528)
 ![微信样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/2cb198df6739d1a9f91d9ee60ec3c29f-528)
 
- - 自定义样式
+ - **自定义样式**
  
 ![自定义样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/44b8fdecff62aa20eb51b4f54cfec30a-528)
 ![自定义样式](https://app-screenshot.pgyer.com/image/view/app_screenshots/57a62bcc84844400878fdb343cf762e8-528) 
  
 
- - 自定义比例剪裁
+ - **自定义比例剪裁**
  
  ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/15483adb087360ff49e831cb988adce1-528)
  ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/c32921bd346904cec77b7fea919afb56-528)
@@ -97,8 +98,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
         });     
         
 //Fragment调用：    
-MultiImagePickerFragment fragment = ImagePicker.withMultiFragment(new WXImgPickerPresenter())
-				.setMaxCount(9)//设置最大选择数量      
+MultiImagePickerFragment mFragment = ImagePicker.withMultiFragment(new WXImgPickerPresenter())    
               	...//省略以上若干属性
                .pickWithFragment(new OnImagePickCompleteListener() {
                     @Override
@@ -106,6 +106,23 @@ MultiImagePickerFragment fragment = ImagePicker.withMultiFragment(new WXImgPicke
                         //处理回调回来的图片信息，主线程         
                     }
                 });
+
+//---------外部Activity需要重写的方法------------         
+@Override                                                                                   
+public void onBackPressed() {                                                               
+    if (null != mFragment && mFragment.onBackPressed()) {                                   
+        return;                                                                             
+    }                                                                                       
+    super.onBackPressed();                                                                  
+}                                                                                           
+                                                                                            
+@Override                                                                                   
+protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {   
+    super.onActivityResult(requestCode, resultCode, data);                                  
+    if (mFragment != null) {                                                                
+        mFragment.onTakePhotoResult(requestCode, resultCode);                               
+    }                                                                                       
+}           
 });
                                                          
 ```
@@ -404,11 +421,12 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
 }
 
 ```
-### 后期优化
 
- - **微信选择框架暂不支持图片高级编辑(贴纸、剪裁、标签等)，后期会加入**
- - **图片剪裁暂不支持旋转**
- - **视频预览框架切换（吐槽：官方videoView太难用了~~/(ㄒoㄒ)/~~）**
+### 下个版本排期
+时间：2019年12月左右
+ 1. 视频预览框架切换（吐槽：官方videoView太难用了~~/(ㄒoㄒ)/~~）
+ 2. 图片剪裁支持旋转
+ 3. 支持JPEG、PNG、GIF、BMP、WEBP、MPEG、MP4、QUICKTIME、THREEGPP、THREEGPP2、MKV、WEBM、TS、AVI等图片视频文件格式混合加载或指定加载
 
 
 本库来源于mars App,想要体验城市最新的吃喝玩乐，欢迎读者下载体验mars!
@@ -416,6 +434,8 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
 
 作者：[calorYang](https://blog.csdn.net/qq_16674697)
 邮箱：313930500@qq.com
-微信：calor0616
+Q Q: 313930500 
+微信：calor0616 
 
-**你的star就是我前进的动力~🌹**
+
+**遇到问题别绕路，QQ微信直接呼~ 您的star就是我前进的动力~🌹**
