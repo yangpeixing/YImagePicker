@@ -38,25 +38,30 @@ YImagePicker与主项目通过presenter进行交互与解耦，presenter采用�
 ## 效果图集
  - de'mo效果
  
-![demo](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvZWE4MjEzOTQzZTliNWJiY2NiY2E3NTIzNTZmZjlkMTYtNTI4) 
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110326691.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70 =360x640)
+
+ - 小红书样式
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110550617.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70 =360x640)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110616310.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70 =360x640)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110801796.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70 =360x640)
 
  - 微信样式
  
-![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvYjc3MjUwMmU3YjBhOTk1ZTJhZGY4NjFkZTg1YjhiMzAtNTI4)
-![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvMDQ4ZjY2MjI3YTQxYTUzYWRlNWM5ZmZhZWRkYzc1MGMtNTI4) 
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110856974.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70 =360x640)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110918334.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70 =360x640)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110951368.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70 =360x640)
 
  - 自定义样式
  
- ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvODZmMmNkNDQ4MDIzMzFmODg3MWQ5ODFiNmU0NDQ1NjAtNTI4)
- ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvY2M5MzVmNWVkZTM1NmJlYjkyOTIwYjJmZjczZWRjNjgtNTI4) 
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012111018751.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70 =360x640)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012111041908.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70 =360x640)
  
- - 小红书样式
-
-![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvZDUzODc0N2VlZTA2ZDVjNzFiMzgwNTEyMTg0ZTczNTMtNTI4)
 
  - 自定义比例剪裁
  
- ![在这里插入图片描述](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hcHAtc2NyZWVuc2hvdC5wZ3llci5jb20vaW1hZ2Uvdmlldy9hcHBfc2NyZWVuc2hvdHMvMTRjZDJiZjIxMzk1MjVhMDhmZWZhNjdjNmExMjkwMWMtNTI4)
+ ![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012111132271.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70 =360x640)
+ ![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012111117469.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70 =360x640)
 
  
 ## 微信图片选择

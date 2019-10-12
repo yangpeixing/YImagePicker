@@ -24,4 +24,5 @@
     <string name="str_image">图片选择</string>
     <string name="str_limit">最多选择%d张图片</string>
     <string name="str_loading">资源加载中,请稍后...</string>
+    <string name="str_crop">图片剪裁</string>
 </resources>
