@@ -1,4 +1,4 @@
-## 关于YImagePicker 
+### 关于YImagePicker 
 [ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=2.4.1) ](https://bintray.com/yangpeixing/yimagepicker/androidx/2.4.1/link)
  - 支持无缝切换小红书剪裁样式并自定义UI
  - 支持微信、马蜂窝、知乎等多个不同风格样式定制
@@ -16,7 +16,7 @@
  - 永久维护
 
 
-## 引入依赖
+### 引入依赖
 **androidx版本：**
 
 ```java
@@ -27,7 +27,7 @@ implementation 'com.ypx.yimagepicker:androidx:2.4.1'
 implementation 'com.ypx.yimagepicker:support:2.4.1'
 ```
 
-## 核心原理
+### 核心原理
 YImagePicker与主项目通过presenter进行交互与解耦，presenter采用序列化接口的方式实现。回调采用嵌入fragment的方式实现，类似于Glide或RxPermisson.原理上还是使用OnActivityResult,但无需再配置requestCode并且支持跨进程回调。
 
 小红书样式需要实现：ICropPickerBindPresenter
@@ -35,36 +35,36 @@ YImagePicker与主项目通过presenter进行交互与解耦，presenter采用�
 
 [apk体验地址](https://www.pgyer.com/Wfhb)
 
-## 效果图集
- - de'mo效果
+### 效果图集
+ - demo效果
  
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110326691.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70)
+ <img src="https://img-blog.csdnimg.cn/20191012110326691.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
 
  - 小红书样式
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110550617.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110616310.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110801796.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70)
+<img src="https://img-blog.csdnimg.cn/20191012110550617.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
+<img src="https://img-blog.csdnimg.cn/20191012110616310.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
+<img src="https://img-blog.csdnimg.cn/20191012110801796.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
 
  - 微信样式
  
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110856974.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110918334.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012110951368.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70)
+ <img src="https://img-blog.csdnimg.cn/20191012110856974.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
+ <img src="https://img-blog.csdnimg.cn/20191012110918334.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
+ <img src="https://img-blog.csdnimg.cn/20191012110951368.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
 
  - 自定义样式
  
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012111018751.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012111041908.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70)
+ <img src="https://img-blog.csdnimg.cn/20191012111018751.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
+ <img src="https://img-blog.csdnimg.cn/20191012111041908.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
  
 
  - 自定义比例剪裁
  
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012111132271.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70)
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20191012111117469.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70)
+ <img src="https://img-blog.csdnimg.cn/20191012111132271.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
+ <img src="https://img-blog.csdnimg.cn/20191012111117469.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzE2Njc0Njk3,size_16,color_FFFFFF,t_70" width="360">
 
  
-## 微信图片选择
+### 微信图片选择
 支持视频、GIF、长图选择，支持单张多比例剪裁，支持多图预览、编辑、以及调序，支持直接拍照。调用前请按照demo实现IMultiPickerBindPresenter 接口          
 
  - **多图/单图选择—— 支持视频和图片单一选择模式**
@@ -227,7 +227,7 @@ public class WXImgPickerPresenter implements IMultiPickerBindPresenter {
 }                                                                                                                                                                                                                                                                                                                                       
 ```
  
-## 小红书图片剪裁选择      
+### 小红书图片剪裁选择      
 高仿小红书图片剪裁框架，支持视频以及多图剪裁、支持fragment样式侵入
 
  - **Activity直接调用**
@@ -403,7 +403,7 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
 }
 
 ```
-## 后期优化
+### 后期优化
 
  - **微信选择框架暂不支持图片高级编辑(贴纸、剪裁、标签等)，后期会加入**
  - **图片剪裁暂不支持旋转**
