@@ -13,6 +13,8 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.AnimationDrawable;
@@ -31,7 +33,10 @@ import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
+import com.ypx.imagepicker.utils.PFileUtil;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
+
+import java.io.File;
 
 /**
  * Description: 剪裁ImageView
@@ -620,6 +625,7 @@ public class CropImageView extends ImageView {
         cropRectPaint.setColor(Color.WHITE);
         cropRectPaint.setAntiAlias(true);
         cropRectPaint.setStyle(Paint.Style.STROKE);
+        cropRectPaint.setDither(true);
         initMaskPaint();
     }
 
@@ -666,6 +672,12 @@ public class CropImageView extends ImageView {
 
     private boolean isShowImageRectLine = false;
     private boolean canShowTouchLine = true;
+    private boolean isCircle = false;
+
+    public void setCircle(boolean circle) {
+        isCircle = circle;
+        invalidate();
+    }
 
     public void setShowImageRectLine(boolean showImageRectLine) {
         isShowImageRectLine = showImageRectLine;
@@ -677,10 +689,11 @@ public class CropImageView extends ImageView {
         invalidate();
     }
 
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (isShowLine && canShowTouchLine) {
+        if (isShowLine && canShowTouchLine && !isCircle) {
             int left, top, right, bottom, w, h;
             if (isShowImageRectLine) {
                 left = mImgRect.left > mCropRect.left ? (int) mImgRect.left : (int) mCropRect.left;
@@ -704,10 +717,15 @@ public class CropImageView extends ImageView {
         if (aspectY <= 0 || aspectX <= 0) {
             return;
         }
-        drawStrokeLine(canvas);
+
         getDrawingRect(viewDrawingRect);
         path.reset();
-        path.addRect(mCropRect.left, mCropRect.top, mCropRect.right, mCropRect.bottom, Path.Direction.CW);
+        if (isCircle) {
+            path.addCircle(mCropRect.left + mCropRect.width() / 2, mCropRect.top + mCropRect.height() / 2, mCropRect.width() / 2, Path.Direction.CW);
+        } else {
+            drawStrokeLine(canvas);
+            path.addRect(mCropRect.left, mCropRect.top, mCropRect.right, mCropRect.bottom, Path.Direction.CW);
+        }
         canvas.clipPath(path, android.graphics.Region.Op.DIFFERENCE);
         canvas.drawRect(viewDrawingRect, maskPaint);
         canvas.drawPath(path, cropRectPaint);
@@ -1389,6 +1407,7 @@ public class CropImageView extends ImageView {
         executeTranslate();
     }
 
+
     /**
      * 生成剪裁图片
      *
@@ -1450,11 +1469,30 @@ public class CropImageView extends ImageView {
         Bitmap bitmap1 = null;
         try {
             bitmap1 = Bitmap.createBitmap(originalBitmap, (int) endX, (int) endY, (int) endW, (int) endH);
+            if (isCircle) {
+                bitmap1 = createCircleBitmap(bitmap1);
+            }
         } catch (Exception ignored) {
         }
 
         return bitmap1;
     }
+
+
+    private Bitmap createCircleBitmap(Bitmap resource) {
+        int width = resource.getWidth();
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        Bitmap circleBitmap = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(circleBitmap);
+        canvas.drawCircle(width / 2, width / 2, width / 2, paint);
+        //设置画笔为取交集模式
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        //裁剪图片
+        canvas.drawBitmap(resource, 0, 0, paint);
+        return circleBitmap;
+    }
+
 
     public float getTranslateX() {
         return mImgRect.left - mCropRect.left;

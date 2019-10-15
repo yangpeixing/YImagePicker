@@ -25,4 +25,5 @@
     <string name="str_limit">最多选择%d张图片</string>
     <string name="str_loading">资源加载中,请稍后...</string>
     <string name="str_crop">图片剪裁</string>
+    <string name="str_video_error">该视频文件路径无效或已损坏!</string>
 </resources>

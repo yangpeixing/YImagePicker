@@ -9,7 +9,6 @@ import java.util.ArrayList;
  * Date: 2019/2/21
  */
 public class MultiSelectConfig extends BaseSelectConfig {
-    private int columnCount = 4;
     private boolean isShowOriginalCheckBox;
     private boolean isCanEditPic;
     private boolean isPreview = true;
@@ -23,8 +22,17 @@ public class MultiSelectConfig extends BaseSelectConfig {
 
     private int cropRatioX = 1;
     private int cropRatioY = 1;
+    private boolean isCircle = false;
     private int cropRectMargin = 0;
     private String cropSaveFilePath = "";
+
+    public boolean isCircle() {
+        return isCircle;
+    }
+
+    public void setCircle(boolean circle) {
+        isCircle = circle;
+    }
 
     public boolean isSinglePickImageOrVideoType() {
         return isSinglePickImageOrVideoType;
@@ -49,6 +57,7 @@ public class MultiSelectConfig extends BaseSelectConfig {
     public void setCropSaveFilePath(String cropSaveFilePath) {
         this.cropSaveFilePath = cropSaveFilePath;
     }
+
     public boolean isPreview() {
         return isPreview;
     }
@@ -93,14 +102,6 @@ public class MultiSelectConfig extends BaseSelectConfig {
 
     public void setSelectMode(int selectMode) {
         this.selectMode = selectMode;
-    }
-
-    public int getColumnCount() {
-        return columnCount;
-    }
-
-    public void setColumnCount(int columnCount) {
-        this.columnCount = columnCount;
     }
 
     public boolean isShowOriginalCheckBox() {

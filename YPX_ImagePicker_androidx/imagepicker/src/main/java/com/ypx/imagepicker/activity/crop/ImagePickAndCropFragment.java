@@ -216,7 +216,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
      * 初始化图片列表
      */
     private void initGridImagesAndImageSets() {
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), selectConfig.getColumnCount());
         mGridImageRecyclerView.setLayoutManager(gridLayoutManager);
         imageGridAdapter = new CropGridAdapter(mContentView.getContext(), selectConfig, imageItems, selectList, presenter, uiConfig);
         imageGridAdapter.setHasStableIds(true);
@@ -302,6 +302,10 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
                     presenter.clickVideo(getActivity(), currentImageItem);
                 }
             } else {
+                if (currentImageItem.duration == 0 || !PFileUtil.exists(currentImageItem.path)) {
+                    Toast.makeText(getActivity(), R.string.str_video_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 //执行预览视频操作
                 videoViewContainerHelper.loadVideoView(mCropContainer, currentImageItem, presenter, uiConfig);
                 checkStateBtn();
@@ -647,7 +651,6 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         }
         super.takePhoto();
     }
-
 
     @Override
     protected BaseSelectConfig getSelectConfig() {

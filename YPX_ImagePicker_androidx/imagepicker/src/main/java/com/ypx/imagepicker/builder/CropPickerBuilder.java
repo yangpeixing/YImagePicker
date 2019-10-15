@@ -3,6 +3,7 @@ package com.ypx.imagepicker.builder;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 import com.ypx.imagepicker.bean.CropSelectConfig;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
@@ -13,6 +14,7 @@ import com.ypx.imagepicker.activity.crop.ImagePickAndCropFragment;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.utils.PFileUtil;
+
 import java.util.ArrayList;
 
 /**
@@ -69,6 +71,13 @@ public class CropPickerBuilder {
         return this;
     }
 
+    /**
+     * @param columnCount 设置列数
+     */
+    public CropPickerBuilder setColumnCount(int columnCount) {
+        selectConfig.setColumnCount(columnCount);
+        return this;
+    }
 
     /**
      * @param selectConfig 选择配置项

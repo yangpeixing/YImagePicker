@@ -241,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
         }
         ImagePicker.withCrop(new RedBookCropPresenter())
                 .setMaxCount(count)
+                .setColumnCount(4)
                 .showCamera(mCbShowCamera.isChecked())
                 .showImage(!mRbVideoOnly.isChecked())
                 .showVideo(!mRbImageOnly.isChecked())
@@ -301,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
                 .setColumnCount(4)
                 .showCamera(mCbShowCamera.isChecked())
                 .showImage(true)
+               // .cropAsCircle()
                 .setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress())
                 .cropRectMinMargin(dp(mMarginSeekBar.getProgress()))
                 .cropSaveFilePath(ImagePicker.cropPicSaveFilePath)

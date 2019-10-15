@@ -32,6 +32,35 @@ public class PFileUtil {
     /**
      * 保存一张图片到本地
      */
+    public static String saveBitmapToLocalWithPNG(Bitmap bmp, String localPath) {
+        if (bmp == null || localPath == null || localPath.length() == 0) {
+            return "";
+        }
+        FileOutputStream b = null;
+        createFile(localPath);
+        try {
+            b = new FileOutputStream(localPath);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, b);// 把数据写入文件
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (b != null) {
+                    b.flush();
+                }
+                if (b != null) {
+                    b.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return localPath;
+    }
+
+    /**
+     * 保存一张图片到本地
+     */
     public static String saveBitmapToLocalWithJPEG(Bitmap bmp, String localPath) {
         if (bmp == null || localPath == null || localPath.length() == 0) {
             return "";
@@ -97,6 +126,10 @@ public class PFileUtil {
         view.buildDrawingCache(true);
         Bitmap bitmap = view.getDrawingCache(true);
         return bitmap;
+    }
+
+    public static boolean exists(String fileName) {
+        return new File(fileName).exists();
     }
 
     /**

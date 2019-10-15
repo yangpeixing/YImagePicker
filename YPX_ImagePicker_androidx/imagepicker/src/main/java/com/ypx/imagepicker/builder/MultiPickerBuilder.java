@@ -203,6 +203,14 @@ public class MultiPickerBuilder {
     }
 
     /**
+     *  设置圆形剪裁
+     */
+    public MultiPickerBuilder cropAsCircle() {
+        multiSelectConfig.setCircle(true);
+        return this;
+    }
+
+    /**
      * @param isPreview 是否开启预览
      */
     public MultiPickerBuilder setPreview(boolean isPreview) {

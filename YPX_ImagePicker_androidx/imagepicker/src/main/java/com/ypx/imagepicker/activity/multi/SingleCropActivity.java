@@ -81,6 +81,7 @@ public class SingleCropActivity extends FragmentActivity {
             cropView.setCropMargin(selectConfig.getCropRectMargin());
             presenter.displayPerViewImage(cropView, imagePath);
             cropView.setCropRatio(selectConfig.getCropRatioX(), selectConfig.getCropRatioY());
+            cropView.setCircle(selectConfig.isCircle());
         } else {
             finish();
         }
@@ -115,9 +116,7 @@ public class SingleCropActivity extends FragmentActivity {
                 if (cropView.isEditing()) {
                     return;
                 }
-                Bitmap bitmap = cropView.generateCropBitmap();
-                File f = new File(selectConfig.getCropSaveFilePath(), "crop_" + System.currentTimeMillis() + ".jpg");
-                String cropUrl = PFileUtil.saveBitmapToLocalWithJPEG(bitmap, f.getAbsolutePath());
+                String cropUrl = generateCropFile(selectConfig.getCropSaveFilePath(), "crop_" + System.currentTimeMillis());
                 ImageItem item = new ImageItem();
                 item.path = cropUrl;
                 ArrayList<ImageItem> list = new ArrayList<>();
@@ -133,6 +132,19 @@ public class SingleCropActivity extends FragmentActivity {
             }
         });
     }
+
+    public String generateCropFile(String filePath, String fileName) {
+        File f = new File(filePath, fileName + (selectConfig.isCircle() ? ".png" : ".jpg"));
+        String cropUrl;
+        Bitmap bitmap = cropView.generateCropBitmap();
+        if (selectConfig.isCircle()) {
+            cropUrl = PFileUtil.saveBitmapToLocalWithPNG(bitmap, f.getAbsolutePath());
+        } else {
+            cropUrl = PFileUtil.saveBitmapToLocalWithJPEG(bitmap, f.getAbsolutePath());
+        }
+        return cropUrl;
+    }
+
 
     private void notifyOnImagePickComplete(ArrayList<ImageItem> list) {
         Intent intent = new Intent();

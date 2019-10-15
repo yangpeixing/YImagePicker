@@ -10,12 +10,21 @@ import java.util.Set;
  */
 public class BaseSelectConfig implements Serializable {
     private int maxCount;
+    private int columnCount = 4;
     private boolean isShowCamera;
     private boolean isVideoSinglePick = true;
     private boolean isShowVideo = true;
     private boolean isShowImage = true;
     private boolean isLoadGif = false;
     private Set<MimeType> mimeTypes = MimeType.ofAll();
+
+    public int getColumnCount() {
+        return columnCount;
+    }
+
+    public void setColumnCount(int columnCount) {
+        this.columnCount = columnCount;
+    }
 
     public int getMaxCount() {
         return maxCount;

@@ -8,12 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.CropUiConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
+import com.ypx.imagepicker.utils.PFileUtil;
 
 /**
  * Time: 2019/9/30 9:45
@@ -27,6 +29,7 @@ public class VideoViewContainerHelper {
 
     public void loadVideoView(ViewGroup parent, ImageItem imageItem, ICropPickerBindPresenter presenter, CropUiConfig uiConfig) {
         Context context = parent.getContext();
+
         if (videoView == null) {
             videoView = new VideoView(context);
             videoView.setBackgroundColor(Color.TRANSPARENT);
