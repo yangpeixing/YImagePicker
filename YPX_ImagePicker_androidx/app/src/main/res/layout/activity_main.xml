@@ -219,6 +219,7 @@
             android:layout_marginStart="5dp"
             android:orientation="vertical">
 
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
@@ -232,6 +233,13 @@
                 android:layout_height="30dp"
                 android:gravity="center"
                 android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/cb_circle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:text="圆形剪裁" />
 
                 <TextView
                     android:id="@+id/mCropX"
@@ -276,8 +284,9 @@
                     android:id="@+id/mCropMargin"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
                     android:gravity="center"
-                    android:text="cropMargin:0" />
+                    android:text="剪裁框间距:0" />
 
                 <SeekBar
                     android:id="@+id/mMarginSeekBar"
