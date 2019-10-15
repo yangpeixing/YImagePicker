@@ -1,5 +1,23 @@
 
-<!-- TOC -->autoauto- [关于YImagePicker](#关于yimagepicker)auto- [引入依赖](#引入依赖)auto- [核心原理](#核心原理)auto- [效果图集](#效果图集)auto- [微信图片选择](#微信图片选择)auto    - [单张剪裁 —— 支持自定义剪裁比例](#单张剪裁--支持自定义剪裁比例)auto    - [预览 —— 支持普通预览和编辑预览](#预览--支持普通预览和编辑预览)auto    - [拍照](#拍照)auto    - [自定义UI和presenter交互 —— 支持item自定义和文件夹列表弹入方向](#自定义ui和presenter交互--支持item自定义和文件夹列表弹入方向)auto- [小红书图片剪裁选择](#小红书图片剪裁选择)auto    - [Activity直接调用](#activity直接调用)auto    - [Fragment嵌套调用](#fragment嵌套调用)auto    - [自定义UI和Presenter交互](#自定义ui和presenter交互)auto- [版本记录](#版本记录)auto    - [2.4.3版本](#243版本)auto    - [2.4.2版本](#242版本)auto- [下个版本排期](#下个版本排期)autoauto<!-- /TOC -->
+<!-- TOC -->
+- [关于YImagePicker](#关于yimagepicker)
+- [引入依赖](#引入依赖)
+- [核心原理](#核心原理)
+- [效果图集](#效果图集)
+- [微信图片选择](#微信图片选择)
+    - [单张剪裁 —— 支持自定义剪裁比例](#单张剪裁--支持自定义剪裁比例)
+    - [预览 —— 支持普通预览和编辑预览](#预览--支持普通预览和编辑预览)
+    - [拍照](#拍照)
+    - [自定义UI和presenter交互 —— 支持item自定义和文件夹列表弹入方向](#自定义ui和presenter交互--支持item自定义和文件夹列表弹入方向)
+- [小红书图片剪裁选择](#小红书图片剪裁选择)  
+    - [Activity直接调用](#activity直接调用)
+    - [Fragment嵌套调用](#fragment嵌套调用)
+    - [自定义UI和Presenter交互](#自定义ui和presenter交互)
+- [版本记录](#版本记录)
+    - [2.4.3版本](#243版本)
+    - [2.4.2版本](#242版本)
+- [下个版本排期](#下个版本排期)
+<!-- /TOC -->
 
 ### 关于YImagePicker 
 [ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=2.4.3) ](https://bintray.com/yangpeixing/yimagepicker/androidx/2.4.3/link)
