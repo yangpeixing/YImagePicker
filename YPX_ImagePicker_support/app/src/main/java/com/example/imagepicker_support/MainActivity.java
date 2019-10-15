@@ -28,6 +28,7 @@ import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSelectMode;
 import com.ypx.imagepicker.bean.SelectMode;
+import com.ypx.imagepicker.builder.MultiPickerBuilder;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox mCbClosePreview;
     private CheckBox mCbVideoSingle;
     private CheckBox mCbImageOrVideoMix;
+    private CheckBox mCbcircle;
     private RadioButton mRbNew;
     private RadioButton mRbShield;
     private RadioButton mRbSave;
@@ -90,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         mCbClosePreview = findViewById(R.id.cb_closePreview);
         mCbVideoSingle = findViewById(R.id.cb_videoSingle);
         mCbImageOrVideoMix = findViewById(R.id.cb_imageOrVideoMix);
+        mCbcircle = findViewById(R.id.cb_circle);
         mRbNew = findViewById(R.id.rb_new);
         mRbShield = findViewById(R.id.rb_shield);
         mRbSave = findViewById(R.id.rb_save);
@@ -138,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (seekBar == mYSeekBar) {
                 mCropY.setText(String.format("cropY: %d", progress));
             } else if (seekBar == mMarginSeekBar) {
-                mCropMargin.setText(String.format("cropMargin: %d", progress));
+                mCropMargin.setText(String.format("剪裁框间距: %d", progress));
             }
         }
 
@@ -241,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
         }
         ImagePicker.withCrop(new RedBookCropPresenter())
                 .setMaxCount(count)
+                .setColumnCount(4)
                 .showCamera(mCbShowCamera.isChecked())
                 .showImage(!mRbVideoOnly.isChecked())
                 .showVideo(!mRbImageOnly.isChecked())
@@ -297,11 +301,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void crop() {
-        ImagePicker.withMulti(mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter())
+        MultiPickerBuilder builder = ImagePicker.withMulti(mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter())
                 .setColumnCount(4)
                 .showCamera(mCbShowCamera.isChecked())
-                .showImage(true)
-                .setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress())
+                .showImage(true);
+        if (mCbcircle.isChecked()) {
+            builder.cropAsCircle();
+        }
+        builder.setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress())
                 .cropRectMinMargin(dp(mMarginSeekBar.getProgress()))
                 .cropSaveFilePath(ImagePicker.cropPicSaveFilePath)
                 .crop(this, new OnImagePickCompleteListener() {

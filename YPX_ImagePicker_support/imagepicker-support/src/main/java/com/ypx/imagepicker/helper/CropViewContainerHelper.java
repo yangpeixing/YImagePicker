@@ -13,7 +13,7 @@ import com.ypx.imagepicker.bean.ImageCropMode;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.utils.PFileUtil;
-import com.ypx.imagepicker.widget.CropImageView;
+import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 import java.io.File;
 import java.lang.ref.WeakReference;

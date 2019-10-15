@@ -13,8 +13,6 @@ import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 
 
-import com.ypx.imagepicker.helper.PickerFileProvider;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

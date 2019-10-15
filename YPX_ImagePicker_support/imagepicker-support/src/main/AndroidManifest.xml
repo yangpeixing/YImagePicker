@@ -35,7 +35,7 @@
             android:multiprocess="true" />
 
         <provider
-            android:name=".helper.PickerFileProvider"
+            android:name=".utils.PickerFileProvider"
             android:authorities="${applicationId}.picker.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">

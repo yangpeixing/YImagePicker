@@ -71,6 +71,13 @@ public class CropPickerBuilder {
         return this;
     }
 
+    /**
+     * @param columnCount 设置列数
+     */
+    public CropPickerBuilder setColumnCount(int columnCount) {
+        selectConfig.setColumnCount(columnCount);
+        return this;
+    }
 
     /**
      * @param selectConfig 选择配置项

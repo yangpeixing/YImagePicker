@@ -66,6 +66,12 @@ public class RecyclerViewTouchHelper {
 
     public RecyclerViewTouchHelper build() {
         setRecyclerViewPaddingTop(canScrollHeight + stickHeight);
+        recyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                setRecyclerViewPaddingTop(topView.getHeight());
+            }
+        });
         recyclerView.setTouchView(topView);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -75,7 +81,6 @@ public class RecyclerViewTouchHelper {
                     return;
                 }
                 int scrollY = getScrollYDistance();
-
                 if (isScrollTopView && topView.getTranslationY() != -canScrollHeight) {
                     if (lastScrollY == 0) {
                         lastScrollY = scrollY;
@@ -177,14 +182,27 @@ public class RecyclerViewTouchHelper {
             count = recyclerView.getAdapter().getItemCount();
         }
         int itemHeight = getItemHeight();
-        if (count < 4) {
+        if (count < getSpanCount()) {
             return false;
         }
-        int lineCount = count % 4 == 0 ? count / 4 : count / 4 + 1;
+        int lineCount = count % getSpanCount() == 0 ? count / getSpanCount() : count / getSpanCount() + 1;
         return lineCount * itemHeight + recyclerView.getPaddingBottom() >
                 PViewSizeUtils.getScreenHeight(recyclerView.getContext()) - stickHeight;
     }
 
+    private int spanCount = 0;
+
+    private int getSpanCount() {
+        if (spanCount != 0) {
+            return spanCount;
+        }
+        GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+        if (gridLayoutManager != null) {
+            spanCount = gridLayoutManager.getSpanCount();
+            return spanCount;
+        }
+        return 0;
+    }
 
     /**
      * 设置剪裁区域阴影
@@ -235,8 +253,9 @@ public class RecyclerViewTouchHelper {
         if (firstVisibleChildView == null) {
             return 0;
         }
-        int itemHeight = firstVisibleChildView.getHeight();
-        return (position / 4) * itemHeight - firstVisibleChildView.getTop();
+
+        int itemHeight = firstVisibleChildView.getHeight() + PViewSizeUtils.dp(recyclerView.getContext(), 2);
+        return (position / getSpanCount()) * itemHeight - firstVisibleChildView.getTop();
     }
 
     private int getItemHeight() {
@@ -260,8 +279,7 @@ public class RecyclerViewTouchHelper {
         if (scrollY == 0) {
             return;
         }
-        @SuppressLint("ObjectAnimatorBinding")
-        ObjectAnimator anim = ObjectAnimator.ofFloat(this, "translationY", 0.0f, 1.0f);
+        ValueAnimator anim = ValueAnimator.ofFloat(0.0f, 1.0f);
         anim.setDuration(500);
         anim.setInterpolator(new AccelerateDecelerateInterpolator());
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -280,7 +298,6 @@ public class RecyclerViewTouchHelper {
      * @param isFocusShow      是否强制完全展示
      * @param scrollToPosition 滑动到制定的位置
      */
-    @SuppressLint("ObjectAnimatorBinding")
     public void transitTopWithAnim(boolean isFocusShow, final int scrollToPosition, boolean isShowTransit) {
         if (!isShowTransit) {
             return;
@@ -293,7 +310,7 @@ public class RecyclerViewTouchHelper {
         final int endTop = (isFocusShow || (startTop > -stickHeight / 2)) ? 0 : -canScrollHeight;
         final int startPadding = recyclerView.getPaddingTop();
         final float startAlpha = maskView.getAlpha();
-        ObjectAnimator anim = ObjectAnimator.ofFloat(this, "translationY", 0.0f, 1.0f);
+        ValueAnimator anim = ValueAnimator.ofFloat(0.0f, 1.0f);
         anim.setDuration(300);
         anim.setInterpolator(new AccelerateDecelerateInterpolator());
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {

@@ -37,7 +37,7 @@ import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PFileUtil;
 import com.ypx.imagepicker.utils.PTakePhotoUtil;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
-import com.ypx.imagepicker.widget.CropImageView;
+import com.ypx.imagepicker.widget.cropimage.CropImageView;
 import com.ypx.imagepicker.widget.TouchRecyclerView;
 
 import java.util.ArrayList;
@@ -207,13 +207,15 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         mTvSelectNum.setBackground(PCornerUtils.cornerDrawable(uiConfig.getNextBtnSelectedTextColor(), dp(10)));
         mGridImageRecyclerView.setBackgroundColor(uiConfig.getGridBackgroundColor());
         mTvNext.setText(uiConfig.getNextBtnText());
+        mTvNext.setBackground(uiConfig.getNextBtnUnSelectBackground());
+        mTvNext.setTextColor(uiConfig.getNextBtnUnSelectTextColor());
     }
 
     /**
      * 初始化图片列表
      */
     private void initGridImagesAndImageSets() {
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), selectConfig.getColumnCount());
         mGridImageRecyclerView.setLayoutManager(gridLayoutManager);
         imageGridAdapter = new CropGridAdapter(mContentView.getContext(), selectConfig, imageItems, selectList, presenter, uiConfig);
         imageGridAdapter.setHasStableIds(true);
@@ -299,8 +301,12 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
                     presenter.clickVideo(getActivity(), currentImageItem);
                 }
             } else {
+                if (currentImageItem.duration == 0 || !PFileUtil.exists(currentImageItem.path)) {
+                    Toast.makeText(getActivity(), R.string.str_video_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 //执行预览视频操作
-                videoViewContainerHelper.loadVideoView(mCropContainer, currentImageItem, presenter,uiConfig);
+                videoViewContainerHelper.loadVideoView(mCropContainer, currentImageItem, presenter, uiConfig);
                 checkStateBtn();
             }
         } else {
@@ -448,7 +454,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
             if (currentImageItem == selectList.get(0)) {
                 stateBtn.setVisibility(View.VISIBLE);
                 mTvFullOrGap.setVisibility(View.GONE);
-                mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                mCropView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 currentImageItem.setCropMode(cropMode);
             } else {
                 //如果当前选中item不是第一张图片，显示mTvFullOrGap
@@ -504,7 +510,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
             currentImageItem.setCropMode(cropMode);
         }
 
-        mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        mCropView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         resetCropViewSize(mCropView, true);
         //以下是重置所有选中图片剪裁模式
         cropViewContainerHelper.refreshAllState(currentImageItem, selectList, mInvisibleContainer,
@@ -539,7 +545,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
                 //否则都按照默认填充的模式，显示留白提示
                 fullState();
                 currentImageItem.setCropMode(ImageCropMode.ImageScale_FILL);
-                mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                mCropView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             }
         }
     }
@@ -556,7 +562,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         } else {
             //充满
             currentImageItem.setCropMode(ImageCropMode.ImageScale_FILL);
-            mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            mCropView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             fullState();
         }
         resetCropViewSize(mCropView, false);
@@ -644,7 +650,6 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         }
         super.takePhoto();
     }
-
 
     @Override
     protected BaseSelectConfig getSelectConfig() {

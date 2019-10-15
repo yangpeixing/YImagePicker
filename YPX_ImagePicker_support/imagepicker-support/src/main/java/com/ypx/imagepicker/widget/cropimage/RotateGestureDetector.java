@@ -1,4 +1,4 @@
-package com.ypx.imagepicker.widget.browseimage;
+package com.ypx.imagepicker.widget.cropimage;
 
 import android.view.MotionEvent;
 
@@ -61,6 +61,10 @@ public class RotateGestureDetector {
         x2 = event.getX(1);
         y2 = event.getY(1);
         return (y2 - y1) / (x2 - x1);
+    }
+
+    public static interface OnRotateListener {
+        void onRotate(float degrees, float focusX, float focusY);
     }
 }
 

@@ -140,7 +140,7 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
             rootView = itemView.findViewById(R.id.rootView);
             mTvDuration = itemView.findViewById(R.id.mTvDuration);
             context = imageView.getContext();
-            int width = (PViewSizeUtils.getScreenWidth(context) - PViewSizeUtils.dp(context, 10)) / 4;
+            int width = (PViewSizeUtils.getScreenWidth(context) - (PViewSizeUtils.dp(context, 2) * (selectConfig.getColumnCount() + 1))) / selectConfig.getColumnCount();
             PViewSizeUtils.setViewSize(rootView, width, 1.0f);
             PViewSizeUtils.setViewSize(mVMask, width, 1.0f);
             iv_camera.setImageDrawable(itemView.getContext().getResources().getDrawable(uiConfig.getCameraIconID()));
