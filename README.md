@@ -4,7 +4,7 @@
  - 支持微信、马蜂窝、知乎等多个不同风格样式定制
  - 支持图片直接预览和编辑预览（排序、删除）
  - 支持单图自定义比例剪裁
- - 支持单图圆形剪裁(2.4.3版本加入)
+ - 支持单图圆形剪裁，生成png圆形图片(2.4.3版本加入)
  - 支持视频、图片、GIF图等不同类型混合加载
  - 支持视频图片混合单选或多选
  - 支持高清预览超长图、超大图，图片放大效果胜过微信
@@ -26,7 +26,7 @@ implementation 'com.ypx.yimagepicker:androidx:2.4.3'
 ```
 **support版本：**
 ```java
-implementation 'com.ypx.yimagepicker:support:2.4.2'
+implementation 'com.ypx.yimagepicker:support:2.4.3'
 ```
 
 ### 核心原理
@@ -434,13 +434,14 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
   4. 【新增】单图剪裁支持圆形，并生成圆形的png图片，使用方式为： .cropAsCircle()
 
 #### 2.4.2版本
-  1. 修复了小红书剪裁点击下一步，剪裁区域往左偏移的问题  
-  2. 包架构调整，删除不必要的类文件和资源文件 
-  3. 小红书样式将标题栏改为55dp 
-  4. 修复小红书视频切换，暂停图标不消失的BUG 
-  5. 移除PicBrowseImageView，合并为CropImageView  
-  6. 修复小红书样式一打开，下一步按钮背景失效的BUG 
-  7. 修复单张图片剪裁标题栏文字
+  1. 【BUG修复】修复了小红书剪裁点击下一步，剪裁区域往左偏移的问题  
+  2. 【BUG修复】修复小红书视频切换，暂停图标不消失的BUG 
+  3. 【BUG修复】修复小红书样式一打开，下一步按钮背景失效的BUG 
+  4. 【BUG修复】修复单张图片剪裁标题栏文字
+  5. 【调整】小红书样式将标题栏改为55dp 
+  6. 【调整】移除PicBrowseImageView，合并为CropImageView  
+  7. 【优化】包架构调整，删除不必要的类文件和资源文件
+
 
 
 ### 下个版本排期
@@ -448,6 +449,7 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
  1. 视频预览框架切换（吐槽：官方videoView太难用了~~/(ㄒoㄒ)/~~）
  2. 图片剪裁支持旋转
  3. 支持JPEG、PNG、GIF、BMP、WEBP、MPEG、MP4、QUICKTIME、THREEGPP、THREEGPP2、MKV、WEBM、TS、AVI等图片视频文件格式混合加载或指定加载
+ 4. **等你来提**
  
 
 
