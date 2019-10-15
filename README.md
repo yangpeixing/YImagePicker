@@ -4,6 +4,7 @@
  - 支持微信、马蜂窝、知乎等多个不同风格样式定制
  - 支持图片直接预览和编辑预览（排序、删除）
  - 支持单图自定义比例剪裁
+ - 支持单图圆形剪裁(2.4.3版本加入)
  - 支持视频、图片、GIF图等不同类型混合加载
  - 支持视频图片混合单选或多选
  - 支持高清预览超长图、超大图，图片放大效果胜过微信
@@ -21,7 +22,7 @@
 **androidx版本：**
 
 ```java
-implementation 'com.ypx.yimagepicker:androidx:2.4.2'
+implementation 'com.ypx.yimagepicker:androidx:2.4.3'
 ```
 **support版本：**
 ```java
@@ -63,7 +64,7 @@ YImagePicker与主项目通过presenter进行交互与解耦，presenter采用�
  
  ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/15483adb087360ff49e831cb988adce1-528)
  ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/c32921bd346904cec77b7fea919afb56-528)
-
+ ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/4cf64a6afb74b6457103bd04debb7e58-528)
 
  
 ### 微信图片选择
@@ -131,7 +132,8 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
 //微信样式多选，WXImgPickerPresenter为用户自定义的微信显示样式，                                  
 // 以及一些交互逻辑，实现自IMultiPickerBindPresenter接口                                   
 ImagePicker.withMulti(new WXImgPickerPresenter())                            
-       	...//省略以上所有公共属性                                              
+       	...//省略以上所有公共属性       
+        .cropAsCircle() //设置圆形剪裁，设置此属性后，setCropRatio失效                                
         .setCropRatio(1, 1)//设置剪裁比例   1：1            
         .cropSaveFilePath("剪裁图片保存地址")
         .cropRectMinMargin(0)//设置剪裁边框间距,单位 px                           
@@ -256,7 +258,8 @@ ImagePicker.withCrop(new RedBookCropPresenter())
         //设置第一张图信息，可为null,设置以后，选择器会默认                                         
         // 以第一张图片的剪裁方式剪裁后面所有的图片                                               
         .setFirstImageItem(new ImageItem())                                   
-        .setFirstImageUrl("这里填入外部已经选择的第一张图片地址url")                            
+        .setFirstImageUrl("这里填入外部已经选择的第一张图片地址url")     
+        .setColumnCount(4)//设置显示列数                          
         //设置要选择的最大数                                                           
         .setMaxCount(count)                                                                                             
         //设置是否加载视频                                                            
@@ -422,11 +425,30 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
 
 ```
 
+### 版本记录
+
+####2.4.3版本
+  1. 【BUG修复】修复了小红书预览视频时当视频文件损坏或不存在时导致的重复弹窗问题 
+  2. 【BUG修复】修复了小红书样式，吸顶模式下，轻微下拉偶现一点点抖动的问题 
+  3. 【新增】小红书样式支持列数定制，setColumnCount()  
+  4. 【新增】单图剪裁支持圆形，并生成圆形的png图片，使用方式为： .cropAsCircle()
+
+####2.4.2版本
+  1. 修复了小红书剪裁点击下一步，剪裁区域往左偏移的问题  
+  2. 包架构调整，删除不必要的类文件和资源文件 
+  3. 小红书样式将标题栏改为55dp 
+  4. 修复小红书视频切换，暂停图标不消失的BUG 
+  5. 移除PicBrowseImageView，合并为CropImageView  
+  6. 修复小红书样式一打开，下一步按钮背景失效的BUG 
+  7. 修复单张图片剪裁标题栏文字
+
+
 ### 下个版本排期
 时间：2019年12月左右
  1. 视频预览框架切换（吐槽：官方videoView太难用了~~/(ㄒoㄒ)/~~）
  2. 图片剪裁支持旋转
  3. 支持JPEG、PNG、GIF、BMP、WEBP、MPEG、MP4、QUICKTIME、THREEGPP、THREEGPP2、MKV、WEBM、TS、AVI等图片视频文件格式混合加载或指定加载
+ 
 
 
 本库来源于mars App,想要体验城市最新的吃喝玩乐，欢迎读者下载体验mars!
