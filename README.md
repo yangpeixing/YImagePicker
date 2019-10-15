@@ -1,5 +1,4 @@
-
-<!-- TOC -->
+<!-- TOC 
 - [关于YImagePicker](#关于yimagepicker)
 - [引入依赖](#引入依赖)
 - [核心原理](#核心原理)
@@ -17,7 +16,7 @@
     - [2.4.3版本](#243版本)
     - [2.4.2版本](#242版本)
 - [下个版本排期](#下个版本排期)
-<!-- /TOC -->
+/TOC -->
 
 ### 关于YImagePicker 
 [ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=2.4.3) ](https://bintray.com/yangpeixing/yimagepicker/androidx/2.4.3/link)
