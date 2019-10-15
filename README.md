@@ -1,5 +1,5 @@
 ### 关于YImagePicker 
-[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=2.4.1) ](https://bintray.com/yangpeixing/yimagepicker/androidx/2.4.1/link)
+[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=2.4.3) ](https://bintray.com/yangpeixing/yimagepicker/androidx/2.4.3/link)
  - 支持无缝切换小红书剪裁样式并自定义UI
  - 支持微信、马蜂窝、知乎等多个不同风格样式定制
  - 支持图片直接预览和编辑预览（排序、删除）
