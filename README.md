@@ -106,7 +106,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())//指定presenter
            .setPreview(true)//开启预览
            .setVideoSinglePick(true)//设置视频单选
            .setSinglePickImageOrVideoType(true)//设置图片和视频单一类型选择
-           .setMaxVideoDuration(2000L)//设置视频可选取的最大时长
+           .setMaxVideoDuration(120000L)//设置视频可选取的最大时长
            .setLastImageList(null)//设置上一次操作的图片列表，下次选择时默认恢复上一次选择的状态
            .setShieldList(null)//设置需要屏蔽掉的图片列表，下次选择时已屏蔽的文件不可选择
            .pick(this, new OnImagePickCompleteListener() {
@@ -179,7 +179,7 @@ ImagePicker.preview(this, new WXImgPickerPresenter(), allPreviewImageList, defau
 ```
 
 
-#### 直接拍照
+### 直接拍照
 支持直接打开摄像头拍照
 
  **调用示例**：
@@ -192,7 +192,7 @@ ImagePicker.takePhoto(this, "拍照保存路径", new OnImagePickCompleteListene
         });
 ```
  
-#### 直接拍照并剪裁
+### 直接拍照并剪裁
 支持直接打开摄像头拍照并剪裁，支持自定义比例剪裁和圆形剪裁
 
  **调用示例**：
@@ -211,7 +211,7 @@ ImagePicker.takePhotoAndCrop(this, new WXImgPickerPresenter(), selectConfig, new
     });
 ```
 
-#### 设置选择器调用失败回调
+### 设置选择器调用失败回调
 所有OnImagePickCompleteListener回调都可以设置OnImagePickCompleteListener2监听
 
  **调用示例**：
