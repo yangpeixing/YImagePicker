@@ -25,7 +25,7 @@
  - 支持图片直接预览和编辑预览（排序、删除）
  - 支持单图自定义比例剪裁
  - 支持单图圆形剪裁，生成png圆形图片(2.4.3版本加入)
- - 支持13种视频图片文件指定或混合选择(2.4.4版本加入)
+ - 支持13种视频图片文件类型混合加载(2.4.4版本加入)
  - 支持视频图片混合单选或多选
  - 支持高清预览超长图、超大图，图片放大效果胜过微信
  - 小红书剪裁样式支持视频预览
@@ -93,7 +93,7 @@ YImagePicker与主项目通过presenter进行交互与解耦，presenter采用�
 ### [点击查看详细API文档](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档)
  
 ### 微信图片选择
-支持视频、GIF、长图选择，支持单张多比例剪裁，支持多图预览、编辑、以及调序，支持直接拍照。调用前请按照demo实现IMultiPickerBindPresenter 接口 
+支持视频、GIF、长图选择，支持选择状态保存。调用前请按照demo实现IMultiPickerBindPresenter接口 
 
  **调用示例**：
 ```java
@@ -103,6 +103,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())//指定presenter
            .mimeType(MimeType.ofAll())//设置要加载的文件类型，可指定单一类型
            .filterMimeType(MimeType.GIF)//设置需要过滤掉加载的文件类型
            .showCamera(true)//显示拍照
+           .setPreview(true)//开启预览
            .setVideoSinglePick(true)//设置视频单选
            .setSinglePickImageOrVideoType(true)//设置图片和视频单一类型选择
            .setMaxVideoDuration(2000L)//设置视频可选取的最大时长
@@ -116,7 +117,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())//指定presenter
             });                                                                                                                            
 ```
 ### 小红书图片选择
-高仿小红书图片剪裁框架，支持视频以及多图剪裁、支持UI自定义，支持fragment样式侵入
+高仿小红书图片剪裁框架，支持视频以及多图剪裁、支持视频预览，支持UI自定义，支持fragment样式侵入。调用前请按照demo实现ICropPickerBindPresenter接口 
 
  **调用示例**：
 ```java
