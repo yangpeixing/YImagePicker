@@ -10,6 +10,9 @@ import android.view.WindowManager;
 
 import java.lang.reflect.Method;
 
+/**
+ * 状态栏工具类
+ */
 public class PStatusBarUtil {
 
     /**

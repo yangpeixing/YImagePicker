@@ -1,26 +1,35 @@
 package com.ypx.imagepicker.utils;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+
 import android.text.TextUtils;
 
 import com.ypx.imagepicker.BuildConfig;
 
 
 /**
- * Description:
+ * Description: 权限工具类
  * <p>
  * Author: peixing.yang
  * Date: 2019/3/1
  */
 public class PPermissionUtils {
     private Context context;
+
+    public static boolean hasCameraPermissions(Activity activity) {
+        return ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+    }
 
     public static PPermissionUtils create(Context context) {
         return new PPermissionUtils(context);

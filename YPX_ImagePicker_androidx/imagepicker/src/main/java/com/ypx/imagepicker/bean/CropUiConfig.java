@@ -16,6 +16,7 @@ import java.io.Serializable;
 public class CropUiConfig implements Serializable {
     private int themeColor;
     private int cropViewBackgroundColor;
+    private int titleArrowIconID;
     private int cameraIconID;
     private int cameraBackgroundColor;
     private int backIconID;
@@ -35,6 +36,7 @@ public class CropUiConfig implements Serializable {
     private int gridBackgroundColor;
     private boolean isShowNextCount;
     private String nextBtnText;
+    private boolean isShowStatusBar;
 
     public CropUiConfig() {
         setDefaultStyle();
@@ -63,6 +65,24 @@ public class CropUiConfig implements Serializable {
         setNextBtnUnSelectBackground(null);
         setShowNextCount(true);
         setNextBtnText("下一步");
+        setShowStatusBar(false);
+        setTitleArrowIconID(R.mipmap.picker_arrow_down);
+    }
+
+    public int getTitleArrowIconID() {
+        return titleArrowIconID;
+    }
+
+    public void setTitleArrowIconID(int titleArrowIconID) {
+        this.titleArrowIconID = titleArrowIconID;
+    }
+
+    public boolean isShowStatusBar() {
+        return isShowStatusBar;
+    }
+
+    public void setShowStatusBar(boolean isShowStatusBar) {
+        this.isShowStatusBar = isShowStatusBar;
     }
 
     public int getVideoPauseIconID() {

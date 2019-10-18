@@ -1,9 +1,15 @@
 package com.ypx.imagepicker.utils;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.view.View;
 
 import java.io.File;
@@ -14,7 +20,7 @@ import java.io.IOException;
 /**
  * Time: 2019/7/17 14:16
  * Author:ypx
- * Description:
+ * Description:文件工具类
  */
 public class PFileUtil {
     public static int[] getImageWidthHeight(String path) {
@@ -163,6 +169,53 @@ public class PFileUtil {
         MediaMetadataRetriever media = new MediaMetadataRetriever();
         media.setDataSource(path);
         return media.getFrameAtTime();
+    }
+
+    /**
+     * 获取系统相册文件路径
+     */
+    public static String getDCIMOutputPath(String fileNameStart, String fileNameEnd) {
+        String outputDir;
+        File dcim = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+        if (null != dcim && dcim.exists()) {
+            outputDir = dcim.getAbsolutePath() + File.separator + "Camera";
+        } else {
+            outputDir = (Environment.getDataDirectory().getPath() + File.separator + "Camera");
+        }
+        File outputFolder = new File(outputDir);
+        if (!outputFolder.exists()) {
+            outputFolder.mkdir();
+        }
+        return outputDir + File.separator + fileNameStart + System.currentTimeMillis() + fileNameEnd;
+    }
+
+    /**
+     * 刷新相册
+     */
+    public static void refreshGalleryAddPic(Context context, String path) {
+        if (context == null) {
+            return;
+        }
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(path);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        context.sendBroadcast(mediaScanIntent);
+    }
+
+    public static Intent getTakePhotoIntent(Activity activity, String savePath) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            Uri imageUri;
+            if (android.os.Build.VERSION.SDK_INT < 24) {
+                imageUri = Uri.fromFile(new File(savePath));
+            } else {
+                imageUri = PickerFileProvider.getUriForFile(activity, activity
+                        .getApplication().getPackageName() + ".picker.fileprovider", new File(savePath));
+            }
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        }
+        return intent;
     }
 
 }

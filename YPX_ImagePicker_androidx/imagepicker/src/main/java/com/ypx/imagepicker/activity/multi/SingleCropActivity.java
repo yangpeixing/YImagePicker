@@ -31,11 +31,15 @@ import java.util.ArrayList;
 
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_CURRENT_IMAGE;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
-import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_UI_CONFIG;
+import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
 
 
 /**
- * 截取头像
+ * Description: 图片剪裁页面
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
 public class SingleCropActivity extends FragmentActivity {
     private CropImageView cropView;
@@ -48,7 +52,7 @@ public class SingleCropActivity extends FragmentActivity {
                                   String path,
                                   final OnImagePickCompleteListener listener) {
         Intent intent = new Intent(context, SingleCropActivity.class);
-        intent.putExtra(INTENT_KEY_UI_CONFIG, presenter);
+        intent.putExtra(INTENT_KEY_PRESENTER, presenter);
         intent.putExtra(INTENT_KEY_SELECT_CONFIG, config);
         intent.putExtra(INTENT_KEY_CURRENT_IMAGE, path);
         PLauncher.init(context).startActivityForResult(intent, new PLauncher.Callback() {
@@ -67,8 +71,8 @@ public class SingleCropActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.picker_activity_crop);
-        if (getIntent() != null && getIntent().hasExtra(INTENT_KEY_UI_CONFIG)) {
-            IMultiPickerBindPresenter presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_UI_CONFIG);
+        if (getIntent() != null && getIntent().hasExtra(INTENT_KEY_PRESENTER)) {
+            IMultiPickerBindPresenter presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
             selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
             uiConfig = presenter.getUiConfig(this);
             String imagePath = "file://" + getIntent().getStringExtra(INTENT_KEY_CURRENT_IMAGE);

@@ -90,6 +90,9 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
         config.setShowNextCount(false);
         //设置下一步按钮文字
         config.setNextBtnText("下一步");
+        config.setTitleArrowIconID(R.mipmap.picker_arrow_down);
+
+        config.setShowStatusBar(false);
         return config;
     }
 

@@ -7,25 +7,29 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.data.MediaSetsDataSource;
+import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.utils.PPermissionUtils;
-import com.ypx.imagepicker.utils.PTakePhotoUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_CAMERA;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_STORAGE;
+import static com.ypx.imagepicker.ImagePicker.REQ_CAMERA;
+import static com.ypx.imagepicker.ImagePicker.REQ_STORAGE;
+
 
 /**
- * Time: 2019/9/30 11:18
- * Author:ypx
- * Description:选择器加载基类，主要处理媒体文件的加载和权限管理
+ * Description: 选择器加载基类，主要处理媒体文件的加载和权限管理
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
 public abstract class PBaseLoaderFragment extends Fragment {
     /**
@@ -51,10 +55,9 @@ public abstract class PBaseLoaderFragment extends Fragment {
     /**
      * 拍照回调
      *
-     * @param requestCode 请求码
-     * @param resultCode  返回码
+     * @param imageItem 拍照返回
      */
-    protected abstract void onTakePhotoResult(int requestCode, int resultCode);
+    protected abstract void onTakePhotoResult(ImageItem imageItem);
 
     /**
      * @return 返回需要判断当前文件夹列表是否打开
@@ -73,7 +76,14 @@ public abstract class PBaseLoaderFragment extends Fragment {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
         } else {
-            PTakePhotoUtil.takePhoto(getActivity(), REQ_CAMERA);
+            ImagePicker.takePhoto(getActivity(), new OnImagePickCompleteListener() {
+                @Override
+                public void onImagePickComplete(ArrayList<ImageItem> items) {
+                    if (items != null && items.size() > 0) {
+                        onTakePhotoResult(items.get(0));
+                    }
+                }
+            });
         }
     }
 

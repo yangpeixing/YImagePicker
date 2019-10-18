@@ -40,21 +40,9 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
     private Set<MimeType> mimeTypeSet = MimeType.ofAll();
 
     public MediaItemsDataSource setMimeTypeSet(BaseSelectConfig config) {
-
-        mimeTypeSet = MimeType.ofAll();
-        if (!config.isShowImage()) {
-            mimeTypeSet.removeAll(MimeType.ofImage());
-        } else {
-            if (!config.isLoadGif()) {
-                mimeTypeSet.remove(MimeType.GIF);
-            }
-        }
+        mimeTypeSet = config.getMimeTypes();
         isLoadImage = config.isShowImage();
         isLoadVideo = config.isShowVideo();
-        if (!config.isShowVideo()) {
-            mimeTypeSet.removeAll(MimeType.ofVideo());
-        }
-
         return this;
     }
 

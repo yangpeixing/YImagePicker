@@ -38,20 +38,7 @@ public class MediaSetsDataSource implements LoaderManager.LoaderCallbacks<Cursor
     public MediaSetsDataSource setMimeTypeSet(BaseSelectConfig config) {
         isLoadImage = config.isShowImage();
         isLoadVideo = config.isShowVideo();
-
-        mimeTypeSet = MimeType.ofAll();
-        if (!config.isShowImage()) {
-            mimeTypeSet.removeAll(MimeType.ofImage());
-        } else {
-            if (!config.isLoadGif()) {
-                mimeTypeSet.remove(MimeType.GIF);
-            }
-        }
-
-        if (!config.isShowVideo()) {
-            mimeTypeSet.removeAll(MimeType.ofVideo());
-        }
-
+        mimeTypeSet = config.getMimeTypes();
         return this;
     }
 

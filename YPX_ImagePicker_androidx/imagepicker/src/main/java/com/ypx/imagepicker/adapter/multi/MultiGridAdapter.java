@@ -1,6 +1,5 @@
 package com.ypx.imagepicker.adapter.multi;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -20,11 +19,8 @@ import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.utils.PTakePhotoUtil;
 
 import java.util.List;
-
-import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.REQ_CAMERA;
 
 /**
  * Description: 多选adapter
@@ -135,7 +131,7 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         notifyDataSetChanged();
     }
 
-    static class CameraViewHolder extends RecyclerView.ViewHolder {
+    class CameraViewHolder extends RecyclerView.ViewHolder {
         private TextView tv_camera;
 
         CameraViewHolder(@NonNull View itemView, MultiSelectConfig selectConfig, PickerUiConfig uiConfig) {
@@ -157,7 +153,10 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             tv_camera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PTakePhotoUtil.takePhoto((Activity) v.getContext(), REQ_CAMERA);
+                    if (onActionResult != null) {
+                        onActionResult.onClickItem(null, -1);
+                    }
+                    //   PTakePhotoUtil.takePhoto((Activity) v.getContext(), REQ_CAMERA);
                 }
             });
         }
