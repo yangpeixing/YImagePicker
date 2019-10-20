@@ -43,9 +43,15 @@ public class MultiImagePickerActivity extends FragmentActivity {
     private MultiSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
 
-    public static void intent(Activity activity,
-                              MultiSelectConfig selectConfig,
-                              IMultiPickerBindPresenter presenter,
+    /**
+     * 跳转微信选择器页面
+     *
+     * @param activity     跳转的activity
+     * @param selectConfig 配置项
+     * @param presenter    IMultiPickerBindPresenter
+     * @param listener     选择回调
+     */
+    public static void intent(Activity activity, MultiSelectConfig selectConfig, IMultiPickerBindPresenter presenter,
                               final OnImagePickCompleteListener listener) {
         Intent intent = new Intent(activity, MultiImagePickerActivity.class);
         intent.putExtra(MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG, selectConfig);
@@ -67,32 +73,35 @@ public class MultiImagePickerActivity extends FragmentActivity {
     /**
      * 校验传递数据是否合法
      */
-    private boolean isIntentDataValid() {
-        if (getIntent() == null || !getIntent().hasExtra(INTENT_KEY_SELECT_CONFIG)
-                || !getIntent().hasExtra(INTENT_KEY_PRESENTER)) {
-            PickerErrorExecutor.executeError(this, PickerError.PRESENTER_NOT_FOUND.getCode());
-            return false;
-        }
+    private boolean isIntentDataFailed() {
         selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
         presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
         if (presenter == null) {
             PickerErrorExecutor.executeError(this, PickerError.PRESENTER_NOT_FOUND.getCode());
-            return false;
+            return true;
         }
         if (selectConfig == null) {
             PickerErrorExecutor.executeError(this, PickerError.SELECT_CONFIG_NOT_FOUND.getCode());
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!isIntentDataValid()) {
+        if (isIntentDataFailed()) {
             return;
         }
         setContentView(R.layout.picker_activity_fragment_wrapper);
+        setStatusBar();
+        setFragment();
+    }
+
+    /**
+     * 设置是否沉浸式状态栏
+     */
+    private void setStatusBar() {
         View mStatusBar = findViewById(R.id.mStatusBar);
         PickerUiConfig uiConfig = presenter.getUiConfig(this);
         if (uiConfig != null && uiConfig.isImmersionBar()) {
@@ -105,7 +114,12 @@ public class MultiImagePickerActivity extends FragmentActivity {
         } else {
             mStatusBar.setVisibility(View.GONE);
         }
+    }
 
+    /**
+     * 填充选择器fragment
+     */
+    private void setFragment() {
         fragment = ImagePicker.withMulti(presenter)
                 .withMultiSelectConfig(selectConfig)
                 .pickWithFragment(new OnImagePickCompleteListener2() {
@@ -127,7 +141,6 @@ public class MultiImagePickerActivity extends FragmentActivity {
                 .replace(R.id.fragment_container, fragment)
                 .commit();
     }
-
 
     @Override
     public void onBackPressed() {

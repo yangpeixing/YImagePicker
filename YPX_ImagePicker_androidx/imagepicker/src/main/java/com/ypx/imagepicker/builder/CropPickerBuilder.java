@@ -233,6 +233,9 @@ public class CropPickerBuilder {
         ImagePickAndCropActivity.intent(activity, presenter, selectConfig, listener);
     }
 
+    /**
+     * @return 获取选择器的presenter和selectConfig
+     */
     private Bundle getFragmentArguments() {
         checkVideoAndImage();
         Bundle bundle = new Bundle();
@@ -253,6 +256,9 @@ public class CropPickerBuilder {
         return mFragment;
     }
 
+    /**
+     * 检测是否加载视频和图片
+     */
     private void checkVideoAndImage() {
         if (selectConfig == null) {
             return;

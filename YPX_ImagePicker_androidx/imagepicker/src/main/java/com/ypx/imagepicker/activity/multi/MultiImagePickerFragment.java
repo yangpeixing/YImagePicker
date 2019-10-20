@@ -103,7 +103,6 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
             PickerErrorExecutor.executeError(onImagePickCompleteListener, PickerError.SELECT_CONFIG_NOT_FOUND.getCode());
             return false;
         }
-
         return true;
     }
 

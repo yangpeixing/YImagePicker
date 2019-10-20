@@ -38,9 +38,15 @@ public class ImagePickAndCropActivity extends FragmentActivity {
     private ICropPickerBindPresenter presenter;
     private CropSelectConfig selectConfig;
 
-    public static void intent(Activity activity,
-                              ICropPickerBindPresenter presenter,
-                              CropSelectConfig selectConfig,
+    /**
+     * 跳转小红书剪裁页面
+     *
+     * @param activity     跳转activity
+     * @param presenter    ICropPickerBindPresenter
+     * @param selectConfig 选择器配置
+     * @param listener     选择回调
+     */
+    public static void intent(Activity activity, ICropPickerBindPresenter presenter, CropSelectConfig selectConfig,
                               final OnImagePickCompleteListener listener) {
         Intent intent = new Intent(activity, ImagePickAndCropActivity.class);
         intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_DATA_PRESENTER, presenter);
@@ -62,41 +68,36 @@ public class ImagePickAndCropActivity extends FragmentActivity {
     /**
      * 校验传递数据是否合法
      */
-    private boolean isIntentDataValid() {
-        if (getIntent() == null || !getIntent().hasExtra(INTENT_KEY_DATA_PRESENTER)) {
-            PickerErrorExecutor.executeError(this, PickerError.PRESENTER_NOT_FOUND.getCode());
-            return false;
-        }
-        //获取相关配置信息
-        presenter = (ICropPickerBindPresenter) getIntent().
-                getSerializableExtra(INTENT_KEY_DATA_PRESENTER);
-        selectConfig = (CropSelectConfig) getIntent().
-                getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
+    private boolean isIntentDataFailed() {
+        presenter = (ICropPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_DATA_PRESENTER);
+        selectConfig = (CropSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
         if (presenter == null) {
             PickerErrorExecutor.executeError(this, PickerError.PRESENTER_NOT_FOUND.getCode());
-            return false;
+            return true;
         }
         if (selectConfig == null) {
             PickerErrorExecutor.executeError(this, PickerError.SELECT_CONFIG_NOT_FOUND.getCode());
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        if (isIntentDataValid()) {
-            initView();
+        if (isIntentDataFailed()) {
+            return;
         }
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.picker_activity_fragment_wrapper);
+        setStatusBar();
+        setFragment();
     }
 
     /**
-     * 启动参数转发
+     * 设置是否显示状态栏
      */
-    private void initView() {
-
+    private void setStatusBar() {
         CropUiConfig uiConfig = presenter.getUiConfig(this);
         if (uiConfig == null) {
             uiConfig = new CropUiConfig();
@@ -110,9 +111,12 @@ public class ImagePickAndCropActivity extends FragmentActivity {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
+    }
 
-        setContentView(R.layout.picker_activity_fragment_wrapper);
-        //fragment构建
+    /**
+     * 填充fragment
+     */
+    private void setFragment() {
         mFragment = ImagePicker.withCrop(presenter)
                 .withSelectConfig(selectConfig)
                 .pickWithFragment(new OnImagePickCompleteListener2() {

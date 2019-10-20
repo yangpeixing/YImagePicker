@@ -224,7 +224,6 @@ public class CropImageView extends ImageView {
             }
         }
 
-
         if (onImageLoadListener != null) {
             onImageLoadListener.onImageLoaded(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             onImageLoadListener = null;
@@ -247,7 +246,6 @@ public class CropImageView extends ImageView {
             initBase();
         }
     }
-
 
     private Info restoreInfo;
 
@@ -357,7 +355,7 @@ public class CropImageView extends ImageView {
             sy = (float) h / drawableHeight;
         }
 
-        baseScale = sx < sy ? sx : sy;
+        baseScale = Math.min(sx, sy);
 
         mBaseMatrix.reset();
         mBaseMatrix.postTranslate(tx, ty);

@@ -84,12 +84,19 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     private MultiPreviewAdapter previewAdapter;
     private boolean isCanEdit = false;
 
-    public static void intent(Activity context,
-                              MultiSelectConfig selectConfig,
-                              IMultiPickerBindPresenter presenter,
-                              final boolean isPickerJump,
-                              final ArrayList<ImageItem> previewList,
-                              int currentPos,
+    /**
+     * 跳转预览页面
+     *
+     * @param context      跳转的activity
+     * @param selectConfig 设置配置属性
+     * @param presenter    IMultiPickerBindPresenter 负责提供UI展示
+     * @param isPickerJump 是否是选择器跳转，如果是选择器跳转，需要从媒体库中更新图片列表
+     * @param previewList  需要预览的图片列表
+     * @param currentPos   默认选中项
+     * @param listener     预览编辑完成回调，如果传null,代表普通编辑
+     */
+    public static void intent(Activity context, MultiSelectConfig selectConfig, IMultiPickerBindPresenter presenter,
+                              final boolean isPickerJump, final ArrayList<ImageItem> previewList, int currentPos,
                               final OnImagePickCompleteListener listener) {
         Intent intent = new Intent(context, MultiImagePreviewActivity.class);
         intent.putExtra(INTENT_KEY_PREVIEW_LIST, previewList);

@@ -26,7 +26,6 @@ import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_CURRENT_IMAGE;
@@ -46,14 +45,20 @@ public class SingleCropActivity extends FragmentActivity {
     private PickerUiConfig uiConfig;
     private MultiSelectConfig selectConfig;
 
-    public static void intentCrop(Activity context,
-                                  IMultiPickerBindPresenter presenter,
-                                  MultiSelectConfig config,
-                                  String path,
-                                  final OnImagePickCompleteListener listener) {
+    /**
+     * 跳转单图剪裁
+     *
+     * @param context      跳转的activity
+     * @param presenter    IMultiPickerBindPresenter
+     * @param selectConfig 选择配置
+     * @param path         需要剪裁的图片的原始路径
+     * @param listener     剪裁回调
+     */
+    public static void intentCrop(Activity context, IMultiPickerBindPresenter presenter, MultiSelectConfig selectConfig,
+                                  String path, final OnImagePickCompleteListener listener) {
         Intent intent = new Intent(context, SingleCropActivity.class);
         intent.putExtra(INTENT_KEY_PRESENTER, presenter);
-        intent.putExtra(INTENT_KEY_SELECT_CONFIG, config);
+        intent.putExtra(INTENT_KEY_SELECT_CONFIG, selectConfig);
         intent.putExtra(INTENT_KEY_CURRENT_IMAGE, path);
         PLauncher.init(context).startActivityForResult(intent, new PLauncher.Callback() {
             @Override
@@ -149,12 +154,10 @@ public class SingleCropActivity extends FragmentActivity {
         return cropUrl;
     }
 
-
     private void notifyOnImagePickComplete(ArrayList<ImageItem> list) {
         Intent intent = new Intent();
-        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, (Serializable) list);
+        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, list);
         setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
         finish();
     }
-
 }
