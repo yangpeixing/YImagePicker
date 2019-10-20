@@ -26,10 +26,9 @@
  - 支持单图自定义比例剪裁
  - 支持单图圆形剪裁，生成png圆形图片(2.4.3版本加入)
  - 支持13种视频图片文件类型混合加载(2.4.4版本加入)
- - 支持视频图片混合单选或多选
  - 支持高清预览超长图、超大图，图片放大效果胜过微信
  - 小红书剪裁样式支持视频预览
- - 微信样式支持指定单一类型选择（图片、视频）
+ - 支持图片和视频文件混合选择或指定类型选择
  - 微信样式支持多次选择状态保存
  - 微信样式支持指定某些媒体文件不可选择
  - 选择结果直接回调，拒绝配置ActivityForResult+requestCode，即调用即处理
@@ -45,9 +44,9 @@
 ```java
 implementation 'com.ypx.yimagepicker:androidx:2.4.4'
 ```
-**support版本：（暂未更新）**
+**support版本：**
 ```java
-implementation 'com.ypx.yimagepicker:support:2.4.3'
+implementation 'com.ypx.yimagepicker:support:2.4.4'
 ```
 
 ### 核心原理
@@ -236,10 +235,10 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
 
 ### 版本记录
 [查看详细版本记录](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker版本记录)
-#### 2.4.4版本
+#### 2.4.4版本 [2019.10.18]
   1. 【BUG修复】修复了预览时无法排序问题
   2. 【新增】支持十三种图片视频文件混合或指定选择，调用方法mimeType()和filterMimeType()
-  3. 【新增】支持直接拍照和直接拍照并剪裁图片
+  3. 【新增】支持直接调用拍照和直接调用拍照并剪裁图片
   4. 【新增】支持选择器调用失败或取消选择回调，使用OnImagePickCompleteListener2
   5. 【新增】小红书剪裁支持配置状态栏是否显示
   6. 【新增】小红书剪裁支持定制标题下箭头
@@ -267,6 +266,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
 邮箱：313930500@qq.com
 Q Q: 313930500 
 微信：calor0616 
+博客：[CSDN](https://blog.csdn.net/qq_16674697)
 
 
 **遇到问题别绕路，QQ微信直接呼~ 您的star就是我前进的动力~🌹**
