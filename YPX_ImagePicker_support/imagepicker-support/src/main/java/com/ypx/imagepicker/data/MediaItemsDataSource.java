@@ -40,21 +40,9 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
     private Set<MimeType> mimeTypeSet = MimeType.ofAll();
 
     public MediaItemsDataSource setMimeTypeSet(BaseSelectConfig config) {
-
-        mimeTypeSet = MimeType.ofAll();
-        if (!config.isShowImage()) {
-            mimeTypeSet.removeAll(MimeType.ofImage());
-        } else {
-            if (!config.isLoadGif()) {
-                mimeTypeSet.remove(MimeType.GIF);
-            }
-        }
+        mimeTypeSet = config.getMimeTypes();
         isLoadImage = config.isShowImage();
         isLoadVideo = config.isShowVideo();
-        if (!config.isShowVideo()) {
-            mimeTypeSet.removeAll(MimeType.ofVideo());
-        }
-
         return this;
     }
 
@@ -97,7 +85,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
             public void run() {
                 final ArrayList<ImageItem> imageItems = new ArrayList<>();
                 ArrayList<ImageItem> allVideoItems = new ArrayList<>();
-                if (!context.isDestroyed() && cursor.moveToFirst() && !cursor.isClosed()) {
+                if (!context.isDestroyed() && !cursor.isClosed() && cursor.moveToFirst()) {
                     do {
                         ImageItem item = new ImageItem();
                         item.id = getLong(cursor, MediaStore.Files.FileColumns._ID);
@@ -108,6 +96,9 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                         item.duration = getLong(cursor, MediaStore.Video.Media.DURATION);
                         item.setVideo(MimeType.isVideo(item.mimeType));
                         if (item.path == null || item.path.length() == 0) {
+                            continue;
+                        }
+                        if (item.isVideo() && item.duration == 0) {
                             continue;
                         }
                         if (item.duration > 0) {
@@ -134,7 +125,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                         if (preloadProvider != null && imageItems.size() == 40) {
                             notifyPreloadItem(context, imageItems);
                         }
-                    } while (!context.isDestroyed() && cursor.moveToNext() && !cursor.isClosed());
+                    } while (!context.isDestroyed() && !cursor.isClosed() && cursor.moveToNext());
                 }
 
                 ImageSet allVideoSet = null;

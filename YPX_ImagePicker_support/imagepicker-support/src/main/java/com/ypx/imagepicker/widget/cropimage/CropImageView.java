@@ -33,7 +33,10 @@ import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
+import com.ypx.imagepicker.utils.PFileUtil;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
+
+import java.io.File;
 
 /**
  * Description: 剪裁ImageView
@@ -221,7 +224,6 @@ public class CropImageView extends ImageView {
             }
         }
 
-
         if (onImageLoadListener != null) {
             onImageLoadListener.onImageLoaded(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             onImageLoadListener = null;
@@ -244,7 +246,6 @@ public class CropImageView extends ImageView {
             initBase();
         }
     }
-
 
     private Info restoreInfo;
 
@@ -354,7 +355,7 @@ public class CropImageView extends ImageView {
             sy = (float) h / drawableHeight;
         }
 
-        baseScale = sx < sy ? sx : sy;
+        baseScale = Math.min(sx, sy);
 
         mBaseMatrix.reset();
         mBaseMatrix.postTranslate(tx, ty);

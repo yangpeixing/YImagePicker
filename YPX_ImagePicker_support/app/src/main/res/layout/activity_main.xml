@@ -36,10 +36,11 @@
                 android:id="@+id/rb_weChat"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="微信样式" />
 
             <RadioButton
-                android:id="@+id/rb_Custom"
+                android:id="@+id/rb_custom"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:text="自定义样式" />
@@ -54,30 +55,126 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <RadioGroup
-            android:id="@+id/rg_type"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <RadioButton
-                android:id="@+id/rb_all"
-                android:layout_width="120dp"
+            <CheckBox
+                android:id="@+id/cb_JPEG"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="图片和视频" />
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="JPEG" />
 
-            <RadioButton
-                android:id="@+id/rb_imageOnly"
-                android:layout_width="120dp"
+            <CheckBox
+                android:id="@+id/cb_PNG"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="只加载图片" />
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="PNG" />
 
-            <RadioButton
-                android:id="@+id/rb_VideoOnly"
-                android:layout_width="120dp"
+            <CheckBox
+                android:id="@+id/cb_GIF"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="只加载视频" />
-        </RadioGroup>
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="GIF" />
+
+            <CheckBox
+                android:id="@+id/cb_BMP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="BMP" />
+
+            <CheckBox
+                android:id="@+id/cb_WEBP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="WEBP" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/cb_MPEG"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="MPEG" />
+
+            <CheckBox
+                android:id="@+id/cb_MP4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="MP4" />
+
+            <CheckBox
+                android:id="@+id/cb_AVI"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="AVI" />
+
+            <CheckBox
+                android:id="@+id/cb_MKV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="MKV" />
+
+            <CheckBox
+                android:id="@+id/cb_WEBM"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="WEBM" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/cb_TS"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="TS" />
+
+            <CheckBox
+                android:id="@+id/cb_QUICKTIME"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="QUICKTIME" />
+
+            <CheckBox
+                android:id="@+id/cb_THREEGPP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="THREEGPP" />
+
+        </LinearLayout>
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -96,44 +193,45 @@
 
             <CheckBox
                 android:id="@+id/cb_showCamera"
-                android:layout_width="120dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="显示拍照" />
 
             <CheckBox
-                android:id="@+id/cb_showGif"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:text="不加载Gif" />
-
-            <CheckBox
                 android:id="@+id/cb_closePreview"
-                android:layout_width="120dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="关闭预览" />
+
+            <CheckBox
+                android:id="@+id/cb_previewCanEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="预览是否支持编辑" />
         </LinearLayout>
 
-        <CheckBox
-            android:id="@+id/cb_videoSingle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="只能选择一个视频" />
+            android:orientation="horizontal">
 
-        <CheckBox
-            android:id="@+id/cb_imageOrVideoMix"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="只能选择图片或视频" />
+            <CheckBox
+                android:id="@+id/cb_videoSingle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="只能选择一个视频" />
 
-        <CheckBox
-            android:id="@+id/cb_previewCanEdit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="预览时可以取消选择或排序" />
+            <CheckBox
+                android:id="@+id/cb_imageOrVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="只能选择图片或视频" />
+
+
+        </LinearLayout>
 
 
         <TextView
-            android:id="@+id/mTvSelectListTitle"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_marginStart="6dp"
@@ -142,8 +240,8 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-
         <RadioGroup
+            android:id="@+id/rg_nextPickType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -152,6 +250,7 @@
                 android:id="@+id/rb_new"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="重新选择" />
 
             <RadioButton
@@ -186,29 +285,32 @@
 
             <RadioButton
                 android:id="@+id/rb_multi"
-                android:layout_width="120dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="多选模式" />
-
-            <RadioButton
-                android:id="@+id/rb_single"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:text="单选模式" />
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="多选/单选" />
 
             <RadioButton
                 android:id="@+id/rb_crop"
-                android:layout_width="120dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="单张剪裁" />
+                android:layout_weight="1"
+                android:text="剪裁" />
 
             <RadioButton
                 android:id="@+id/rb_takePhoto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:text="拍照"
-                android:visibility="gone" />
+                android:layout_weight="1"
+                android:text="拍照" />
+
+            <RadioButton
+                android:id="@+id/rb_takePhotoAndCrop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="拍照并剪裁" />
 
         </RadioGroup>
 
@@ -217,8 +319,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:orientation="vertical">
-
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -228,23 +330,24 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
+            <CheckBox
+                android:id="@+id/cb_circle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="开启圆形剪裁" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <CheckBox
-                    android:id="@+id/cb_circle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:text="圆形剪裁" />
-
                 <TextView
                     android:id="@+id/mCropX"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
                     android:gravity="center"
                     android:text="cropX:1" />
 
@@ -292,7 +395,7 @@
                     android:id="@+id/mMarginSeekBar"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:max="80"
+                    android:max="200"
                     android:progress="0" />
             </LinearLayout>
 

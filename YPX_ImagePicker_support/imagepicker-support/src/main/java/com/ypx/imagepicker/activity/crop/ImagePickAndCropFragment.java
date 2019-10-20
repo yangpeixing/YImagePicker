@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,14 +27,15 @@ import com.ypx.imagepicker.bean.CropUiConfig;
 import com.ypx.imagepicker.bean.ImageCropMode;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
+import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.CropViewContainerHelper;
+import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.RecyclerViewTouchHelper;
 import com.ypx.imagepicker.helper.VideoViewContainerHelper;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PFileUtil;
-import com.ypx.imagepicker.utils.PTakePhotoUtil;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
 import com.ypx.imagepicker.widget.TouchRecyclerView;
@@ -43,17 +43,15 @@ import com.ypx.imagepicker.widget.TouchRecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.app.Activity.RESULT_OK;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_DATA_PRESENTER;
 import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.INTENT_KEY_SELECT_CONFIG;
-import static com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity.REQ_CAMERA;
-
 
 /**
  * Description: 图片选择和剪裁fragment
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/21
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
 public class ImagePickAndCropFragment extends PBaseLoaderFragment implements View.OnClickListener,
         CropSetAdapter.OnSelectImageSetListener,
@@ -115,22 +113,34 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        dealWithIntentData();
-        initView();
-        initUI();
-        initGridImagesAndImageSets();
-        loadMediaSets();
+        if (isIntentDataValid()) {
+            initView();
+            initUI();
+            initGridImagesAndImageSets();
+            loadMediaSets();
+        }
     }
 
     /**
-     * 处理传递数据
+     * 校验传递数据是否合法
      */
-    private void dealWithIntentData() {
+    private boolean isIntentDataValid() {
         Bundle arguments = getArguments();
         if (null != arguments) {
             presenter = (ICropPickerBindPresenter) arguments.getSerializable(INTENT_KEY_DATA_PRESENTER);
             selectConfig = (CropSelectConfig) arguments.getSerializable(INTENT_KEY_SELECT_CONFIG);
         }
+
+        if (presenter == null) {
+            PickerErrorExecutor.executeError(imageListener, PickerError.PRESENTER_NOT_FOUND.getCode());
+            return false;
+        }
+
+        if (selectConfig == null) {
+            PickerErrorExecutor.executeError(imageListener, PickerError.SELECT_CONFIG_NOT_FOUND.getCode());
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -203,6 +213,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         titleBar.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
         mCropContainer.setBackgroundColor(uiConfig.getCropViewBackgroundColor());
         mTvSetName.setTextColor(uiConfig.getTitleTextColor());
+        mArrowImg.setImageDrawable(getResources().getDrawable(uiConfig.getTitleArrowIconID()));
         mArrowImg.setColorFilter(uiConfig.getTitleTextColor());
         mTvSelectNum.setBackground(PCornerUtils.cornerDrawable(uiConfig.getNextBtnSelectedTextColor(), dp(10)));
         mGridImageRecyclerView.setBackgroundColor(uiConfig.getGridBackgroundColor());
@@ -658,7 +669,8 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
 
     @Override
     protected void loadMediaSetsComplete(List<ImageSet> imageSetList) {
-        if (imageSetList == null || imageSetList.size() == 0) {
+        if (imageSetList == null || imageSetList.size() == 0 || (imageSetList.size() == 1 && imageSetList.get(0).count == 0)) {
+            PickerErrorExecutor.executeError(imageListener, PickerError.MEDIA_NOT_FOUND.getCode());
             return;
         }
         this.imageSets.clear();
@@ -706,28 +718,23 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
      */
     @Override
     public boolean onBackPressed() {
-        if (mImageSetRecyclerView.getVisibility() == View.VISIBLE) {
+        if (mImageSetRecyclerView != null && mImageSetRecyclerView.getVisibility() == View.VISIBLE) {
             toggleImageSet();
             return true;
         }
+        PickerErrorExecutor.executeError(imageListener, PickerError.CANCEL.getCode());
         return false;
     }
 
     @Override
-    public void onTakePhotoResult(int requestCode, int resultCode) {
-        if (resultCode == RESULT_OK && requestCode == REQ_CAMERA) {
-            if (!TextUtils.isEmpty(PTakePhotoUtil.mCurrentPhotoPath)) {
-                PTakePhotoUtil.refreshGalleryAddPic(getContext());
-                ImageItem item = new ImageItem(PTakePhotoUtil.mCurrentPhotoPath, System.currentTimeMillis());
-                item.width = PFileUtil.getImageWidthHeight(PTakePhotoUtil.mCurrentPhotoPath)[0];
-                item.height = PFileUtil.getImageWidthHeight(PTakePhotoUtil.mCurrentPhotoPath)[1];
-                imageItems.add(0, item);
-                if (imageSets != null && imageSets.size() > 0 && imageSets.get(0).imageItems != null) {
-                    imageSets.get(0).imageItems.add(0, item);
-                }
-                onSelectImage(selectConfig.isShowCamera() ? 1 : 0);
-                imageGridAdapter.notifyDataSetChanged();
+    protected void onTakePhotoResult(ImageItem imageItem) {
+        if (imageItem != null) {
+            imageItems.add(0, imageItem);
+            if (imageSets != null && imageSets.size() > 0 && imageSets.get(0).imageItems != null) {
+                imageSets.get(0).imageItems.add(0, imageItem);
             }
+            onSelectImage(selectConfig.isShowCamera() ? 1 : 0);
+            imageGridAdapter.notifyDataSetChanged();
         }
     }
 

@@ -1,8 +1,8 @@
 package com.example.imagepicker_support;
 
 import android.annotation.SuppressLint;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -20,48 +20,57 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.bumptech.glide.Glide;
 import com.example.imagepicker_support.style.CustomImgPickerPresenter;
 import com.example.imagepicker_support.style.RedBookCropPresenter;
 import com.example.imagepicker_support.style.WXImgPickerPresenter;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.ImageSelectMode;
-import com.ypx.imagepicker.bean.SelectMode;
+import com.ypx.imagepicker.bean.MimeType;
+import com.ypx.imagepicker.bean.MultiSelectConfig;
+import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.builder.MultiPickerBuilder;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
+import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     private ArrayList<ImageItem> picList = new ArrayList<>();
-
-    int maxNum = 16;
     private RadioButton mRbRedBook;
     private RadioButton mRbWeChat;
     private RadioButton mRbCustom;
-    private RadioButton mRbAll;
-    private RadioButton mRbImageOnly;
-    private RadioButton mRbVideoOnly;
+    private RadioGroup mRgStyle;
+    private CheckBox mCbJPEG;
+    private CheckBox mCbPNG;
+    private CheckBox mCbGIF;
+    private CheckBox mCbBMP;
+    private CheckBox mCbWEBP;
+    private CheckBox mCbMPEG;
+    private CheckBox mCbMP4;
+    private CheckBox mCbAVI;
+    private CheckBox mCbMKV;
+    private CheckBox mCbWEBM;
+    private CheckBox mCbTS;
+    private CheckBox mCbQUICKTIME;
+    private CheckBox mCbTHREEGPP;
     private CheckBox mCbShowCamera;
-    private CheckBox mCbShowGif;
     private CheckBox mCbClosePreview;
+    private CheckBox mCbPreviewCanEdit;
     private CheckBox mCbVideoSingle;
-    private CheckBox mCbImageOrVideoMix;
-    private CheckBox mCbcircle;
+    private CheckBox mCbImageOrVideo;
     private RadioButton mRbNew;
     private RadioButton mRbShield;
     private RadioButton mRbSave;
-    private GridLayout mGridLayout;
-    private RadioGroup mRgStyle;
-    private RadioGroup mRgType;
-    private TextView mTvSelectListTitle;
     private RadioButton mRbMulti;
-    private RadioButton mRbSingle;
     private RadioButton mRbCrop;
     private RadioButton mRbTakePhoto;
-    private RadioGroup mRgOpenType;
-    private CheckBox mCbPreviewCanEdit;
+    private RadioButton mRbTakePhotoAndCrop;
+    private CheckBox mCbCircle;
     private TextView mCropX;
     private SeekBar mXSeekBar;
     private TextView mCropY;
@@ -69,6 +78,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView mCropMargin;
     private SeekBar mMarginSeekBar;
     private LinearLayout mCropSetLayout;
+    private RadioGroup mRgNextPickType;
+    private RadioGroup mRgOpenType;
+    private GridLayout mGridLayout;
+
+    private int maxCount = 9;
 
 
     @Override
@@ -76,35 +90,41 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        picList.clear();
+        refreshGridLayout();
     }
 
     private void initView() {
-        mRgStyle = findViewById(R.id.rg_style);
-        mRgType = findViewById(R.id.rg_type);
         mRbRedBook = findViewById(R.id.rb_redBook);
         mRbWeChat = findViewById(R.id.rb_weChat);
-        mRbCustom = findViewById(R.id.rb_Custom);
-        mRbAll = findViewById(R.id.rb_all);
-        mRbImageOnly = findViewById(R.id.rb_imageOnly);
-        mRbVideoOnly = findViewById(R.id.rb_VideoOnly);
+        mRbCustom = findViewById(R.id.rb_custom);
+        mRgStyle = findViewById(R.id.rg_style);
+        mCbJPEG = findViewById(R.id.cb_JPEG);
+        mCbPNG = findViewById(R.id.cb_PNG);
+        mCbGIF = findViewById(R.id.cb_GIF);
+        mCbBMP = findViewById(R.id.cb_BMP);
+        mCbWEBP = findViewById(R.id.cb_WEBP);
+        mCbMPEG = findViewById(R.id.cb_MPEG);
+        mCbMP4 = findViewById(R.id.cb_MP4);
+        mCbAVI = findViewById(R.id.cb_AVI);
+        mCbMKV = findViewById(R.id.cb_MKV);
+        mCbWEBM = findViewById(R.id.cb_WEBM);
+        mCbTS = findViewById(R.id.cb_TS);
+        mCbQUICKTIME = findViewById(R.id.cb_QUICKTIME);
+        mCbTHREEGPP = findViewById(R.id.cb_THREEGPP);
         mCbShowCamera = findViewById(R.id.cb_showCamera);
-        mCbShowGif = findViewById(R.id.cb_showGif);
         mCbClosePreview = findViewById(R.id.cb_closePreview);
+        mCbPreviewCanEdit = findViewById(R.id.cb_previewCanEdit);
         mCbVideoSingle = findViewById(R.id.cb_videoSingle);
-        mCbImageOrVideoMix = findViewById(R.id.cb_imageOrVideoMix);
-        mCbcircle = findViewById(R.id.cb_circle);
+        mCbImageOrVideo = findViewById(R.id.cb_imageOrVideo);
         mRbNew = findViewById(R.id.rb_new);
         mRbShield = findViewById(R.id.rb_shield);
         mRbSave = findViewById(R.id.rb_save);
-        mGridLayout = findViewById(R.id.gridLayout);
-        mTvSelectListTitle = findViewById(R.id.mTvSelectListTitle);
-
         mRbMulti = findViewById(R.id.rb_multi);
-        mRbSingle = findViewById(R.id.rb_single);
         mRbCrop = findViewById(R.id.rb_crop);
         mRbTakePhoto = findViewById(R.id.rb_takePhoto);
-        mRgOpenType = findViewById(R.id.rg_openType);
-        mCbPreviewCanEdit = findViewById(R.id.cb_previewCanEdit);
+        mRbTakePhotoAndCrop = findViewById(R.id.rb_takePhotoAndCrop);
+        mCbCircle = findViewById(R.id.cb_circle);
         mCropX = findViewById(R.id.mCropX);
         mXSeekBar = findViewById(R.id.mXSeekBar);
         mCropY = findViewById(R.id.mCropY);
@@ -112,25 +132,62 @@ public class MainActivity extends AppCompatActivity {
         mCropMargin = findViewById(R.id.mCropMargin);
         mMarginSeekBar = findViewById(R.id.mMarginSeekBar);
         mCropSetLayout = findViewById(R.id.mCropSetLayout);
-
+        mGridLayout = findViewById(R.id.gridLayout);
+        mRgNextPickType = findViewById(R.id.rg_nextPickType);
+        mRgOpenType = findViewById(R.id.rg_openType);
         mRgStyle.setOnCheckedChangeListener(listener);
-        mRgType.setOnCheckedChangeListener(listener);
-        mRgOpenType.setOnCheckedChangeListener(listener);
+        mRgOpenType.setOnCheckedChangeListener(listener2);
         mXSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
         mYSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
         mMarginSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
-
-        mRbWeChat.setChecked(true);
-        mRbAll.setChecked(true);
-        mRbNew.setChecked(true);
-        mRbMulti.setChecked(true);
-
-        mCropSetLayout.setVisibility(View.GONE);
-
-        picList.clear();
-        refreshGridLayout();
-
     }
+
+    RadioGroup.OnCheckedChangeListener listener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            if (checkedId == mRbRedBook.getId()) {
+                mCbClosePreview.setEnabled(false);
+                mCbImageOrVideo.setEnabled(false);
+                mRbNew.setEnabled(false);
+                mRbShield.setEnabled(false);
+                mRbSave.setEnabled(false);
+                mRbCrop.setEnabled(false);
+                mCbVideoSingle.setEnabled(true);
+                mRbMulti.setChecked(true);
+            } else if (checkedId == mRbWeChat.getId()) {
+                mCbClosePreview.setEnabled(true);
+                mCbImageOrVideo.setEnabled(true);
+                mRgNextPickType.setEnabled(true);
+                mRbCrop.setEnabled(true);
+                mCbVideoSingle.setEnabled(true);
+                mRbMulti.setChecked(true);
+                mRbNew.setEnabled(true);
+                mRbShield.setEnabled(true);
+                mRbSave.setEnabled(true);
+            } else if (checkedId == mRbCustom.getId()) {
+                mCbClosePreview.setEnabled(false);
+                mCbVideoSingle.setEnabled(false);
+                mCbImageOrVideo.setEnabled(true);
+                mRgNextPickType.setEnabled(true);
+                mRbCrop.setEnabled(true);
+                mRbMulti.setChecked(true);
+                mRbNew.setEnabled(true);
+                mRbShield.setEnabled(true);
+                mRbSave.setEnabled(true);
+            }
+        }
+    };
+
+    RadioGroup.OnCheckedChangeListener listener2 = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            if (checkedId == mRbCrop.getId() || checkedId == mRbTakePhotoAndCrop.getId()) {
+                mCropSetLayout.setVisibility(View.VISIBLE);
+            } else {
+                mCropSetLayout.setVisibility(View.GONE);
+            }
+        }
+    };
 
     @SuppressLint("DefaultLocale")
     SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -156,112 +213,30 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    RadioGroup.OnCheckedChangeListener listener = new RadioGroup.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-            if (group == mRgOpenType) {
-                if (checkedId == mRbMulti.getId()) {//多选
-                    mRbAll.setChecked(true);
-                    mRbAll.setEnabled(true);
-                    mRbVideoOnly.setEnabled(true);
-                    mRbImageOnly.setEnabled(true);
-                } else {
-                    mRbAll.setChecked(false);
-                    mRbImageOnly.setChecked(true);
-                    mRbAll.setEnabled(false);
-                    mRbVideoOnly.setEnabled(false);
-                    mRbImageOnly.setEnabled(false);
-                    if (checkedId == mRbCrop.getId()) {
-                        mCropSetLayout.setVisibility(View.VISIBLE);
-                    } else {
-                        mCropSetLayout.setVisibility(View.GONE);
-                    }
-                }
-                refreshGridLayout();
-                return;
-            }
-            mCbVideoSingle.setEnabled(true);
-            mCbImageOrVideoMix.setEnabled(true);
-            if (checkedId == mRbRedBook.getId()) {
-                mCbShowGif.setVisibility(View.VISIBLE);
-                mCbClosePreview.setVisibility(View.GONE);
-                mCbVideoSingle.setVisibility(View.VISIBLE);
-                mCbImageOrVideoMix.setVisibility(View.GONE);
-                mTvSelectListTitle.setVisibility(View.GONE);
-                ((ViewGroup) mRbNew.getParent()).setVisibility(View.GONE);
-                mCbClosePreview.setVisibility(View.GONE);
-                mRbCrop.setVisibility(View.GONE);
-            } else if (checkedId == mRbWeChat.getId()) {
-                mCbShowGif.setVisibility(View.VISIBLE);
-                mCbClosePreview.setVisibility(View.VISIBLE);
-                mCbVideoSingle.setVisibility(View.VISIBLE);
-                mCbImageOrVideoMix.setVisibility(View.VISIBLE);
-                mTvSelectListTitle.setVisibility(View.VISIBLE);
-                mCbShowGif.setVisibility(View.VISIBLE);
-                mCbClosePreview.setVisibility(View.VISIBLE);
-                ((ViewGroup) mRbNew.getParent()).setVisibility(View.VISIBLE);
-                mRbCrop.setVisibility(View.VISIBLE);
-            } else if (checkedId == mRbCustom.getId()) {
-                mCbShowGif.setVisibility(View.VISIBLE);
-                mCbVideoSingle.setVisibility(View.VISIBLE);
-                mCbImageOrVideoMix.setVisibility(View.VISIBLE);
-                mTvSelectListTitle.setVisibility(View.VISIBLE);
-                mCbClosePreview.setVisibility(View.VISIBLE);
-                ((ViewGroup) mRbNew.getParent()).setVisibility(View.VISIBLE);
-                mRbCrop.setVisibility(View.VISIBLE);
-                mCbVideoSingle.setChecked(true);
-                mCbImageOrVideoMix.setChecked(true);
-                mCbVideoSingle.setEnabled(false);
-                mCbImageOrVideoMix.setEnabled(false);
-            } else if (checkedId == mRbImageOnly.getId()) {
-                if (!mRbRedBook.isChecked()) {
-                    mCbShowGif.setVisibility(View.VISIBLE);
-                }
-                mCbImageOrVideoMix.setVisibility(View.GONE);
-                mCbVideoSingle.setVisibility(View.GONE);
-            } else if (checkedId == mRbVideoOnly.getId()) {
-                mCbShowGif.setVisibility(View.GONE);
-                if (mRbWeChat.isChecked()) {
-                    mCbImageOrVideoMix.setVisibility(View.VISIBLE);
-                    mCbVideoSingle.setVisibility(View.VISIBLE);
-                }
-            } else if (checkedId == mRbAll.getId()) {
-                if (!mRbRedBook.isChecked()) {
-                    mCbShowGif.setVisibility(View.VISIBLE);
-                }
-                if (mRbWeChat.isChecked()) {
-                    mCbImageOrVideoMix.setVisibility(View.VISIBLE);
-                    mCbVideoSingle.setVisibility(View.VISIBLE);
-                }
-            }
-        }
-    };
-
-
     private void redBookPick(int count) {
-        if (mRbSave.isChecked()) {
-            count = 9;
-        }
-        ImagePicker.withCrop(new RedBookCropPresenter())
-                .setMaxCount(count)
-                .setColumnCount(4)
-                .showCamera(mCbShowCamera.isChecked())
-                .showImage(!mRbVideoOnly.isChecked())
-                .showVideo(!mRbImageOnly.isChecked())
-                .showGif(!mCbShowGif.isChecked())
-                .setVideoSinglePick(mCbVideoSingle.isChecked())
+        ImagePicker.withCrop(new RedBookCropPresenter())//设置presenter
+                .setMaxCount(count)//设置选择数量
+                .showCamera(mCbShowCamera.isChecked())//设置显示拍照
+                .setColumnCount(4)//设置列数
+                .mimeType(getMimeTypes())//设置需要加载的文件类型
+                // .filterMimeType(MimeType.GIF)//设置需要过滤掉的文件类型
+                .setFirstImageItem(picList.size() > 0 ? picList.get(0) : null)//设置上一次选中的图片
+                // .setFirstImageUrl(null)//设置上一次选中的图片地址
+                .setVideoSinglePick(mCbVideoSingle.isChecked())//设置视频单选
                 .setCropPicSaveFilePath(ImagePicker.cropPicSaveFilePath)
-                .setFirstImageItem(picList != null && picList.size() > 0 ? picList.get(0) : null)
-                .pick(this, new OnImagePickCompleteListener() {
+                .setMaxVideoDuration(120000L)//设置可选区的最大视频时长
+                .pick(this, new OnImagePickCompleteListener2() {
+                    @Override
+                    public void onPickFailed(PickerError error) {
+                        Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {
-                        for (ImageItem imageItem : items) {
-                            if (!imageItem.isVideo()) {
-                                imageItem.path = imageItem.getCropUrl();
-                            }
-                        }
-                        if (mRbSave.isChecked()) {
-                            picList.clear();
+                        //图片剪裁回调，主线程
+                        //注意：剪裁回调里的ImageItem中getCropUrl()才是剪裁过后的图片地址
+                        for (ImageItem item : items) {
+                            item.path = item.getCropUrl();
                         }
                         picList.addAll(items);
                         refreshGridLayout();
@@ -270,27 +245,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void pick(int count) {
-        if (mRbSave.isChecked()) {
-            count = 9;
-        }
-        ImagePicker.withMulti(mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter())
-                .setMaxCount(count)
-                .setColumnCount(4)
-                .showVideo(!mRbImageOnly.isChecked())
-                .showGif(!mCbShowGif.isChecked())
-                .showCamera(mCbShowCamera.isChecked())
-                .showImage(!mRbVideoOnly.isChecked())
-                .setSinglePickImageOrVideoType(mCbImageOrVideoMix.isChecked())
-                .setVideoSinglePick(mCbVideoSingle.isChecked())
-                .setShieldList(mRbShield.isChecked() ? picList : null)
-                .setLastImageList(mRbSave.isChecked() ? picList : null)
-                .setPreview(!mCbClosePreview.isChecked())
-                .setSelectMode(mRbSingle.isChecked() ? SelectMode.MODE_SINGLE :
-                        SelectMode.MODE_MULTI)
-                .setMaxVideoDuration(120000)
+        IMultiPickerBindPresenter presenter = mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter();
+        ImagePicker.withMulti(presenter)//指定presenter
+                .setMaxCount(count)//设置选择的最大数
+                .setColumnCount(4)//设置列数
+                .mimeType(getMimeTypes())//设置要加载的文件类型，可指定单一类型
+                // .filterMimeType(MimeType.GIF)//设置需要过滤掉加载的文件类型
+                .showCamera(mCbShowCamera.isChecked())//显示拍照
+                .setPreview(!mCbClosePreview.isChecked())//是否开启预览
+                .setVideoSinglePick(mCbVideoSingle.isChecked())//设置视频单选
+                .setSinglePickImageOrVideoType(mCbImageOrVideo.isChecked())//设置图片和视频单一类型选择
+                .setMaxVideoDuration(12000L)//设置视频可选取的最大时长
+                .setLastImageList(mRbSave.isChecked() ? picList : null)//设置上一次操作的图片列表，下次选择时默认恢复上一次选择的状态
+                .setShieldList(mRbShield.isChecked() ? picList : null)//设置需要屏蔽掉的图片列表，下次选择时已屏蔽的文件不可选择
                 .pick(this, new OnImagePickCompleteListener() {
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {
+                        //图片选择回调，主线程
                         if (mRbSave.isChecked()) {
                             picList.clear();
                         }
@@ -300,52 +271,88 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void crop() {
-        MultiPickerBuilder builder = ImagePicker.withMulti(mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter())
-                .setColumnCount(4)
-                .showCamera(mCbShowCamera.isChecked())
-                .showImage(true);
-        if (mCbcircle.isChecked()) {
-            builder.cropAsCircle();
+    private void preview(int pos) {
+        IMultiPickerBindPresenter presenter = mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter();
+        if (mCbPreviewCanEdit.isChecked()) {
+            //开启编辑预览
+            ImagePicker.preview(this, presenter, picList, pos, new OnImagePickCompleteListener() {
+                @Override
+                public void onImagePickComplete(ArrayList<ImageItem> items) {
+                    //图片编辑回调，主线程
+                    picList.clear();
+                    picList.addAll(items);
+                    refreshGridLayout();
+                }
+            });
+        } else {
+            //开启普通预览
+            ImagePicker.preview(this, presenter, picList, pos, null);
         }
-        builder.setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress())
-                .cropRectMinMargin(dp(mMarginSeekBar.getProgress()))
-                .cropSaveFilePath(ImagePicker.cropPicSaveFilePath)
-                .crop(this, new OnImagePickCompleteListener() {
-                    @Override
-                    public void onImagePickComplete(ArrayList<ImageItem> items) {
-                        picList.clear();
-                        picList.addAll(items);
-                        refreshGridLayout();
-                    }
-                });
     }
 
-    private void preview(int pos) {
-        ImagePicker.withMulti(mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter())
-                .preview(this, picList, pos, mCbPreviewCanEdit.isChecked() ? new OnImagePickCompleteListener() {
-                    @Override
-                    public void onImagePickComplete(ArrayList<ImageItem> items) {
-                        picList.clear();
-                        picList.addAll(items);
-                        refreshGridLayout();
-                    }
-                } : null);
+    private void crop() {
+        IMultiPickerBindPresenter presenter = mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter();
+        MultiPickerBuilder builder = ImagePicker.withMulti(presenter)//指定presenter
+                .setColumnCount(4)//设置列数
+                .mimeType(getMimeTypes())//设置要加载的文件类型，可指定单一类型
+                // .filterMimeType(MimeType.GIF)//设置需要过滤掉加载的文件类型
+                .showCamera(mCbShowCamera.isChecked())//显示拍照
+                .cropRectMinMargin(mMarginSeekBar.getProgress())
+                .cropSaveFilePath(ImagePicker.cropPicSaveFilePath)
+                .setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());
+        if (mCbCircle.isChecked()) {
+            builder.cropAsCircle();
+        }
+        builder.crop(this, new OnImagePickCompleteListener() {
+            @Override
+            public void onImagePickComplete(ArrayList<ImageItem> items) {
+                //图片选择回调，主线程
+                picList.addAll(items);
+                refreshGridLayout();
+            }
+        });
+    }
+
+    private void takePhoto() {
+        ImagePicker.takePhoto(this, new OnImagePickCompleteListener() {
+            @Override
+            public void onImagePickComplete(ArrayList<ImageItem> items) {
+                picList.addAll(items);
+                refreshGridLayout();
+            }
+        });
+    }
+
+    private void takePhotoAndCrop() {
+        //配置剪裁属性
+        MultiSelectConfig selectConfig = new MultiSelectConfig();
+        selectConfig.setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());//设置剪裁比例
+        selectConfig.setCropRectMargin(mMarginSeekBar.getProgress());//设置剪裁框间距，单位px
+        selectConfig.setCropSaveFilePath(ImagePicker.cropPicSaveFilePath);
+        selectConfig.setCircle(mCbCircle.isChecked());//是否圆形剪裁
+        ImagePicker.takePhotoAndCrop(this, new WXImgPickerPresenter(), selectConfig, new OnImagePickCompleteListener() {
+            @Override
+            public void onImagePickComplete(ArrayList<ImageItem> items) {
+                //剪裁回调，主线程
+                picList.addAll(items);
+                refreshGridLayout();
+            }
+        });
     }
 
     private void startPick() {
-        if (mRbRedBook.isChecked()) {
-            redBookPick(9 - picList.size());
-        } else {
-            if (mRbCrop.isChecked()) {
-                crop();
-            } else if (mRbSingle.isChecked()) {
-                pick(1);
-            } else if (mRbMulti.isChecked()) {
-                pick(9 - picList.size());
-            } else {
-                Toast.makeText(this, "拍照功能暂未开放!", Toast.LENGTH_SHORT).show();
-            }
+        if (mRbCrop.isChecked()) {
+            crop();
+        } else if (mRbTakePhoto.isChecked()) {
+            takePhoto();
+        } else if (mRbTakePhotoAndCrop.isChecked()) {
+            takePhotoAndCrop();
+        } else if (mRbRedBook.isChecked()) {
+            redBookPick(maxCount - picList.size());
+        } else if (mRbWeChat.isChecked()) {
+            pick(maxCount - picList.size());
+        } else if (mRbCustom.isChecked()) {
+            pick(maxCount - picList.size());
         }
     }
 
@@ -359,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
         int num = picList.size();
         final int picSize = (getScreenWidth() - dp(20)) / 4;
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(picSize, picSize);
-        if (num >= maxNum) {
+        if (num >= maxCount) {
             mGridLayout.setVisibility(View.VISIBLE);
             for (int i = 0; i < num; i++) {
                 RelativeLayout view = (RelativeLayout) LayoutInflater.from(this).inflate(R.layout.a_layout_pic_select, null);
@@ -416,7 +423,6 @@ public class MainActivity extends AppCompatActivity {
                 dpVal, this.getResources().getDisplayMetrics());
     }
 
-
     /**
      * 获得屏幕宽度
      */
@@ -426,5 +432,49 @@ public class MainActivity extends AppCompatActivity {
         assert wm != null;
         wm.getDefaultDisplay().getMetrics(outMetrics);
         return outMetrics.widthPixels;
+    }
+
+    private Set<MimeType> getMimeTypes() {
+        Set<MimeType> mimeTypes = new HashSet<>();
+        if (mCbJPEG.isChecked()) {
+            mimeTypes.add(MimeType.JPEG);
+        }
+        if (mCbPNG.isChecked()) {
+            mimeTypes.add(MimeType.PNG);
+        }
+        if (mCbGIF.isChecked()) {
+            mimeTypes.add(MimeType.GIF);
+        }
+        if (mCbBMP.isChecked()) {
+            mimeTypes.add(MimeType.BMP);
+        }
+        if (mCbWEBP.isChecked()) {
+            mimeTypes.add(MimeType.WEBP);
+        }
+        if (mCbMPEG.isChecked()) {
+            mimeTypes.add(MimeType.MPEG);
+        }
+        if (mCbMP4.isChecked()) {
+            mimeTypes.add(MimeType.MP4);
+        }
+        if (mCbAVI.isChecked()) {
+            mimeTypes.add(MimeType.AVI);
+        }
+        if (mCbMKV.isChecked()) {
+            mimeTypes.add(MimeType.MKV);
+        }
+        if (mCbWEBM.isChecked()) {
+            mimeTypes.add(MimeType.WEBM);
+        }
+        if (mCbTS.isChecked()) {
+            mimeTypes.add(MimeType.TS);
+        }
+        if (mCbQUICKTIME.isChecked()) {
+            mimeTypes.add(MimeType.QUICKTIME);
+        }
+        if (mCbTHREEGPP.isChecked()) {
+            mimeTypes.add(MimeType.THREEGPP);
+        }
+        return mimeTypes;
     }
 }

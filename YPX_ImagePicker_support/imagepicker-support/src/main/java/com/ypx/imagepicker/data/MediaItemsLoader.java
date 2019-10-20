@@ -30,9 +30,6 @@ import com.ypx.imagepicker.bean.MimeType;
 import java.util.Set;
 
 
-/**
- * Load images and videos into a single cursor.
- */
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
 public class MediaItemsLoader extends CursorLoader {
     private static final Uri QUERY_URI = MediaStore.Files.getContentUri("external");
@@ -86,6 +83,5 @@ public class MediaItemsLoader extends CursorLoader {
 
     @Override
     public void onContentChanged() {
-        // FIXME a dirty way to fix loading multiple times
     }
 }

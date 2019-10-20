@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,25 +38,32 @@ import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.utils.PickerFileProvider;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
+import com.ypx.imagepicker.helper.recyclerviewitemhelper.SimpleItemTouchHelperCallback;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
+import com.ypx.imagepicker.utils.PickerFileProvider;
 import com.ypx.imagepicker.widget.SuperCheckBox;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_CURRENT_INDEX;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
-import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_UI_CONFIG;
+import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
 
 /**
- * 预览页面
+ * Description: 预览页面，其中包含编辑预览和普通预览
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
+@SuppressLint("DefaultLocale")
 public class MultiImagePreviewActivity extends FragmentActivity {
     public static final String INTENT_KEY_PREVIEW_LIST = "previewList";
     public static final String INTENT_KEY_CAN_EDIT = "canEdit";
@@ -76,19 +84,24 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     private MultiPreviewAdapter previewAdapter;
     private boolean isCanEdit = false;
 
-    public static void preview(Activity context,
-                               MultiSelectConfig selectConfig,
-                               IMultiPickerBindPresenter presenter,
-                               final boolean isPickerJump,
-                               final ArrayList<ImageItem> previewList,
-                               int currentPos,
-                               final OnImagePickCompleteListener listener) {
+    /**
+     * 跳转预览页面
+     *
+     * @param context      跳转的activity
+     * @param selectConfig 设置配置属性
+     * @param presenter    IMultiPickerBindPresenter 负责提供UI展示
+     * @param isPickerJump 是否是选择器跳转，如果是选择器跳转，需要从媒体库中更新图片列表
+     * @param previewList  需要预览的图片列表
+     * @param currentPos   默认选中项
+     * @param listener     预览编辑完成回调，如果传null,代表普通编辑
+     */
+    public static void intent(Activity context, MultiSelectConfig selectConfig, IMultiPickerBindPresenter presenter,
+                              final boolean isPickerJump, final ArrayList<ImageItem> previewList, int currentPos,
+                              final OnImagePickCompleteListener listener) {
         Intent intent = new Intent(context, MultiImagePreviewActivity.class);
-        if (previewList != null) {
-            intent.putExtra(INTENT_KEY_PREVIEW_LIST, previewList);
-        }
+        intent.putExtra(INTENT_KEY_PREVIEW_LIST, previewList);
         intent.putExtra(INTENT_KEY_SELECT_CONFIG, selectConfig);
-        intent.putExtra(INTENT_KEY_UI_CONFIG, presenter);
+        intent.putExtra(INTENT_KEY_PRESENTER, presenter);
         intent.putExtra(INTENT_KEY_CURRENT_INDEX, currentPos);
         intent.putExtra(INTENT_KEY_CAN_EDIT, listener != null);
         PLauncher.init(context).startActivityForResult(intent, new PLauncher.Callback() {
@@ -97,7 +110,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
                 if (resultCode == RESULT_OK && listener != null) {
                     listener.onImagePickComplete(MultiPickerData.instance.getSelectImageList());
                     if (!isPickerJump) {
-                        MultiPickerData.instance.clear();
+                        ImagePicker.clearAllCache();
                     }
                 }
             }
@@ -107,40 +120,53 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.picker_activity_image_pre);
-        if (getIntent() == null || !getIntent().hasExtra(INTENT_KEY_SELECT_CONFIG)
-                || !getIntent().hasExtra(INTENT_KEY_UI_CONFIG)) {
+        if (isIntentDataFailed()) {
             finish();
-            return;
+        } else {
+            setContentView(R.layout.picker_activity_image_pre);
+            setUI();
+            List list = (List) getIntent().getSerializableExtra(INTENT_KEY_PREVIEW_LIST);
+            if (list != null && list.size() > 0) {
+                mImageList = new ArrayList<ImageItem>(list);
+                mPreviewList.addAll(mImageList);
+                initData();
+            } else {
+                loadMediaPreviewList();
+            }
+        }
+    }
+
+    /**
+     * @return 跳转数据是否合法
+     */
+    private boolean isIntentDataFailed() {
+        if (getIntent() == null || !getIntent().hasExtra(INTENT_KEY_SELECT_CONFIG)
+                || !getIntent().hasExtra(INTENT_KEY_PRESENTER)) {
+            return true;
         }
         selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
-        presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_UI_CONFIG);
+        presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
         mCurrentItemPosition = getIntent().getIntExtra(INTENT_KEY_CURRENT_INDEX, 0);
         isCanEdit = getIntent().getBooleanExtra(INTENT_KEY_CAN_EDIT, false);
         mPreviewList = new ArrayList<>();
         if (presenter == null) {
-            finish();
-            return;
+            return true;
         }
         uiConfig = presenter.getUiConfig(this);
-        if (uiConfig == null) {
-            finish();
-            return;
-        }
-        initUI();
-        if (getIntent().hasExtra(INTENT_KEY_PREVIEW_LIST)) {
-            mImageList = (ArrayList<ImageItem>) getIntent().getSerializableExtra(INTENT_KEY_PREVIEW_LIST);
-            mPreviewList.addAll(mImageList);
-            init();
+        return uiConfig == null;
+    }
+
+    /**
+     * 加载媒体文件夹
+     */
+    private void loadMediaPreviewList() {
+        ImageSet imageSet = MultiPickerData.instance.getCurrentImageSet();
+        if (imageSet.imageItems != null && imageSet.imageItems.size() > 0
+                && imageSet.imageItems.size() >= imageSet.count) {
+            mImageList = new ArrayList<>(imageSet.imageItems);
+            mPreviewList.addAll(MultiPickerData.instance.getSelectImageList());
+            initData();
         } else {
-            ImageSet imageSet = MultiPickerData.instance.getCurrentImageSet();
-            if (imageSet.imageItems != null && imageSet.imageItems.size() > 0
-                    && imageSet.imageItems.size() >= imageSet.count) {
-                mImageList = new ArrayList<>(imageSet.imageItems);
-                mPreviewList.addAll(MultiPickerData.instance.getSelectImageList());
-                init();
-                return;
-            }
             final ProgressDialog dialog = ProgressDialog.show(this, null, getResources().getString(R.string.str_loading));
             MediaItemsDataSource.create(this, imageSet)
                     .setMimeTypeSet(selectConfig)
@@ -150,67 +176,36 @@ public class MultiImagePreviewActivity extends FragmentActivity {
                             dialog.dismiss();
                             mImageList = new ArrayList<>(imageItems);
                             mPreviewList.addAll(MultiPickerData.instance.getSelectImageList());
-                            init();
+                            initData();
                         }
                     });
         }
-
     }
 
-    private void init() {
-        for (ImageItem imageItem : mPreviewList) {
-            imageItem.setSelect(false);
-        }
-        if (mImageList == null || mImageList.size() == 0) {
-            finish();
-            return;
-        }
+    /**
+     * 初始化预览列表
+     */
+    private void initData() {
         initPreviewRecyclerView();
         initViewPager();
-        setListener();
     }
 
-    @Override
-    public void finish() {
-        if (mPreviewList != null) {
-            MultiPickerData.instance.setSelectImageList(mPreviewList);
-        }
-        super.finish();
-    }
-
+    /**
+     * 初始化预览列表，支持排序
+     */
     private void initPreviewRecyclerView() {
         mPreviewRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
         previewAdapter = new MultiPreviewAdapter(mPreviewList, presenter);
         mPreviewRecyclerView.setAdapter(previewAdapter);
-    }
-
-    private void setListener() {
-        mCbSelected.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mPreviewList.size() > selectConfig.getMaxCount() && selectConfig.getMaxCount() > 0) {
-                    if (mCbSelected.isChecked()) {
-                        mCbSelected.toggle();
-                        String toast = getResources().getString(R.string.you_have_a_select_limit, selectConfig.getMaxCount() + "");
-                        Toast.makeText(MultiImagePreviewActivity.this, toast, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
-
-        mCbSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                selectCurrent(isChecked);
-            }
-        });
-
+        SimpleItemTouchHelperCallback callback = new SimpleItemTouchHelperCallback(previewAdapter);
+        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(mPreviewRecyclerView);
     }
 
     /**
      * 初始化标题栏
      */
-    private void initUI() {
+    private void setUI() {
         mPreviewRecyclerView = findViewById(R.id.mPreviewRecyclerView);
         mViewPager = findViewById(R.id.viewpager);
         mCbSelected = findViewById(R.id.btn_check);
@@ -218,20 +213,19 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         mTvRight = findViewById(R.id.tv_rightBtn);
         mTitleBar = findViewById(R.id.top_bar);
         mBottomBar = findViewById(R.id.bottom_bar);
-
         if (uiConfig.isImmersionBar()) {
             PStatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
                     PStatusBarUtil.isDarkColor(uiConfig.getTitleBarBackgroundColor()));
 
             mTitleBar.setPadding(0, PStatusBarUtil.getStatusBarHeight(this), 0, 0);
         }
-
-        ImageView iv_back = findViewById(R.id.iv_back);
+        ImageView mBackImg = findViewById(R.id.iv_back);
+        mBackImg.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
+        mBackImg.setColorFilter(uiConfig.getBackIconColor());
         mBottomBar.setClickable(true);
+        mCbSelected.setClickable(true);
         mCbSelected.setLeftDrawable(getResources().getDrawable(uiConfig.getSelectedIconID()),
                 getResources().getDrawable(uiConfig.getUnSelectIconID()));
-        iv_back.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
-        iv_back.setColorFilter(uiConfig.getBackIconColor());
         mCbSelected.setTextColor(uiConfig.getPreviewTextColor());
         mTitleBar.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
         mBottomBar.setBackgroundColor(uiConfig.getBottomBarBackgroundColor());
@@ -240,22 +234,14 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         if (uiConfig.getOkBtnSelectBackground() == null && uiConfig.getOkBtnUnSelectBackground() == null) {
             mTvRight.setPadding(0, 0, 0, 0);
         }
-
         if (!isCanEdit) {
             mCbSelected.setVisibility(View.GONE);
             mPreviewRecyclerView.setVisibility(View.GONE);
             mBottomBar.setVisibility(View.GONE);
             mTvRight.setVisibility(View.GONE);
         }
-
-        iv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
         ((LinearLayout) findViewById(R.id.mTitleRoot)).setGravity(uiConfig.getTitleBarGravity());
-        resetBtnOKBtn();
+        resetRightBtn();
         mTvRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -266,15 +252,39 @@ public class MultiImagePreviewActivity extends FragmentActivity {
                 finish();
             }
         });
+        mBackImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mCbSelected.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mPreviewList.size() > selectConfig.getMaxCount() && selectConfig.getMaxCount() > 0) {
+                    String toast = getResources().getString(R.string.you_have_a_select_limit, selectConfig.getMaxCount() + "");
+                    presenter.tip(MultiImagePreviewActivity.this, toast);
+                    mCbSelected.setChecked(false);
+                }
+            }
+        });
+        mCbSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                checkItem(isChecked);
+            }
+        });
     }
 
+    /**
+     * 初始化viewpager
+     */
     private void initViewPager() {
         TouchImageAdapter mAdapter = new TouchImageAdapter(this.getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
         mViewPager.setCurrentItem(mCurrentItemPosition, false);
         ImageItem item = mImageList.get(mCurrentItemPosition);
-        onImagePageSelected(mCurrentItemPosition, hasItem(item));
-
+        onImagePageSelected(mCurrentItemPosition, item);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -284,13 +294,12 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             public void onPageSelected(int position) {
                 mCurrentItemPosition = position;
                 ImageItem item = mImageList.get(mCurrentItemPosition);
-                onImagePageSelected(mCurrentItemPosition, hasItem(item));
+                onImagePageSelected(mCurrentItemPosition, item);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
             }
-
         });
     }
 
@@ -300,34 +309,28 @@ public class MultiImagePreviewActivity extends FragmentActivity {
      * @param imageItem 当前图片
      */
     public void onPreviewItemClick(ImageItem imageItem) {
-        int i = 0;
-        for (ImageItem item : mImageList) {
-            if (item.equals(imageItem)) {
-                mViewPager.setCurrentItem(i, false);
-                notifyPreviewList(imageItem);
-                return;
-            }
-            i++;
-        }
+        mViewPager.setCurrentItem(mImageList.indexOf(imageItem), false);
     }
 
-    public void selectCurrent(boolean isCheck) {
+    /**
+     * @param isCheck item选中操作
+     */
+    public void checkItem(boolean isCheck) {
         ImageItem item = mImageList.get(mCurrentItemPosition);
         if (isCheck) {
-            if (!hasItem(item)) {
+            if (!mPreviewList.contains(item)) {
                 mPreviewList.add(item);
             }
         } else {
-            if (hasItem(item)) {
-                mPreviewList.remove(item);
-            }
+            mPreviewList.remove(item);
         }
-
-        resetBtnOKBtn();
+        resetRightBtn();
         notifyPreviewList(item);
     }
 
-
+    /**
+     * 单击图片
+     */
     public void onImageSingleTap() {
         if (mTitleBar.getVisibility() == View.VISIBLE) {
             mTitleBar.setAnimation(AnimationUtils.loadAnimation(this, R.anim.picker_top_out));
@@ -348,15 +351,19 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         }
     }
 
-    @SuppressLint("DefaultLocale")
-    public void onImagePageSelected(int position, boolean isSelected) {
+    /**
+     * viewpager滑动回调
+     *
+     * @param position  当前预览图片索引
+     * @param imageItem 当前图片
+     */
+    public void onImagePageSelected(int position, ImageItem imageItem) {
         mTvTitle.setText(String.format("%d/%d", position + 1, mImageList.size()));
-        mCbSelected.setChecked(isSelected);
+        mCbSelected.setChecked(mPreviewList.contains(imageItem));
         mCbSelected.setVisibility(View.VISIBLE);
-        ImageItem imageItem = mImageList.get(position);
         notifyPreviewList(imageItem);
-        resetBtnOKBtn();
-        if (selectConfig.isShieldItem(imageItem)) {
+        resetRightBtn();
+        if (selectConfig != null && selectConfig.isShieldItem(imageItem)) {
             mCbSelected.setVisibility(View.GONE);
             return;
         }
@@ -364,7 +371,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             mCbSelected.setVisibility(View.GONE);
             return;
         }
-        if (selectConfig.isVideoSinglePick() && imageItem.isVideo()) {
+        if (selectConfig != null && selectConfig.isVideoSinglePick() && imageItem.isVideo()) {
             mCbSelected.setVisibility(View.GONE);
             if (mPreviewList.size() == 0) {
                 mTvRight.setEnabled(true);
@@ -374,7 +381,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             }
         } else {
             //如果图片和视频只能选择一种并且已选中列表中第一个item属性与当前图片或视频不符合，则隐藏底部选择框
-            if (selectConfig.isSinglePickImageOrVideoType() && mPreviewList.size() > 0) {
+            if (selectConfig != null && selectConfig.isSinglePickImageOrVideoType() && mPreviewList.size() > 0) {
                 if (mPreviewList.get(0).isVideo() != imageItem.isVideo()) {
                     mCbSelected.setVisibility(View.GONE);
                 } else {
@@ -384,20 +391,22 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         }
     }
 
+    /**
+     * 刷新预览编辑列表
+     *
+     * @param imageItem 当前预览的图片
+     */
     private void notifyPreviewList(ImageItem imageItem) {
-        for (ImageItem mItem : mPreviewList) {
-            if (mItem.equals(imageItem)) {
-                mItem.setSelect(true);
-                mPreviewRecyclerView.scrollToPosition(mPreviewList.indexOf(mItem));
-            } else {
-                mItem.setSelect(false);
-            }
+        previewAdapter.setPreviewImageItem(imageItem);
+        if (mPreviewList.contains(imageItem)) {
+            mPreviewRecyclerView.smoothScrollToPosition(mPreviewList.indexOf(imageItem));
         }
-        previewAdapter.notifyDataSetChanged();
     }
 
-    @SuppressLint("DefaultLocale")
-    private void resetBtnOKBtn() {
+    /**
+     * 刷新右上角完成按钮
+     */
+    private void resetRightBtn() {
         if (mPreviewList != null && mPreviewList.size() > 0) {
             mTvRight.setEnabled(true);
             mTvRight.setBackground(uiConfig.getOkBtnSelectBackground());
@@ -407,7 +416,9 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             mTvRight.setBackground(uiConfig.getOkBtnUnSelectBackground());
             mTvRight.setTextColor(uiConfig.getOkBtnUnSelectTextColor());
         }
-
+        if (selectConfig == null) {
+            return;
+        }
         if (selectConfig.getMaxCount() < 0 || mPreviewList == null || mPreviewList.size() <= 0) {
             mTvRight.setText(uiConfig.getOkBtnText());
         } else {
@@ -418,6 +429,13 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         }
     }
 
+    @Override
+    public void finish() {
+        if (mPreviewList != null) {
+            MultiPickerData.instance.setSelectImageList(mPreviewList);
+        }
+        super.finish();
+    }
 
     public IMultiPickerBindPresenter getImgLoader() {
         return presenter;
@@ -426,7 +444,6 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     public static class SinglePreviewFragment extends Fragment {
         static final String KEY_URL = "key_url";
         private RelativeLayout layout;
-        private String url;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -439,7 +456,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             if (imageItem == null) {
                 return;
             }
-            url = imageItem.path;
+            String url = imageItem.path;
             layout = new RelativeLayout(getContext());
             CropImageView imageView = new CropImageView(getActivity());
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -502,7 +519,6 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             return layout;
         }
-
     }
 
     class TouchImageAdapter extends FragmentStatePagerAdapter {
@@ -518,6 +534,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             return mImageList.size();
         }
 
+        @NonNull
         @Override
         public Fragment getItem(int position) {
             SinglePreviewFragment fragment = new SinglePreviewFragment();
@@ -528,17 +545,6 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         }
     }
 
-    public boolean hasItem(ImageItem imageItem) {
-        if (imageItem == null || imageItem.path == null || mPreviewList == null) {
-            return false;
-        }
-        for (ImageItem item : mPreviewList) {
-            if (item.path != null && item.path.equals(imageItem.path)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private long lastTime = 0L;
 
@@ -552,5 +558,4 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         lastTime = System.currentTimeMillis();
         return !flag;
     }
-
 }

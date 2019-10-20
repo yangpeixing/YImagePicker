@@ -11,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -26,30 +24,39 @@ import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_CURRENT_IMAGE;
+import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
-import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_UI_CONFIG;
 
 
 /**
- * 截取头像
+ * Description: 图片剪裁页面
+ * <p>
+ * Author: peixing.yang
+ * Date: 2019/2/21
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
 public class SingleCropActivity extends FragmentActivity {
     private CropImageView cropView;
     private PickerUiConfig uiConfig;
     private MultiSelectConfig selectConfig;
 
-    public static void intentCrop(Activity context,
-                                  IMultiPickerBindPresenter presenter,
-                                  MultiSelectConfig config,
-                                  String path,
-                                  final OnImagePickCompleteListener listener) {
+    /**
+     * 跳转单图剪裁
+     *
+     * @param context      跳转的activity
+     * @param presenter    IMultiPickerBindPresenter
+     * @param selectConfig 选择配置
+     * @param path         需要剪裁的图片的原始路径
+     * @param listener     剪裁回调
+     */
+    public static void intentCrop(Activity context, IMultiPickerBindPresenter presenter, MultiSelectConfig selectConfig,
+                                  String path, final OnImagePickCompleteListener listener) {
         Intent intent = new Intent(context, SingleCropActivity.class);
-        intent.putExtra(INTENT_KEY_UI_CONFIG, presenter);
-        intent.putExtra(INTENT_KEY_SELECT_CONFIG, config);
+        intent.putExtra(INTENT_KEY_PRESENTER, presenter);
+        intent.putExtra(INTENT_KEY_SELECT_CONFIG, selectConfig);
         intent.putExtra(INTENT_KEY_CURRENT_IMAGE, path);
         PLauncher.init(context).startActivityForResult(intent, new PLauncher.Callback() {
             @Override
@@ -67,8 +74,8 @@ public class SingleCropActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.picker_activity_crop);
-        if (getIntent() != null && getIntent().hasExtra(INTENT_KEY_UI_CONFIG)) {
-            IMultiPickerBindPresenter presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_UI_CONFIG);
+        if (getIntent() != null && getIntent().hasExtra(INTENT_KEY_PRESENTER)) {
+            IMultiPickerBindPresenter presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
             selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
             uiConfig = presenter.getUiConfig(this);
             String imagePath = "file://" + getIntent().getStringExtra(INTENT_KEY_CURRENT_IMAGE);
@@ -145,12 +152,10 @@ public class SingleCropActivity extends FragmentActivity {
         return cropUrl;
     }
 
-
     private void notifyOnImagePickComplete(ArrayList<ImageItem> list) {
         Intent intent = new Intent();
-        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, (Serializable) list);
+        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, list);
         setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
         finish();
     }
-
 }

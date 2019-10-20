@@ -34,16 +34,6 @@
             android:name=".activity.multi.SingleCropActivity"
             android:multiprocess="true" />
 
-        <provider
-            android:name=".utils.PickerFileProvider"
-            android:authorities="${applicationId}.picker.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/picker_file_paths" />
-        </provider>
-
     </application>
 
 </manifest>

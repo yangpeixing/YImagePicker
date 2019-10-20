@@ -6,10 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+
 /**
- * 作者：yangpeixing on 2018/9/20 17:26
- * 功能：时间转化工具类
- * 产权：南京婚尚信息技术
+ * 时间工具类
  */
 public class PDateUtil {
 

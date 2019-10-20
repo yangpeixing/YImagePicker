@@ -8,20 +8,28 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.helper.recyclerviewitemhelper.ItemTouchHelperAdapter;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.widget.ShowTypeImageView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Time: 2019/7/23 10:43
  * Author:ypx
  * Description: 多选预览adapter
  */
-public class MultiPreviewAdapter extends RecyclerView.Adapter<MultiPreviewAdapter.ViewHolder> {
+public class MultiPreviewAdapter extends RecyclerView.Adapter<MultiPreviewAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private ArrayList<ImageItem> previewList;
     private Context context;
     private IMultiPickerBindPresenter presenter;
+    private ImageItem previewImageItem;
+
+    public void setPreviewImageItem(ImageItem previewImageItem) {
+        this.previewImageItem = previewImageItem;
+        notifyDataSetChanged();
+    }
 
     public MultiPreviewAdapter(ArrayList<ImageItem> previewList, IMultiPickerBindPresenter presenter) {
         this.previewList = previewList;
@@ -46,8 +54,9 @@ public class MultiPreviewAdapter extends RecyclerView.Adapter<MultiPreviewAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         final ImageItem imageItem = previewList.get(position);
+        boolean isSelect = previewImageItem != null && previewImageItem.equals(imageItem);
+        holder.imageView.setSelect(isSelect, presenter.getUiConfig(context).getThemeColor());
         holder.imageView.setTypeFromImage(imageItem);
-        holder.imageView.setSelect(imageItem.isSelect(), presenter.getUiConfig(context).getThemeColor());
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +79,31 @@ public class MultiPreviewAdapter extends RecyclerView.Adapter<MultiPreviewAdapte
         }
         float density = context.getResources().getDisplayMetrics().density;
         return (int) (dp * density + 0.5);
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        try {
+            if (null == previewList
+                    || fromPosition >= previewList.size()
+                    || toPosition >= previewList.size()) {
+                return true;
+            }
+            Collections.swap(previewList, fromPosition, toPosition);
+            notifyItemMoved(fromPosition, toPosition);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+    }
+
+    @Override
+    public boolean isItemViewSwipeEnabled() {
+        return false;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

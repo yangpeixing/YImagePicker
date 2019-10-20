@@ -31,9 +31,7 @@ import com.ypx.imagepicker.bean.MimeType;
 
 import java.util.Set;
 
-/**
- * Load all albums (grouped by bucket_id) into a single cursor.
- */
+
 public class MediaSetsLoader extends CursorLoader {
     public static final String COLUMN_COUNT = "count";
     private static final Uri QUERY_URI = MediaStore.Files.getContentUri("external");
@@ -117,6 +115,5 @@ public class MediaSetsLoader extends CursorLoader {
 
     @Override
     public void onContentChanged() {
-        // FIXME a dirty way to fix loading multiple times
     }
 }
