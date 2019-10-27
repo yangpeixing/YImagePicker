@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class MultiSelectConfig extends BaseSelectConfig {
+public class MultiSelectConfig extends CropConfig {
     private boolean isShowOriginalCheckBox;
     private boolean isCanEditPic;
     private boolean isPreview = true;
@@ -20,19 +20,7 @@ public class MultiSelectConfig extends BaseSelectConfig {
     private ArrayList<ImageItem> lastImageList = new ArrayList<>();
     private ArrayList<ImageItem> shieldImageList = new ArrayList<>();
 
-    private int cropRatioX = 1;
-    private int cropRatioY = 1;
-    private boolean isCircle = false;
-    private int cropRectMargin = 0;
-    private String cropSaveFilePath = "";
 
-    public boolean isCircle() {
-        return isCircle;
-    }
-
-    public void setCircle(boolean circle) {
-        isCircle = circle;
-    }
 
     public boolean isSinglePickImageOrVideoType() {
         return isSinglePickImageOrVideoType;
@@ -42,21 +30,6 @@ public class MultiSelectConfig extends BaseSelectConfig {
         this.isSinglePickImageOrVideoType = isSinglePickImageOrVideoType;
     }
 
-    public int getCropRectMargin() {
-        return cropRectMargin;
-    }
-
-    public void setCropRectMargin(int cropRectMargin) {
-        this.cropRectMargin = cropRectMargin;
-    }
-
-    public String getCropSaveFilePath() {
-        return cropSaveFilePath;
-    }
-
-    public void setCropSaveFilePath(String cropSaveFilePath) {
-        this.cropSaveFilePath = cropSaveFilePath;
-    }
 
     public boolean isPreview() {
         return isPreview;
@@ -66,18 +39,6 @@ public class MultiSelectConfig extends BaseSelectConfig {
         isPreview = preview;
     }
 
-    public int getCropRatioX() {
-        return cropRatioX;
-    }
-
-    public void setCropRatio(int x, int y) {
-        this.cropRatioX = x;
-        this.cropRatioY = y;
-    }
-
-    public int getCropRatioY() {
-        return cropRatioY;
-    }
 
 
     public ArrayList<ImageItem> getShieldImageList() {

@@ -6,8 +6,8 @@ android {
         applicationId "com.ypx.imagepickerdemo"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 10
-        versionName "2.4.4"
+        versionCode 11
+        versionName "2.4.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -27,6 +27,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation project(path: ':imagepicker')
-    //implementation 'com.ypx.yimagepicker:androidx:2.4.4'
+    //implementation project(path: ':imagepicker')
+    implementation 'com.ypx.yimagepicker:androidx:2.4.5'
 }

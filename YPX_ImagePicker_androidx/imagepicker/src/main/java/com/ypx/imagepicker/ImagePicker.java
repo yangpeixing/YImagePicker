@@ -1,15 +1,21 @@
 package com.ypx.imagepicker;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Environment;
+import androidx.annotation.NonNull;
+
 import com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity;
 import com.ypx.imagepicker.activity.multi.SingleCropActivity;
+import com.ypx.imagepicker.bean.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.MultiSelectConfig;
+import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.builder.CropPickerBuilder;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
@@ -75,11 +81,20 @@ public class ImagePicker {
      */
     public static void takePhoto(final Activity activity, final String savePath, final OnImagePickCompleteListener listener) {
         if (!PPermissionUtils.hasCameraPermissions(activity)) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                activity.requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
+            }
             return;
         }
         PLauncher.init(activity).startActivityForResult(PFileUtil.getTakePhotoIntent(activity, savePath), new PLauncher.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode != Activity.RESULT_OK) {
+                    return;
+                }
+                if (savePath == null || savePath.trim().length() == 0) {
+                    return;
+                }
                 PFileUtil.refreshGalleryAddPic(activity, savePath);
                 if (listener != null) {
                     ImageItem item = new ImageItem(savePath, System.currentTimeMillis());
@@ -109,24 +124,47 @@ public class ImagePicker {
     /**
      * 直接调用拍照并剪裁
      *
-     * @param activity     调用activity
-     * @param presenter    选择器样式类，主要负责返回UIConfig
-     * @param selectConfig 剪裁配置
-     * @param listener     剪裁回调
+     * @param activity   调用activity
+     * @param presenter  选择器样式类，主要负责返回UIConfig
+     * @param cropConfig 剪裁配置
+     * @param listener   剪裁回调
      */
     public static void takePhotoAndCrop(final Activity activity, final IMultiPickerBindPresenter presenter,
-                                        final MultiSelectConfig selectConfig, final OnImagePickCompleteListener listener) {
-        if (presenter == null || selectConfig == null || listener == null) {
+                                        final CropConfig cropConfig, @NonNull final OnImagePickCompleteListener listener) {
+        if (presenter == null) {
+            PickerErrorExecutor.executeError(activity, PickerError.PRESENTER_NOT_FOUND.getCode());
+            return;
+        }
+        if (cropConfig == null) {
+            PickerErrorExecutor.executeError(activity, PickerError.SELECT_CONFIG_NOT_FOUND.getCode());
             return;
         }
         takePhoto(activity, new OnImagePickCompleteListener() {
             @Override
             public void onImagePickComplete(ArrayList<ImageItem> items) {
                 if (items != null && items.size() > 0) {
-                    SingleCropActivity.intentCrop(activity, presenter, selectConfig, items.get(0).path, listener);
+                    SingleCropActivity.intentCrop(activity, presenter, cropConfig, items.get(0).path, listener);
                 }
             }
         });
+    }
+
+    /**
+     * 直接调用拍照并剪裁
+     *
+     * @param activity      调用activity
+     * @param presenter     选择器样式类，主要负责返回UIConfig
+     * @param cropConfig    剪裁配置
+     * @param cropImagePath 需要剪裁的图片路径
+     * @param listener      剪裁回调
+     */
+    public static void crop(final Activity activity, final IMultiPickerBindPresenter presenter,
+                            final CropConfig cropConfig, String cropImagePath, final OnImagePickCompleteListener listener) {
+        if (presenter == null || cropConfig == null || listener == null) {
+            PickerErrorExecutor.executeError(activity, PickerError.PRESENTER_NOT_FOUND.getCode());
+            return;
+        }
+        SingleCropActivity.intentCrop(activity, presenter, cropConfig, cropImagePath, listener);
     }
 
     /**

@@ -15,10 +15,13 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.bean.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.MultiSelectConfig;
+import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
+import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PFileUtil;
@@ -43,22 +46,22 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
 public class SingleCropActivity extends FragmentActivity {
     private CropImageView cropView;
     private PickerUiConfig uiConfig;
-    private MultiSelectConfig selectConfig;
+    private CropConfig cropConfig;
 
     /**
      * 跳转单图剪裁
      *
-     * @param context      跳转的activity
-     * @param presenter    IMultiPickerBindPresenter
-     * @param selectConfig 选择配置
-     * @param path         需要剪裁的图片的原始路径
-     * @param listener     剪裁回调
+     * @param context    跳转的activity
+     * @param presenter  IMultiPickerBindPresenter
+     * @param cropConfig 剪裁配置
+     * @param path       需要剪裁的图片的原始路径
+     * @param listener   剪裁回调
      */
-    public static void intentCrop(Activity context, IMultiPickerBindPresenter presenter, MultiSelectConfig selectConfig,
+    public static void intentCrop(Activity context, IMultiPickerBindPresenter presenter, CropConfig cropConfig,
                                   String path, final OnImagePickCompleteListener listener) {
         Intent intent = new Intent(context, SingleCropActivity.class);
         intent.putExtra(INTENT_KEY_PRESENTER, presenter);
-        intent.putExtra(INTENT_KEY_SELECT_CONFIG, selectConfig);
+        intent.putExtra(INTENT_KEY_SELECT_CONFIG, cropConfig);
         intent.putExtra(INTENT_KEY_CURRENT_IMAGE, path);
         PLauncher.init(context).startActivityForResult(intent, new PLauncher.Callback() {
             @Override
@@ -67,6 +70,8 @@ public class SingleCropActivity extends FragmentActivity {
                         data.hasExtra(ImagePicker.INTENT_KEY_PICKER_RESULT) && listener != null) {
                     ArrayList list = (ArrayList) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKER_RESULT);
                     listener.onImagePickComplete(list);
+                } else if (listener instanceof OnImagePickCompleteListener2) {
+                    ((OnImagePickCompleteListener2) listener).onPickFailed(PickerError.valueOf(resultCode));
                 }
             }
         });
@@ -75,25 +80,47 @@ public class SingleCropActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.picker_activity_crop);
-        if (getIntent() != null && getIntent().hasExtra(INTENT_KEY_PRESENTER)) {
-            IMultiPickerBindPresenter presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
-            selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
-            uiConfig = presenter.getUiConfig(this);
-            String imagePath = "file://" + getIntent().getStringExtra(INTENT_KEY_CURRENT_IMAGE);
-            cropView = findViewById(R.id.cropView);
-            setTitleBar();
-            cropView.enable(); // 启用图片缩放功能
-            cropView.setMaxScale(7.0f);
-            cropView.setRotateEnable(false);
-            cropView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            cropView.setCropMargin(selectConfig.getCropRectMargin());
-            presenter.displayPerViewImage(cropView, imagePath);
-            cropView.setCropRatio(selectConfig.getCropRatioX(), selectConfig.getCropRatioY());
-            cropView.setCircle(selectConfig.isCircle());
-        } else {
-            finish();
+        if (getIntent() == null) {
+            PickerErrorExecutor.executeError(this, PickerError.PRESENTER_NOT_FOUND.getCode());
+            return;
         }
+        IMultiPickerBindPresenter presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
+        cropConfig = (CropConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
+        if (presenter == null) {
+            PickerErrorExecutor.executeError(this, PickerError.PRESENTER_NOT_FOUND.getCode());
+            return;
+        }
+
+        if (cropConfig == null) {
+            PickerErrorExecutor.executeError(this, PickerError.SELECT_CONFIG_NOT_FOUND.getCode());
+            return;
+        }
+        uiConfig = presenter.getUiConfig(this);
+        if (uiConfig == null) {
+            uiConfig = new PickerUiConfig();
+        }
+        String url = getIntent().getStringExtra(INTENT_KEY_CURRENT_IMAGE);
+        if (url == null || url.trim().length() == 0 || !new File(url).exists()) {
+            PickerErrorExecutor.executeError(this, PickerError.CROP_URL_NOT_FOUND.getCode());
+            return;
+        }
+        String imagePath = "file://" + url;
+        setContentView(R.layout.picker_activity_crop);
+        setTitleBar();
+        cropView = findViewById(R.id.cropView);
+        cropView.setMaxScale(7.0f);
+        cropView.setRotateEnable(false);
+        cropView.enable();
+        cropView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        cropView.setBounceEnable(!cropConfig.isGap());
+        cropView.setCropMargin(cropConfig.getCropRectMargin());
+        if (!cropConfig.isCircle()) {
+            cropView.setCropRatio(cropConfig.getCropRatioX(), cropConfig.getCropRatioY());
+        } else {
+            cropView.setCropRatio(1, 1);
+        }
+        cropView.setCircle(cropConfig.isCircle());
+        presenter.displayPerViewImage(cropView, imagePath);
     }
 
     private void setTitleBar() {
@@ -125,7 +152,12 @@ public class SingleCropActivity extends FragmentActivity {
                 if (cropView.isEditing()) {
                     return;
                 }
-                String cropUrl = generateCropFile(selectConfig.getCropSaveFilePath(), "crop_" + System.currentTimeMillis());
+                String cropUrl = generateCropFile(cropConfig.getCropSaveFilePath(), "crop_" + System.currentTimeMillis());
+                if (cropUrl.startsWith("Exception:")) {
+                    PickerError.CROP_EXCEPTION.setMessage(cropUrl);
+                    PickerErrorExecutor.executeError(SingleCropActivity.this, PickerError.CROP_EXCEPTION.getCode());
+                    return;
+                }
                 ImageItem item = new ImageItem();
                 item.path = cropUrl;
                 ArrayList<ImageItem> list = new ArrayList<>();
@@ -143,10 +175,15 @@ public class SingleCropActivity extends FragmentActivity {
     }
 
     public String generateCropFile(String filePath, String fileName) {
-        File f = new File(filePath, fileName + (selectConfig.isCircle() ? ".png" : ".jpg"));
+        File f = new File(filePath, fileName + (cropConfig.isNeedPng() ? ".png" : ".jpg"));
         String cropUrl;
-        Bitmap bitmap = cropView.generateCropBitmap();
-        if (selectConfig.isCircle()) {
+        Bitmap bitmap;
+        if (cropConfig.isGap()) {
+            bitmap = cropView.generateCropBitmapFromView(cropConfig.getCropGapBackgroundColor());
+        } else {
+            bitmap = cropView.generateCropBitmap();
+        }
+        if (cropConfig.isNeedPng()) {
             cropUrl = PFileUtil.saveBitmapToLocalWithPNG(bitmap, f.getAbsolutePath());
         } else {
             cropUrl = PFileUtil.saveBitmapToLocalWithJPEG(bitmap, f.getAbsolutePath());

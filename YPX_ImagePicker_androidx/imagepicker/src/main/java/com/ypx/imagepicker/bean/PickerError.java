@@ -11,8 +11,10 @@ public enum PickerError {
     MEDIA_NOT_FOUND(-26884,"not found media files"),
     PRESENTER_NOT_FOUND(-26885, "not found presenter,you must be implements IMultiPickerBindPresenter or ICropPickerBindPresenter"),
     UI_CONFIG_NOT_FOUND(-26886, "presenter not found uiConfig,please check IMultiPickerBindPresenter or ICropPickerBindPresenter's getUiConfig() method realize"),
-    SELECT_CONFIG_NOT_FOUND(-26887, "not found selectConfig"),
-    OTHER(-26888, "other error");
+    SELECT_CONFIG_NOT_FOUND(-26887, "not found selectConfig or cropConfig"),
+    CROP_URL_NOT_FOUND(-26888, "not found imagePath to crop"),
+    CROP_EXCEPTION(-26889, "crop exception"),
+    OTHER(-26890, "other error");
 
 
     private int mCode = 0;
@@ -21,6 +23,10 @@ public enum PickerError {
     PickerError(int code, String msg) {
         mCode = code;
         mMessage = msg;
+    }
+
+    public void setMessage(String mMessage) {
+        this.mMessage = mMessage;
     }
 
     public static PickerError valueOf(int code) {

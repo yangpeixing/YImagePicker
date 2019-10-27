@@ -289,29 +289,53 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checked="true"
-                android:text="多选/单选" />
+                android:text="选择器-多选" />
+
+            <RadioButton
+                android:id="@+id/rb_single"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="false"
+                android:text="选择器-单选" />
 
             <RadioButton
                 android:id="@+id/rb_crop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="剪裁" />
+                android:checked="false"
+                android:text="选择器-剪裁" />
+
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/rg_openType2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_autoCrop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="直接剪裁" />
 
             <RadioButton
                 android:id="@+id/rb_takePhoto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="拍照" />
+                android:text="直接拍照" />
 
             <RadioButton
                 android:id="@+id/rb_takePhotoAndCrop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="拍照并剪裁" />
-
+                android:text="直接拍照并剪裁" />
         </RadioGroup>
 
         <LinearLayout
@@ -330,12 +354,30 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <CheckBox
-                android:id="@+id/cb_circle"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:text="开启圆形剪裁" />
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/cb_circle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="开启圆形剪裁" />
+
+                <CheckBox
+                    android:id="@+id/cb_gap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="开启留白剪裁" />
+
+                <CheckBox
+                    android:id="@+id/cb_gapBackground"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="留白透明背景" />
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -14,9 +14,7 @@ import java.io.Serializable;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public interface ICropPickerBindPresenter extends Serializable {
-
-    void displayListImage(ImageView imageView, ImageItem item, int size);
+public interface ICropPickerBindPresenter extends BasePresenter {
 
     /**
      * 加载剪裁区域里的图片

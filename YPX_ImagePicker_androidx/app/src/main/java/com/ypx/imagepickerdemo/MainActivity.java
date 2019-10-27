@@ -1,14 +1,17 @@
 package com.ypx.imagepickerdemo;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,13 +26,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.ypx.imagepicker.ImagePicker;
+import com.ypx.imagepicker.bean.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
-import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.builder.MultiPickerBuilder;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
+import com.ypx.imagepicker.data.OnPickerCompleteListener;
+import com.ypx.imagepicker.data.OnStringCompleteListener;
+import com.ypx.imagepicker.data.OnStringListCompleteListener;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepickerdemo.style.CustomImgPickerPresenter;
 import com.ypx.imagepickerdemo.style.RedBookCropPresenter;
@@ -70,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioButton mRbCrop;
     private RadioButton mRbTakePhoto;
     private RadioButton mRbTakePhotoAndCrop;
+    private RadioButton mRbSingle;
     private CheckBox mCbCircle;
     private TextView mCropX;
     private SeekBar mXSeekBar;
@@ -80,10 +87,13 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout mCropSetLayout;
     private RadioGroup mRgNextPickType;
     private RadioGroup mRgOpenType;
+    private RadioButton mRbAutoCrop;
+    private RadioGroup mRgOpenType2;
     private GridLayout mGridLayout;
+    private CheckBox mCbGap;
+    private CheckBox mCbGapBackground;
 
     private int maxCount = 9;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         mRbSave = findViewById(R.id.rb_save);
         mRbMulti = findViewById(R.id.rb_multi);
         mRbCrop = findViewById(R.id.rb_crop);
+        mRbSingle = findViewById(R.id.rb_single);
         mRbTakePhoto = findViewById(R.id.rb_takePhoto);
         mRbTakePhotoAndCrop = findViewById(R.id.rb_takePhotoAndCrop);
         mCbCircle = findViewById(R.id.cb_circle);
@@ -135,11 +146,21 @@ public class MainActivity extends AppCompatActivity {
         mGridLayout = findViewById(R.id.gridLayout);
         mRgNextPickType = findViewById(R.id.rg_nextPickType);
         mRgOpenType = findViewById(R.id.rg_openType);
+        mRbAutoCrop = findViewById(R.id.rb_autoCrop);
+        mRgOpenType2 = findViewById(R.id.rg_openType2);
         mRgStyle.setOnCheckedChangeListener(listener);
-        mRgOpenType.setOnCheckedChangeListener(listener2);
+        mRbMulti.setOnCheckedChangeListener(listener4);
+        mRbCrop.setOnCheckedChangeListener(listener4);
+        mRbAutoCrop.setOnCheckedChangeListener(listener4);
+        mRbTakePhoto.setOnCheckedChangeListener(listener4);
+        mRbTakePhotoAndCrop.setOnCheckedChangeListener(listener4);
+        mRbSingle.setOnCheckedChangeListener(listener4);
         mXSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
         mYSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
         mMarginSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
+
+        mCbGap = findViewById(R.id.cb_gap);
+        mCbGapBackground = findViewById(R.id.cb_gapBackground);
     }
 
     RadioGroup.OnCheckedChangeListener listener = new RadioGroup.OnCheckedChangeListener() {
@@ -178,13 +199,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    RadioGroup.OnCheckedChangeListener listener2 = new RadioGroup.OnCheckedChangeListener() {
+    CompoundButton.OnCheckedChangeListener listener4 = new CompoundButton.OnCheckedChangeListener() {
         @Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-            if (checkedId == mRbCrop.getId() || checkedId == mRbTakePhotoAndCrop.getId()) {
-                mCropSetLayout.setVisibility(View.VISIBLE);
-            } else {
-                mCropSetLayout.setVisibility(View.GONE);
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                if (buttonView.getParent() == mRgOpenType) {
+                    mRgOpenType2.clearCheck();
+                } else {
+                    mRgOpenType.clearCheck();
+                }
+
+                if (buttonView == mRbTakePhotoAndCrop || buttonView == mRbAutoCrop || buttonView == mRbCrop) {
+                    mCropSetLayout.setVisibility(View.VISIBLE);
+                } else {
+                    mCropSetLayout.setVisibility(View.GONE);
+                }
             }
         }
     };
@@ -298,6 +327,8 @@ public class MainActivity extends AppCompatActivity {
                 // .filterMimeType(MimeType.GIF)//设置需要过滤掉加载的文件类型
                 .showCamera(mCbShowCamera.isChecked())//显示拍照
                 .cropRectMinMargin(mMarginSeekBar.getProgress())
+                .cropStyle(mCbGap.isChecked() ? CropConfig.STYLE_GAP : CropConfig.STYLE_FILL)
+                .cropGapBackgroundColor(mCbGapBackground.isChecked() ? Color.TRANSPARENT : Color.RED)
                 .cropSaveFilePath(ImagePicker.cropPicSaveFilePath)
                 .setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());
         if (mCbCircle.isChecked()) {
@@ -325,12 +356,42 @@ public class MainActivity extends AppCompatActivity {
 
     private void takePhotoAndCrop() {
         //配置剪裁属性
-        MultiSelectConfig selectConfig = new MultiSelectConfig();
-        selectConfig.setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());//设置剪裁比例
-        selectConfig.setCropRectMargin(mMarginSeekBar.getProgress());//设置剪裁框间距，单位px
-        selectConfig.setCropSaveFilePath(ImagePicker.cropPicSaveFilePath);
-        selectConfig.setCircle(mCbCircle.isChecked());//是否圆形剪裁
-        ImagePicker.takePhotoAndCrop(this, new WXImgPickerPresenter(), selectConfig, new OnImagePickCompleteListener() {
+        CropConfig cropConfig = new CropConfig();
+        cropConfig.setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());//设置剪裁比例
+        cropConfig.setCropRectMargin(mMarginSeekBar.getProgress());//设置剪裁框间距，单位px
+        cropConfig.setCropSaveFilePath(ImagePicker.cropPicSaveFilePath);
+        cropConfig.setCircle(mCbCircle.isChecked());//是否圆形剪裁
+        cropConfig.setCropStyle(mCbGap.isChecked() ? CropConfig.STYLE_GAP : CropConfig.STYLE_FILL);
+        cropConfig.setCropGapBackgroundColor(mCbGapBackground.isChecked() ? Color.TRANSPARENT : Color.RED);
+        ImagePicker.takePhotoAndCrop(this, new WXImgPickerPresenter(), cropConfig, new OnImagePickCompleteListener() {
+            @Override
+            public void onImagePickComplete(ArrayList<ImageItem> items) {
+                //剪裁回调，主线程
+                picList.addAll(items);
+                refreshGridLayout();
+            }
+        });
+    }
+
+    private void autoCrop() {
+        if (picList.size() == 0) {
+            Toast.makeText(this, "请至少选择一张图片", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        //配置剪裁属性
+        CropConfig cropConfig = new CropConfig();
+        cropConfig.setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());//设置剪裁比例
+        cropConfig.setCropRectMargin(mMarginSeekBar.getProgress());//设置剪裁框间距，单位px
+        cropConfig.setCropSaveFilePath(ImagePicker.cropPicSaveFilePath);
+        cropConfig.setCircle(mCbCircle.isChecked());//是否圆形剪裁
+        cropConfig.setCropStyle(mCbGap.isChecked() ? CropConfig.STYLE_GAP : CropConfig.STYLE_FILL);
+        cropConfig.setCropGapBackgroundColor(mCbGapBackground.isChecked() ? Color.TRANSPARENT : Color.RED);
+        ImagePicker.crop(this, new WXImgPickerPresenter(), cropConfig, picList.get(0).path, new OnImagePickCompleteListener2() {
+            @Override
+            public void onPickFailed(PickerError error) {
+                Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
             @Override
             public void onImagePickComplete(ArrayList<ImageItem> items) {
                 //剪裁回调，主线程
@@ -345,8 +406,16 @@ public class MainActivity extends AppCompatActivity {
             crop();
         } else if (mRbTakePhoto.isChecked()) {
             takePhoto();
+        } else if (mRbAutoCrop.isChecked()) {
+            autoCrop();
         } else if (mRbTakePhotoAndCrop.isChecked()) {
             takePhotoAndCrop();
+        } else if (mRbSingle.isChecked()) {
+            if (mRbRedBook.isChecked()) {
+                redBookPick(1);
+            } else {
+                pick(1);
+            }
         } else if (mRbRedBook.isChecked()) {
             redBookPick(maxCount - picList.size());
         } else if (mRbWeChat.isChecked()) {

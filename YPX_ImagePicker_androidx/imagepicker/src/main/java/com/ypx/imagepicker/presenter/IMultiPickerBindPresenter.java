@@ -16,15 +16,7 @@ import java.util.ArrayList;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public interface IMultiPickerBindPresenter extends Serializable {
-    /**
-     * 加载列表缩略图
-     *
-     * @param imageView imageView
-     * @param item      图片信息
-     * @param size      加载尺寸
-     */
-    void displayListImage(ImageView imageView, ImageItem item, int size);
+public interface IMultiPickerBindPresenter extends BasePresenter {
 
     /**
      * 加载详情预览图片
