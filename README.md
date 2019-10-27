@@ -19,20 +19,22 @@
 /TOC -->
 
 ### 关于YImagePicker 
-[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=2.4.4) ](https://bintray.com/yangpeixing/yimagepicker/androidx/2.4.4/link)
+[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=2.4.5) ](https://bintray.com/yangpeixing/yimagepicker/androidx/2.4.5/link)
  - 支持无缝切换小红书剪裁样式并自定义UI
  - 支持微信、马蜂窝、知乎等多个不同风格样式定制
+ - 支持13种视频图片文件类型混合加载(2.4.4版本加入)
  - 支持图片直接预览和编辑预览（排序、删除）
+ - 支持高清预览超长图、超大图，图片放大效果胜过微信
  - 支持单图自定义比例剪裁
  - 支持单图圆形剪裁，生成png圆形图片(2.4.3版本加入)
- - 支持13种视频图片文件类型混合加载(2.4.4版本加入)
- - 支持高清预览超长图、超大图，图片放大效果胜过微信
- - 小红书剪裁样式支持视频预览
- - 支持图片和视频文件混合选择或指定类型选择
+ - 支持单图留白剪裁（仿最新微信图片头像选择），支持生成透明背景图(2.4.5版本加入)
+ - 小红书剪裁样式支持视频多选和预览
+ - 微信样式支持图片和视频文件混合选择或指定类型选择
  - 微信样式支持多次选择状态保存
  - 微信样式支持指定某些媒体文件不可选择
  - 选择结果直接回调，拒绝配置ActivityForResult+requestCode，即调用即处理
  - 支持选择器调用失败回调(2.4.4版本加入)
+ - 支持自定义回调类型(2.4.5版本加入)
  - 轻量级，aar大小不超过300K，无so库，无任何第三方依赖
  - 支持androidx和support
  - 永久维护
@@ -42,9 +44,9 @@
 **androidx版本：**
 
 ```java
-implementation 'com.ypx.yimagepicker:androidx:2.4.4'
+implementation 'com.ypx.yimagepicker:androidx:2.4.5'
 ```
-**support版本：**
+**support版本：**（暂未更新）
 ```java
 implementation 'com.ypx.yimagepicker:support:2.4.4'
 ```
@@ -63,7 +65,7 @@ YImagePicker与主项目通过presenter进行交互与解耦，presenter采用�
 ### 效果图集
  - **demo效果**
  
-![demo效果](https://app-screenshot.pgyer.com/image/view/app_screenshots/6279ecf776c256a3929ab72fb031e5c1-528)
+![demo效果](https://app-screenshot.pgyer.com/image/view/app_screenshots/49a0ff5b0eede276c94c1f094bf12e75-528)
 
  - **小红书样式**
 
@@ -147,16 +149,23 @@ ImagePicker.withCrop(new RedBookCropPresenter())//设置presenter
 ImagePicker.withMulti(new WXImgPickerPresenter())
             .mimeType(MimeType.ofImage())
             .filterMimeType(MimeType.GIF)
-            .setCropRatio(1,1)//设置剪裁比例
+             //设置剪裁比例
+            .setCropRatio(1,1)
             .cropSaveFilePath("剪裁图片保存路径")
-            .cropRectMinMargin(50)//设置剪裁框间距，单位px
-            .cropAsCircle()//圆形剪裁
+            //设置剪裁框间距，单位px
+            .cropRectMinMargin(50)
+             //是否圆形剪裁，圆形剪裁时，setCropRatio无效
+            .cropAsCircle()
+             //设置剪裁模式，留白或充满  CropConfig.STYLE_GAP 或 CropConfig.STYLE_FILL
+            .cropStyle(CropConfig.STYLE_FILL)
+             //设置留白模式下生成的图片背景色，支持透明背景
+            .cropGapBackgroundColor(Color.TRANSPARENT)
             .crop(this, new OnImagePickCompleteListener() {
                 @Override
                 public void onImagePickComplete(ArrayList<ImageItem> items) {
                     //图片剪裁回调，主线程
                 }
-            });                                                      
+            });                                                     
 ```
 
 ### 预览
@@ -197,14 +206,51 @@ ImagePicker.takePhoto(this, "拍照保存路径", new OnImagePickCompleteListene
  **调用示例**：
 ```java
 //配置剪裁属性
-MultiSelectConfig selectConfig = new MultiSelectConfig();
-selectConfig.setCropRatio(1, 1);//设置剪裁比例
-selectConfig.setCropRectMargin(50);//设置剪裁框间距，单位px
-selectConfig.setCropSaveFilePath("剪裁图片保存路径");
-selectConfig.setCircle(false);//是否圆形剪裁
-ImagePicker.takePhotoAndCrop(this, new WXImgPickerPresenter(), selectConfig, new OnImagePickCompleteListener() {
-    @Override
-    public void onImagePickComplete(ArrayList<ImageItem> items) {
+CropConfig cropConfig = new CropConfig();
+ //设置剪裁比例
+cropConfig.setCropRatio(1, 1);
+//设置剪裁框间距，单位px
+cropConfig.setCropRectMargin(100);
+cropConfig.setCropSaveFilePath("剪裁生成的图片路径");
+//是否圆形剪裁，圆形剪裁时，setCropRatio无效
+cropConfig.setCircle(false);
+//设置剪裁模式，留白或充满  CropConfig.STYLE_GAP 或 CropConfig.STYLE_FILL
+cropConfig.setCropStyle(CropConfig.STYLE_GAP);
+//设置留白模式下生成的图片背景色，支持透明背景
+cropConfig.setCropGapBackgroundColor(Color.TRANSPARENT );
+//调用拍照
+ImagePicker.takePhotoAndCrop(this, new WXImgPickerPresenter(), cropConfig, 
+    new OnImagePickCompleteListener() {
+        @Override
+        public void onImagePickComplete(ArrayList<ImageItem> items) {
+            //剪裁回调，主线程
+        }
+    });
+```
+
+### 直接剪裁
+支持直接跳转剪裁页面
+
+ **调用示例**：
+```java
+CropConfig cropConfig = new CropConfig();
+ //设置剪裁比例
+cropConfig.setCropRatio(1, 1);
+//设置剪裁框间距，单位px
+cropConfig.setCropRectMargin(100);
+cropConfig.setCropSaveFilePath("剪裁生成的图片路径");
+//是否圆形剪裁，圆形剪裁时，setCropRatio无效
+cropConfig.setCircle(false);
+//设置剪裁模式，留白或充满  CropConfig.STYLE_GAP 或 CropConfig.STYLE_FILL
+cropConfig.setCropStyle(CropConfig.STYLE_GAP);
+//设置留白模式下生成的图片背景色，支持透明背景
+cropConfig.setCropGapBackgroundColor(Color.TRANSPARENT );
+//调用剪裁
+String needCropImageUrl="需要剪裁的图片路径";
+ImagePicker.crop(this, new WXImgPickerPresenter(), cropConfig, needCropImageUrl，
+    new OnImagePickCompleteListener() {
+        @Override
+        public void onImagePickComplete(ArrayList<ImageItem> items) {
             //剪裁回调，主线程
         }
     });
@@ -230,23 +276,44 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
             })
 ```
 
+### 设置自定义回调
+所有OnImagePickCompleteListener回调都可以被自定义回调OnPickerCompleteListener给替换，框架默认支持两种回调
+
+- **OnStringCompleteListener**：String回调，一般用于单图和剪裁的回调
+- **OnStringListCompleteListener**：string数组回调，用于多图选择或预览回调
+
+ **调用示例**：
+```java
+ImagePicker.withMulti(new WXImgPickerPresenter())
+            //...省略若干属性
+            .pick(new OnPickerCompleteListener<String>() {
+                @Override
+                public String onTransit(ArrayList<ImageItem> items) {
+                    return null;
+                }
+
+                @Override
+                public void onPickComplete(String s) {
+                    //回调
+                }
+        });
+```
+
 **以上只是简单代码示例，详细功能请**
 [查看详细API文档](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档)
 
 ### 版本记录
 [查看详细版本记录](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker版本记录)
-#### 2.4.4版本 [2019.10.18]
-  1. 【BUG修复】修复了预览时无法排序问题
-  2. 【新增】支持十三种图片视频文件混合或指定选择，调用方法mimeType()和filterMimeType()
-  3. 【新增】支持直接调用拍照和直接调用拍照并剪裁图片
-  4. 【新增】支持选择器调用失败或取消选择回调，使用OnImagePickCompleteListener2
-  5. 【新增】小红书剪裁支持配置状态栏是否显示
-  6. 【新增】小红书剪裁支持定制标题下箭头
-  7. 【去除】去除showImage()、showVideo()、showGif()三个方法，统一使用mimeType()和filterMimeType()
-  8. 【去除】去除原有预览和拍照方法，全部采用ImagePicker.takePhoto()
-  9. 【优化】预览页面重构，支持编辑预览和普通预览
-  10. 【优化】优化拍照逻辑，去除PTakePhoto类
 
+
+#### 2.4.5版本 [2019.10.27]
+  1. 【BUG修复】修复拍照返回生成空文件的问题
+  2. 【BUG修复】修复小红书样式切换文件夹，当文件夹中全部是视频时，视频单选的情况下直接回调clickVideo的问题
+  3. 【新增】支持直接调用剪裁
+  4. 【新增】支持自定义图片选择回调
+  5. 【新增】支持留白式剪裁（仿最新版微信图片选择），可以让图片在剪裁区域内随意放置，镂空背景可定制
+  6. 【新增】PickerError新增剪裁错误回调类型
+  7. 【调整】原有调用剪裁时SelectConfig调整为为CropConfig
 
 
 
