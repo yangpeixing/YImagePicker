@@ -7,17 +7,13 @@ import android.widget.ImageView;
 import com.ypx.imagepicker.bean.CropUiConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 
-import java.io.Serializable;
-
 /**
  * Description: 图片加载提供类
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public interface ICropPickerBindPresenter extends Serializable {
-
-    void displayListImage(ImageView imageView, ImageItem item, int size);
+public interface ICropPickerBindPresenter extends BasePresenter {
 
     /**
      * 加载剪裁区域里的图片

@@ -1,21 +1,17 @@
 package com.ypx.imagepicker.builder;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.ypx.imagepicker.ImagePicker;
-import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerActivity;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerFragment;
-import com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 
 import java.util.ArrayList;
@@ -23,8 +19,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
+import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
 
 /**
  * Description: 多选选择器构造类
@@ -33,19 +29,19 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * Date: 2018/9/19 16:56
  */
 public class MultiPickerBuilder {
-    private MultiSelectConfig multiSelectConfig;
+    private MultiSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
 
     public MultiPickerBuilder(IMultiPickerBindPresenter presenter) {
         this.presenter = presenter;
-        this.multiSelectConfig = new MultiSelectConfig();
+        this.selectConfig = new MultiSelectConfig();
     }
 
     /**
      * @param config 选择配置
      */
     public MultiPickerBuilder withMultiSelectConfig(MultiSelectConfig config) {
-        this.multiSelectConfig = config;
+        this.selectConfig = config;
         return this;
     }
 
@@ -57,12 +53,11 @@ public class MultiPickerBuilder {
      */
     public void pick(Activity context, final OnImagePickCompleteListener listener) {
         MultiPickerData.instance.clear();
-        if (multiSelectConfig != null && multiSelectConfig.getMaxCount() <= 0) {
-            presenter.tip(context, context.getResources().getString(R.string.str_setcount));
-            return;
+        if (selectConfig.getMaxCount() == 1) {
+            selectConfig.setSelectMode(SelectMode.MODE_SINGLE);
         }
         checkVideoAndImage();
-        MultiImagePickerActivity.intent(context, multiSelectConfig, presenter, listener);
+        MultiImagePickerActivity.intent(context, selectConfig, presenter, listener);
     }
 
     /**
@@ -80,18 +75,18 @@ public class MultiPickerBuilder {
         setLastImageList(null);
         setPreview(false);
         MultiPickerData.instance.clear();
-        multiSelectConfig.setSelectMode(SelectMode.MODE_CROP);
-        if (multiSelectConfig.isCircle()) {
-            multiSelectConfig.setCropRatio(1, 1);
+        selectConfig.setSelectMode(SelectMode.MODE_CROP);
+        if (selectConfig.isCircle()) {
+            selectConfig.setCropRatio(1, 1);
         }
-        MultiImagePickerActivity.intent(context, multiSelectConfig, presenter, listener);
+        MultiImagePickerActivity.intent(context, selectConfig, presenter, listener);
     }
 
     /**
      * @param selectLimit 设置最大数量限制
      */
     public MultiPickerBuilder setMaxCount(int selectLimit) {
-        multiSelectConfig.setMaxCount(selectLimit);
+        selectConfig.setMaxCount(selectLimit);
         return this;
     }
 
@@ -100,7 +95,7 @@ public class MultiPickerBuilder {
      *                   {@link SelectMode}
      */
     public MultiPickerBuilder setSelectMode(int selectMode) {
-        multiSelectConfig.setSelectMode(selectMode);
+        selectConfig.setSelectMode(selectMode);
         return this;
     }
 
@@ -118,7 +113,17 @@ public class MultiPickerBuilder {
      * @param margin 间距
      */
     public MultiPickerBuilder cropRectMinMargin(int margin) {
-        multiSelectConfig.setCropRectMargin(margin);
+        selectConfig.setCropRectMargin(margin);
+        return this;
+    }
+
+    public MultiPickerBuilder cropStyle(int style) {
+        selectConfig.setCropStyle(style);
+        return this;
+    }
+
+    public MultiPickerBuilder cropGapBackgroundColor(int color) {
+        selectConfig.setCropGapBackgroundColor(color);
         return this;
     }
 
@@ -128,7 +133,7 @@ public class MultiPickerBuilder {
      * @param path 路径+图片名字
      */
     public MultiPickerBuilder cropSaveFilePath(String path) {
-        multiSelectConfig.setCropSaveFilePath(path);
+        selectConfig.setCropSaveFilePath(path);
         return this;
     }
 
@@ -151,7 +156,7 @@ public class MultiPickerBuilder {
      * @param mimeTypes 文件类型集合
      */
     public MultiPickerBuilder filterMimeType(Set<MimeType> mimeTypes) {
-        multiSelectConfig.getMimeTypes().removeAll(mimeTypes);
+        selectConfig.getMimeTypes().removeAll(mimeTypes);
         return this;
     }
 
@@ -177,7 +182,7 @@ public class MultiPickerBuilder {
         if (mimeTypes == null || mimeTypes.size() == 0) {
             return this;
         }
-        multiSelectConfig.setMimeTypes(mimeTypes);
+        selectConfig.setMimeTypes(mimeTypes);
         return this;
     }
 
@@ -187,11 +192,11 @@ public class MultiPickerBuilder {
      */
     public MultiPickerBuilder showImage(boolean showImage) {
         if (!showImage) {
-            Set<MimeType> mimeTypes = multiSelectConfig.getMimeTypes();
+            Set<MimeType> mimeTypes = selectConfig.getMimeTypes();
             mimeTypes.removeAll(MimeType.ofImage());
-            multiSelectConfig.setMimeTypes(mimeTypes);
+            selectConfig.setMimeTypes(mimeTypes);
         }
-        multiSelectConfig.setShowImage(showImage);
+        selectConfig.setShowImage(showImage);
         return this;
     }
 
@@ -201,11 +206,11 @@ public class MultiPickerBuilder {
      */
     public MultiPickerBuilder showVideo(boolean showVideo) {
         if (!showVideo) {
-            Set<MimeType> mimeTypes = multiSelectConfig.getMimeTypes();
+            Set<MimeType> mimeTypes = selectConfig.getMimeTypes();
             mimeTypes.removeAll(MimeType.ofVideo());
-            multiSelectConfig.setMimeTypes(mimeTypes);
+            selectConfig.setMimeTypes(mimeTypes);
         }
-        multiSelectConfig.setShowVideo(showVideo);
+        selectConfig.setShowVideo(showVideo);
         return this;
     }
 
@@ -215,11 +220,11 @@ public class MultiPickerBuilder {
      */
     public MultiPickerBuilder showGif(boolean showGif) {
         if (!showGif) {
-            Set<MimeType> mimeTypes = multiSelectConfig.getMimeTypes();
+            Set<MimeType> mimeTypes = selectConfig.getMimeTypes();
             mimeTypes.remove(MimeType.GIF);
-            multiSelectConfig.setMimeTypes(mimeTypes);
+            selectConfig.setMimeTypes(mimeTypes);
         }
-        multiSelectConfig.setLoadGif(showGif);
+        selectConfig.setLoadGif(showGif);
         return this;
     }
 
@@ -227,7 +232,7 @@ public class MultiPickerBuilder {
      * @param columnCount 设置列数
      */
     public MultiPickerBuilder setColumnCount(int columnCount) {
-        multiSelectConfig.setColumnCount(columnCount);
+        selectConfig.setColumnCount(columnCount);
         return this;
     }
 
@@ -235,7 +240,7 @@ public class MultiPickerBuilder {
      * 设置圆形剪裁
      */
     public MultiPickerBuilder cropAsCircle() {
-        multiSelectConfig.setCircle(true);
+        selectConfig.setCircle(true);
         return this;
     }
 
@@ -243,7 +248,7 @@ public class MultiPickerBuilder {
      * @param isPreview 是否开启预览
      */
     public MultiPickerBuilder setPreview(boolean isPreview) {
-        multiSelectConfig.setPreview(isPreview);
+        selectConfig.setPreview(isPreview);
         return this;
     }
 
@@ -252,7 +257,7 @@ public class MultiPickerBuilder {
      * @param showCamera 显示拍照item
      */
     public MultiPickerBuilder showCamera(boolean showCamera) {
-        multiSelectConfig.setShowCamera(showCamera);
+        selectConfig.setShowCamera(showCamera);
         return this;
     }
 
@@ -260,7 +265,7 @@ public class MultiPickerBuilder {
      * @param isSinglePickImageOrVideoType 是否只能选择视频或图片
      */
     public MultiPickerBuilder setSinglePickImageOrVideoType(boolean isSinglePickImageOrVideoType) {
-        multiSelectConfig.setSinglePickImageOrVideoType(isSinglePickImageOrVideoType);
+        selectConfig.setSinglePickImageOrVideoType(isSinglePickImageOrVideoType);
         return this;
     }
 
@@ -269,7 +274,7 @@ public class MultiPickerBuilder {
      * @param isVideoSinglePick 视频是否单选
      */
     public MultiPickerBuilder setVideoSinglePick(boolean isVideoSinglePick) {
-        multiSelectConfig.setVideoSinglePick(isVideoSinglePick);
+        selectConfig.setVideoSinglePick(isVideoSinglePick);
         return this;
     }
 
@@ -282,7 +287,7 @@ public class MultiPickerBuilder {
         if (imageList == null || imageList.size() == 0) {
             return this;
         }
-        multiSelectConfig.setShieldImageList(transitArray(imageList));
+        selectConfig.setShieldImageList(transitArray(imageList));
         return this;
     }
 
@@ -294,7 +299,7 @@ public class MultiPickerBuilder {
         if (imageList == null || imageList.size() == 0) {
             return this;
         }
-        multiSelectConfig.setLastImageList(transitArray(imageList));
+        selectConfig.setLastImageList(transitArray(imageList));
         return this;
     }
 
@@ -305,7 +310,7 @@ public class MultiPickerBuilder {
      * @param y 剪裁比例y
      */
     public MultiPickerBuilder setCropRatio(int x, int y) {
-        multiSelectConfig.setCropRatio(x, y);
+        selectConfig.setCropRatio(x, y);
         return this;
     }
 
@@ -331,7 +336,7 @@ public class MultiPickerBuilder {
     private Bundle getFragmentArguments() {
         checkVideoAndImage();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(INTENT_KEY_SELECT_CONFIG, multiSelectConfig);
+        bundle.putSerializable(INTENT_KEY_SELECT_CONFIG, selectConfig);
         bundle.putSerializable(INTENT_KEY_PRESENTER, presenter);
         return bundle;
     }
@@ -350,17 +355,17 @@ public class MultiPickerBuilder {
     }
 
     private void checkVideoAndImage() {
-        if (multiSelectConfig == null) {
+        if (selectConfig == null) {
             return;
         }
-        multiSelectConfig.setShowVideo(false);
-        multiSelectConfig.setShowImage(false);
-        for (MimeType mimeType : multiSelectConfig.getMimeTypes()) {
+        selectConfig.setShowVideo(false);
+        selectConfig.setShowImage(false);
+        for (MimeType mimeType : selectConfig.getMimeTypes()) {
             if (MimeType.ofVideo().contains(mimeType)) {
-                multiSelectConfig.setShowVideo(true);
+                selectConfig.setShowVideo(true);
             }
             if (MimeType.ofImage().contains(mimeType)) {
-                multiSelectConfig.setShowImage(true);
+                selectConfig.setShowImage(true);
             }
         }
     }

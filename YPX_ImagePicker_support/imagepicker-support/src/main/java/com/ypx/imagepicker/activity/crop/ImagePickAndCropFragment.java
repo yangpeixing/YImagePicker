@@ -17,8 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PBaseLoaderFragment;
+import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.adapter.crop.CropGridAdapter;
 import com.ypx.imagepicker.adapter.crop.CropSetAdapter;
 import com.ypx.imagepicker.bean.BaseSelectConfig;
@@ -30,7 +32,6 @@ import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.CropViewContainerHelper;
-import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.RecyclerViewTouchHelper;
 import com.ypx.imagepicker.helper.VideoViewContainerHelper;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
@@ -686,20 +687,45 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
             imageItems.addAll(set.imageItems);
             imageGridAdapter.notifyDataSetChanged();
             int firstImageIndex = getFirstImage();
+            if (firstImageIndex < 0) {
+                return;
+            }
             int index = selectConfig.isShowCamera() ? firstImageIndex + 1 : firstImageIndex;
             onPressImage(index, true);
         }
     }
 
     private int getFirstImage() {
-        if (selectConfig.isVideoSinglePick()) {
-            for (int i = 0; i < imageItems.size(); i++) {
-                if (!imageItems.get(i).isVideo()) {
-                    return i;
-                }
+        for (int i = 0; i < imageItems.size(); i++) {
+            if (isItemCanPress(i)) {
+                return i;
             }
         }
-        return 0;
+        return -1;
+    }
+
+    /**
+     * 检测item是否可以被选中
+     *
+     * @param position 当前item的索引
+     * @return 是否可以选中
+     */
+    private boolean isItemCanPress(int position) {
+        ImageItem item = imageItems.get(position);
+        //如果是图片，则不校验，默认选中第一个即可
+        if (!item.isVideo()) {
+            return true;
+        }
+        //如果当前选中的文件中第一个是图片，则代表只能选择图片，则该项跳过
+        if (selectList.size() > 0 && selectList.get(0) != null && !selectList.get(0).isVideo()) {
+            return false;
+        }
+        //如果视频单选，跳过
+        if (selectConfig.isVideoSinglePick()) {
+            return false;
+        }
+        //如果该视频超过了可选择的最大时长，跳过
+        return item.duration <= ImagePicker.MAX_VIDEO_DURATION;
     }
 
     @Override

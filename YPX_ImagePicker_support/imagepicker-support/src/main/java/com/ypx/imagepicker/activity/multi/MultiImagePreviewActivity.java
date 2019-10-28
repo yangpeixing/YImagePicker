@@ -26,7 +26,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
@@ -35,17 +36,17 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
-import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.helper.launcher.PLauncher;
+import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.helper.recyclerviewitemhelper.SimpleItemTouchHelperCallback;
+import com.ypx.imagepicker.utils.PickerFileProvider;
+import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
-import com.ypx.imagepicker.utils.PickerFileProvider;
-import com.ypx.imagepicker.widget.SuperCheckBox;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
+import com.ypx.imagepicker.widget.SuperCheckBox;
 
 import java.io.File;
 import java.util.ArrayList;

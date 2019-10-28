@@ -36,8 +36,6 @@ import android.widget.Scroller;
 import com.ypx.imagepicker.utils.PFileUtil;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 
-import java.io.File;
-
 /**
  * Description: 剪裁ImageView
  * <p>
@@ -782,7 +780,9 @@ public class CropImageView extends ImageView {
             mDegrees = toDegrees;
         }
 
-
+        if (!isBounceEnable) {
+            return;
+        }
         if (mScale < 1) {
             mTranslate.withScale(mScale, 1);
             mScale = 1;
@@ -790,7 +790,6 @@ public class CropImageView extends ImageView {
             mTranslate.withScale(mScale, mMaxScale);
             mScale = mMaxScale;
         }
-
         float cx = mImgRect.left + mImgRect.width() / 2;
         float cy = mImgRect.top + mImgRect.height() / 2;
 
@@ -809,6 +808,12 @@ public class CropImageView extends ImageView {
 
         doTranslateReset(mTmpRect);
         mTranslate.start();
+    }
+
+    private boolean isBounceEnable = true;
+
+    public void setBounceEnable(boolean isBounceEnable) {
+        this.isBounceEnable = isBounceEnable;
     }
 
     private void doTranslateReset(RectF imgRect) {
@@ -1015,9 +1020,9 @@ public class CropImageView extends ImageView {
 
                 mAnimMatrix.postTranslate(-distanceX, 0);
                 mTranslateX -= distanceX;
-            } else if (imgLargeWidth || hasMultiTouch || hasOverTranslate) {
+            } else if (imgLargeWidth || hasMultiTouch || hasOverTranslate || !isBounceEnable) {
                 checkRect();
-                if (!hasMultiTouch) {
+                if (!hasMultiTouch || !isBounceEnable) {
                     if (distanceX < 0 && mImgRect.left - distanceX > mCommonRect.left)
                         distanceX = resistanceScrollByX(mImgRect.left - mCommonRect.left, distanceX);
                     if (distanceX > 0 && mImgRect.right - distanceX < mCommonRect.right)
@@ -1037,9 +1042,9 @@ public class CropImageView extends ImageView {
 
                 mAnimMatrix.postTranslate(0, -distanceY);
                 mTranslateY -= distanceY;
-            } else if (imgLargeHeight || hasOverTranslate || hasMultiTouch) {
+            } else if (imgLargeHeight || hasOverTranslate || hasMultiTouch || !isBounceEnable) {
                 checkRect();
-                if (!hasMultiTouch) {
+                if (!hasMultiTouch || !isBounceEnable) {
                     if (distanceY < 0 && mImgRect.top - distanceY > mCommonRect.top)
                         distanceY = resistanceScrollByY(mImgRect.top - mCommonRect.top, distanceY);
                     if (distanceY > 0 && mImgRect.bottom - distanceY < mCommonRect.bottom)
@@ -1405,6 +1410,24 @@ public class CropImageView extends ImageView {
         executeTranslate();
     }
 
+    public Bitmap generateCropBitmapFromView(int backgroundColor) {
+        setShowImageRectLine(false);
+        aspectX = 0;
+        aspectY = 0;
+        setVisibility(INVISIBLE);
+        setBackgroundColor(backgroundColor);
+        invalidate();
+        Bitmap bitmap = PFileUtil.getViewBitmap(this);
+        try {
+            bitmap = Bitmap.createBitmap(bitmap, (int) mCropRect.left, (int) mCropRect.top,
+                    (int) mCropRect.width(), (int) mCropRect.height());
+            if (isCircle) {
+                bitmap = createCircleBitmap(bitmap);
+            }
+        } catch (Exception ignored) {
+        }
+        return bitmap;
+    }
 
     /**
      * 生成剪裁图片
@@ -1471,6 +1494,7 @@ public class CropImageView extends ImageView {
                 bitmap1 = createCircleBitmap(bitmap1);
             }
         } catch (Exception ignored) {
+            return generateCropBitmapFromView(Color.BLACK);
         }
 
         return bitmap1;

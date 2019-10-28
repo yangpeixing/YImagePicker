@@ -36,6 +36,10 @@ public class ImageItem implements Serializable {
     public ImageItem() {
     }
 
+    public ImageItem(String path) {
+        this.path = path;
+    }
+
     public String getVideoImageUri() {
         if (videoImageUri == null || videoImageUri.length() == 0) {
             return path;

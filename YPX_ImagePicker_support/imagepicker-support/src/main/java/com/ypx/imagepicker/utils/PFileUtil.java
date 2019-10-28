@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.view.View;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,8 +47,8 @@ public class PFileUtil {
         try {
             b = new FileOutputStream(localPath);
             bmp.compress(Bitmap.CompressFormat.PNG, 100, b);// 把数据写入文件
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            return "Exception:" + e.getMessage();
         } finally {
             try {
                 if (b != null) {
@@ -57,7 +58,7 @@ public class PFileUtil {
                     b.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                return "Exception:" + e.getMessage();
             }
         }
         return localPath;
@@ -201,6 +202,38 @@ public class PFileUtil {
         mediaScanIntent.setData(contentUri);
         context.sendBroadcast(mediaScanIntent);
     }
+
+    /**
+     * 获取指定文件大小
+     *
+     * @param file 检测文件
+     * @return 文件大小
+     * @throws Exception
+     */
+    public static long getFileSize(File file) {
+        long size = 0;
+        if (file.exists()) {
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+                size = fis.available();
+            } catch (Exception ignored) {
+
+            } finally {
+                if (size == 0) {
+                    deleteFile(file);
+                }
+            }
+        }
+        return size;
+    }
+
+    public static void deleteFile(File file) {
+        if (file != null && file.exists()) {
+            file.delete();
+        }
+    }
+
 
     public static Intent getTakePhotoIntent(Activity activity, String savePath) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

@@ -24,18 +24,18 @@ import android.widget.TextView;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PBaseLoaderFragment;
+import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.adapter.multi.MultiSetAdapter;
 import com.ypx.imagepicker.bean.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.PickerError;
+import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MultiSelectConfig;
-import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.bean.PickerUiConfig;
-import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 
@@ -43,8 +43,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
+import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
 
 /**
  * Description: 多选页
@@ -496,7 +496,13 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
 
         //剪裁模式下，直接跳转剪裁
         if (selectConfig.getSelectMode() == SelectMode.MODE_CROP) {
-            intentCrop(item.path);
+            if (item.isGif() || item.isVideo()) {
+                ArrayList<ImageItem> list2 = new ArrayList<>();
+                list2.add(item);
+                notifyOnImagePickComplete(list2);
+            } else {
+                intentCrop(item.path);
+            }
             return;
         }
 
