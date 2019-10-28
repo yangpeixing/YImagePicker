@@ -496,7 +496,13 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
 
         //剪裁模式下，直接跳转剪裁
         if (selectConfig.getSelectMode() == SelectMode.MODE_CROP) {
-            intentCrop(item.path);
+            if (item.isGif() || item.isVideo()) {
+                ArrayList<ImageItem> list2 = new ArrayList<>();
+                list2.add(item);
+                notifyOnImagePickComplete(list2);
+            } else {
+                intentCrop(item.path);
+            }
             return;
         }
 
