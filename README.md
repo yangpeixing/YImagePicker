@@ -46,9 +46,9 @@
 ```java
 implementation 'com.ypx.yimagepicker:androidx:2.4.5'
 ```
-**support版本：**（暂未更新）
+**support版本：** 
 ```java
-implementation 'com.ypx.yimagepicker:support:2.4.4'
+implementation 'com.ypx.yimagepicker:support:2.4.5'
 ```
 
 ### 核心原理
