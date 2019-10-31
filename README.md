@@ -93,9 +93,7 @@ YImagePicker与主项目通过presenter进行交互与解耦，presenter采用�
 ### [点击查看详细API文档](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档)
  
 ### 微信图片选择
-支持视频、GIF、长图选择，支持选择状态保存。调用前请按照demo实现IMultiPickerBindPresenter接口 
-
- **调用示例**：
+支持视频、GIF、长图选择，支持选择状态保存。调用前请按照demo实现IMultiPickerBindPresenter接口 ，示例如下：
 ```java
 ImagePicker.withMulti(new WXImgPickerPresenter())//指定presenter
            .setMaxCount(9)//设置选择的最大数
@@ -117,9 +115,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())//指定presenter
             });                                                                                                                            
 ```
 ### 小红书图片选择
-高仿小红书图片剪裁框架，支持视频以及多图剪裁、支持视频预览，支持UI自定义，支持fragment样式侵入。调用前请按照demo实现ICropPickerBindPresenter接口 
-
- **调用示例**：
+高仿小红书图片剪裁框架，支持视频以及多图剪裁、支持视频预览，支持UI自定义，支持fragment样式侵入。调用前请按照demo实现ICropPickerBindPresenter接口 ，示例如下：
 ```java
 ImagePicker.withCrop(new RedBookCropPresenter())//设置presenter
            .setMaxCount(9)//设置选择数量
@@ -140,10 +136,35 @@ ImagePicker.withCrop(new RedBookCropPresenter())//设置presenter
                 }
             });                                                        
 ```
-### 单图剪裁
-支持选择图片完调用剪裁，支持自定义比例剪裁，支持圆形剪裁
+### 预览
+支持普通预览和编辑预览，示例如下：
+```java
+//配置需要预览的所有图片列表
+ArrayList<ImageItem> allPreviewImageList = new ArrayList<>();
+//默认选中的图片索引
+int defaultPosition = 0;
+//开启编辑预览
+ImagePicker.preview(this, new WXImgPickerPresenter(), allPreviewImageList, defaultPosition, new OnImagePickCompleteListener() {
+        @Override
+        public void onImagePickComplete(ArrayList<ImageItem> items) {
+            //图片编辑回调，主线程
+        }
+    });                                                           
+```
 
- **调用示例**：
+### 拍照
+支持直接打开摄像头拍照，示例如下：
+```java
+ImagePicker.takePhoto(this, "拍照保存路径", new OnImagePickCompleteListener() {
+            @Override
+            public void onImagePickComplete(ArrayList<ImageItem> items) {
+                //拍照回调，主线程
+            }
+        });
+```
+
+### 调用选择器并剪裁
+支持选择图片完调用剪裁，支持自定义比例剪裁，支持圆形剪裁，示例如下：
  ```java
 ImagePicker.withMulti(new WXImgPickerPresenter())
             .mimeType(MimeType.ofImage())
@@ -167,42 +188,8 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
             });                                                     
 ```
 
-### 预览
-支持普通预览和编辑预览
-
- **调用示例**：
-```java
-//配置需要预览的所有图片列表
-ArrayList<ImageItem> allPreviewImageList = new ArrayList<>();
-//默认选中的图片索引
-int defaultPosition = 0;
-//开启编辑预览
-ImagePicker.preview(this, new WXImgPickerPresenter(), allPreviewImageList, defaultPosition, new OnImagePickCompleteListener() {
-        @Override
-        public void onImagePickComplete(ArrayList<ImageItem> items) {
-            //图片编辑回调，主线程
-        }
-    });                                                           
-```
-
-
-### 直接拍照
-支持直接打开摄像头拍照
-
- **调用示例**：
-```java
-ImagePicker.takePhoto(this, "拍照保存路径", new OnImagePickCompleteListener() {
-            @Override
-            public void onImagePickComplete(ArrayList<ImageItem> items) {
-                //拍照回调，主线程
-            }
-        });
-```
- 
-### 直接拍照并剪裁
-支持直接打开摄像头拍照并剪裁，支持自定义比例剪裁和圆形剪裁
-
- **调用示例**：
+### 拍照并剪裁
+支持直接打开摄像头拍照并剪裁，支持自定义比例剪裁和圆形剪裁，示例如下：
 ```java
 //配置剪裁属性
 CropConfig cropConfig = new CropConfig();
@@ -228,9 +215,7 @@ ImagePicker.takePhotoAndCrop(this, new WXImgPickerPresenter(), cropConfig,
 ```
 
 ### 直接剪裁
-支持直接跳转剪裁页面
-
- **调用示例**：
+支持直接跳转剪裁页面，示例如下：
 ```java
 CropConfig cropConfig = new CropConfig();
  //设置剪裁比例
@@ -256,9 +241,7 @@ ImagePicker.crop(this, new WXImgPickerPresenter(), cropConfig, needCropImageUrl�
 ```
 
 ### 设置选择器调用失败回调
-所有OnImagePickCompleteListener回调都可以设置OnImagePickCompleteListener2监听
-
- **调用示例**：
+所有OnImagePickCompleteListener回调都可以设置OnImagePickCompleteListener2监听，示例如下：
 ```java
 ImagePicker.withMulti(new WXImgPickerPresenter())
             //...省略若干属性
@@ -275,11 +258,11 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
             })
 ```
 
-### 设置自定义回调
+### 设置自定义回调类型
 所有OnImagePickCompleteListener回调都可以被自定义回调OnPickerCompleteListener给替换，框架默认支持两种回调
 
-- **OnStringCompleteListener**：String回调，一般用于单图和剪裁的回调
-- **OnStringListCompleteListener**：string数组回调，用于多图选择或预览回调
+- **OnStringCompleteListener**：String回调，一般用于单图和剪裁的回调，继承于OnPickerCompleteListener
+- **OnStringListCompleteListener**：String数组回调，用于多图选择或预览回调，继承于OnPickerCompleteListener
 
  **调用示例**：
 ```java
