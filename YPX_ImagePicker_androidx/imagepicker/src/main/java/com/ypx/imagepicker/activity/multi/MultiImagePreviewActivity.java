@@ -127,7 +127,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             mImageList = new ArrayList<>(currentImageSet.imageItems);
             initData();
         } else {
-            final ProgressDialog dialog = ProgressDialog.show(this, null,PConstantsUtil.getString(this,presenter).picker_str_loading);
+            final ProgressDialog dialog = ProgressDialog.show(this, null, PConstantsUtil.getString(this, presenter).picker_str_loading);
             ImagePicker.provideMediaItemsFromSet(this, currentImageSet, selectConfig.getMimeTypes(), new MediaItemsDataSource.MediaItemProvider() {
                 @Override
                 public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
@@ -237,11 +237,11 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     protected boolean isItemCantClick(List<ImageItem> selectList, ImageItem imageItem) {
         //在屏蔽列表中
         if (selectConfig.isShieldItem(imageItem)) {
-            presenter.tip(this,PConstantsUtil.getString(this,presenter).picker_str_shield);
+            presenter.tip(this, PConstantsUtil.getString(this, presenter).picker_str_shield);
             return true;
         }
         if (imageItem.isVideo()) {
-            if (selectList != null && selectList.size() > 0 && selectList.get(0).isImage()) {
+            if (selectConfig.isSinglePickImageOrVideoType() && selectList != null && selectList.size() > 0 && selectList.get(0).isImage()) {
                 presenter.tip(this, PConstantsUtil.getString(this, presenter).picker_str_only_select_image);
                 return true;
             } else if (imageItem.duration > selectConfig.getMaxVideoDuration()) {
@@ -254,7 +254,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
                 return true;
             }
         } else {
-            if (selectList != null && selectList.size() > 0 && selectList.get(0).isVideo()) {
+            if (selectConfig.isSinglePickImageOrVideoType() && selectList != null && selectList.size() > 0 && selectList.get(0).isVideo()) {
                 presenter.tip(this, PConstantsUtil.getString(this, presenter).picker_str_only_select_video);
                 return true;
             }

@@ -21,7 +21,19 @@ public class BaseSelectConfig implements Serializable {
     private boolean isShowVideo = true;
     private boolean isShowImage = true;
     private boolean isLoadGif = false;
+    /**
+     * 图片和视频只能选择一个
+     */
+    private boolean isSinglePickImageOrVideoType = false;
     private Set<MimeType> mimeTypes = MimeType.ofAll();
+
+    public boolean isSinglePickImageOrVideoType() {
+        return isSinglePickImageOrVideoType;
+    }
+
+    public void setSinglePickImageOrVideoType(boolean singlePickImageOrVideoType) {
+        isSinglePickImageOrVideoType = singlePickImageOrVideoType;
+    }
 
     public int getMinCount() {
         return minCount;

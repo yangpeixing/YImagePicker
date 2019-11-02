@@ -268,6 +268,7 @@ public class CropPickerBuilder {
      * 检测是否加载视频和图片
      */
     private void checkVideoAndImage() {
+        selectConfig.setSinglePickImageOrVideoType(true);
         if (selectConfig == null) {
             return;
         }

@@ -397,7 +397,6 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         imageItems.add(0, imageItem);
         mAdapter.refreshData(imageItems);
         onCheckItem(imageItem);
-        //  notifyOnSingleImagePickComplete(imageItem);
     }
 
     @Override
@@ -453,6 +452,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
                         selectList.clear();
                         selectList.addAll(mList);
                         mAdapter.refreshData(imageItems);
+                        refreshOKBtn();
                     }
                 }
             }
@@ -491,9 +491,6 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     public void onClickItem(ImageItem item, int position) {
         if (position < 0 && selectConfig.isShowCamera()) {
             takePhoto();
-            return;
-        }
-        if (isItemCantClick(selectList, item)) {
             return;
         }
         mRecyclerView.setTag(item);
@@ -539,6 +536,11 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         if (!selectList.contains(imageItem) && isOverMaxCount()) {
             return;
         }
+
+        if (isItemCantClick(selectList, imageItem)) {
+            return;
+        }
+        
         if (selectList.contains(imageItem)) {
             selectList.remove(imageItem);
             if (selectConfig.isLastItem(imageItem)) {

@@ -199,7 +199,7 @@ public abstract class PBaseLoaderFragment extends Fragment {
             }
         }
         if (imageItem.isVideo()) {
-            if (selectList != null && selectList.size() > 0 && selectList.get(0).isImage()) {
+            if (getSelectConfig().isSinglePickImageOrVideoType() && selectList != null && selectList.size() > 0 && selectList.get(0).isImage()) {
                 getPresenter().tip(getActivity(), getPickConstants().picker_str_only_select_image);
                 return true;
             } else if (imageItem.duration > getSelectConfig().getMaxVideoDuration()) {
@@ -208,11 +208,11 @@ public abstract class PBaseLoaderFragment extends Fragment {
                 return true;
             } else if (imageItem.duration < getSelectConfig().getMinVideoDuration()) {
                 getPresenter().tip(getActivity(), String.format("%s%s", getPickConstants().picker_str_video_less_min_duration,
-                        getSelectConfig().getMaxVideoDurationFormat()));
+                        getSelectConfig().getMinVideoDurationFormat()));
                 return true;
             }
         } else {
-            if (selectList != null && selectList.size() > 0 && selectList.get(0).isVideo()) {
+            if (getSelectConfig().isSinglePickImageOrVideoType() && selectList != null && selectList.size() > 0 && selectList.get(0).isVideo()) {
                 getPresenter().tip(getActivity(), getPickConstants().picker_str_only_select_video);
                 return true;
             }

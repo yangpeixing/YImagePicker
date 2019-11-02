@@ -6,7 +6,7 @@ def groupId = 'com.ypx.yimagepicker'
 //声明模块名称
 def artifactId = 'androidx'
 //要发布的版本号
-def version = '2.4.5'
+def version = '2.4.6'
 
 def localReleaseDest = "${buildDir}/release/${version}"
 
