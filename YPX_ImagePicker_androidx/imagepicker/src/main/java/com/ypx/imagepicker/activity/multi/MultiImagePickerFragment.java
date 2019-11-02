@@ -478,6 +478,9 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
             takePhoto();
             return;
         }
+        if (isItemCantClick(selectList, item)) {
+            return;
+        }
         mRecyclerView.setTag(item);
         //如果只能选择一个视频，且当前是视频的时候直接返回
         if (selectConfig.isVideoSinglePick() && item.isVideo()) {
@@ -511,9 +514,6 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
 
         //单选模式下且选择数量只有一个时，直接回调出去
         if (selectConfig.getSelectMode() == SelectMode.MODE_SINGLE && selectConfig.getMaxCount() <= 1) {
-            if (isItemCantClick(selectList, item)) {
-                return;
-            }
             notifyOnSingleImagePickComplete(item);
         }
     }
