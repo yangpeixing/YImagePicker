@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * Author:ypx
  * Description: 选择器交互基类
  */
-public interface BasePresenter extends Serializable {
+public interface PBasePresenter extends Serializable {
     /**
      * 加载列表缩略图
      *

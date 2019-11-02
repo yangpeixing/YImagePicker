@@ -26,7 +26,7 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * Author: peixing.yang
  * Date: 2018/9/19 16:56
  */
-public class MultiPickerBuilder {
+public class MultiPickerBuilder extends PBaseBuilder{
     private MultiSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
 

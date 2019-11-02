@@ -37,7 +37,7 @@ import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
-import com.ypx.imagepicker.presenter.BasePresenter;
+import com.ypx.imagepicker.presenter.PBasePresenter;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 
@@ -58,8 +58,8 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity.INTEN
  * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
 public class MultiImagePickerFragment extends PBaseLoaderFragment implements View.OnClickListener, MultiGridAdapter.OnActionResult {
-    private List<ImageSet> imageSets;
-    private ArrayList<ImageItem> imageItems;
+    private List<ImageSet> imageSets = new ArrayList<>();
+    private ArrayList<ImageItem> imageItems = new ArrayList<>();
     private RecyclerView mRecyclerView;
     private View v_masker;
     private Button btnDir;
@@ -216,10 +216,13 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
 
         if (selectConfig.isShowVideo() && selectConfig.isShowImage()) {
             mTvTitle.setText(getPickConstants().picker_str_multi_title);
+            btnDir.setText(R.string.picker_str_all);
         } else if (selectConfig.isShowVideo()) {
             mTvTitle.setText(getPickConstants().picker_str_multi_title_video);
+            btnDir.setText(R.string.picker_str_all_video);
         } else {
             mTvTitle.setText(getPickConstants().picker_str_multi_title_image);
+            btnDir.setText(R.string.picker_str_all_image);
         }
     }
 
@@ -352,7 +355,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    protected PBasePresenter getPresenter() {
         return presenter;
     }
 
@@ -395,7 +398,22 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
             return;
         }
         imageItems.add(0, imageItem);
+        if (imageSets.size() == 0) {
+            ImageSet imageSet = ImageSet.allImageSet(btnDir.getText().toString());
+            imageSet.cover = imageItem;
+            imageSet.coverPath = imageItem.path;
+            imageSet.imageItems = imageItems;
+            imageSet.count = imageSet.imageItems.size();
+            imageSets.add(imageSet);
+        } else {
+            imageSets.get(0).imageItems = imageItems;
+            imageSets.get(0).cover = imageItem;
+            imageSets.get(0).coverPath = imageItem.path;
+            imageSets.get(0).count = imageItems.size();
+        }
+
         mAdapter.refreshData(imageItems);
+        mImageSetAdapter.refreshData(imageSets);
         onCheckItem(imageItem);
     }
 
@@ -426,39 +444,6 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         });
     }
 
-    /**
-     * 跳转预览
-     *
-     * @param position 默认选中的index
-     */
-    private void intentPreview(int position) {
-        MultiImagePreviewActivity.currentImageSet = imageSets.get(currentSetIndex).copy();
-        Intent intent = new Intent(getActivity(), MultiImagePreviewActivity.class);
-        intent.putExtra(INTENT_KEY_SELECT_LIST, selectList);
-        intent.putExtra(INTENT_KEY_SELECT_CONFIG, selectConfig);
-        intent.putExtra(INTENT_KEY_PRESENTER, presenter);
-        intent.putExtra(INTENT_KEY_CURRENT_INDEX, position);
-        PLauncher.init(getActivity()).startActivityForResult(intent, new PLauncher.Callback() {
-            @Override
-            public void onActivityResult(int resultCode, Intent data) {
-                if (data != null && data.hasExtra(ImagePicker.INTENT_KEY_PICKER_RESULT)) {
-                    ArrayList<ImageItem> mList = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKER_RESULT);
-                    if (mList == null) {
-                        return;
-                    }
-                    if (resultCode == RESULT_OK) {
-                        notifyOnImagePickComplete(mList);
-                    } else {
-                        selectList.clear();
-                        selectList.addAll(mList);
-                        mAdapter.refreshData(imageItems);
-                        refreshOKBtn();
-                    }
-                }
-            }
-        });
-    }
-
     @SuppressLint("DefaultLocale")
     private void refreshOKBtn() {
         if (selectConfig.getMaxCount() == 1 && selectConfig.getSelectMode() != SelectMode.MODE_MULTI) {
@@ -478,7 +463,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
                     selectCount, selectConfig.getMaxCount()));
             mTvRight.setBackground(uiConfig.getOkBtnSelectBackground());
             mTvRight.setTextColor(uiConfig.getOkBtnSelectTextColor());
-            mTvPreview.setText(String.format("预览(%d)", selectCount));
+            mTvPreview.setText(String.format("%s(%d)", getString(R.string.picker_str_preview), selectCount));
             //可以预览时才显示预览按钮
             if (selectConfig.isPreview()) {
                 mTvPreview.setVisibility(View.VISIBLE);
@@ -519,8 +504,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
             if (selectConfig.isPreview()) {
                 intentPreview(position);
             } else {
-                presenter.imageItemClick(mContext, item, selectList
-                        , imageItems, mAdapter);
+                presenter.imageItemClick(mContext, item, selectList, imageItems, mAdapter);
             }
             return;
         }
@@ -540,7 +524,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         if (isItemCantClick(selectList, imageItem)) {
             return;
         }
-        
+
         if (selectList.contains(imageItem)) {
             selectList.remove(imageItem);
             if (selectConfig.isLastItem(imageItem)) {
@@ -551,5 +535,38 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         }
         mAdapter.notifyDataSetChanged();
         refreshOKBtn();
+    }
+
+    /**
+     * 跳转预览
+     *
+     * @param position 默认选中的index
+     */
+    private void intentPreview(int position) {
+        MultiImagePreviewActivity.currentImageSet = imageSets.get(currentSetIndex).copy();
+        Intent intent = new Intent(getActivity(), MultiImagePreviewActivity.class);
+        intent.putExtra(INTENT_KEY_SELECT_LIST, selectList);
+        intent.putExtra(INTENT_KEY_SELECT_CONFIG, selectConfig);
+        intent.putExtra(INTENT_KEY_PRESENTER, presenter);
+        intent.putExtra(INTENT_KEY_CURRENT_INDEX, position);
+        PLauncher.init(getActivity()).startActivityForResult(intent, new PLauncher.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (data != null && data.hasExtra(ImagePicker.INTENT_KEY_PICKER_RESULT)) {
+                    ArrayList<ImageItem> mList = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKER_RESULT);
+                    if (mList == null) {
+                        return;
+                    }
+                    if (resultCode == RESULT_OK) {
+                        notifyOnImagePickComplete(mList);
+                    } else {
+                        selectList.clear();
+                        selectList.addAll(mList);
+                        mAdapter.refreshData(imageItems);
+                        refreshOKBtn();
+                    }
+                }
+            }
+        });
     }
 }

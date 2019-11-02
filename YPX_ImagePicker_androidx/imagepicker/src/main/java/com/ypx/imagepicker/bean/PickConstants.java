@@ -44,6 +44,10 @@ public class PickConstants {
     public String picker_str_video_over_max_duration;
     //视频时长不得少于
     public String picker_str_video_less_min_duration;
+    //拍摄视频
+    public String picker_str_take_video;
+    //拍摄照片
+    public String picker_str_take_photo;
 
     public PickConstants(Context context) {
         picker_str_camera_permission = context.getResources().getString(R.string.picker_str_camera_permission);
@@ -63,5 +67,7 @@ public class PickConstants {
         picker_str_only_select_video = context.getResources().getString(R.string.picker_str_only_select_video);
         picker_str_video_over_max_duration = context.getResources().getString(R.string.picker_str_video_over_max_duration);
         picker_str_video_less_min_duration = context.getResources().getString(R.string.picker_str_video_less_min_duration);
+        picker_str_take_video = context.getResources().getString(R.string.picker_str_take_video);
+        picker_str_take_photo = context.getResources().getString(R.string.picker_str_take_photo);
     }
 }

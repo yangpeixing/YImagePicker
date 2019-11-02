@@ -7,7 +7,6 @@ import com.ypx.imagepicker.bean.CropSelectConfig;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.bean.ImageCropMode;
-import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity;
 import com.ypx.imagepicker.activity.crop.ImagePickAndCropFragment;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -25,7 +24,7 @@ import java.util.Set;
  * Author: peixing.yang
  * Date: 2019/2/28
  */
-public class CropPickerBuilder {
+public class CropPickerBuilder extends PBaseBuilder {
     private CropSelectConfig selectConfig;
     private ICropPickerBindPresenter presenter;
 

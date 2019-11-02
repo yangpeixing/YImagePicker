@@ -7,7 +7,6 @@ import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -16,7 +15,7 @@ import java.util.ArrayList;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public interface IMultiPickerBindPresenter extends BasePresenter {
+public interface IMultiPickerBindPresenter extends PBasePresenter {
 
     /**
      * 加载详情预览图片

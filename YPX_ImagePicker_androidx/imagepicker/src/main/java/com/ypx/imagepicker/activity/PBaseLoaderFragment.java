@@ -16,7 +16,8 @@ import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.data.MediaSetsDataSource;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.presenter.BasePresenter;
+import com.ypx.imagepicker.data.OnPickerCompleteListener;
+import com.ypx.imagepicker.presenter.PBasePresenter;
 import com.ypx.imagepicker.utils.PConstantsUtil;
 import com.ypx.imagepicker.utils.PPermissionUtils;
 
@@ -43,7 +44,7 @@ public abstract class PBaseLoaderFragment extends Fragment {
      */
     protected abstract BaseSelectConfig getSelectConfig();
 
-    protected abstract BasePresenter getPresenter();
+    protected abstract PBasePresenter getPresenter();
 
     /**
      * @param imageSetList 媒体文件夹加载完成回调
@@ -100,14 +101,26 @@ public abstract class PBaseLoaderFragment extends Fragment {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
         } else {
-            ImagePicker.takePhoto(getActivity(), new OnImagePickCompleteListener() {
-                @Override
-                public void onImagePickComplete(ArrayList<ImageItem> items) {
-                    if (items != null && items.size() > 0) {
-                        onTakePhotoResult(items.get(0));
+            //如果只加载视频,则调用拍视频
+            if (getSelectConfig().isShowVideo() && !getSelectConfig().isShowImage()) {
+                ImagePicker.takeVideo(getActivity(), new OnImagePickCompleteListener() {
+                    @Override
+                    public void onImagePickComplete(ArrayList<ImageItem> items) {
+                        if (items != null && items.size() > 0) {
+                            onTakePhotoResult(items.get(0));
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                ImagePicker.takePhoto(getActivity(), new OnImagePickCompleteListener() {
+                    @Override
+                    public void onImagePickComplete(ArrayList<ImageItem> items) {
+                        if (items != null && items.size() > 0) {
+                            onTakePhotoResult(items.get(0));
+                        }
+                    }
+                });
+            }
         }
     }
 

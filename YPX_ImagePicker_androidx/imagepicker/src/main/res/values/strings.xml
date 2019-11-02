@@ -23,4 +23,7 @@
     <string name="picker_str_only_select_video">只能选择视频!</string>
     <string name="picker_str_video_over_max_duration">视频时长不得超过</string>
     <string name="picker_str_video_less_min_duration">视频时长不得少于</string>
+    <string name="picker_str_preview">预览</string>
+    <string name="picker_str_take_video">拍摄视频</string>
+    <string name="picker_str_take_photo">拍摄照片</string>
 </resources>

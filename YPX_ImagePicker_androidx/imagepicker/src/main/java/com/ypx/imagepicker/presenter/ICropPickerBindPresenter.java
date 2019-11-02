@@ -1,13 +1,10 @@
 package com.ypx.imagepicker.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.widget.ImageView;
 
 import com.ypx.imagepicker.bean.CropUiConfig;
 import com.ypx.imagepicker.bean.ImageItem;
-
-import java.util.ArrayList;
 
 /**
  * Description: 图片加载提供类
@@ -15,7 +12,7 @@ import java.util.ArrayList;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public interface ICropPickerBindPresenter extends BasePresenter {
+public interface ICropPickerBindPresenter extends PBasePresenter {
 
     /**
      * 加载剪裁区域里的图片

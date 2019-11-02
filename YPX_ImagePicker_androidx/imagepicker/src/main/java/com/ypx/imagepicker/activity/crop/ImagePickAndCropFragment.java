@@ -34,7 +34,7 @@ import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.CropViewContainerHelper;
 import com.ypx.imagepicker.helper.RecyclerViewTouchHelper;
 import com.ypx.imagepicker.helper.VideoViewContainerHelper;
-import com.ypx.imagepicker.presenter.BasePresenter;
+import com.ypx.imagepicker.presenter.PBasePresenter;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PFileUtil;
@@ -657,7 +657,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    protected PBasePresenter getPresenter() {
         return presenter;
     }
 

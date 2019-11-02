@@ -3,7 +3,7 @@ package com.ypx.imagepicker.utils;
 import android.content.Context;
 
 import com.ypx.imagepicker.bean.PickConstants;
-import com.ypx.imagepicker.presenter.BasePresenter;
+import com.ypx.imagepicker.presenter.PBasePresenter;
 
 /**
  * Time: 2019/11/2 13:07
@@ -11,7 +11,7 @@ import com.ypx.imagepicker.presenter.BasePresenter;
  * Description:
  */
 public class PConstantsUtil {
-    public static PickConstants getString(Context context, BasePresenter presenter) {
+    public static PickConstants getString(Context context, PBasePresenter presenter) {
         if (presenter == null) {
             return new PickConstants(context);
         }

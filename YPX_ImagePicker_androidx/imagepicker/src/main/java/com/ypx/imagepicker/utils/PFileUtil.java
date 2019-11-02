@@ -36,6 +36,8 @@ public class PFileUtil {
         }
     }
 
+
+
     /**
      * 保存一张图片到本地
      */
@@ -173,6 +175,25 @@ public class PFileUtil {
     }
 
     /**
+     * get Local video duration
+     *
+     * @return
+     */
+    public static int getLocalVideoDuration(String videoPath) {
+        int duration;
+        try {
+            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            mmr.setDataSource(videoPath);
+            duration = Integer.parseInt(mmr.extractMetadata
+                    (MediaMetadataRetriever.METADATA_KEY_DURATION));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return duration;
+    }
+
+    /**
      * 获取系统相册文件路径
      */
     public static String getDCIMOutputPath(String fileNameStart, String fileNameEnd) {
@@ -238,6 +259,21 @@ public class PFileUtil {
 
     public static Intent getTakePhotoIntent(Activity activity, String savePath) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            Uri imageUri;
+            if (android.os.Build.VERSION.SDK_INT < 24) {
+                imageUri = Uri.fromFile(new File(savePath));
+            } else {
+                imageUri = PickerFileProvider.getUriForFile(activity, activity
+                        .getApplication().getPackageName() + ".picker.fileprovider", new File(savePath));
+            }
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        }
+        return intent;
+    }
+
+    public static Intent getTakeVideoIntent(Activity activity, String savePath) {
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             Uri imageUri;
             if (android.os.Build.VERSION.SDK_INT < 24) {

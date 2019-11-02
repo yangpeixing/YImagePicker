@@ -23,6 +23,7 @@ import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.builder.MultiPickerBuilder;
+import com.ypx.imagepicker.utils.PDateUtil;
 import com.ypx.imagepicker.utils.PFileUtil;
 import com.ypx.imagepicker.utils.PPermissionUtils;
 
@@ -73,38 +74,6 @@ public class ImagePicker {
     }
 
     /**
-     * 直接调用拍照
-     *
-     * @param activity 调用activity
-     * @param savePath 照片保存路径+文件名
-     * @param listener 拍照回调
-     */
-    public static void takePhoto(final Activity activity, final String savePath, final OnImagePickCompleteListener listener) {
-        if (PPermissionUtils.checkCameraPermissions(activity)) {
-            return;
-        }
-        PLauncher.init(activity).startActivityForResult(PFileUtil.getTakePhotoIntent(activity, savePath), new PLauncher.Callback() {
-            @Override
-            public void onActivityResult(int resultCode, Intent data) {
-                if (listener == null) {
-                    return;
-                }
-                if (resultCode != Activity.RESULT_OK || savePath == null || savePath.trim().length() == 0) {
-                    PickerErrorExecutor.executeError(listener, PickerError.TAKE_PHOTO_FAILED.getCode());
-                    return;
-                }
-                PFileUtil.refreshGalleryAddPic(activity, savePath);
-                ImageItem item = new ImageItem(savePath, System.currentTimeMillis());
-                item.width = PFileUtil.getImageWidthHeight(savePath)[0];
-                item.height = PFileUtil.getImageWidthHeight(savePath)[1];
-                ArrayList<ImageItem> list = new ArrayList<>();
-                list.add(item);
-                listener.onImagePickComplete(list);
-            }
-        });
-    }
-
-    /**
      * 直接调用拍照，默认图片存储路径为DCIM目录下Camera文件夹下
      *
      * @param activity 调用activity
@@ -114,6 +83,78 @@ public class ImagePicker {
         String fileName = "IMG_" + System.currentTimeMillis();
         String path = PFileUtil.getDCIMOutputPath(fileName, ".jpg");
         takePhoto(activity, path, listener);
+    }
+
+    /**
+     * 直接调用摄像头拍视频，默认视频存储路径为DCIM目录下Camera文件夹下
+     *
+     * @param activity 调用activity
+     * @param listener 视频回调
+     */
+    public static void takeVideo(Activity activity, OnImagePickCompleteListener listener) {
+        String fileName = "VIDEO_" + System.currentTimeMillis();
+        String path = PFileUtil.getDCIMOutputPath(fileName, ".mp4");
+        takeVideo(activity, path, listener);
+    }
+    /**
+     * 直接调用拍照
+     *
+     * @param activity 调用activity
+     * @param savePath 照片保存路径+文件名
+     * @param listener 拍照回调
+     */
+    public static void takePhoto(final Activity activity, final String savePath, final OnImagePickCompleteListener listener) {
+        if (PPermissionUtils.checkCameraPermissions(activity) || listener == null) {
+            return;
+        }
+        PLauncher.init(activity).startActivityForResult(PFileUtil.getTakePhotoIntent(activity, savePath), new PLauncher.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode != Activity.RESULT_OK || savePath == null || savePath.trim().length() == 0) {
+                    PickerErrorExecutor.executeError(listener, PickerError.TAKE_PHOTO_FAILED.getCode());
+                    return;
+                }
+                PFileUtil.refreshGalleryAddPic(activity, savePath);
+                ImageItem item = new ImageItem(savePath, System.currentTimeMillis());
+                item.width = PFileUtil.getImageWidthHeight(savePath)[0];
+                item.height = PFileUtil.getImageWidthHeight(savePath)[1];
+                item.mimeType = MimeType.JPEG.toString();
+                ArrayList<ImageItem> list = new ArrayList<>();
+                list.add(item);
+                listener.onImagePickComplete(list);
+            }
+        });
+    }
+
+    /**
+     * 直接调用摄像头拍视频
+     *
+     * @param activity activity
+     * @param savePath 视频保存路径
+     * @param listener 视频回调
+     */
+    public static void takeVideo(final Activity activity, final String savePath, final OnImagePickCompleteListener listener) {
+        if (PPermissionUtils.checkCameraPermissions(activity) || listener == null) {
+            return;
+        }
+        PLauncher.init(activity).startActivityForResult(PFileUtil.getTakeVideoIntent(activity, savePath), new PLauncher.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode != Activity.RESULT_OK || savePath == null || savePath.trim().length() == 0) {
+                    PickerErrorExecutor.executeError(listener, PickerError.TAKE_PHOTO_FAILED.getCode());
+                    return;
+                }
+                PFileUtil.refreshGalleryAddPic(activity, savePath);
+                ImageItem item = new ImageItem(savePath, System.currentTimeMillis());
+                item.mimeType = MimeType.MP4.toString();
+                item.setVideo(true);
+                item.duration = PFileUtil.getLocalVideoDuration(savePath);
+                item.setDurationFormat(PDateUtil.getVideoDuration(item.duration));
+                ArrayList<ImageItem> list = new ArrayList<>();
+                list.add(item);
+                listener.onImagePickComplete(list);
+            }
+        });
     }
 
 

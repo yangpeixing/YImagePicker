@@ -73,6 +73,22 @@ public class WXItemView extends BaseItemView {
         if (presenter != null) {
             presenter.displayListImage(mIvThumb, item, getLayoutParams().height);
         }
+        mIvThumb.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onActionResult != null) {
+                    onActionResult.onClickItem(item, position);
+                }
+            }
+        });
+        mIvThumbCheck.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onActionResult != null) {
+                    onActionResult.onCheckItem(item);
+                }
+            }
+        });
         mIvThumbCheck.setVisibility(View.VISIBLE);
         //如果是视频
         if (item.isVideo()) {
@@ -126,24 +142,6 @@ public class WXItemView extends BaseItemView {
         if (selectConfig.getMaxCount() <= 1 && selectConfig.getSelectMode() != SelectMode.MODE_MULTI) {
             mIvThumbCheck.setVisibility(View.GONE);
         }
-
-        mIvThumb.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onActionResult != null) {
-                    onActionResult.onClickItem(item, position);
-                }
-            }
-        });
-
-        mIvThumbCheck.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onActionResult != null) {
-                    onActionResult.onCheckItem(item);
-                }
-            }
-        });
     }
 
 }

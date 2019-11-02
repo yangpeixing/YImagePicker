@@ -184,8 +184,9 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
                 mTvDuration.setVisibility(View.VISIBLE);
                 mTvDuration.setText(imageItem.getDurationFormat());
                 //如果当前选中列表的第一个item不是视频,或者该视频超过最大时长选择，则需要置灰该视频item
-                if (selectConfig.hasFirstImageItem() || (selectList != null && selectList.size() > 0 && !selectList.get(0).isVideo()) ||
-                        imageItem.duration > selectConfig.getMaxVideoDuration()
+                if (selectConfig.hasFirstImageItem()
+                        || (selectList != null && selectList.size() > 0 && !selectList.get(0).isVideo())
+                        || imageItem.duration > selectConfig.getMaxVideoDuration()
                         || imageItem.duration < selectConfig.getMinVideoDuration()) {
                     mVMask.setVisibility(View.VISIBLE);
                     mVMask.setBackgroundColor(Color.parseColor("#80FFFFFF"));
@@ -201,8 +202,8 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
             } else {
                 mTvDuration.setVisibility(View.GONE);
                 //如果当前选中列表的第一个item是视频，则需要置灰该图片item
-                if (selectConfig.hasFirstVideoItem() ||
-                        (selectList != null && selectList.size() > 0 && selectList.get(0).isVideo())) {
+                if (selectConfig.hasFirstVideoItem()
+                        || (selectList != null && selectList.size() > 0 && selectList.get(0).isVideo())) {
                     mVMask.setVisibility(View.VISIBLE);
                     mVMask.setBackgroundColor(Color.parseColor("#80FFFFFF"));
                     hideCheckBox();

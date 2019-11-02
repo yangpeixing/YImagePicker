@@ -250,7 +250,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
                 return true;
             } else if (imageItem.duration < selectConfig.getMinVideoDuration()) {
                 presenter.tip(this, String.format("%s%s", PConstantsUtil.getString(this, presenter).picker_str_video_less_min_duration,
-                        selectConfig.getMinVideoDuration()));
+                        selectConfig.getMinVideoDurationFormat()));
                 return true;
             }
         } else {

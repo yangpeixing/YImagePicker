@@ -111,6 +111,14 @@ public class BaseSelectConfig implements Serializable {
         return isShowImage;
     }
 
+    public boolean isOnlyShowImage() {
+        return isShowImage && !isShowVideo;
+    }
+
+    public boolean isOnlyShowVideo() {
+        return isShowVideo && !isShowImage;
+    }
+
     public void setShowImage(boolean showImage) {
         isShowImage = showImage;
     }

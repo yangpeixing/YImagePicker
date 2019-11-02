@@ -1,5 +1,7 @@
 package com.ypx.imagepicker.bean;
 
+import com.ypx.imagepicker.R;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -46,12 +48,19 @@ public class ImageSet implements Serializable {
         return imageSet;
     }
 
+    public static ImageSet allImageSet(String name) {
+        ImageSet imageSet = new ImageSet();
+        imageSet.id = ImageSet.ID_ALL_MEDIA;
+        imageSet.name = name;
+        return imageSet;
+    }
+
     public boolean isAllMedia() {
-        return id.equals(ID_ALL_MEDIA);
+        return id == null || id.equals(ID_ALL_MEDIA);
     }
 
     public boolean isAllVideo() {
-        return id.equals(ID_ALL_VIDEO);
+        return id != null && id.equals(ID_ALL_VIDEO);
     }
 
 }
