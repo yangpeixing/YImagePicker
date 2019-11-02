@@ -511,6 +511,9 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
 
         //单选模式下且选择数量只有一个时，直接回调出去
         if (selectConfig.getSelectMode() == SelectMode.MODE_SINGLE && selectConfig.getMaxCount() <= 1) {
+            if (isItemCantClick(selectList, item)) {
+                return;
+            }
             notifyOnSingleImagePickComplete(item);
         }
     }

@@ -3,8 +3,11 @@ package com.ypx.imagepicker.builder;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.CropSelectConfig;
 import com.ypx.imagepicker.bean.MimeType;
+import com.ypx.imagepicker.bean.PickerError;
+import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.bean.ImageCropMode;
 import com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity;
@@ -237,6 +240,11 @@ public class CropPickerBuilder extends PBaseBuilder {
      */
     public void pick(Activity activity, final OnImagePickCompleteListener listener) {
         checkVideoAndImage();
+        if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
+            PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
+            presenter.tip(activity, activity.getResources().getString(R.string.picker_str_mimetypes_empty));
+            return;
+        }
         ImagePickAndCropActivity.intent(activity, presenter, selectConfig, listener);
     }
 
