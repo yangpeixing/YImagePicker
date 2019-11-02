@@ -19,6 +19,9 @@
 /TOC -->
 
 ### 关于YImagePicker 
+
+本文档更新于:2019/11/02
+
 [ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=2.4.5) ](https://bintray.com/yangpeixing/yimagepicker/androidx/2.4.5/link)
  - 支持小红书剪裁样式并自定义UI
  - 支持微信、马蜂窝、知乎等样式定制
@@ -38,14 +41,19 @@
  - 支持androidx和support
  - 永久维护
 
+ - **支持直接回调媒体相册列表及文件列表数据(2.4.6版本加入)**
+ - **支持选择器所有文案定制(2.4.6版本加入)**
+ - **已适配AndroidQ(2.4.6版本加入)**
+ - **支持直接拍摄视频(2.4.6版本加入)**
+
 
 ### 引入依赖
 **androidx版本：**
 
 ```java
-implementation 'com.ypx.yimagepicker:androidx:2.4.5'
+implementation 'com.ypx.yimagepicker:androidx:2.4.6'
 ```
-**support版本：** 
+**support版本：** （暂未更新）
 ```java
 implementation 'com.ypx.yimagepicker:support:2.4.5'
 ```
@@ -105,6 +113,7 @@ ImagePicker.withMulti(new WXImgPickerPresenter())//指定presenter
            .setVideoSinglePick(true)//设置视频单选
            .setSinglePickImageOrVideoType(true)//设置图片和视频单一类型选择
            .setMaxVideoDuration(120000L)//设置视频可选取的最大时长
+           .setMinVideoDuration(60000L)//设置视频可选取的最小时长
            .setLastImageList(null)//设置上一次操作的图片列表，下次选择时默认恢复上一次选择的状态
            .setShieldList(null)//设置需要屏蔽掉的图片列表，下次选择时已屏蔽的文件不可选择
            .pick(this, new OnImagePickCompleteListener() {
@@ -127,7 +136,8 @@ ImagePicker.withCrop(new RedBookCropPresenter())//设置presenter
            .setFirstImageUrl(null)//设置上一次选中的图片地址
            .setVideoSinglePick(true)//设置视频单选
            .setCropPicSaveFilePath("剪裁图片保存路径")
-           .setMaxVideoDuration(2000L)//设置可选区的最大视频时长
+           .setMaxVideoDuration(2000L)//设置可选取的最大视频时长
+           .setMinVideoDuration(60000L)//设置视频可选取的最小时长
            .pick(this, new OnImagePickCompleteListener() {
                 @Override
                 public void onImagePickComplete(ArrayList<ImageItem> items) {
@@ -156,11 +166,22 @@ ImagePicker.preview(this, new WXImgPickerPresenter(), allPreviewImageList, defau
 支持直接打开摄像头拍照，示例如下：
 ```java
 ImagePicker.takePhoto(this, "拍照保存路径", new OnImagePickCompleteListener() {
-            @Override
-            public void onImagePickComplete(ArrayList<ImageItem> items) {
-                //拍照回调，主线程
-            }
-        });
+        @Override
+        public void onImagePickComplete(ArrayList<ImageItem> items) {
+            //拍照回调，主线程
+        }
+    });
+```
+
+### 拍摄视频
+支持直接打开摄像头拍视频，示例如下：
+```java
+ImagePicker.takeVideo(this, "视频保存路径", new OnImagePickCompleteListener() {
+        @Override
+        public void onImagePickComplete(ArrayList<ImageItem> items) {
+            //拍照回调，主线程
+        }
+    });
 ```
 
 ### 调用选择器并剪裁
@@ -240,87 +261,128 @@ ImagePicker.crop(this, new WXImgPickerPresenter(), cropConfig, needCropImageUrl�
     });
 ```
 
-### 设置选择器调用失败回调
-所有OnImagePickCompleteListener回调都可以设置OnImagePickCompleteListener2监听，示例如下：
+### 提供媒体数据——支持回调相册数据、所有媒体数据、指定相册内媒体数据
+#### 获取媒体相册数据
 ```java
-ImagePicker.withMulti(new WXImgPickerPresenter())
-            //...省略若干属性
-            .pick(new OnImagePickCompleteListener2() {
-                 @Override
-                public void onPickFailed(PickerError error) {
-                    //调用选择器失败回调
-                }
-
-                @Override
-                public void onImagePickComplete(ArrayList<ImageItem> items) {
-                    //图片选择回调，主线程
-                }
-            })
+//指定要回调的相册类型，可以指定13种图片视频文件格式混合
+Set<MimeType> mimeTypes = MimeType.ofAll();
+ImagePicker.provideMediaSets(this, mimeTypes, new MediaSetsDataSource.MediaSetProvider() {
+    @Override
+    public void providerMediaSets(ArrayList<ImageSet> imageSets) {
+        //相册列表回调，主线程
+    }
+});
 ```
-
-### 设置自定义回调类型
-所有OnImagePickCompleteListener回调都可以被自定义回调OnPickerCompleteListener给替换，框架默认支持两种回调
-
-- **OnStringCompleteListener**：String回调，一般用于单图和剪裁的回调，继承于OnPickerCompleteListener
-- **OnStringListCompleteListener**：String数组回调，用于多图选择或预览回调，继承于OnPickerCompleteListener
-
- **调用示例**：
+#### 获取全部媒体文件
 ```java
-ImagePicker.withMulti(new WXImgPickerPresenter())
-            //...省略若干属性
-            .pick(new OnPickerCompleteListener<String>() {
-                @Override
-                public String onTransit(ArrayList<ImageItem> items) {
-                    return null;
-                }
-
-                @Override
-                public void onPickComplete(String s) {
-                    //回调
-                }
+//指定要回调的相册类型，可以指定13种图片视频文件格式混合
+Set<MimeType> mimeTypes = MimeType.ofAll();
+ImagePicker.provideAllMediaItems(this, mimeTypes, new MediaItemsDataSource.MediaItemProvider() {
+    @Override
+        public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
+            //全部媒体数据回调，主线程
+            //只有当mimeTypes既包含图片或者视频格式文件时，allVideoSet才有值
+        }
+    });
+```
+#### 获取指定相册内全部媒体文件
+```java
+//指定要回调的相册类型，可以指定13种图片视频文件格式混合
+Set<MimeType> mimeTypes = MimeType.ofAll();
+//指定相册，id不能为空
+ImageSet imageSet = new ImageSet();
+ImagePicker.provideMediaItemsFromSet(this, imageSet, mimeTypes, new MediaItemsDataSource.MediaItemProvider() {
+    @Override
+        public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
+            //全部媒体数据回调，主线程
+            //只有当mimeTypes既包含图片或者视频格式文件时，allVideoSet才有值
+        }
+    });
+```
+#### 预加载获取指定相册内全部媒体文件
+```java
+//指定要回调的相册类型，可以指定13种图片视频文件格式混合
+Set<MimeType> mimeTypes = MimeType.ofAll();
+//指定相册，id不能为空
+ImageSet imageSet = new ImageSet();
+//预加载个数
+int preloadSize = 40;
+ImagePicker.provideMediaItemsFromSetWithPreload(this, imageSet, mimeTypes, preloadSize, 
+    new MediaItemsDataSource.MediaItemPreloadProvider() {
+        @Override
+        public void providerMediaItems(ArrayList<ImageItem> imageItems) {
+            //预加载回调，预先加载指定数目的媒体文件回调
+        }
+    },
+    new MediaItemsDataSource.MediaItemProvider() {
+        @Override
+        public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
+            //所有媒体文件回调
+            }
         });
 ```
 
-**以上只是简单代码示例，详细功能请**
-[查看详细API文档](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档)
+### presenter指定、自定义Item样式、自定义皮肤UI、自定义提示常量、设置选择器调用失败回调、自定义回调类型
+详细使用方法请[查看详细API文档](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档)
+
 
 ### 版本记录
 [查看详细版本记录](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker版本记录)
 
 
-#### 2.4.5版本 [2019.10.27]
-  1. 【BUG修复】修复拍照返回生成空文件的问题
-  2. 【BUG修复】修复小红书样式切换文件夹，当文件夹中全部是视频时，视频单选的情况下直接回调clickVideo的问题
-  3. 【新增】支持直接调用剪裁
-  4. 【新增】支持自定义图片选择回调
-  5. 【新增】支持留白式剪裁（仿最新版微信图片选择），可以让图片在剪裁区域内随意放置，镂空背景可定制
-  6. 【新增】PickerError新增剪裁错误回调类型
-  7. 【调整】原有调用剪裁时SelectConfig调整为为CropConfig
-
-
+#### 2.4.6版本 [2019.11.02]
+  1. 【BUG修复】修复了红米拍照闪退问题
+  2. 【BUG修复】取消了选择器没有文件时直接退出选择器的策略。改为提示语句“暂未发现媒体文件”.
+  3. 【适配】已适配AndroidQ，解决targetSdkVersion设置29时数据库报错的bug
+  4. 【新增】新增直接拍摄视频
+  5. 【新增】presenter新增overMaxCountTip、interceptPickerCancel、interceptVideoClick、getPickConstants四个方法
+  6. 【新增】新增PickConstants用于修改选择器所有文案，在presenter中指定
+  7. 【新增】支持直接回调媒体数据，其中包含回调相册列表、全部媒体文件、指定相册里媒体文件，支持指定数量预加载。
+  8. 【新增】新增退出选择器时拦截回调，新增点击视频item的拦截回调，在presenter中指定
+  9. 【新增】新增视频最小选择时长
+  10. 【优化】重构了预览页面，将选择器预览和通用预览分离，降低耦合度
+  11. 【优化】统一整理了资源文件命名，以及删除不必要的资源
+  12. 【调整】clearAllCache方法已废弃
+  13. 【调整】原有的选择器拍照会直接回调出照片，现在改为生成在选择器的第一个
+  14. 【调整】当选择器只加载视频时，拍照item支持拍摄视频，其他情况均为拍照
+  15. 【优化】选择器调用屏蔽多次点击，调用多次
+  16. 【优化】所有不可选择的item(置灰)选中均会有具体的提示
 
 ### 下个版本排期
 时间：2019年11月中旬
- 1. 适配AndroidQ
+ 1. ~~适配AndroidQ~~（2.4.6已支持）
  2. 微信选择器加入原图选项
- 3. 支持对外暴露数据源，以便于实现类似QQ发消息时的选择图片
+ 3. ~~支持对外暴露数据源，以便于实现类似QQ发消息时的选择图片~~（2.4.6已支持）
  4. 实现最新版微信样式
- 5. **等你来提**
+ 5. 剪裁支持输出指定大小图片
+ 6. **等你来提**
 
  计划TODO：
  1. 视频预览框架切换（吐槽：官方videoView太难用了~~/(ㄒoㄒ)/~~）
  2. 图片剪裁支持旋转
  3. ~~支持JPEG、PNG、GIF、BMP、WEBP、MPEG、MP4、QUICKTIME、THREEGPP、THREEGPP2、MKV、WEBM、TS、AVI等图片视频文件格式混合加载或指定加载~~（2.4.4已支持）
 
+ 永不TODO：
+ 1. 不会支持图片压缩，请使用者自行使用luBan
+ 2. 不会支持图片和视频高级编辑（滤镜、贴纸等）
 
-本库来源于mars App,想要体验城市最新的吃喝玩乐，欢迎读者下载体验mars!
+### 感谢
+- 本框架媒体库查询部分借鉴于知乎开源框架Matisee，并在其基础上拓展并延伸，让查询更富有定制性，在此对原作者表示感谢。
+
+- 本库来源于mars App,想要体验城市最新的吃喝玩乐，欢迎读者下载体验mars!
+
+- 感谢所有支持或Star本项目的使用者，感谢所有给我提Issue的朋友们 ~~ 鞠躬 ~~！
+
+### 心声
+
+因本人最近顺利的当了爸爸，需要照顾老婆和小孩，所以有些时候消息回复的不是很及时，很多问题没能够给使用者及时的回复，在这里由衷的表示歉意。 YImagePicker从当初的只支持微信图片选择器到支持小红书样式，再到各种自定义，可谓花费了我近一年多的时光，可能有人觉得这个项目很简单，但是从开源性的角度上来说，很多时候代码不是我们想怎么写就怎么写的。为了达成统一风格，本人也借鉴了不下于20多个图片选择库。但是随着业务的复杂和机型的多样，不得不一遍一遍重构，其中带来了不少的问题，也学习到了很多。在我的计划中，本库只是一个开始，虽然定制性很强，但是代码逻辑还是有些复杂，架构还需要不断调整。可能使用者在使用的过程中会出现各种各样的问题，还请不要对本库放弃，可以大胆的加我联系方式并反馈给我（喷我），如果BUG紧急，我也会加班完善它，至于那些取消star或者不看好本框架的，我也只能说声抱歉，没有解决掉你们的痛点。还是那句老话，没有什么是完美的，但我会力所能及~
 
 
-作者：[calorYang](https://blog.csdn.net/qq_16674697)
-邮箱：313930500@qq.com
-Q Q: 313930500 
-微信：calor0616 
-博客：[CSDN](https://blog.csdn.net/qq_16674697)
+- 作者：[calorYang](https://blog.csdn.net/qq_16674697)
+- 邮箱：313930500@qq.com
+- Q Q: 313930500 
+- 微信：calor0616 
+- 博客：[CSDN](https://blog.csdn.net/qq_16674697)
 
 
 **遇到问题别绕路，QQ微信直接呼~ 您的star就是我前进的动力~🌹**
