@@ -51,7 +51,7 @@
 **androidx版本：**
 
 ```java
-implementation 'com.ypx.yimagepicker:androidx:2.4.6.1'
+implementation 'com.ypx.yimagepicker:androidx:2.4.6.2'
 ```
 **support版本：** （暂未更新）
 ```java
