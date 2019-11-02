@@ -51,7 +51,7 @@
 **androidx版本：**
 
 ```java
-implementation 'com.ypx.yimagepicker:androidx:2.4.6'
+implementation 'com.ypx.yimagepicker:androidx:2.4.6.1'
 ```
 **support版本：** （暂未更新）
 ```java
@@ -278,7 +278,7 @@ ImagePicker.provideMediaSets(this, mimeTypes, new MediaSetsDataSource.MediaSetPr
 //指定要回调的相册类型，可以指定13种图片视频文件格式混合
 Set<MimeType> mimeTypes = MimeType.ofAll();
 ImagePicker.provideAllMediaItems(this, mimeTypes, new MediaItemsDataSource.MediaItemProvider() {
-    @Override
+        @Override
         public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
             //全部媒体数据回调，主线程
             //只有当mimeTypes既包含图片或者视频格式文件时，allVideoSet才有值
@@ -292,7 +292,7 @@ Set<MimeType> mimeTypes = MimeType.ofAll();
 //指定相册，id不能为空
 ImageSet imageSet = new ImageSet();
 ImagePicker.provideMediaItemsFromSet(this, imageSet, mimeTypes, new MediaItemsDataSource.MediaItemProvider() {
-    @Override
+        @Override
         public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
             //全部媒体数据回调，主线程
             //只有当mimeTypes既包含图片或者视频格式文件时，allVideoSet才有值
