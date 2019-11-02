@@ -128,8 +128,9 @@ public class CustomPickerItem extends BaseItemView {
             mRectView.setVisibility(View.GONE);
             mVMask.setVisibility(View.GONE);
             //如果当前选中列表的第一个item不是视频,或者该视频超过最大时长选择，则需要置灰该视频item
-            if ((selectImageList != null && selectImageList.size() > 0 && !selectImageList.get(0).isVideo()) ||
-                    imageItem.duration > ImagePicker.MAX_VIDEO_DURATION) {
+            if ((selectImageList != null && selectImageList.size() > 0 && !selectImageList.get(0).isVideo())
+                    || imageItem.duration > selectConfig.getMaxVideoDuration()
+                    || imageItem.duration < selectConfig.getMinVideoDuration()) {
                 mVMask.setVisibility(View.VISIBLE);
                 mVMask.setBackgroundColor(Color.parseColor("#80FFFFFF"));
                 mItemImage.setOnClickListener(null);

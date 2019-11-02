@@ -2,6 +2,6 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
      <item android:drawable="@color/press" android:state_pressed="true"/>
-    <item android:drawable="@color/normal" android:state_pressed="false"/>
+    <item android:drawable="@android:color/white" android:state_pressed="false"/>
 
 </selector>

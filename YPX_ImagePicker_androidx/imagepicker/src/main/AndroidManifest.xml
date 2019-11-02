@@ -26,11 +26,15 @@
             android:multiprocess="true" />
 
         <activity
-            android:name=".activity.multi.SingleCropActivity"
+            android:name=".activity.singlecrop.SingleCropActivity"
             android:multiprocess="true" />
 
         <activity
             android:name=".activity.multi.MultiImagePickerActivity"
+            android:multiprocess="true" />
+
+        <activity
+            android:name=".activity.preview.MediaPreviewActivity"
             android:multiprocess="true" />
 
         <provider

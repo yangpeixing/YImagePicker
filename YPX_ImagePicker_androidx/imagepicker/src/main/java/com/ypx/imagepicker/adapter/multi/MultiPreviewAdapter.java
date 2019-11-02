@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity;
+import com.ypx.imagepicker.activity.preview.MediaPreviewActivity;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.helper.recyclerviewitemhelper.ItemTouchHelperAdapter;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
@@ -64,6 +65,8 @@ public class MultiPreviewAdapter extends RecyclerView.Adapter<MultiPreviewAdapte
             public void onClick(View v) {
                 if (context instanceof MultiImagePreviewActivity) {
                     ((MultiImagePreviewActivity) context).onPreviewItemClick(imageItem);
+                } else if (context instanceof MediaPreviewActivity) {
+                    ((MediaPreviewActivity) context).onPreviewItemClick(imageItem);
                 }
             }
         });

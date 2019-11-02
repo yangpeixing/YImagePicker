@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">YImagePicker</string>
+    <string name="picker_str_error">点错了</string>
+    <string name="picker_str_sure">确定</string>
 </resources>

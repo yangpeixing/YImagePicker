@@ -108,6 +108,10 @@ public class ImageItem implements Serializable {
         return isVideo;
     }
 
+    public boolean isImage() {
+        return !isVideo;
+    }
+
     public int getCropMode() {
         return cropMode;
     }

@@ -1,5 +1,7 @@
 package com.ypx.imagepicker.bean;
 
+import com.ypx.imagepicker.utils.PDateUtil;
+
 import java.io.Serializable;
 import java.util.Set;
 
@@ -10,6 +12,9 @@ import java.util.Set;
  */
 public class BaseSelectConfig implements Serializable {
     private int maxCount;
+    private int minCount;
+    private long minVideoDuration = 0;
+    private long maxVideoDuration = 120000L;
     private int columnCount = 4;
     private boolean isShowCamera;
     private boolean isVideoSinglePick = true;
@@ -17,6 +22,38 @@ public class BaseSelectConfig implements Serializable {
     private boolean isShowImage = true;
     private boolean isLoadGif = false;
     private Set<MimeType> mimeTypes = MimeType.ofAll();
+
+    public int getMinCount() {
+        return minCount;
+    }
+
+    public void setMinCount(int minCount) {
+        this.minCount = minCount;
+    }
+
+    public long getMinVideoDuration() {
+        return minVideoDuration;
+    }
+
+    public void setMinVideoDuration(long minVideoDuration) {
+        this.minVideoDuration = minVideoDuration;
+    }
+
+    public long getMaxVideoDuration() {
+        return maxVideoDuration;
+    }
+
+    public String getMaxVideoDurationFormat() {
+        return PDateUtil.formatTime(maxVideoDuration);
+    }
+
+    public String getMinVideoDurationFormat() {
+        return PDateUtil.formatTime(minVideoDuration);
+    }
+
+    public void setMaxVideoDuration(long maxVideoDuration) {
+        this.maxVideoDuration = maxVideoDuration;
+    }
 
     public int getColumnCount() {
         return columnCount;

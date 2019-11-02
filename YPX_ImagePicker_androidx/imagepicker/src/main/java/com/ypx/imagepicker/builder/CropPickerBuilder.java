@@ -93,7 +93,15 @@ public class CropPickerBuilder {
      * @param duration 设置视频可选择的最大时长
      */
     public CropPickerBuilder setMaxVideoDuration(long duration) {
-        ImagePicker.MAX_VIDEO_DURATION = duration;
+        this.selectConfig.setMaxVideoDuration(duration);
+        return this;
+    }
+
+    /**
+     * @param duration 设置视频可选择的最小时长
+     */
+    public CropPickerBuilder setMinVideoDuration(long duration) {
+        this.selectConfig.setMinVideoDuration(duration);
         return this;
     }
 

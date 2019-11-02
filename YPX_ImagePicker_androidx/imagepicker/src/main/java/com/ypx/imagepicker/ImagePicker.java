@@ -1,19 +1,22 @@
 package com.ypx.imagepicker;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Environment;
-import androidx.annotation.NonNull;
 
-import com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity;
-import com.ypx.imagepicker.activity.multi.SingleCropActivity;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+
+import com.ypx.imagepicker.activity.preview.MediaPreviewActivity;
+import com.ypx.imagepicker.activity.singlecrop.SingleCropActivity;
 import com.ypx.imagepicker.bean.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.ImageSet;
+import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.builder.CropPickerBuilder;
-import com.ypx.imagepicker.data.MultiPickerData;
+import com.ypx.imagepicker.data.MediaItemsDataSource;
+import com.ypx.imagepicker.data.MediaSetsDataSource;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
@@ -25,6 +28,7 @@ import com.ypx.imagepicker.utils.PPermissionUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Description: 图片加载启动类
@@ -34,10 +38,6 @@ import java.util.ArrayList;
  * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
 public class ImagePicker {
-    /**
-     * 可以选取的视频最大时长
-     */
-    public static long MAX_VIDEO_DURATION = 120000;
     //选择返回的key
     public static final String INTENT_KEY_PICKER_RESULT = "pickerResult";
     //选择返回code
@@ -80,30 +80,26 @@ public class ImagePicker {
      * @param listener 拍照回调
      */
     public static void takePhoto(final Activity activity, final String savePath, final OnImagePickCompleteListener listener) {
-        if (!PPermissionUtils.hasCameraPermissions(activity)) {
-            if (Build.VERSION.SDK_INT >= 23) {
-                activity.requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
-            }
+        if (PPermissionUtils.checkCameraPermissions(activity)) {
             return;
         }
         PLauncher.init(activity).startActivityForResult(PFileUtil.getTakePhotoIntent(activity, savePath), new PLauncher.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
-                if (resultCode != Activity.RESULT_OK) {
+                if (listener == null) {
                     return;
                 }
-                if (savePath == null || savePath.trim().length() == 0) {
+                if (resultCode != Activity.RESULT_OK || savePath == null || savePath.trim().length() == 0) {
+                    PickerErrorExecutor.executeError(listener, PickerError.TAKE_PHOTO_FAILED.getCode());
                     return;
                 }
                 PFileUtil.refreshGalleryAddPic(activity, savePath);
-                if (listener != null) {
-                    ImageItem item = new ImageItem(savePath, System.currentTimeMillis());
-                    item.width = PFileUtil.getImageWidthHeight(savePath)[0];
-                    item.height = PFileUtil.getImageWidthHeight(savePath)[1];
-                    ArrayList<ImageItem> list = new ArrayList<>();
-                    list.add(item);
-                    listener.onImagePickComplete(list);
-                }
+                ImageItem item = new ImageItem(savePath, System.currentTimeMillis());
+                item.width = PFileUtil.getImageWidthHeight(savePath)[0];
+                item.height = PFileUtil.getImageWidthHeight(savePath)[1];
+                ArrayList<ImageItem> list = new ArrayList<>();
+                list.add(item);
+                listener.onImagePickComplete(list);
             }
         });
     }
@@ -181,9 +177,7 @@ public class ImagePicker {
         if (imageList == null || imageList.size() == 0) {
             return;
         }
-        MultiPickerData.instance.clear();
-        MultiImagePreviewActivity.intent(context, null, presenter, false,
-                transitArray(imageList), pos, listener);
+        MediaPreviewActivity.intent(context, presenter, transitArray(imageList), pos, listener);
     }
 
     /**
@@ -208,9 +202,87 @@ public class ImagePicker {
     }
 
     /**
+     * 提供媒体相册列表
+     *
+     * @param activity    调用activity
+     * @param mimeTypeSet 指定相册文件类型
+     * @param provider    相回调
+     */
+    public static void provideMediaSets(FragmentActivity activity,
+                                        Set<MimeType> mimeTypeSet,
+                                        MediaSetsDataSource.MediaSetProvider provider) {
+        if (PPermissionUtils.checkStoragePermissions(activity)) {
+            return;
+        }
+        MediaSetsDataSource.create(activity).setMimeTypeSet(mimeTypeSet).loadMediaSets(provider);
+    }
+
+    /**
+     * 根据相册提供媒体数据
+     *
+     * @param activity    调用activity
+     * @param set         相册文件
+     * @param mimeTypeSet 加载类型
+     * @param provider    媒体文件回调
+     */
+    public static void provideMediaItemsFromSet(FragmentActivity activity,
+                                                ImageSet set,
+                                                Set<MimeType> mimeTypeSet,
+                                                MediaItemsDataSource.MediaItemProvider provider) {
+        if (PPermissionUtils.checkStoragePermissions(activity)) {
+            return;
+        }
+        MediaItemsDataSource.create(activity, set).setMimeTypeSet(mimeTypeSet).loadMediaItems(provider);
+    }
+
+    /**
+     * 根据相册提供媒体数据，预加载指定数目
+     *
+     * @param activity        调用activity
+     * @param set             相册文件
+     * @param mimeTypeSet     加载类型
+     * @param preloadSize     预加载个数
+     * @param preloadProvider 预加载回调
+     * @param provider        所有文件回调
+     */
+    public static void provideMediaItemsFromSetWithPreload(FragmentActivity activity,
+                                                           ImageSet set,
+                                                           Set<MimeType> mimeTypeSet,
+                                                           int preloadSize,
+                                                           MediaItemsDataSource.MediaItemPreloadProvider preloadProvider,
+                                                           MediaItemsDataSource.MediaItemProvider provider) {
+        if (PPermissionUtils.checkStoragePermissions(activity)) {
+            return;
+        }
+        MediaItemsDataSource dataSource = MediaItemsDataSource.create(activity, set)
+                .setMimeTypeSet(mimeTypeSet)
+                .preloadSize(preloadSize);
+        dataSource.setPreloadProvider(preloadProvider);
+        dataSource.loadMediaItems(provider);
+    }
+
+
+    /**
+     * 提供所有媒体数据
+     *
+     * @param activity    调用activity
+     * @param mimeTypeSet 加载文件类型
+     * @param provider    文件列表回调
+     */
+    public static void provideAllMediaItems(FragmentActivity activity,
+                                            Set<MimeType> mimeTypeSet,
+                                            MediaItemsDataSource.MediaItemProvider provider) {
+        ImageSet set = new ImageSet();
+        set.id = ImageSet.ID_ALL_MEDIA;
+        provideMediaItemsFromSet(activity, set, mimeTypeSet, provider);
+    }
+
+    /**
      * 清除缓存数据
+     *
+     * @deprecated
      */
     public static void clearAllCache() {
-        MultiPickerData.instance.clear();
+
     }
 }

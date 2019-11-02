@@ -3,7 +3,6 @@ package com.ypx.imagepicker.data;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -17,6 +16,12 @@ import com.ypx.imagepicker.bean.MimeType;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Set;
+
+import static com.ypx.imagepicker.data.MediaSetsConstants.COLUMN_BUCKET_DISPLAY_NAME;
+import static com.ypx.imagepicker.data.MediaSetsConstants.COLUMN_BUCKET_ID;
+import static com.ypx.imagepicker.data.MediaSetsConstants.COLUMN_COUNT;
+import static com.ypx.imagepicker.data.MediaSetsConstants.COLUMN_URI;
+import static com.ypx.imagepicker.data.MediaSetsConstants.DATA;
 
 
 /**
@@ -42,6 +47,19 @@ public class MediaSetsDataSource implements LoaderManager.LoaderCallbacks<Cursor
         return this;
     }
 
+    public MediaSetsDataSource setMimeTypeSet(Set<MimeType> mimeTypeSet) {
+        this.mimeTypeSet = mimeTypeSet;
+        for (MimeType mimeType : mimeTypeSet) {
+            if (MimeType.ofVideo().contains(mimeType)) {
+                isLoadVideo = true;
+            }
+            if (MimeType.ofImage().contains(mimeType)) {
+                isLoadImage = true;
+            }
+        }
+        return this;
+    }
+
     public void loadMediaSets(MediaSetProvider mediaSetProvider) {
         this.mediaSetProvider = mediaSetProvider;
         mLoaderManager.initLoader(LOADER_ID, null, this);
@@ -60,10 +78,10 @@ public class MediaSetsDataSource implements LoaderManager.LoaderCallbacks<Cursor
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Context context = mContext.get();
-        if (context == null) {
-            return null;
-        }
-        return MediaSetsLoader.newInstance(context, mimeTypeSet, isLoadVideo, isLoadImage);
+//        if (!MediaSetsConstants.isAfterAndroidQ()) {
+//            return MediaSetsLoader.create(context, mimeTypeSet, isLoadVideo, isLoadImage);
+//        }
+        return MediaSetsLoader_29.create(context, mimeTypeSet, isLoadVideo, isLoadImage);
     }
 
     @Override
@@ -76,10 +94,14 @@ public class MediaSetsDataSource implements LoaderManager.LoaderCallbacks<Cursor
         if (!context.isDestroyed() && cursor.moveToFirst() && !cursor.isClosed()) {
             do {
                 ImageSet imageSet = new ImageSet();
-                imageSet.id = getString(cursor, "bucket_id");
-                imageSet.name = getString(cursor, "bucket_display_name");
-                imageSet.coverPath = getString(cursor, MediaStore.MediaColumns.DATA);
-                imageSet.count = getInt(cursor, "count");
+                imageSet.id = getString(cursor, COLUMN_BUCKET_ID);
+                imageSet.name = getString(cursor, COLUMN_BUCKET_DISPLAY_NAME);
+                String path = getString(cursor, COLUMN_URI);
+                if (path == null || path.equals("")) {
+                    path = getString(cursor, DATA);
+                }
+                imageSet.coverPath = path;
+                imageSet.count = getInt(cursor, COLUMN_COUNT);
                 imageSetList.add(imageSet);
             } while (!context.isDestroyed() && cursor.moveToNext() && !cursor.isClosed());
         }

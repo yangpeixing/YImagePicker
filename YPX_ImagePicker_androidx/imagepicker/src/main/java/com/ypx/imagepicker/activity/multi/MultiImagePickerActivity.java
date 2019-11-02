@@ -22,6 +22,7 @@ import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -53,6 +54,9 @@ public class MultiImagePickerActivity extends FragmentActivity {
      */
     public static void intent(Activity activity, MultiSelectConfig selectConfig, IMultiPickerBindPresenter presenter,
                               final OnImagePickCompleteListener listener) {
+        if (PViewSizeUtils.onDoubleClick()) {
+            return;
+        }
         Intent intent = new Intent(activity, MultiImagePickerActivity.class);
         intent.putExtra(MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG, selectConfig);
         intent.putExtra(MultiImagePickerActivity.INTENT_KEY_PRESENTER, presenter);
@@ -64,6 +68,9 @@ public class MultiImagePickerActivity extends FragmentActivity {
                     ArrayList list = (ArrayList) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKER_RESULT);
                     listener.onImagePickComplete(list);
                 } else if (listener instanceof OnImagePickCompleteListener2) {
+                    if (resultCode == 0) {
+                        resultCode = PickerError.CANCEL.getCode();
+                    }
                     ((OnImagePickCompleteListener2) listener).onPickFailed(PickerError.valueOf(resultCode));
                 }
             }

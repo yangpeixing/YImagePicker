@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.ypx.imagepicker.bean.CropSelectConfig;
 import com.ypx.imagepicker.bean.CropUiConfig;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
-import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.utils.PCornerUtils;
@@ -143,7 +142,8 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
             rootView = itemView.findViewById(R.id.rootView);
             mTvDuration = itemView.findViewById(R.id.mTvDuration);
             context = imageView.getContext();
-            int width = (PViewSizeUtils.getScreenWidth(context) - (PViewSizeUtils.dp(context, 2) * (selectConfig.getColumnCount() + 1))) / selectConfig.getColumnCount();
+            int width = (PViewSizeUtils.getScreenWidth(context) - (PViewSizeUtils.dp(context, 2) *
+                    (selectConfig.getColumnCount() + 1))) / selectConfig.getColumnCount();
             PViewSizeUtils.setViewSize(rootView, width, 1.0f);
             PViewSizeUtils.setViewSize(mVMask, width, 1.0f);
             iv_camera.setImageDrawable(itemView.getContext().getResources().getDrawable(uiConfig.getCameraIconID()));
@@ -185,10 +185,10 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
                 mTvDuration.setText(imageItem.getDurationFormat());
                 //如果当前选中列表的第一个item不是视频,或者该视频超过最大时长选择，则需要置灰该视频item
                 if (selectConfig.hasFirstImageItem() || (selectList != null && selectList.size() > 0 && !selectList.get(0).isVideo()) ||
-                        imageItem.duration > ImagePicker.MAX_VIDEO_DURATION) {
+                        imageItem.duration > selectConfig.getMaxVideoDuration()
+                        || imageItem.duration < selectConfig.getMinVideoDuration()) {
                     mVMask.setVisibility(View.VISIBLE);
                     mVMask.setBackgroundColor(Color.parseColor("#80FFFFFF"));
-                    itemView.setOnClickListener(null);
                     hideCheckBox();
                     return;
                 } else {
@@ -205,7 +205,6 @@ public class CropGridAdapter extends RecyclerView.Adapter<CropGridAdapter.ViewHo
                         (selectList != null && selectList.size() > 0 && selectList.get(0).isVideo())) {
                     mVMask.setVisibility(View.VISIBLE);
                     mVMask.setBackgroundColor(Color.parseColor("#80FFFFFF"));
-                    itemView.setOnClickListener(null);
                     hideCheckBox();
                     return;
                 } else {

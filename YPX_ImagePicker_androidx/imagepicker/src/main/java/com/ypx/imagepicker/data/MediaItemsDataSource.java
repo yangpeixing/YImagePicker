@@ -35,14 +35,27 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
     private LoaderManager mLoaderManager;
     private MediaItemProvider mediaItemProvider;
     private boolean isLoadVideo;
-    private boolean isLoadImage;
-
+    private int preloadSize = 40;
     private Set<MimeType> mimeTypeSet = MimeType.ofAll();
 
     public MediaItemsDataSource setMimeTypeSet(BaseSelectConfig config) {
         mimeTypeSet = config.getMimeTypes();
-        isLoadImage = config.isShowImage();
         isLoadVideo = config.isShowVideo();
+        return this;
+    }
+
+    public MediaItemsDataSource setMimeTypeSet(Set<MimeType> mimeTypeSet) {
+        this.mimeTypeSet = mimeTypeSet;
+        for (MimeType mimeType : mimeTypeSet) {
+            if (MimeType.ofVideo().contains(mimeType)) {
+                isLoadVideo = true;
+            }
+        }
+        return this;
+    }
+
+    public MediaItemsDataSource preloadSize(int preloadSize) {
+        this.preloadSize = preloadSize;
         return this;
     }
 
@@ -115,14 +128,14 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                             item.height = size[1];
                         }
 
-                        if (set.isAllMedia() && isLoadVideo && isLoadImage) {
+                        if (set.isAllMedia() && isLoadVideo) {
                             if (item.isVideo()) {
                                 allVideoItems.add(item);
                             }
                         }
                         imageItems.add(item);
 
-                        if (preloadProvider != null && imageItems.size() == 40) {
+                        if (preloadProvider != null && imageItems.size() == preloadSize) {
                             notifyPreloadItem(context, imageItems);
                         }
                     } while (!context.isDestroyed() && !cursor.isClosed() && cursor.moveToNext());
@@ -136,7 +149,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                     allVideoSet.cover = allVideoItems.get(0);
                     allVideoSet.count = allVideoItems.size();
                     allVideoSet.imageItems = allVideoItems;
-                    allVideoSet.name = context.getResources().getString(R.string.str_allvideo);
+                    allVideoSet.name = context.getResources().getString(R.string.picker_str_all_video);
                 }
 
                 final ImageSet finalAllVideoSet = allVideoSet;

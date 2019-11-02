@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.SelectMode;
@@ -80,11 +79,11 @@ public class WXItemView extends BaseItemView {
             mVideoLayout.setVisibility(View.VISIBLE);
             mVideoTime.setText(item.getDurationFormat());
             mIvThumb.setType(ShowTypeImageView.TYPE_NONE);
-            if (item.duration > ImagePicker.MAX_VIDEO_DURATION) {
+            if (item.duration > selectConfig.getMaxVideoDuration()
+                    || item.duration < selectConfig.getMinVideoDuration()) {
                 mIvThumbCheck.setVisibility(View.GONE);
                 mVMasker.setVisibility(View.VISIBLE);
                 mVMasker.setBackgroundColor(Color.parseColor("#80FFFFFF"));
-                mIvThumb.setOnClickListener(null);
                 return;
             }
             //只能单选视频
@@ -103,7 +102,6 @@ public class WXItemView extends BaseItemView {
                 mIvThumbCheck.setVisibility(View.GONE);
                 mVMasker.setVisibility(View.VISIBLE);
                 mVMasker.setBackgroundColor(Color.parseColor("#80FFFFFF"));
-                mIvThumb.setOnClickListener(null);
                 return;
             }
         }

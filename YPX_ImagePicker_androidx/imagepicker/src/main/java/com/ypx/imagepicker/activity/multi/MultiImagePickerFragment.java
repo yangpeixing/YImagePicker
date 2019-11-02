@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PBaseLoaderFragment;
+import com.ypx.imagepicker.activity.singlecrop.SingleCropActivity;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.adapter.multi.MultiSetAdapter;
@@ -34,17 +35,20 @@ import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
-import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.helper.launcher.PLauncher;
+import com.ypx.imagepicker.presenter.BasePresenter;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
+import static android.app.Activity.RESULT_OK;
+import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_CURRENT_INDEX;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
+import static com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity.INTENT_KEY_SELECT_LIST;
 
 /**
  * Description: 多选页
@@ -98,7 +102,6 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
             PickerErrorExecutor.executeError(onImagePickCompleteListener, PickerError.PRESENTER_NOT_FOUND.getCode());
             return false;
         }
-
         if (selectConfig == null) {
             PickerErrorExecutor.executeError(onImagePickCompleteListener, PickerError.SELECT_CONFIG_NOT_FOUND.getCode());
             return false;
@@ -113,7 +116,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         if (isIntentDataValid()) {
             ImagePicker.clearAllCache();
             if (selectConfig.getLastImageList() != null && selectConfig.getLastImageList().size() > 0) {
-                MultiPickerData.instance.addAllImageItems(selectConfig.getLastImageList());
+                selectList.addAll(selectConfig.getLastImageList());
             }
             uiConfig = presenter.getUiConfig(mContext);
             findView();
@@ -148,15 +151,6 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         initUI();
         setListener();
         refreshOKBtn();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (imageItems != null && mAdapter != null) {
-            mAdapter.refreshData(imageItems);
-            refreshOKBtn();
-        }
     }
 
     private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
@@ -221,11 +215,11 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         mSetArrowImg.setImageDrawable(uiConfig.getTitleDrawableRight());
 
         if (selectConfig.isShowVideo() && selectConfig.isShowImage()) {
-            mTvTitle.setText(getResources().getString(R.string.str_image_video));
+            mTvTitle.setText(getPickConstants().picker_str_multi_title);
         } else if (selectConfig.isShowVideo()) {
-            mTvTitle.setText(getResources().getString(R.string.str_video));
+            mTvTitle.setText(getPickConstants().picker_str_multi_title_video);
         } else {
-            mTvTitle.setText(getResources().getString(R.string.str_image));
+            mTvTitle.setText(getPickConstants().picker_str_multi_title_image);
         }
     }
 
@@ -249,7 +243,6 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         });
     }
 
-
     /**
      * 初始化相关adapter
      */
@@ -259,7 +252,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         mSetRecyclerView.setAdapter(mImageSetAdapter);
         mImageSetAdapter.refreshData(imageSets);
 
-        mAdapter = new MultiGridAdapter(mContext, new ArrayList<ImageItem>(), selectConfig, presenter);
+        mAdapter = new MultiGridAdapter(mContext, selectList, new ArrayList<ImageItem>(), selectConfig, presenter);
         mAdapter.setHasStableIds(true);
         mAdapter.setOnActionResult(this);
         layoutManager = new GridLayoutManager(mContext, selectConfig.getColumnCount());
@@ -279,7 +272,6 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     private void selectImageFromSet(final int position, boolean isTransit) {
         this.currentSetIndex = position;
         final ImageSet set = imageSets.get(currentSetIndex);
-        MultiPickerData.instance.setCurrentImageSet(set);
         if (isTransit) {
             showOrHideImageSetList();
         }
@@ -311,10 +303,10 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         if (v == btnDir || v == v_masker) {
             showOrHideImageSetList();
         } else if (v == mTvRight) {
-            if (isEmpty() || onDoubleClick()) {
+            if (selectList == null || selectList.size() == 0 || onDoubleClick()) {
                 return;
             }
-            notifyOnImagePickComplete(new ArrayList<>(MultiPickerData.instance.getSelectImageList()));
+            notifyOnImagePickComplete(new ArrayList<>(selectList));
         } else if (v == mBckImg) {
             mContext.onBackPressed();
         } else if (v == mTvTitle || v == mSetArrowImg) {
@@ -322,25 +314,11 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
                 showOrHideImageSetList();
             }
         } else if (v == mTvPreview) {
-            if (isEmpty()) {
+            if (selectList == null || selectList.size() == 0) {
                 return;
             }
-            intentPreview(0, MultiPickerData.instance.getSelectImageList());
+            intentPreview(0);
         }
-    }
-
-    /**
-     * 是否未选择
-     *
-     * @return true：未选择图片 false:选择了
-     */
-    private boolean isEmpty() {
-        if (MultiPickerData.instance.isEmpty()) {
-            presenter.tip(mContext, getResources()
-                    .getString(R.string.str_emptytip));
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -359,15 +337,30 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         }
     }
 
+    /**
+     * @param imageItem 回调一张图片
+     */
+    private void notifyOnSingleImagePickComplete(ImageItem imageItem) {
+        ArrayList<ImageItem> list = new ArrayList<>();
+        list.add(imageItem);
+        notifyOnImagePickComplete(list);
+    }
+
     @Override
     protected BaseSelectConfig getSelectConfig() {
         return selectConfig;
     }
 
     @Override
+    protected BasePresenter getPresenter() {
+        return presenter;
+    }
+
+    @Override
     protected void loadMediaSetsComplete(List<ImageSet> imageSetList) {
-        if (imageSetList == null || imageSetList.size() == 0 || (imageSetList.size() == 1 && imageSetList.get(0).count == 0)) {
-            PickerErrorExecutor.executeError(onImagePickCompleteListener, PickerError.MEDIA_NOT_FOUND.getCode());
+        if (imageSetList == null || imageSetList.size() == 0 ||
+                (imageSetList.size() == 1 && imageSetList.get(0).count == 0)) {
+            tip(getPickConstants().picker_str_media_not_found);
             return;
         }
         this.imageSets = imageSetList;
@@ -379,14 +372,15 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     protected void loadMediaItemsComplete(ImageSet set) {
         this.imageItems = set.imageItems;
         btnDir.setText(imageSets.get(currentSetIndex).name);
-        mTvTitle.setText(imageSets.get(currentSetIndex).name);
+        if (uiConfig.getPickStyle() == PickerUiConfig.PICK_STYLE_TITLE) {
+            mTvTitle.setText(imageSets.get(currentSetIndex).name);
+        }
         mAdapter.refreshData(imageItems);
     }
 
     @Override
     protected void refreshAllVideoSet(ImageSet allVideoSet) {
-        if (allVideoSet != null &&
-                allVideoSet.imageItems != null
+        if (allVideoSet != null && allVideoSet.imageItems != null
                 && allVideoSet.imageItems.size() > 0
                 && !imageSets.contains(allVideoSet)) {
             imageSets.add(1, allVideoSet);
@@ -400,15 +394,19 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
             intentCrop(imageItem.path);
             return;
         }
-        ArrayList<ImageItem> list = new ArrayList<>();
-        list.add(imageItem);
-        notifyOnImagePickComplete(list);
+        imageItems.add(0, imageItem);
+        mAdapter.refreshData(imageItems);
+        onCheckItem(imageItem);
+        //  notifyOnSingleImagePickComplete(imageItem);
     }
 
     @Override
     public boolean onBackPressed() {
         if (mSetRecyclerView != null && mSetRecyclerView.getVisibility() == View.VISIBLE) {
             showOrHideImageSetList();
+            return true;
+        }
+        if (presenter != null && presenter.interceptPickerCancel(getActivity(), selectList)) {
             return true;
         }
         PickerErrorExecutor.executeError(onImagePickCompleteListener, PickerError.CANCEL.getCode());
@@ -434,25 +432,41 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
      *
      * @param position 默认选中的index
      */
-    private void intentPreview(int position, ArrayList<ImageItem> previewList) {
-        MultiImagePreviewActivity.intent(mContext, selectConfig, presenter, true, previewList, position,
-                new OnImagePickCompleteListener() {
-                    @Override
-                    public void onImagePickComplete(ArrayList<ImageItem> items) {
-                        notifyOnImagePickComplete(items);
+    private void intentPreview(int position) {
+        MultiImagePreviewActivity.currentImageSet = imageSets.get(currentSetIndex).copy();
+        Intent intent = new Intent(getActivity(), MultiImagePreviewActivity.class);
+        intent.putExtra(INTENT_KEY_SELECT_LIST, selectList);
+        intent.putExtra(INTENT_KEY_SELECT_CONFIG, selectConfig);
+        intent.putExtra(INTENT_KEY_PRESENTER, presenter);
+        intent.putExtra(INTENT_KEY_CURRENT_INDEX, position);
+        PLauncher.init(getActivity()).startActivityForResult(intent, new PLauncher.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (data != null && data.hasExtra(ImagePicker.INTENT_KEY_PICKER_RESULT)) {
+                    ArrayList<ImageItem> mList = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKER_RESULT);
+                    if (mList == null) {
+                        return;
                     }
-                });
+                    if (resultCode == RESULT_OK) {
+                        notifyOnImagePickComplete(mList);
+                    } else {
+                        selectList.clear();
+                        selectList.addAll(mList);
+                        mAdapter.refreshData(imageItems);
+                    }
+                }
+            }
+        });
     }
 
     @SuppressLint("DefaultLocale")
     private void refreshOKBtn() {
-        if (selectConfig.getMaxCount() == 1 &&
-                selectConfig.getSelectMode() != SelectMode.MODE_MULTI) {
+        if (selectConfig.getMaxCount() == 1 && selectConfig.getSelectMode() != SelectMode.MODE_MULTI) {
             mTvRight.setVisibility(View.GONE);
             return;
         }
-        int selectCount = MultiPickerData.instance.getSelectCount();
-        if (MultiPickerData.instance.isEmpty()) {
+        int selectCount = selectList != null ? selectList.size() : 0;
+        if (selectList != null && selectList.size() == 0) {
             mTvRight.setEnabled(false);
             mTvRight.setText(uiConfig.getOkBtnText());
             mTvRight.setBackground(uiConfig.getOkBtnUnSelectBackground());
@@ -472,34 +486,30 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         }
     }
 
+
     @Override
     public void onClickItem(ImageItem item, int position) {
         if (position < 0 && selectConfig.isShowCamera()) {
             takePhoto();
             return;
         }
-        //在屏蔽列表中
-        if (selectConfig.isShieldItem(item)) {
-            presenter.tip(getContext(), getResources().getString(R.string.str_shield));
+        if (isItemCantClick(selectList, item)) {
             return;
         }
-
         mRecyclerView.setTag(item);
-
         //如果只能选择一个视频，且当前是视频的时候直接返回
         if (selectConfig.isVideoSinglePick() && item.isVideo()) {
-            ArrayList<ImageItem> list = new ArrayList<>();
-            list.add(item);
-            notifyOnImagePickComplete(list);
+            if (presenter.interceptVideoClick(getActivity(), item)) {
+                return;
+            }
+            notifyOnSingleImagePickComplete(item);
             return;
         }
 
         //剪裁模式下，直接跳转剪裁
         if (selectConfig.getSelectMode() == SelectMode.MODE_CROP) {
             if (item.isGif() || item.isVideo()) {
-                ArrayList<ImageItem> list2 = new ArrayList<>();
-                list2.add(item);
-                notifyOnImagePickComplete(list2);
+                notifyOnSingleImagePickComplete(item);
             } else {
                 intentCrop(item.path);
             }
@@ -510,9 +520,9 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         if (selectConfig.getMaxCount() > 1 || selectConfig.getSelectMode() == SelectMode.MODE_MULTI) {
             //打开了预览，则跳转预览，否则执行自定义的点击操作
             if (selectConfig.isPreview()) {
-                intentPreview(position, null);
+                intentPreview(position);
             } else {
-                presenter.imageItemClick(mContext, item, MultiPickerData.instance.getSelectImageList()
+                presenter.imageItemClick(mContext, item, selectList
                         , imageItems, mAdapter);
             }
             return;
@@ -520,28 +530,22 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
 
         //单选模式下且选择数量只有一个时，直接回调出去
         if (selectConfig.getSelectMode() == SelectMode.MODE_SINGLE && selectConfig.getMaxCount() <= 1) {
-            ArrayList<ImageItem> list2 = new ArrayList<>();
-            list2.add(item);
-            notifyOnImagePickComplete(list2);
+            notifyOnSingleImagePickComplete(item);
         }
     }
 
     @Override
     public void onCheckItem(ImageItem imageItem) {
-        if (!MultiPickerData.instance.hasItem(imageItem) &&
-                MultiPickerData.instance.isOverLimit(selectConfig.getMaxCount())) {
-            presenter.tip(getContext(), String.format(Objects.requireNonNull(getContext())
-                            .getResources().getString(R.string.str_limit),
-                    selectConfig.getMaxCount()));
+        if (!selectList.contains(imageItem) && isOverMaxCount()) {
             return;
         }
-        if (MultiPickerData.instance.hasItem(imageItem)) {
-            MultiPickerData.instance.removeImageItem(imageItem);
+        if (selectList.contains(imageItem)) {
+            selectList.remove(imageItem);
             if (selectConfig.isLastItem(imageItem)) {
                 selectConfig.getLastImageList().remove(imageItem);
             }
         } else {
-            MultiPickerData.instance.addImageItem(imageItem);
+            selectList.add(imageItem);
         }
         mAdapter.notifyDataSetChanged();
         refreshOKBtn();

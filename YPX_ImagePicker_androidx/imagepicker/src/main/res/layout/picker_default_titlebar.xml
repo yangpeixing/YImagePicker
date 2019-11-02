@@ -24,7 +24,7 @@
             android:maxWidth="165dp"
             android:maxLines="1"
             android:text="图片预览"
-            android:textColor="@color/black"
+            android:textColor="@android:color/black"
             android:textSize="16sp" />
 
         <ImageView

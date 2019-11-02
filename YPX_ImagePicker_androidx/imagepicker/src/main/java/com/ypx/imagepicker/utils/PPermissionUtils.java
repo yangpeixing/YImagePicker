@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.ypx.imagepicker.BuildConfig;
+import com.ypx.imagepicker.ImagePicker;
 
 
 /**
@@ -27,8 +28,24 @@ import com.ypx.imagepicker.BuildConfig;
 public class PPermissionUtils {
     private Context context;
 
-    public static boolean hasCameraPermissions(Activity activity) {
-        return ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+    public static boolean checkCameraPermissions(Activity activity) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                activity.requestPermissions(new String[]{Manifest.permission.CAMERA}, ImagePicker.REQ_CAMERA);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean checkStoragePermissions(Activity activity) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                activity.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, ImagePicker.REQ_STORAGE);
+                return true;
+            }
+        }
+        return false;
     }
 
     public static PPermissionUtils create(Context context) {

@@ -1,16 +1,22 @@
 package com.ypx.imagepickerdemo.style;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.request.RequestOptions;
 import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 import com.ypx.imagepicker.utils.PCornerUtils;
@@ -76,11 +82,91 @@ public class WXImgPickerPresenter implements IMultiPickerBindPresenter {
         return config;
     }
 
+    /**
+     * 提示
+     *
+     * @param context 上下文
+     * @param msg     提示文本
+     */
     @Override
     public void tip(Context context, String msg) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * 选择超过数量限制提示
+     *
+     * @param context  上下文
+     * @param maxCount 最大数量
+     */
+    @Override
+    public void overMaxCountTip(Context context, int maxCount) {
+        tip(context, "最多选择" + maxCount + "个文件");
+    }
+
+    /**
+     * 拦截选择器取消操作，用于弹出二次确认框
+     *
+     * @param activity     当前选择器页面
+     * @param selectedList 当前已经选择的文件列表
+     * @return true:则拦截选择器取消， false，不处理选择器取消操作
+     */
+    @Override
+    public boolean interceptPickerCancel(final Activity activity, ArrayList<ImageItem> selectedList) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage("是否放弃选择？");
+        builder.setPositiveButton(R.string.picker_str_sure,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        activity.finish();
+                    }
+                });
+        builder.setNegativeButton(R.string.picker_str_error,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        return true;
+    }
+
+    /**
+     * 满足selectConfig.isVideoSinglePick()==true 时，才会触发此方法
+     * 在单选视频里，点击视频item会触发此方法
+     *
+     * @param activity  页面
+     * @param imageItem 当前选中视频
+     * @return true:则拦截外部回调，直接执行该方法， false，不处理视频点击
+     */
+    @Override
+    public boolean interceptVideoClick(Activity activity, ImageItem imageItem) {
+        Toast.makeText(activity, "点击视频啦" + imageItem.path, Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    @NonNull
+    @Override
+    public PickConstants getPickConstants(Context context) {
+        return new PickConstants(context);
+    }
+
+
+    /**
+     * 图片点击事件
+     *
+     * @param context         上下文
+     * @param imageItem       当前图片
+     * @param selectImageList 当前选中列表
+     * @param allSetImageList 当前文件夹所有图片
+     * @param adapter         当前列表适配器，用于刷新数据
+     *                        <p>
+     *                        该方法只有在setPreview(false)的时候才会调用，默认点击图片会跳转预览页面。如果指定了剪裁模式，则不走该方法
+     */
     @Override
     public void imageItemClick(Context context, ImageItem imageItem, ArrayList<ImageItem> selectImageList,
                                ArrayList<ImageItem> allSetImageList, MultiGridAdapter adapter) {

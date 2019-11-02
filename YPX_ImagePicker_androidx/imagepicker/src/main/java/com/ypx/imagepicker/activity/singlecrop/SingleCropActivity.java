@@ -1,4 +1,4 @@
-package com.ypx.imagepicker.activity.multi;
+package com.ypx.imagepicker.activity.singlecrop;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,6 +17,7 @@ import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
@@ -24,6 +25,7 @@ import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
+import com.ypx.imagepicker.utils.PConstantsUtil;
 import com.ypx.imagepicker.utils.PFileUtil;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
@@ -44,9 +46,12 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
 public class SingleCropActivity extends FragmentActivity {
+    private final String PNG = ".png";
+    private final String JPEG = ".jpg";
     private CropImageView cropView;
     private PickerUiConfig uiConfig;
     private CropConfig cropConfig;
+    private IMultiPickerBindPresenter presenter;
 
     /**
      * 跳转单图剪裁
@@ -84,7 +89,7 @@ public class SingleCropActivity extends FragmentActivity {
             PickerErrorExecutor.executeError(this, PickerError.PRESENTER_NOT_FOUND.getCode());
             return;
         }
-        IMultiPickerBindPresenter presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
+        presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
         cropConfig = (CropConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
         if (presenter == null) {
             PickerErrorExecutor.executeError(this, PickerError.PRESENTER_NOT_FOUND.getCode());
@@ -138,7 +143,7 @@ public class SingleCropActivity extends FragmentActivity {
         top_bar.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
         iv_back.setColorFilter(uiConfig.getBackIconColor());
         tv_title.setTextColor(uiConfig.getTitleColor());
-        tv_title.setText(R.string.str_crop);
+        tv_title.setText(PConstantsUtil.getString(this, presenter).picker_str_crop_title);
         ((LinearLayout) findViewById(R.id.mTitleRoot)).setGravity(uiConfig.getTitleBarGravity());
         if (uiConfig.getOkBtnSelectBackground() == null) {
             tv_rightBtn.setPadding(0, 0, 0, 0);
@@ -160,6 +165,14 @@ public class SingleCropActivity extends FragmentActivity {
                 }
                 ImageItem item = new ImageItem();
                 item.path = cropUrl;
+                if (cropUrl.endsWith(PNG)) {
+                    item.mimeType = MimeType.JPEG.toString();
+                } else {
+                    item.mimeType = MimeType.PNG.toString();
+                }
+
+                item.width = cropView.getCropWidth();
+                item.height = cropView.getCropHeight();
                 ArrayList<ImageItem> list = new ArrayList<>();
                 list.add(item);
                 notifyOnImagePickComplete(list);
@@ -175,7 +188,7 @@ public class SingleCropActivity extends FragmentActivity {
     }
 
     public String generateCropFile(String filePath, String fileName) {
-        File f = new File(filePath, fileName + (cropConfig.isNeedPng() ? ".png" : ".jpg"));
+        File f = new File(filePath, fileName + (cropConfig.isNeedPng() ? PNG : JPEG));
         String cropUrl;
         Bitmap bitmap;
         if (cropConfig.isGap()) {

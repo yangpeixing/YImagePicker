@@ -28,9 +28,12 @@ import com.bumptech.glide.Glide;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.builder.MultiPickerBuilder;
+import com.ypx.imagepicker.data.MediaItemsDataSource;
+import com.ypx.imagepicker.data.MediaSetsDataSource;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
 import com.ypx.imagepicker.data.OnPickerCompleteListener;
@@ -254,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
                 .setVideoSinglePick(mCbVideoSingle.isChecked())//设置视频单选
                 .setCropPicSaveFilePath(ImagePicker.cropPicSaveFilePath)
                 .setMaxVideoDuration(120000L)//设置可选区的最大视频时长
+                .setMinVideoDuration(60000L)
                 .pick(this, new OnImagePickCompleteListener2() {
                     @Override
                     public void onPickFailed(PickerError error) {
@@ -265,7 +269,9 @@ public class MainActivity extends AppCompatActivity {
                         //图片剪裁回调，主线程
                         //注意：剪裁回调里的ImageItem中getCropUrl()才是剪裁过后的图片地址
                         for (ImageItem item : items) {
-                            item.path = item.getCropUrl();
+                            if (item.getCropUrl() != null && item.getCropUrl().length() > 0) {
+                                item.path = item.getCropUrl();
+                            }
                         }
                         picList.addAll(items);
                         refreshGridLayout();
@@ -284,7 +290,8 @@ public class MainActivity extends AppCompatActivity {
                 .setPreview(!mCbClosePreview.isChecked())//是否开启预览
                 .setVideoSinglePick(mCbVideoSingle.isChecked())//设置视频单选
                 .setSinglePickImageOrVideoType(mCbImageOrVideo.isChecked())//设置图片和视频单一类型选择
-                .setMaxVideoDuration(12000L)//设置视频可选取的最大时长
+                .setMaxVideoDuration(120000L)//设置视频可选取的最大时长
+                .setMinVideoDuration(60000L)
                 .setLastImageList(mRbSave.isChecked() ? picList : null)//设置上一次操作的图片列表，下次选择时默认恢复上一次选择的状态
                 .setShieldList(mRbShield.isChecked() ? picList : null)//设置需要屏蔽掉的图片列表，下次选择时已屏蔽的文件不可选择
                 .pick(this, new OnImagePickCompleteListener() {
@@ -402,6 +409,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startPick() {
+//        ImagePicker.provideMediaSets(this, MimeType.ofAll(), new MediaSetsDataSource.MediaSetProvider() {
+//            @Override
+//            public void providerMediaSets(ArrayList<ImageSet> imageSets) {
+//                Log.e("startPick", "providerMediaSets: " + imageSets.size());
+//            }
+//        });
+
+//        ImagePicker.provideAllMediaItems(this, getMimeTypes(), new MediaItemsDataSource.MediaItemProvider() {
+//            @Override
+//            public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
+//                Log.e("startPick", "providerMediaSets: " + imageItems.size());
+//            }
+//        });
+
         if (mRbCrop.isChecked()) {
             crop();
         } else if (mRbTakePhoto.isChecked()) {

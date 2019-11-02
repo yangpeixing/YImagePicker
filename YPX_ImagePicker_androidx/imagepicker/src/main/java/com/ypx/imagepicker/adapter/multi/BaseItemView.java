@@ -27,10 +27,25 @@ import java.util.ArrayList;
 public abstract class BaseItemView extends LinearLayout {
     protected View view;
 
+    /**
+     * @return item布局id
+     */
     protected abstract int getLayoutId();
 
+    /**
+     * @param view 初始化view
+     */
     protected abstract void initView(View view);
 
+    /**
+     * 绑定数据
+     *
+     * @param imageItem       当前要加载的imageitem
+     * @param adapter         当前adapter
+     * @param position        position
+     * @param selectImageList 选中列表
+     * @param result          操作回调
+     */
     protected abstract void bindData(ImageItem imageItem,
                                      RecyclerView.Adapter adapter,
                                      int position,

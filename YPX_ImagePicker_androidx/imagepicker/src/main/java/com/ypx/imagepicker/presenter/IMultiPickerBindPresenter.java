@@ -34,13 +34,6 @@ public interface IMultiPickerBindPresenter extends BasePresenter {
      */
     PickerUiConfig getUiConfig(Context context);
 
-    /**
-     * 提示
-     *
-     * @param context 上下文
-     * @param msg     提示文本
-     */
-    void tip(Context context, String msg);
 
     /**
      * 图片点击事件

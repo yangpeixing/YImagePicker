@@ -14,7 +14,8 @@ public enum PickerError {
     SELECT_CONFIG_NOT_FOUND(-26887, "not found selectConfig or cropConfig"),
     CROP_URL_NOT_FOUND(-26888, "not found imagePath to crop"),
     CROP_EXCEPTION(-26889, "crop exception"),
-    OTHER(-26890, "other error");
+    TAKE_PHOTO_FAILED(-268890, "takePhoto failed"),
+    OTHER(-26891, "other error");
 
 
     private int mCode = 0;
