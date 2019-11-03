@@ -5,8 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
@@ -14,9 +16,12 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.imagepicker_support.R;
 import com.ypx.imagepicker.bean.CropUiConfig;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
+
+import java.util.ArrayList;
 
 /**
  * Description: 小红书样式
@@ -44,6 +49,10 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
                 .into(imageView);
     }
 
+    /**
+     * @param context 上下文
+     * @return
+     */
     @Override
     public CropUiConfig getUiConfig(Context context) {
         CropUiConfig config = new CropUiConfig();
@@ -89,24 +98,31 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
         config.setShowNextCount(false);
         //设置下一步按钮文字
         config.setNextBtnText("下一步");
+        config.setTitleArrowIconID(R.mipmap.picker_arrow_down);
+
+        config.setShowStatusBar(false);
         return config;
+    }
+
+    @Override
+    public void tip(Context context, String msg) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
     /**
      * 选择超过数量限制提示
      *
-     * @param context    上下文
-     * @param maxCount   最大数量
-     * @param defaultTip 默认提示文本 “最多选择maxCount张图片”
+     * @param context  上下文
+     * @param maxCount 最大数量
      */
     @Override
-    public void overMaxCountTip(Context context, int maxCount, String defaultTip) {
+    public void overMaxCountTip(Context context, int maxCount) {
         if (context == null) {
             return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(defaultTip);
-        builder.setPositiveButton(com.ypx.imagepicker.R.string.picker_str_isee,
+        builder.setMessage("最多选择" + maxCount + "个文件");
+        builder.setPositiveButton(R.string.picker_str_sure,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -118,13 +134,60 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
     }
 
     /**
-     * 在单选视频里，点击视频item会触发此回调
+     * 拦截选择器取消操作，用于弹出二次确认框
+     *
+     * @param activity     当前选择器页面
+     * @param selectedList 当前已经选择的文件列表
+     * @return true:则拦截选择器取消， false，不处理选择器取消操作
+     */
+    @Override
+    public boolean interceptPickerCancel(final Activity activity, ArrayList<ImageItem> selectedList) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage("是否放弃选择？");
+        builder.setPositiveButton(R.string.picker_str_sure,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        activity.finish();
+                    }
+                });
+        builder.setNegativeButton(R.string.picker_str_error,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        return true;
+    }
+
+    /**
+     * 满足selectConfig.isVideoSinglePick()==true 时，才会触发此方法
+     * 在单选视频里，点击视频item会触发此方法
      *
      * @param activity  页面
      * @param imageItem 当前选中视频
+     * @return true:则拦截外部回调，直接执行该方法， false，不处理视频点击
      */
     @Override
-    public void clickVideo(Activity activity, ImageItem imageItem) {
+    public boolean interceptVideoClick(Activity activity, ImageItem imageItem) {
         Toast.makeText(activity, imageItem.path, Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    /**
+     * @param context context
+     * @return 配置选择器一些提示文本和常量
+     */
+    @NonNull
+    @Override
+    public PickConstants getPickConstants(Context context) {
+        PickConstants pickConstants=new PickConstants(context);
+        pickConstants.picker_str_only_select_image="我是自定义文本";
+        //以下省略若干常量配置
+        return new PickConstants(context);
     }
 }

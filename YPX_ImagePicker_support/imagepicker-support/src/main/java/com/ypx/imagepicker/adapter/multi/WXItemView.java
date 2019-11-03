@@ -8,7 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
-import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MultiSelectConfig;
@@ -74,17 +73,33 @@ public class WXItemView extends BaseItemView {
         if (presenter != null) {
             presenter.displayListImage(mIvThumb, item, getLayoutParams().height);
         }
+        mIvThumb.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onActionResult != null) {
+                    onActionResult.onClickItem(item, position);
+                }
+            }
+        });
+        mIvThumbCheck.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onActionResult != null) {
+                    onActionResult.onCheckItem(item);
+                }
+            }
+        });
         mIvThumbCheck.setVisibility(View.VISIBLE);
         //如果是视频
         if (item.isVideo()) {
             mVideoLayout.setVisibility(View.VISIBLE);
             mVideoTime.setText(item.getDurationFormat());
             mIvThumb.setType(ShowTypeImageView.TYPE_NONE);
-            if (item.duration > ImagePicker.MAX_VIDEO_DURATION) {
+            if (item.duration > selectConfig.getMaxVideoDuration()
+                    || item.duration < selectConfig.getMinVideoDuration()) {
                 mIvThumbCheck.setVisibility(View.GONE);
                 mVMasker.setVisibility(View.VISIBLE);
                 mVMasker.setBackgroundColor(Color.parseColor("#80FFFFFF"));
-                mIvThumb.setOnClickListener(null);
                 return;
             }
             //只能单选视频
@@ -103,7 +118,6 @@ public class WXItemView extends BaseItemView {
                 mIvThumbCheck.setVisibility(View.GONE);
                 mVMasker.setVisibility(View.VISIBLE);
                 mVMasker.setBackgroundColor(Color.parseColor("#80FFFFFF"));
-                mIvThumb.setOnClickListener(null);
                 return;
             }
         }
@@ -128,24 +142,6 @@ public class WXItemView extends BaseItemView {
         if (selectConfig.getMaxCount() <= 1 && selectConfig.getSelectMode() != SelectMode.MODE_MULTI) {
             mIvThumbCheck.setVisibility(View.GONE);
         }
-
-        mIvThumb.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onActionResult != null) {
-                    onActionResult.onClickItem(item, position);
-                }
-            }
-        });
-
-        mIvThumbCheck.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onActionResult != null) {
-                    onActionResult.onCheckItem(item);
-                }
-            }
-        });
     }
 
 }

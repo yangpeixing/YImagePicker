@@ -28,7 +28,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="6dp"
         android:layout_marginBottom="6dp"
-        android:background="@color/black" />
+        android:background="@android:color/black" />
 
     <TextView
         android:id="@+id/mTvDuration"

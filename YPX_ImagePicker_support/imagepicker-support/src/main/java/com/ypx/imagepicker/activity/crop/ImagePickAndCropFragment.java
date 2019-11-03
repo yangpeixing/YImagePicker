@@ -2,7 +2,6 @@ package com.ypx.imagepicker.activity.crop;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,11 +15,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import com.ypx.imagepicker.ImagePicker;
+
+import android.support.annotation.NonNull;
+
+
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PBaseLoaderFragment;
-import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.adapter.crop.CropGridAdapter;
 import com.ypx.imagepicker.adapter.crop.CropSetAdapter;
 import com.ypx.imagepicker.bean.BaseSelectConfig;
@@ -32,14 +32,16 @@ import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.CropViewContainerHelper;
+import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.RecyclerViewTouchHelper;
 import com.ypx.imagepicker.helper.VideoViewContainerHelper;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
+import com.ypx.imagepicker.presenter.PBasePresenter;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PFileUtil;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
-import com.ypx.imagepicker.widget.cropimage.CropImageView;
 import com.ypx.imagepicker.widget.TouchRecyclerView;
+import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,8 +82,6 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
     private int pressImageIndex = 0;
     //滑动辅助类
     private RecyclerViewTouchHelper touchHelper;
-    //选中图片列表
-    private List<ImageItem> selectList = new ArrayList<>();
     //图片加载提供者
     private ICropPickerBindPresenter presenter;
     //选择配置项
@@ -274,6 +274,14 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
 
     private ImageItem lastPressItem;
 
+    private boolean selectedFirstItemIsImage() {
+        return selectConfig.hasFirstImageItem() || (selectList != null && selectList.size() > 0 && !selectList.get(0).isVideo());
+    }
+
+    private boolean selectedFirstItemIsVideo() {
+        return !selectConfig.hasFirstImageItem() && (selectList != null && selectList.size() > 0 && selectList.get(0).isVideo());
+    }
+
     /**
      * 点击图片
      *
@@ -296,6 +304,10 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
             return;
         }
         currentImageItem = imageItems.get(pressImageIndex);
+        //检测item是否可以选中
+        if (isItemCantClick(selectList, currentImageItem)) {
+            return;
+        }
         if (lastPressItem != null) {
             //如果当前选中的item和上一次选中的一致，则不处理
             if (lastPressItem.equals(currentImageItem)) {
@@ -309,12 +321,15 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         if (currentImageItem.isVideo()) {
             //如果当前视频只支持单选的话，执行presenter的clickVideo方法
             if (selectConfig.isVideoSinglePick()) {
-                if (presenter != null) {
-                    presenter.clickVideo(getActivity(), currentImageItem);
+                if (presenter.interceptVideoClick(getActivity(), currentImageItem)) {
+                    return;
                 }
+                selectList.add(currentImageItem);
+                next();
+                return;
             } else {
                 if (currentImageItem.duration == 0 || !PFileUtil.exists(currentImageItem.path)) {
-                    Toast.makeText(getActivity(), R.string.str_video_error, Toast.LENGTH_SHORT).show();
+                    tip(getPickConstants().picker_str_video_error);
                     return;
                 }
                 //执行预览视频操作
@@ -326,7 +341,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
             loadCropView();
             checkStateBtn();
             if (mTvFullOrGap.getVisibility() == View.VISIBLE) {
-                if (mTvFullOrGap.getText().toString().equals(getString(R.string.picker_str_haswhite))) {
+                if (mTvFullOrGap.getText().toString().equals(getPickConstants().picker_str_gap)) {
                     mCropView.setBackgroundColor(Color.TRANSPARENT);
                 } else {
                     mCropView.setBackgroundColor(Color.WHITE);
@@ -584,7 +599,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
      * 留白情况下，显示充满状态
      */
     private void gapState() {
-        mTvFullOrGap.setText(R.string.picker_str_full);
+        mTvFullOrGap.setText(getPickConstants().picker_str_full);
         cropViewContainerHelper.setBackgroundColor(Color.WHITE);
         mTvFullOrGap.setCompoundDrawablesWithIntrinsicBounds(getResources().
                 getDrawable(uiConfig.getFillIconID()), null, null, null);
@@ -594,7 +609,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
      * 充满情况下，显示留白状态
      */
     private void fullState() {
-        mTvFullOrGap.setText(R.string.picker_str_haswhite);
+        mTvFullOrGap.setText(getPickConstants().picker_str_gap);
         cropViewContainerHelper.setBackgroundColor(Color.TRANSPARENT);
         mTvFullOrGap.setCompoundDrawablesWithIntrinsicBounds(getResources().
                 getDrawable(uiConfig.getGapIconID()), null, null, null);
@@ -615,20 +630,20 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
      * 点击下一步
      */
     private void next() {
-        if (mCropView.isEditing()) {
-            return;
-        }
-        if (selectList.contains(currentImageItem)
-                && (mCropView.getDrawable() == null ||
-                mCropView.getDrawable().getIntrinsicHeight() == 0 ||
-                mCropView.getDrawable().getIntrinsicWidth() == 0)) {
-            Toast.makeText(getActivity(), getString(R.string.wait_for_load), Toast.LENGTH_SHORT).show();
-            return;
-        }
         //如果当前选择的都是视频
-        if (selectList.size() > 0 && selectList.get(0).isVideo() && !selectConfig.isVideoSinglePick()) {
+        if (selectList.size() > 0 && selectList.get(0).isVideo()) {
             imageListener.onImagePickComplete((ArrayList<ImageItem>) selectList);
         } else {
+            if (mCropView.isEditing()) {
+                return;
+            }
+            if (selectList.contains(currentImageItem)
+                    && (mCropView.getDrawable() == null ||
+                    mCropView.getDrawable().getIntrinsicHeight() == 0 ||
+                    mCropView.getDrawable().getIntrinsicWidth() == 0)) {
+                tip(getPickConstants().picker_str_wait_for_load);
+                return;
+            }
             ArrayList<ImageItem> cropUrlList = cropViewContainerHelper.
                     generateCropUrls(selectList, selectConfig.getCropSaveFilePath(), cropMode);
             if (null != imageListener) {
@@ -637,41 +652,21 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         }
     }
 
-    /**
-     * 是否超过最大限制数
-     *
-     * @return true:超过
-     */
-    private boolean isOverMaxCount() {
-        if (selectList.size() >= selectConfig.getMaxCount()) {
-            String tip = String.format(getString(R.string.picker_str_selectmaxcount), selectConfig.getMaxCount());
-            if (presenter != null) {
-                presenter.overMaxCountTip(getContext(), selectConfig.getMaxCount(), tip);
-            } else {
-                Toast.makeText(getContext(), tip, Toast.LENGTH_SHORT).show();
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    protected void takePhoto() {
-        if (isOverMaxCount()) {
-            return;
-        }
-        super.takePhoto();
-    }
-
     @Override
     protected BaseSelectConfig getSelectConfig() {
         return selectConfig;
     }
 
     @Override
+    protected PBasePresenter getPresenter() {
+        return presenter;
+    }
+
+    @Override
     protected void loadMediaSetsComplete(List<ImageSet> imageSetList) {
-        if (imageSetList == null || imageSetList.size() == 0 || (imageSetList.size() == 1 && imageSetList.get(0).count == 0)) {
-            PickerErrorExecutor.executeError(imageListener, PickerError.MEDIA_NOT_FOUND.getCode());
+        if (imageSetList == null || imageSetList.size() == 0 ||
+                (imageSetList.size() == 1 && imageSetList.get(0).count == 0)) {
+            tip(getPickConstants().picker_str_media_not_found);
             return;
         }
         this.imageSets.clear();
@@ -686,7 +681,7 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         if (set.imageItems != null && set.imageItems.size() > 0) {
             imageItems.addAll(set.imageItems);
             imageGridAdapter.notifyDataSetChanged();
-            int firstImageIndex = getFirstImage();
+            int firstImageIndex = getCanPressItemPosition();
             if (firstImageIndex < 0) {
                 return;
             }
@@ -695,7 +690,10 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
         }
     }
 
-    private int getFirstImage() {
+    /**
+     * @return 获取第一个有效的item（可以选择的）
+     */
+    private int getCanPressItemPosition() {
         for (int i = 0; i < imageItems.size(); i++) {
             if (isItemCanPress(i)) {
                 return i;
@@ -712,20 +710,26 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
      */
     private boolean isItemCanPress(int position) {
         ImageItem item = imageItems.get(position);
-        //如果是图片，则不校验，默认选中第一个即可
+        if (selectConfig.hasFirstImageItem() || selectList != null && selectList.size() > 0) {
+            //如果当前选中的文件中第一个是视频，则代表只能选择视频，则该项跳过
+            if (selectedFirstItemIsVideo() && !item.isVideo()) {
+                return false;
+            }
+            //如果当前选中的文件中第一个是图片，则代表只能选择图片，则该项跳过
+            if (selectedFirstItemIsImage() && item.isVideo()) {
+                return false;
+            }
+        }
         if (!item.isVideo()) {
             return true;
-        }
-        //如果当前选中的文件中第一个是图片，则代表只能选择图片，则该项跳过
-        if (selectList.size() > 0 && selectList.get(0) != null && !selectList.get(0).isVideo()) {
-            return false;
         }
         //如果视频单选，跳过
         if (selectConfig.isVideoSinglePick()) {
             return false;
         }
-        //如果该视频超过了可选择的最大时长，跳过
-        return item.duration <= ImagePicker.MAX_VIDEO_DURATION;
+        //如果该视频超过了可选择的最大时长或小于最小时长，跳过
+        return item.duration <= selectConfig.getMaxVideoDuration()
+                && item.duration >= selectConfig.getMinVideoDuration();
     }
 
     @Override
@@ -746,6 +750,9 @@ public class ImagePickAndCropFragment extends PBaseLoaderFragment implements Vie
     public boolean onBackPressed() {
         if (mImageSetRecyclerView != null && mImageSetRecyclerView.getVisibility() == View.VISIBLE) {
             toggleImageSet();
+            return true;
+        }
+        if (presenter != null && presenter.interceptPickerCancel(getActivity(), (ArrayList<ImageItem>) selectList)) {
             return true;
         }
         PickerErrorExecutor.executeError(imageListener, PickerError.CANCEL.getCode());

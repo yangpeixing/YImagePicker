@@ -1,29 +1,29 @@
 <resources>
-    <string name="all_images">所有图片</string>
-    <string name="picker_str_camerapermisson">您拒绝了拍照权限，如拒绝设置会导致该功能无法使用!是否前去设置？</string>
-    <string name="picker_str_storagepermisson">您拒绝了存储权限，如拒绝设置会导致该功能无法使用!是否前去设置？</string>
-    <string name="app_str_storagepermisson">您拒绝了存储权限，如拒绝设置会导致Mars无法使用!是否前去设置？</string>
-    <string name="picker_str_selectmaxcount">最多选择%d张图片</string>
-    <string name="picker_str_isee">我知道了</string>
+    <!-- can't change-->
+    <string name="picker_str_piece">张</string>
+    <string name="picker_str_all">图片和视频</string>
+    <string name="picker_str_all_video">所有视频</string>
+    <string name="picker_str_all_image">所有图片</string>
+    <string name="picker_str_mimetypes_empty">请至少选择一种文件加载类型!</string>
+    <!-- can change, see PickConstants-->
+    <string name="picker_str_camera_permission">您拒绝了拍照权限，如拒绝设置会导致该功能无法使用!是否前去设置？</string>
+    <string name="picker_str_storage_permission">您拒绝了存储权限，如拒绝设置会导致该功能无法使用!是否前去设置？</string>
+    <string name="picker_str_multi_title">图片和视频</string>
+    <string name="picker_str_multi_title_video">视频选择</string>
+    <string name="picker_str_multi_title_image">图片选择</string>
+    <string name="picker_str_crop_title">图片剪裁</string>
     <string name="picker_str_full">充满</string>
-    <string name="picker_str_haswhite">留白</string>
-    <string name="str_allmedia">图片和视频</string>
-    <string name="str_allvideo">所有视频</string>
-
-    <string name="you_have_a_select_limit">最多选择%1$s张图片</string>
-    <string name="piece">张</string>
-    <string name="select_complete">完成(%1$s/%2$s)</string>
-    <string name="complete">完成</string>
-    <string name="str_emptytip">请至少选择一张图片</string>
-    <string name="str_overlimit">已超过选择限制!</string>
-    <string name="str_setcount">未设置选择数量!</string>
-    <string name="str_shield">该图片已选过或无法选择!</string>
-    <string name="wait_for_load">图片未加载完成，请稍候!</string>
-    <string name="str_image_video">图片和视频</string>
-    <string name="str_video">视频选择</string>
-    <string name="str_image">图片选择</string>
-    <string name="str_limit">最多选择%d张图片</string>
-    <string name="str_loading">资源加载中,请稍后...</string>
-    <string name="str_crop">图片剪裁</string>
-    <string name="str_video_error">该视频文件路径无效或已损坏!</string>
+    <string name="picker_str_gap">留白</string>
+    <string name="picker_str_shield">该文件已选过或无法选择!</string>
+    <string name="picker_str_wait_for_load">图片未加载完成，请稍候!</string>
+    <string name="picker_str_loading">资源加载中,请稍后…</string>
+    <string name="picker_str_video_error">该视频文件路径无效或已损坏!</string>
+    <string name="picker_str_media_not_found">暂未发现媒体文件</string>
+    <string name="picker_str_only_select_image">只能选择图片!</string>
+    <string name="picker_str_only_select_video">只能选择视频!</string>
+    <string name="picker_str_video_over_max_duration">视频时长不得超过</string>
+    <string name="picker_str_video_less_min_duration">视频时长不得少于</string>
+    <string name="picker_str_preview">预览</string>
+    <string name="picker_str_take_video">拍摄视频</string>
+    <string name="picker_str_take_photo">拍摄照片</string>
 </resources>

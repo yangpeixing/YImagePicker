@@ -11,15 +11,17 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerUiConfig;
-import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
+import com.ypx.imagepicker.utils.PConstantsUtil;
 
+import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * Description: 多选adapter
@@ -31,12 +33,17 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int ITEM_TYPE_CAMERA = 0;
     private static final int ITEM_TYPE_NORMAL = 1;
     private List<ImageItem> images;
+    //选中图片列表
+    private ArrayList<ImageItem> selectList;
     private MultiSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
     private PickerUiConfig pickerUiConfig;
+    private Context context;
 
-    public MultiGridAdapter(Context ctx, List<ImageItem> images, MultiSelectConfig selectConfig, IMultiPickerBindPresenter presenter) {
+    public MultiGridAdapter(Context ctx, ArrayList<ImageItem> selectList, List<ImageItem> images, MultiSelectConfig selectConfig, IMultiPickerBindPresenter presenter) {
+        this.context = ctx;
         this.images = images;
+        this.selectList = selectList;
         this.selectConfig = selectConfig;
         this.presenter = presenter;
         pickerUiConfig = presenter.getUiConfig(ctx);
@@ -85,12 +92,15 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         int itemViewType = getItemViewType(position);
         final ImageItem item = getItem(position);
         if (itemViewType == ITEM_TYPE_CAMERA || item == null) {
+            CameraViewHolder viewHolder1 = (CameraViewHolder) viewHolder;
+            viewHolder1.tv_camera.setText(selectConfig.isOnlyShowVideo() ?
+                    PConstantsUtil.getString(context, presenter).picker_str_take_video :
+                    PConstantsUtil.getString(context, presenter).picker_str_take_photo);
             return;
         }
         int index = selectConfig.isShowCamera() ? position - 1 : position;
         ItemViewHolder holder = (ItemViewHolder) viewHolder;
-        holder.getBaseItemView().bindData(item, this, index,
-                MultiPickerData.instance.getSelectImageList(), onActionResult);
+        holder.getBaseItemView().bindData(item, this, index, selectList, onActionResult);
     }
 
     @Override
@@ -155,7 +165,6 @@ public class MultiGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     if (onActionResult != null) {
                         onActionResult.onClickItem(null, -1);
                     }
-                    //   PTakePhotoUtil.takePhoto((Activity) v.getContext(), REQ_CAMERA);
                 }
             });
         }

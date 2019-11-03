@@ -63,7 +63,7 @@ public class RotateGestureDetector {
         return (y2 - y1) / (x2 - x1);
     }
 
-    public static interface OnRotateListener {
+    public  interface OnRotateListener {
         void onRotate(float degrees, float focusX, float focusY);
     }
 }

@@ -10,7 +10,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
-import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.CropUiConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
@@ -27,6 +26,7 @@ public class VideoViewContainerHelper {
 
     public void loadVideoView(ViewGroup parent, ImageItem imageItem, ICropPickerBindPresenter presenter, CropUiConfig uiConfig) {
         Context context = parent.getContext();
+
         if (videoView == null) {
             videoView = new VideoView(context);
             videoView.setBackgroundColor(Color.TRANSPARENT);
@@ -46,8 +46,8 @@ public class VideoViewContainerHelper {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             params2.gravity = Gravity.CENTER;
             pauseImg.setLayoutParams(params2);
-            pauseImg.setVisibility(View.GONE);
         }
+        pauseImg.setVisibility(View.GONE);
         parent.removeAllViews();
         parent.addView(videoView);
         parent.addView(previewImg);

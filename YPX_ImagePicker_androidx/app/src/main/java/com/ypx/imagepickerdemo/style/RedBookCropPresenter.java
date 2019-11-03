@@ -49,6 +49,10 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
                 .into(imageView);
     }
 
+    /**
+     * @param context 上下文
+     * @return
+     */
     @Override
     public CropUiConfig getUiConfig(Context context) {
         CropUiConfig config = new CropUiConfig();
@@ -108,8 +112,8 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
     /**
      * 选择超过数量限制提示
      *
-     * @param context    上下文
-     * @param maxCount   最大数量
+     * @param context  上下文
+     * @param maxCount 最大数量
      */
     @Override
     public void overMaxCountTip(Context context, int maxCount) {
@@ -174,9 +178,16 @@ public class RedBookCropPresenter implements ICropPickerBindPresenter {
         return false;
     }
 
+    /**
+     * @param context context
+     * @return 配置选择器一些提示文本和常量
+     */
     @NonNull
     @Override
     public PickConstants getPickConstants(Context context) {
-        return null;
+        PickConstants pickConstants=new PickConstants(context);
+        pickConstants.picker_str_only_select_image="我是自定义文本";
+        //以下省略若干常量配置
+        return new PickConstants(context);
     }
 }

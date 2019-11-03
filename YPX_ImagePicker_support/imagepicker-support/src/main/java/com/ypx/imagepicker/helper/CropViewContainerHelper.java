@@ -56,7 +56,7 @@ public class CropViewContainerHelper {
         } else {
             mCropView = new CropImageView(context);
             //设置剪裁view的属性
-            mCropView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            mCropView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             mCropView.enable(); // 启用图片缩放功能
             mCropView.setMaxScale(7.0f);
             mCropView.setCanShowTouchLine(true);

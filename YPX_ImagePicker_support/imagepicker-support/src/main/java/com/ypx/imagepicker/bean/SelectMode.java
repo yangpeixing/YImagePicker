@@ -9,6 +9,5 @@ package com.ypx.imagepicker.bean;
 public interface SelectMode {
     int MODE_SINGLE = 0;
     int MODE_MULTI = 1;
-    int MODE_TAKEPHOTO = 2;
     int MODE_CROP = 3;
 }

@@ -73,6 +73,15 @@ public class CustomPickerItem extends BaseItemView {
         this.selectConfig = selectConfig;
     }
 
+    /**
+     * 自定义Item绑定逻辑
+     *
+     * @param imageItem       当前要加载的imageitem
+     * @param adapter         当前adapter
+     * @param position        position
+     * @param selectImageList 选中列表
+     * @param result          操作回调
+     */
     @SuppressLint("DefaultLocale")
     @Override
     protected void bindData(final ImageItem imageItem, final RecyclerView.Adapter adapter,

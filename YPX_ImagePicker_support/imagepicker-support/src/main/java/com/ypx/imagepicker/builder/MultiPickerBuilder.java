@@ -3,15 +3,16 @@ package com.ypx.imagepicker.builder;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.ypx.imagepicker.ImagePicker;
+import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerActivity;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerFragment;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.MultiSelectConfig;
+import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.bean.SelectMode;
-import com.ypx.imagepicker.data.MultiPickerData;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * Author: peixing.yang
  * Date: 2018/9/19 16:56
  */
-public class MultiPickerBuilder {
+public class MultiPickerBuilder extends PBaseBuilder {
     private MultiSelectConfig selectConfig;
     private IMultiPickerBindPresenter presenter;
 
@@ -52,11 +53,15 @@ public class MultiPickerBuilder {
      * @param listener 选择器选择回调
      */
     public void pick(Activity context, final OnImagePickCompleteListener listener) {
-        MultiPickerData.instance.clear();
         if (selectConfig.getMaxCount() == 1) {
             selectConfig.setSelectMode(SelectMode.MODE_SINGLE);
         }
         checkVideoAndImage();
+        if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
+            PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
+            presenter.tip(context, context.getResources().getString(R.string.picker_str_mimetypes_empty));
+            return;
+        }
         MultiImagePickerActivity.intent(context, selectConfig, presenter, listener);
     }
 
@@ -74,10 +79,14 @@ public class MultiPickerBuilder {
         setShieldList(null);
         setLastImageList(null);
         setPreview(false);
-        MultiPickerData.instance.clear();
         selectConfig.setSelectMode(SelectMode.MODE_CROP);
         if (selectConfig.isCircle()) {
             selectConfig.setCropRatio(1, 1);
+        }
+        if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
+            PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
+            presenter.tip(context, context.getResources().getString(R.string.picker_str_mimetypes_empty));
+            return;
         }
         MultiImagePickerActivity.intent(context, selectConfig, presenter, listener);
     }
@@ -103,7 +112,15 @@ public class MultiPickerBuilder {
      * @param duration 设置视频可选择的最大时长
      */
     public MultiPickerBuilder setMaxVideoDuration(long duration) {
-        ImagePicker.MAX_VIDEO_DURATION = duration;
+        this.selectConfig.setMaxVideoDuration(duration);
+        return this;
+    }
+
+    /**
+     * @param duration 设置视频可选择的最小时长
+     */
+    public MultiPickerBuilder setMinVideoDuration(long duration) {
+        this.selectConfig.setMinVideoDuration(duration);
         return this;
     }
 

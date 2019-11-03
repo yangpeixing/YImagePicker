@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 
 import com.example.imagepicker_support.R;
-import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.adapter.multi.BaseItemView;
 import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -73,6 +72,15 @@ public class CustomPickerItem extends BaseItemView {
         this.selectConfig = selectConfig;
     }
 
+    /**
+     * 自定义Item绑定逻辑
+     *
+     * @param imageItem       当前要加载的imageitem
+     * @param adapter         当前adapter
+     * @param position        position
+     * @param selectImageList 选中列表
+     * @param result          操作回调
+     */
     @SuppressLint("DefaultLocale")
     @Override
     protected void bindData(final ImageItem imageItem, final RecyclerView.Adapter adapter,
@@ -128,8 +136,9 @@ public class CustomPickerItem extends BaseItemView {
             mRectView.setVisibility(View.GONE);
             mVMask.setVisibility(View.GONE);
             //如果当前选中列表的第一个item不是视频,或者该视频超过最大时长选择，则需要置灰该视频item
-            if ((selectImageList != null && selectImageList.size() > 0 && !selectImageList.get(0).isVideo()) ||
-                    imageItem.duration > ImagePicker.MAX_VIDEO_DURATION) {
+            if ((selectImageList != null && selectImageList.size() > 0 && !selectImageList.get(0).isVideo())
+                    || imageItem.duration > selectConfig.getMaxVideoDuration()
+                    || imageItem.duration < selectConfig.getMinVideoDuration()) {
                 mVMask.setVisibility(View.VISIBLE);
                 mVMask.setBackgroundColor(Color.parseColor("#80FFFFFF"));
                 mItemImage.setOnClickListener(null);

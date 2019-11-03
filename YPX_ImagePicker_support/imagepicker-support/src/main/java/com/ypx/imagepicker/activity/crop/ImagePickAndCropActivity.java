@@ -8,18 +8,20 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
+
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.bean.CropSelectConfig;
 import com.ypx.imagepicker.bean.CropUiConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
+import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 
 import java.util.ArrayList;
 
@@ -47,6 +49,9 @@ public class ImagePickAndCropActivity extends FragmentActivity {
      */
     public static void intent(Activity activity, ICropPickerBindPresenter presenter, CropSelectConfig selectConfig,
                               final OnImagePickCompleteListener listener) {
+        if (PViewSizeUtils.onDoubleClick()) {
+            return;
+        }
         Intent intent = new Intent(activity, ImagePickAndCropActivity.class);
         intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_DATA_PRESENTER, presenter);
         intent.putExtra(ImagePickAndCropActivity.INTENT_KEY_SELECT_CONFIG, selectConfig);
@@ -58,6 +63,9 @@ public class ImagePickAndCropActivity extends FragmentActivity {
                     ArrayList list = (ArrayList) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKER_RESULT);
                     listener.onImagePickComplete(list);
                 } else if (listener instanceof OnImagePickCompleteListener2) {
+                    if (resultCode == 0) {
+                        resultCode = PickerError.CANCEL.getCode();
+                    }
                     ((OnImagePickCompleteListener2) listener).onPickFailed(PickerError.valueOf(resultCode));
                 }
             }

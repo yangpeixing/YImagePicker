@@ -6,7 +6,8 @@
     android:layout_margin="1dp"
     android:background="@drawable/picker_selector_list_item_bg"
     android:clickable="true"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/iv_image"
@@ -25,7 +26,7 @@
         android:gravity="bottom"
         android:maxLines="1"
         android:paddingBottom="5dp"
-        android:text="所有照片"
+        android:text=""
         android:textColor="#1A1A1A"
         android:textSize="14sp" />
 
@@ -37,7 +38,7 @@
         android:layout_toEndOf="@+id/iv_image"
         android:gravity="top"
         android:paddingBottom="5dp"
-        android:text="135"
+        android:text=""
         android:textColor="#1A1A1A"
         android:textSize="12sp" />
 

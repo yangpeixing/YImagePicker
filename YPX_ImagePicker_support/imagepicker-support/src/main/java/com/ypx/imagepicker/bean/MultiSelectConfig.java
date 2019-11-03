@@ -12,24 +12,9 @@ public class MultiSelectConfig extends CropConfig {
     private boolean isShowOriginalCheckBox;
     private boolean isCanEditPic;
     private boolean isPreview = true;
-    /**
-     * 图片和视频只能选择一个
-     */
-    private boolean isSinglePickImageOrVideoType = true;
     private int selectMode = SelectMode.MODE_MULTI;
     private ArrayList<ImageItem> lastImageList = new ArrayList<>();
     private ArrayList<ImageItem> shieldImageList = new ArrayList<>();
-
-
-
-    public boolean isSinglePickImageOrVideoType() {
-        return isSinglePickImageOrVideoType;
-    }
-
-    public void setSinglePickImageOrVideoType(boolean isSinglePickImageOrVideoType) {
-        this.isSinglePickImageOrVideoType = isSinglePickImageOrVideoType;
-    }
-
 
     public boolean isPreview() {
         return isPreview;

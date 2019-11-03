@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
@@ -132,7 +134,7 @@ public class MultiSetAdapter extends RecyclerView.Adapter<MultiSetAdapter.ViewHo
         @SuppressLint("DefaultLocale")
         void bindData(ImageSet data) {
             name.setText(data.name);
-            size.setText(String.format("%d%s", data.count, mContext.getResources().getString(R.string.piece)));
+            size.setText(String.format("%d%s", data.count, mContext.getResources().getString(R.string.picker_str_piece)));
             if (uiConfig != null) {
                 ImageItem imageItem = new ImageItem();
                 imageItem.path = data.coverPath;

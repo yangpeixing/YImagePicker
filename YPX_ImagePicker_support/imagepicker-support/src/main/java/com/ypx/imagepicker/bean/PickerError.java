@@ -8,13 +8,15 @@ package com.ypx.imagepicker.bean;
 public enum PickerError {
 
     CANCEL(-26883, "pick cancel"),
-    MEDIA_NOT_FOUND(-26884,"not found media files"),
+    MEDIA_NOT_FOUND(-26884, "not found media files"),
     PRESENTER_NOT_FOUND(-26885, "not found presenter,you must be implements IMultiPickerBindPresenter or ICropPickerBindPresenter"),
     UI_CONFIG_NOT_FOUND(-26886, "presenter not found uiConfig,please check IMultiPickerBindPresenter or ICropPickerBindPresenter's getUiConfig() method realize"),
     SELECT_CONFIG_NOT_FOUND(-26887, "not found selectConfig or cropConfig"),
     CROP_URL_NOT_FOUND(-26888, "not found imagePath to crop"),
     CROP_EXCEPTION(-26889, "crop exception"),
-    OTHER(-26890, "other error");
+    TAKE_PHOTO_FAILED(-268890, "takePhoto failed"),
+    MIMETYPES_EMPTY(-268892, "mimeTypes size is 0"),
+    OTHER(-26891, "other error");
 
 
     private int mCode = 0;
@@ -38,7 +40,7 @@ public enum PickerError {
             return UI_CONFIG_NOT_FOUND;
         } else if (code == SELECT_CONFIG_NOT_FOUND.getCode()) {
             return SELECT_CONFIG_NOT_FOUND;
-        }else if (code == MEDIA_NOT_FOUND.getCode()) {
+        } else if (code == MEDIA_NOT_FOUND.getCode()) {
             return MEDIA_NOT_FOUND;
         }
         return OTHER;

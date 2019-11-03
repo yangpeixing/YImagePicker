@@ -1,15 +1,19 @@
 package com.example.imagepicker_support.style;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 
 import com.bumptech.glide.Glide;
 import com.example.imagepicker_support.R;
 import com.ypx.imagepicker.adapter.multi.MultiGridAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
 
@@ -63,6 +67,27 @@ public class CustomImgPickerPresenter implements IMultiPickerBindPresenter {
     @Override
     public void tip(Context context, String msg) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void overMaxCountTip(Context context, int maxCount) {
+        tip(context, "最多选择" + maxCount + "个文件");
+    }
+
+    @Override
+    public boolean interceptPickerCancel(Activity activity, ArrayList<ImageItem> selectedList) {
+        return false;
+    }
+
+    @Override
+    public boolean interceptVideoClick(Activity activity, ImageItem imageItem) {
+        return false;
+    }
+
+    @NonNull
+    @Override
+    public PickConstants getPickConstants(Context context) {
+        return new PickConstants(context);
     }
 
     @Override

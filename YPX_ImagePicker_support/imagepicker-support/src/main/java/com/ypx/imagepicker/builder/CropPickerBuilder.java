@@ -3,14 +3,16 @@ package com.ypx.imagepicker.builder;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.ypx.imagepicker.ImagePicker;
+import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.crop.ImagePickAndCropActivity;
 import com.ypx.imagepicker.activity.crop.ImagePickAndCropFragment;
 import com.ypx.imagepicker.bean.CropSelectConfig;
 import com.ypx.imagepicker.bean.ImageCropMode;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
+import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
 import com.ypx.imagepicker.utils.PFileUtil;
 
@@ -25,7 +27,7 @@ import java.util.Set;
  * Author: peixing.yang
  * Date: 2019/2/28
  */
-public class CropPickerBuilder {
+public class CropPickerBuilder extends PBaseBuilder {
     private CropSelectConfig selectConfig;
     private ICropPickerBindPresenter presenter;
 
@@ -93,7 +95,15 @@ public class CropPickerBuilder {
      * @param duration 设置视频可选择的最大时长
      */
     public CropPickerBuilder setMaxVideoDuration(long duration) {
-        ImagePicker.MAX_VIDEO_DURATION = duration;
+        this.selectConfig.setMaxVideoDuration(duration);
+        return this;
+    }
+
+    /**
+     * @param duration 设置视频可选择的最小时长
+     */
+    public CropPickerBuilder setMinVideoDuration(long duration) {
+        this.selectConfig.setMinVideoDuration(duration);
         return this;
     }
 
@@ -230,6 +240,11 @@ public class CropPickerBuilder {
      */
     public void pick(Activity activity, final OnImagePickCompleteListener listener) {
         checkVideoAndImage();
+        if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
+            PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
+            presenter.tip(activity, activity.getResources().getString(R.string.picker_str_mimetypes_empty));
+            return;
+        }
         ImagePickAndCropActivity.intent(activity, presenter, selectConfig, listener);
     }
 
@@ -260,6 +275,7 @@ public class CropPickerBuilder {
      * 检测是否加载视频和图片
      */
     private void checkVideoAndImage() {
+        selectConfig.setSinglePickImageOrVideoType(true);
         if (selectConfig == null) {
             return;
         }

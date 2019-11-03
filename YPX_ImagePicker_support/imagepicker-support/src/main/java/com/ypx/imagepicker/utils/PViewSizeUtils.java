@@ -238,24 +238,17 @@ final public class PViewSizeUtils {
         return Color.rgb((int) r, (int) g, (int) b);
     }
 
-    /**
-     * OPPO 是否是刘海屏
-     *
-     * <a href="https://www.jianshu.com/p/811e6986189d">com.oppo.feature.screen.heteromorphism</>
-     *
-     * @param context Context
-     * @return hasNotch
-     */
-    public static boolean hasNotchInOppo(Context context) {
-        boolean has = false;
-        if (null == context) {
-            return has;
+
+    private static long lastTime = 0L;
+
+    public static boolean onDoubleClick() {
+        boolean flag = false;
+        long time = System.currentTimeMillis() - lastTime;
+
+        if (time > 500) {
+            flag = true;
         }
-        try {
-            has = context.getPackageManager().hasSystemFeature("com.oppo.feature.screen.heteromorphism");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return has;
+        lastTime = System.currentTimeMillis();
+        return !flag;
     }
 }
