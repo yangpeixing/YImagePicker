@@ -43,7 +43,7 @@
 
  - **支持直接回调媒体相册列表及文件列表数据(2.4.6版本加入)**
  - **支持选择器所有文案定制(2.4.6版本加入)**
- - **已适配AndroidQ(2.4.6版本加入)**
+ - **androidx已适配AndroidQ，support版本不支持29(2.4.6版本加入)**
  - **支持直接拍摄视频(2.4.6版本加入)**
 
 
@@ -53,9 +53,9 @@
 ```java
 implementation 'com.ypx.yimagepicker:androidx:2.4.6.2'
 ```
-**support版本：** （暂未更新）
+**support版本：** （不支持targetSdkVersion>=29,最高兼容28）
 ```java
-implementation 'com.ypx.yimagepicker:support:2.4.5'
+implementation 'com.ypx.yimagepicker:support:2.4.6'
 ```
 
 ### 核心原理
