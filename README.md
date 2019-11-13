@@ -20,7 +20,11 @@
 
 ### 关于YImagePicker 
 
+
+**重要通知：目前2.x版本为选择器基础版本，预计2019年11月底前发布升级版本3.0，内部架构将会完全重构，UI和逻辑代码完全解耦，将会支持选择器标题栏、底部栏、item、相册列表、预览、剪裁等所有UI定制，不再设置复杂的uiconfig,即可完全实现市场上百分之99的选择器样式。届时会发布邮件通知，请使用者务必watching ,3.x版本将不再兼容2.x，所有配置将会开启新纪元！**
+
 本文档更新于:2019/11/02
+
 
 [ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=2.4.5) ](https://bintray.com/yangpeixing/yimagepicker/androidx/2.4.5/link)
  - 支持小红书剪裁样式并自定义UI
