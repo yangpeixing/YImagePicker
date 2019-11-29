@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="1dp">
 
     <com.ypx.imagepicker.widget.ShowTypeImageView
-        android:id="@+id/iv_thumb"
+        android:id="@+id/mImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
@@ -19,13 +20,13 @@
         android:visibility="gone" />
 
     <FrameLayout
-        android:id="@+id/thumb_check_panel"
+        android:id="@+id/mCheckBoxPanel"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_alignParentEnd="true">
 
-        <com.ypx.imagepicker.widget.CheckImageView
-            android:id="@+id/iv_thumb_check"
+        <CheckBox
+            android:id="@+id/mCheckBox"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"

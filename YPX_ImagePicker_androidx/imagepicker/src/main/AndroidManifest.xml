@@ -16,13 +16,15 @@
 
     <application
         android:allowBackup="true"
-        android:supportsRtl="true">
+        android:requestLegacyExternalStorage="true"
+        android:supportsRtl="true"
+        tools:targetApi="q">
         <activity
-            android:name=".activity.crop.ImagePickAndCropActivity"
+            android:name=".activity.crop.MultiImageCropActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <activity
-            android:name=".activity.multi.MultiImagePreviewActivity"
+            android:name=".activity.preview.MultiImagePreviewActivity"
             android:multiprocess="true" />
 
         <activity
@@ -31,10 +33,6 @@
 
         <activity
             android:name=".activity.multi.MultiImagePickerActivity"
-            android:multiprocess="true" />
-
-        <activity
-            android:name=".activity.preview.MediaPreviewActivity"
             android:multiprocess="true" />
 
         <provider

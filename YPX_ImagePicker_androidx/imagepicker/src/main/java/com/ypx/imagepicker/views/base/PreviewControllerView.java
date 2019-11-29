@@ -1,0 +1,69 @@
+package com.ypx.imagepicker.views.base;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.View;
+
+import androidx.annotation.Nullable;
+
+import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
+import com.ypx.imagepicker.views.PickerUiConfig;
+import com.ypx.imagepicker.presenter.IPickerPresenter;
+
+import java.util.ArrayList;
+
+/**
+ * Time: 2019/11/13 14:39
+ * Author:ypx
+ * Description:自定义预览页面
+ */
+public abstract class PreviewControllerView extends PBaseLayout {
+
+    /**
+     * 设置状态栏
+     */
+    public abstract void setStatusBar();
+
+    /**
+     * 初始化数据
+     *
+     * @param selectConfig 选择配置项
+     * @param presenter    presenter
+     * @param uiConfig     ui配置类
+     * @param selectedList 已选中列表
+     */
+    public abstract void initData(BaseSelectConfig selectConfig, IPickerPresenter presenter,
+                                  PickerUiConfig uiConfig, ArrayList<ImageItem> selectedList);
+
+    /**
+     * @return 获取可以点击完成的View
+     */
+    public abstract View getCompleteView();
+
+    /**
+     * 单击图片
+     */
+    public abstract void singleTap();
+
+    /**
+     * 图片切换回调
+     *
+     * @param position          当前图片索引
+     * @param imageItem         当前图片信息
+     * @param totalPreviewCount 总预览数
+     */
+    public abstract void onPageSelected(int position, ImageItem imageItem, int totalPreviewCount);
+
+    public PreviewControllerView(Context context) {
+        super(context);
+    }
+
+    public PreviewControllerView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public PreviewControllerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+}

@@ -1,5 +1,6 @@
 package com.ypx.imagepicker.activity.preview;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -14,14 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.activity.multi.MultiImagePreviewActivity;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.utils.PickerFileProvider;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 import java.io.File;
-import java.util.Objects;
 
 /**
  * Time: 2019/11/1 16:20
@@ -43,11 +42,9 @@ public class SinglePreviewFragment extends Fragment {
         if (imageItem == null) {
             return;
         }
-        String url = imageItem.path;
         layout = new RelativeLayout(getContext());
         CropImageView imageView = new CropImageView(getActivity());
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        imageView.setBackgroundColor(0xff000000);
         // 启用图片缩放功能
         imageView.enable();
         imageView.setShowImageRectLine(false);
@@ -77,32 +74,20 @@ public class SinglePreviewFragment extends Fragment {
                 if (imageItem.isVideo()) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     File file = new File(imageItem.path);
-                    Uri uri;
-                    if (Build.VERSION.SDK_INT >= 24) {
-                        uri = PickerFileProvider.getUriForFile(v.getContext(),
-                                Objects.requireNonNull(getActivity())
-                                        .getApplication().getPackageName() + ".picker.fileprovider", file);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    } else {
-                        uri = Uri.fromFile(file);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    }
+                    Uri uri = PickerFileProvider.getUriForFile((Activity) v.getContext(), file);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     intent.setDataAndType(uri, "video/*");
                     startActivity(intent);
                     return;
                 }
-                if (getActivity() instanceof MediaPreviewActivity) {
-                    ((MediaPreviewActivity) getActivity()).onImageSingleTap();
-                } else if (getActivity() instanceof MultiImagePreviewActivity) {
+                if (getActivity() instanceof MultiImagePreviewActivity) {
                     ((MultiImagePreviewActivity) getActivity()).onImageSingleTap();
                 }
             }
         });
-        if (getActivity() instanceof MediaPreviewActivity) {
-            ((MediaPreviewActivity) getActivity()).getImgLoader().displayPerViewImage(imageView, url);
-        } else if (getActivity() instanceof MultiImagePreviewActivity) {
-            ((MultiImagePreviewActivity) getActivity()).getImgLoader().displayPerViewImage(imageView, url);
+        if (getActivity() instanceof MultiImagePreviewActivity) {
+            ((MultiImagePreviewActivity) getActivity()).getPresenter().displayImage(imageView, imageItem, imageView.getWidth(), false);
         }
     }
 

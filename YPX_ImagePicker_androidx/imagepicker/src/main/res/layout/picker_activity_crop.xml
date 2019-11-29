@@ -1,14 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/black">
-
-    <include layout="@layout/picker_default_titlebar" />
+    android:layout_height="match_parent">
 
     <com.ypx.imagepicker.widget.cropimage.CropImageView
         android:id="@+id/cropView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/top_bar" />
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/mCropPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

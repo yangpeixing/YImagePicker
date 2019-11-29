@@ -8,14 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.bean.CropUiConfig;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
-import com.ypx.imagepicker.utils.PFileUtil;
+import com.ypx.imagepicker.views.PickerUiConfig;
+import com.ypx.imagepicker.presenter.IPickerPresenter;
 
 /**
  * Time: 2019/9/30 9:45
@@ -27,7 +24,7 @@ public class VideoViewContainerHelper {
     private ImageView previewImg;
     private ImageView pauseImg;
 
-    public void loadVideoView(ViewGroup parent, ImageItem imageItem, ICropPickerBindPresenter presenter, CropUiConfig uiConfig) {
+    public void loadVideoView(ViewGroup parent, ImageItem imageItem, IPickerPresenter presenter, PickerUiConfig uiConfig) {
         Context context = parent.getContext();
 
         if (videoView == null) {
@@ -56,7 +53,7 @@ public class VideoViewContainerHelper {
         parent.addView(previewImg);
         parent.addView(pauseImg);
         previewImg.setVisibility(View.VISIBLE);
-        presenter.displayCropImage(previewImg, imageItem);
+        presenter.displayImage(previewImg, imageItem, 0, false);
         videoView.setVideoPath(imageItem.path);
         videoView.start();
         //监听视频播放完的代码

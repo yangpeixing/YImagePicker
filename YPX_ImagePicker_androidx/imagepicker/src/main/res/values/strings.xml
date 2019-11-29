@@ -26,4 +26,6 @@
     <string name="picker_str_preview">预览</string>
     <string name="picker_str_take_video">拍摄视频</string>
     <string name="picker_str_take_photo">拍摄照片</string>
+    <string name="str_action_frequently">请勿操作过快!</string>
+    <string name="str_cant_preview_video">不支持预览视频！</string>
 </resources>

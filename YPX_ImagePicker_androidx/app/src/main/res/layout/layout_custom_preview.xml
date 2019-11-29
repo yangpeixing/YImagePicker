@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/mTitleBar"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#f01A1A1A">
+
+        <ImageView
+            android:id="@+id/mBackImg"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@mipmap/picker_icon_back_black"
+            android:scaleType="centerInside"
+            android:tint="@color/white_F5" />
+
+        <TextView
+            android:id="@+id/mTvNext"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:text="下一步"
+            android:textColor="#89B374"
+            android:gravity="center"
+            android:paddingEnd="15dp"
+            android:textSize="14sp"/>
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/mTvIndex"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="65dp"
+        android:layout_marginEnd="20dp"
+        android:background="@mipmap/picker_icon_unselect"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/white_F5" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mPreviewRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#f01A1A1A" />
+</RelativeLayout>

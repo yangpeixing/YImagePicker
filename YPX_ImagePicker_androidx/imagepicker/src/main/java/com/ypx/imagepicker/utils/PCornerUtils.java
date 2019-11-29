@@ -4,6 +4,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.widget.CheckBox;
 
 /**
  * Utils to get corner drawable
@@ -135,6 +136,15 @@ public class PCornerUtils {
         bg.addState(new int[]{-android.R.attr.state_pressed}, normal);
         bg.addState(new int[]{android.R.attr.state_pressed}, pressed);
         return bg;
+    }
+
+
+    public static void setCheckBoxDrawable(CheckBox checkBox, int selectedDrawableID, int unSelectedDrawableID) {
+        StateListDrawable checkBoxDrawable = new StateListDrawable();
+        checkBoxDrawable.addState(new int[]{android.R.attr.state_selected},checkBox.getResources().getDrawable(selectedDrawableID) );
+        checkBoxDrawable.addState(new int[]{android.R.attr.state_checked}, checkBox.getResources().getDrawable(selectedDrawableID));
+        checkBoxDrawable.addState(new int[]{}, checkBox.getResources().getDrawable(unSelectedDrawableID));
+        checkBox.setCompoundDrawablesWithIntrinsicBounds(checkBoxDrawable, null, null, null);
     }
 
 }

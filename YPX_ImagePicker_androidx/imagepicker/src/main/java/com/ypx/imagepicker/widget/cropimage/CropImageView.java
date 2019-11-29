@@ -33,10 +33,8 @@ import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
-import com.ypx.imagepicker.utils.PFileUtil;
+import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
-
-import java.io.File;
 
 /**
  * Description: 剪裁ImageView
@@ -1419,7 +1417,7 @@ public class CropImageView extends ImageView {
         setVisibility(INVISIBLE);
         setBackgroundColor(backgroundColor);
         invalidate();
-        Bitmap bitmap = PFileUtil.getViewBitmap(this);
+        Bitmap bitmap = PBitmapUtils.getViewBitmap(this);
         try {
             bitmap = Bitmap.createBitmap(bitmap, (int) mCropRect.left, (int) mCropRect.top,
                     (int) mCropRect.width(), (int) mCropRect.height());

@@ -35,15 +35,24 @@ public class ImageSet implements Serializable {
     }
 
     public ImageSet copy() {
+        return copy(true);
+    }
+
+    public ImageSet copy(boolean isFilterVideo) {
         ImageSet imageSet = new ImageSet();
         imageSet.name = this.name;
         imageSet.coverPath = this.coverPath;
         imageSet.cover = this.cover;
         imageSet.isSelected = this.isSelected;
         imageSet.imageItems = new ArrayList<>();
-        for (ImageItem item : this.imageItems) {
-            ImageItem newItem = item.copy(item);
-            imageSet.imageItems.add(newItem);
+        if (imageItems != null && imageItems.size() > 0) {
+            for (ImageItem item : this.imageItems) {
+                if (isFilterVideo && item.isVideo()) {
+                    continue;
+                }
+                ImageItem newItem = item.copy();
+                imageSet.imageItems.add(newItem);
+            }
         }
         return imageSet;
     }

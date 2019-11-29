@@ -1,6 +1,14 @@
 package com.ypx.imagepicker.bean;
 
+import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.File;
 import java.io.Serializable;
+import java.net.FileNameMap;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Description: 图片信息
@@ -8,7 +16,7 @@ import java.io.Serializable;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class ImageItem implements Serializable {
+public class ImageItem implements Serializable, Parcelable {
     private static final long serialVersionUID = 3429291195776736078L;
     public long id;
     public int width;
@@ -36,9 +44,37 @@ public class ImageItem implements Serializable {
     public ImageItem() {
     }
 
-    public ImageItem(String path) {
-        this.path = path;
+    protected ImageItem(Parcel in) {
+        id = in.readLong();
+        width = in.readInt();
+        height = in.readInt();
+        time = in.readLong();
+        mimeType = in.readString();
+        timeFormat = in.readString();
+        duration = in.readLong();
+        durationFormat = in.readString();
+        videoImageUri = in.readString();
+        imageFilterPath = in.readString();
+        path = in.readString();
+        cropUrl = in.readString();
+        isVideo = in.readByte() != 0;
+        isSelect = in.readByte() != 0;
+        isPress = in.readByte() != 0;
+        selectIndex = in.readInt();
+        cropMode = in.readInt();
     }
+
+    public static final Creator<ImageItem> CREATOR = new Creator<ImageItem>() {
+        @Override
+        public ImageItem createFromParcel(Parcel in) {
+            return new ImageItem(in);
+        }
+
+        @Override
+        public ImageItem[] newArray(int size) {
+            return new ImageItem[size];
+        }
+    };
 
     public String getVideoImageUri() {
         if (videoImageUri == null || videoImageUri.length() == 0) {
@@ -56,12 +92,6 @@ public class ImageItem implements Serializable {
 
     public void setImageFilterPath(String imageFilterPath) {
         this.imageFilterPath = imageFilterPath;
-    }
-
-    public ImageItem(String path, long duration, String videoImageUri) {
-        this.path = path;
-        this.duration = duration;
-        this.videoImageUri = videoImageUri;
     }
 
     public String getLastImageFilterPath() {
@@ -168,17 +198,10 @@ public class ImageItem implements Serializable {
         this.mimeType = mimeType;
     }
 
-    public ImageItem(String path, long time) {
-        this.path = path;
-        this.time = time;
+    public Uri getUri() {
+        return Uri.parse(path);
     }
 
-    public ImageItem(String path, int width, int height, long time) {
-        this.path = path;
-        this.time = time;
-        this.width = width;
-        this.height = height;
-    }
 
     public float getWidthHeightRatio() {
         if (height == 0) {
@@ -221,20 +244,45 @@ public class ImageItem implements Serializable {
         return super.equals(o);
     }
 
-    public ImageItem copy(ImageItem item) {
+    public ImageItem copy() {
         ImageItem newItem = new ImageItem();
-        newItem.path = item.path;
-        newItem.isVideo = item.isVideo;
-        newItem.duration = item.duration;
-        newItem.height = item.height;
-        newItem.width = item.width;
-        newItem.cropMode = item.cropMode;
-        newItem.cropUrl = item.cropUrl;
-        newItem.durationFormat = item.durationFormat;
-        newItem.id = item.id;
+        newItem.path = this.path;
+        newItem.isVideo = this.isVideo;
+        newItem.duration = this.duration;
+        newItem.height = this.height;
+        newItem.width = this.width;
+        newItem.cropMode = this.cropMode;
+        newItem.cropUrl = this.cropUrl;
+        newItem.durationFormat = this.durationFormat;
+        newItem.id = this.id;
         newItem.isPress = false;
         newItem.isSelect = false;
         return newItem;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeInt(width);
+        dest.writeInt(height);
+        dest.writeLong(time);
+        dest.writeString(mimeType);
+        dest.writeString(timeFormat);
+        dest.writeLong(duration);
+        dest.writeString(durationFormat);
+        dest.writeString(videoImageUri);
+        dest.writeString(imageFilterPath);
+        dest.writeString(path);
+        dest.writeString(cropUrl);
+        dest.writeByte((byte) (isVideo ? 1 : 0));
+        dest.writeByte((byte) (isSelect ? 1 : 0));
+        dest.writeByte((byte) (isPress ? 1 : 0));
+        dest.writeInt(selectIndex);
+        dest.writeInt(cropMode);
+    }
 }

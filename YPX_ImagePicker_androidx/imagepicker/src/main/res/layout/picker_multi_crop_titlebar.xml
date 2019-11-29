@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/titleBar"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/mBackImg"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentStart="true"
+        android:scaleType="centerInside"
+        android:src="@mipmap/picker_icon_close_black" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/mTvSetName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxWidth="150dp"
+            android:maxLines="1"
+            android:text="所有文件"
+            android:textColor="#1A1A1A"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/mArrowImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:src="@mipmap/picker_arrow_down" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/mTvNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:gravity="center"
+        android:paddingStart="10dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="4dp"
+        android:text="下一步"
+        android:textColor="#859D7B"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/mTvSelectNum"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="5dp"
+        android:layout_toStartOf="@+id/mTvNext"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="#FFFFFF" />
+</RelativeLayout>

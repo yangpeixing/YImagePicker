@@ -1,26 +1,38 @@
 package com.ypx.imagepicker.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ypx.imagepicker.ImagePicker;
-import com.ypx.imagepicker.bean.BaseSelectConfig;
+import com.ypx.imagepicker.bean.PickerItemDisableCode;
+import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickConstants;
+import com.ypx.imagepicker.data.ITakePhoto;
+import com.ypx.imagepicker.utils.PStatusBarUtil;
+import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.data.MediaSetsDataSource;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.data.OnPickerCompleteListener;
-import com.ypx.imagepicker.presenter.PBasePresenter;
+import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PConstantsUtil;
 import com.ypx.imagepicker.utils.PPermissionUtils;
+import com.ypx.imagepicker.views.PickerUiProvider;
+import com.ypx.imagepicker.views.base.PickerControllerView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,38 +47,49 @@ import static com.ypx.imagepicker.ImagePicker.REQ_STORAGE;
  * Date: 2019/2/21
  * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
-public abstract class PBaseLoaderFragment extends Fragment {
+public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto {
     //选中图片列表
     protected ArrayList<ImageItem> selectList = new ArrayList<>();
 
     /**
      * @return 获取选择器配置项，主要用于加载文件类型的指定
      */
+    @NonNull
     protected abstract BaseSelectConfig getSelectConfig();
 
-    protected abstract PBasePresenter getPresenter();
+    /**
+     * @return 获取presenter
+     */
+    @NonNull
+    protected abstract IPickerPresenter getPresenter();
+
+    /**
+     * @return 获取presenter
+     */
+    @NonNull
+    protected abstract PickerUiConfig getUiConfig();
+
+    protected abstract void notifyOnImagePickComplete();
+
+    protected abstract void toggleFolderList();
+
+    protected abstract void intentPreview(boolean isClickItem, int index);
 
     /**
      * @param imageSetList 媒体文件夹加载完成回调
      */
-    protected abstract void loadMediaSetsComplete(List<ImageSet> imageSetList);
+    protected abstract void loadMediaSetsComplete(@Nullable List<ImageSet> imageSetList);
 
     /**
      * @param set 媒体文件夹内文件加载完成回调
      */
-    protected abstract void loadMediaItemsComplete(ImageSet set);
+    protected abstract void loadMediaItemsComplete(@Nullable ImageSet set);
 
     /**
      * @param allVideoSet 刷新所有视频的文件夹
      */
-    protected abstract void refreshAllVideoSet(ImageSet allVideoSet);
+    protected abstract void refreshAllVideoSet(@Nullable ImageSet allVideoSet);
 
-    /**
-     * 拍照回调
-     *
-     * @param imageItem 拍照返回
-     */
-    protected abstract void onTakePhotoResult(ImageItem imageItem);
 
     /**
      * @return 返回需要判断当前文件夹列表是否打开
@@ -74,6 +97,17 @@ public abstract class PBaseLoaderFragment extends Fragment {
     public boolean onBackPressed() {
         return false;
     }
+
+
+    /**
+     * @param imageItem 回调一张图片
+     */
+    public void notifyOnSingleImagePickComplete(ImageItem imageItem) {
+        selectList.clear();
+        selectList.add(imageItem);
+        notifyOnImagePickComplete();
+    }
+
 
     /**
      * 是否超过最大限制数
@@ -89,38 +123,54 @@ public abstract class PBaseLoaderFragment extends Fragment {
     }
 
     /**
+     * 检测当前拍照item是拍照还是录像
+     */
+    protected void checkTakePhotoOrVideo() {
+        if (getSelectConfig().isShowVideo() && !getSelectConfig().isShowImage()) {
+            takeVideo();
+        } else {
+            takePhoto();
+        }
+    }
+
+    /**
      * 拍照
      */
-    protected void takePhoto() {
-        if (isOverMaxCount()) {
-            return;
-        }
-        if (getActivity() == null) {
+    @Override
+    public void takePhoto() {
+        if (getActivity() == null || isOverMaxCount()) {
             return;
         }
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
         } else {
-            //如果只加载视频,则调用拍视频
-            if (getSelectConfig().isShowVideo() && !getSelectConfig().isShowImage()) {
-                ImagePicker.takeVideo(getActivity(), new OnImagePickCompleteListener() {
-                    @Override
-                    public void onImagePickComplete(ArrayList<ImageItem> items) {
-                        if (items != null && items.size() > 0) {
-                            onTakePhotoResult(items.get(0));
-                        }
+            ImagePicker.takePhoto(getActivity(), new OnImagePickCompleteListener() {
+                @Override
+                public void onImagePickComplete(ArrayList<ImageItem> items) {
+                    if (items != null && items.size() > 0 && items.get(0) != null) {
+                        onTakePhotoResult(items.get(0));
                     }
-                });
-            } else {
-                ImagePicker.takePhoto(getActivity(), new OnImagePickCompleteListener() {
-                    @Override
-                    public void onImagePickComplete(ArrayList<ImageItem> items) {
-                        if (items != null && items.size() > 0) {
-                            onTakePhotoResult(items.get(0));
-                        }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void takeVideo() {
+        if (getActivity() == null || isOverMaxCount()) {
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
+        } else {
+            ImagePicker.takeVideo(getActivity(), new OnImagePickCompleteListener() {
+                @Override
+                public void onImagePickComplete(ArrayList<ImageItem> items) {
+                    if (items != null && items.size() > 0 && items.get(0) != null) {
+                        onTakePhotoResult(items.get(0));
                     }
-                });
-            }
+                }
+            });
         }
     }
 
@@ -150,7 +200,7 @@ public abstract class PBaseLoaderFragment extends Fragment {
      *
      * @param set 文件夹
      */
-    protected void loadMediaItemsFromSet(final ImageSet set) {
+    protected void loadMediaItemsFromSet(final @NonNull ImageSet set) {
         if (set.imageItems == null || set.imageItems.size() == 0) {
             final BaseSelectConfig selectConfig = getSelectConfig();
             ImagePicker.provideMediaItemsFromSetWithPreload(getActivity(), set, selectConfig.getMimeTypes(),
@@ -196,41 +246,162 @@ public abstract class PBaseLoaderFragment extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    protected boolean isItemCantClick(List<ImageItem> selectList, ImageItem imageItem) {
-        if (getPresenter() == null) {
-            return true;
+
+    protected PickerControllerView titleBar;
+    protected PickerControllerView bottomBar;
+
+    protected PickerControllerView inflateControllerView(ViewGroup container, boolean isTitle, PickerUiConfig uiConfig) {
+        final BaseSelectConfig selectConfig = getSelectConfig();
+        final IPickerPresenter presenter = getPresenter();
+        PickerUiProvider uiProvider = uiConfig.getPickerUiProvider();
+        PickerControllerView view = isTitle ? uiProvider.getTitleBar(getWeakActivity()) :
+                uiProvider.getBottomBar(getWeakActivity());
+        if (view != null && view.isAddInParent()) {
+            container.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            if (selectConfig.isShowVideo() && selectConfig.isShowImage()) {
+                view.setTitle(PConstantsUtil.getString(getContext(), presenter).picker_str_multi_title);
+            } else if (selectConfig.isShowVideo()) {
+                view.setTitle(PConstantsUtil.getString(getContext(), presenter).picker_str_multi_title_video);
+            } else {
+                view.setTitle(PConstantsUtil.getString(getContext(), presenter).picker_str_multi_title_image);
+            }
+            final PickerControllerView finalView = view;
+
+            View.OnClickListener clickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (v == finalView.getCanClickToCompleteView()) {
+                            notifyOnImagePickComplete();
+                    } else if (v == finalView.getCanClickToToggleFolderListView()) {
+                        toggleFolderList();
+                    } else {
+                        intentPreview(false, 0);
+                    }
+                }
+            };
+
+            if (view.getCanClickToCompleteView() != null) {
+                view.getCanClickToCompleteView().setOnClickListener(clickListener);
+            }
+
+            if (view.getCanClickToToggleFolderListView() != null) {
+                view.getCanClickToToggleFolderListView().setOnClickListener(clickListener);
+            }
+
+            if (view.getCanClickToIntentPreviewView() != null) {
+                view.getCanClickToIntentPreviewView().setOnClickListener(clickListener);
+            }
         }
 
-        if (getSelectConfig() == null) {
-            return true;
+        return view;
+    }
+
+    protected void controllerViewOnTransitImageSet(boolean isOpen) {
+        if (titleBar != null) {
+            titleBar.onTransitImageSet(isOpen);
         }
-        if (getSelectConfig() instanceof MultiSelectConfig) {
-            //在屏蔽列表中
-            if (((MultiSelectConfig) getSelectConfig()).isShieldItem(imageItem)) {
-                getPresenter().tip(getContext(), getPickConstants().picker_str_shield);
-                return true;
-            }
+        if (bottomBar != null) {
+            bottomBar.onTransitImageSet(isOpen);
         }
-        if (imageItem.isVideo()) {
-            if (getSelectConfig().isSinglePickImageOrVideoType() && selectList != null && selectList.size() > 0 && selectList.get(0).isImage()) {
-                getPresenter().tip(getActivity(), getPickConstants().picker_str_only_select_image);
-                return true;
-            } else if (imageItem.duration > getSelectConfig().getMaxVideoDuration()) {
-                getPresenter().tip(getActivity(), String.format("%s%s", getPickConstants().picker_str_video_over_max_duration,
-                        getSelectConfig().getMaxVideoDurationFormat()));
-                return true;
-            } else if (imageItem.duration < getSelectConfig().getMinVideoDuration()) {
-                getPresenter().tip(getActivity(), String.format("%s%s", getPickConstants().picker_str_video_less_min_duration,
-                        getSelectConfig().getMinVideoDurationFormat()));
-                return true;
+    }
+
+    protected void controllerViewOnImageSetSelected(ImageSet set) {
+        if (titleBar != null) {
+            titleBar.onImageSetSelected(set);
+        }
+        if (bottomBar != null) {
+            bottomBar.onImageSetSelected(set);
+        }
+    }
+
+    protected void refreshCompleteState() {
+        if (titleBar != null) {
+            titleBar.refreshCompleteViewState(selectList, getSelectConfig());
+        }
+
+        if (bottomBar != null) {
+            bottomBar.refreshCompleteViewState(selectList, getSelectConfig());
+        }
+    }
+
+    protected void setFolderListHeight(RecyclerView mFolderListRecyclerView, View mImageSetMask, boolean isCrop) {
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFolderListRecyclerView.getLayoutParams();
+        RelativeLayout.LayoutParams maskParams = (RelativeLayout.LayoutParams) mImageSetMask.getLayoutParams();
+        PickerUiConfig uiConfig = getUiConfig();
+        int height = uiConfig.getFolderListOpenMaxMargin();
+        if (uiConfig.getFolderListOpenDirection() == PickerUiConfig.DIRECTION_BOTTOM) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            if (isCrop) {
+                params.bottomMargin = bottomBar != null ? bottomBar.getViewHeight() : 0;
+                params.topMargin = (titleBar != null ? titleBar.getViewHeight() : 0) + height;
+                maskParams.topMargin = (titleBar != null ? titleBar.getViewHeight() : 0);
+                maskParams.bottomMargin = bottomBar != null ? bottomBar.getViewHeight() : 0;
+            } else {
+                params.bottomMargin = 0;
+                params.topMargin = height;
             }
         } else {
-            if (getSelectConfig().isSinglePickImageOrVideoType() && selectList != null && selectList.size() > 0 && selectList.get(0).isVideo()) {
-                getPresenter().tip(getActivity(), getPickConstants().picker_str_only_select_video);
-                return true;
+            params.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+            if (isCrop) {
+                params.bottomMargin = height + (bottomBar != null ? bottomBar.getViewHeight() : 0);
+                params.topMargin = titleBar != null ? titleBar.getViewHeight() : 0;
+                maskParams.topMargin = (titleBar != null ? titleBar.getViewHeight() : 0);
+                maskParams.bottomMargin = bottomBar != null ? bottomBar.getViewHeight() : 0;
+            } else {
+                params.bottomMargin = height;
+                params.topMargin = 0;
             }
         }
+        mFolderListRecyclerView.setLayoutParams(params);
+        mImageSetMask.setLayoutParams(maskParams);
+    }
+
+    protected boolean interceptClickDisableItem(int disableItemCode, boolean isCheckOverMaxCount) {
+        if (disableItemCode != PickerItemDisableCode.NORMAL) {
+            if (!isCheckOverMaxCount && disableItemCode == PickerItemDisableCode.DISABLE_OVER_MAX_COUNT) {
+                return false;
+            }
+            String message = PickerItemDisableCode.getMessageFormCode(getActivity(), disableItemCode, getPresenter(), getSelectConfig());
+            if (message.length() > 0) {
+                getPresenter().tip(getWeakActivity(), message);
+            }
+            return true;
+        }
         return false;
+    }
+
+
+    protected void addItemInImageSets(@NonNull List<ImageSet> imageSets,
+                                      @NonNull List<ImageItem> imageItems,
+                                      @NonNull ImageItem imageItem,
+                                      @NonNull String firstImageSetName) {
+        imageItems.add(0, imageItem);
+        if (imageSets.size() == 0) {
+            ImageSet imageSet = ImageSet.allImageSet(firstImageSetName);
+            imageSet.cover = imageItem;
+            imageSet.coverPath = imageItem.path;
+            imageSet.imageItems = (ArrayList<ImageItem>) imageItems;
+            imageSet.count = imageSet.imageItems.size();
+            imageSets.add(imageSet);
+        } else {
+            imageSets.get(0).imageItems = (ArrayList<ImageItem>) imageItems;
+            imageSets.get(0).cover = imageItem;
+            imageSets.get(0).coverPath = imageItem.path;
+            imageSets.get(0).count = imageItems.size();
+        }
+    }
+
+    private WeakReference<Activity> weakReference;
+
+    protected Activity getWeakActivity() {
+        if (getActivity() != null) {
+            if (weakReference == null) {
+                weakReference = new WeakReference<Activity>(getActivity());
+            }
+            return weakReference.get();
+        }
+        return null;
     }
 
     protected PickConstants getPickConstants() {
@@ -238,9 +409,7 @@ public abstract class PBaseLoaderFragment extends Fragment {
     }
 
     protected void tip(String msg) {
-        if (getPresenter() != null) {
-            getPresenter().tip(getActivity(), msg);
-        }
+        getPresenter().tip(getWeakActivity(), msg);
     }
 
     final public int dp(float dp) {
@@ -257,10 +426,49 @@ public abstract class PBaseLoaderFragment extends Fragment {
         boolean flag = false;
         long time = System.currentTimeMillis() - lastTime;
 
-        if (time > 500) {
+        if (time > 300) {
             flag = true;
         }
         lastTime = System.currentTimeMillis();
         return !flag;
+    }
+
+
+    protected void traverse(View root) {
+        if (root instanceof ViewGroup) {
+            ViewGroup parent = (ViewGroup) root;
+            final int childCount = parent.getChildCount();
+            for (int i = 0; i < childCount; ++i) {
+                final View child = parent.getChildAt(i);
+                if (child instanceof ViewGroup) {
+                    child.setBackground(null);
+                    traverse((ViewGroup) child);
+                } else {
+                    if (child != null) {
+                        child.setBackground(null);
+                    }
+                    if (child instanceof ImageView) {
+                        ((ImageView) child).setImageDrawable(null);
+                    }
+                }
+            }
+            parent.removeAllViews();
+        }
+    }
+
+
+    /**
+     * 设置是否显示状态栏
+     */
+    protected void setStatusBar() {
+        if (getActivity() != null) {
+            //刘海屏幕需要适配状态栏颜色
+            if (getUiConfig().isShowStatusBar() || PStatusBarUtil.hasNotchInScreen(getActivity())) {
+                PStatusBarUtil.setStatusBar(getActivity(), getUiConfig().getStatusBarColor(),
+                        false, PStatusBarUtil.isDarkColor(getUiConfig().getStatusBarColor()));
+            } else {
+                PStatusBarUtil.fullScreen(getActivity());
+            }
+        }
     }
 }

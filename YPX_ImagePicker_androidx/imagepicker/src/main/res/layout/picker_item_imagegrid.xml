@@ -55,11 +55,4 @@
         android:text=""
         android:textColor="#FFFFFF" />
 
-    <ImageView
-        android:id="@+id/iv_camera"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerInside"
-        android:src="@mipmap/picker_icon_item_photo" />
-
 </RelativeLayout>

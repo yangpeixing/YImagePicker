@@ -185,7 +185,6 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -198,17 +197,54 @@
                 android:text="显示拍照" />
 
             <CheckBox
+                android:id="@+id/cb_showOriginal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="显示原图" />
+
+            <CheckBox
                 android:id="@+id/cb_closePreview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
                 android:text="关闭预览" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/cb_videoSingle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="只能选择一个视频" />
+
+                <CheckBox
+                    android:id="@+id/cb_imageOrVideo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="只能选择图片或视频" />
+
+            </LinearLayout>
+
 
             <CheckBox
                 android:id="@+id/cb_previewCanEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="预览是否支持编辑" />
+                android:text="预览是否支持编辑"
+                android:visibility="gone" />
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -216,17 +252,10 @@
             android:orientation="horizontal">
 
             <CheckBox
-                android:id="@+id/cb_videoSingle"
+                android:id="@+id/cb_singleAutoComplete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="只能选择一个视频" />
-
-            <CheckBox
-                android:id="@+id/cb_imageOrVideo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="只能选择图片或视频" />
-
+                android:text="单选时,点击item直接回调,无需选中" />
 
         </LinearLayout>
 
