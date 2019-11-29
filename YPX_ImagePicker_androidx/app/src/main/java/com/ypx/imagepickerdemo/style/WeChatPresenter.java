@@ -26,8 +26,6 @@ import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.views.PickerUiProvider;
-import com.ypx.imagepicker.views.base.PickerItemView;
-import com.ypx.imagepicker.views.wx.WXItemView;
 import com.ypx.imagepickerdemo.R;
 import com.ypx.imagepickerdemo.SecondActivity;
 
@@ -99,17 +97,9 @@ public class WeChatPresenter implements IPickerPresenter {
         Intent intent = new Intent(activity, SecondActivity.class);
         intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, selectedList);
         activity.startActivity(intent);
-        // ImagePicker.closePickerWithCallback(selectedList);
         return true;
     }
 
-    /**
-     * 拦截选择器取消操作，用于弹出二次确认框
-     *
-     * @param activity     当前选择器页面
-     * @param selectedList 当前已经选择的文件列表
-     * @return true:则拦截选择器取消， false，不处理选择器取消操作
-     */
     @Override
     public boolean interceptPickerCancel(final Activity activity, ArrayList<ImageItem> selectedList) {
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
@@ -144,11 +134,6 @@ public class WeChatPresenter implements IPickerPresenter {
                                       ArrayList<ImageItem> allSetImageList,
                                       BaseSelectConfig selectConfig,
                                       PickerItemAdapter adapter) {
-//        if (selectImageList == null || adapter == null) {
-//            return false;
-//        }
-//        tip(context, "我是自定义的图片点击事件");
-//        adapter.preformCheckItem(imageItem);
         return false;
     }
 
@@ -158,9 +143,8 @@ public class WeChatPresenter implements IPickerPresenter {
             return false;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        final String items[] = {"拍照", "录像"};
         // -1代表没有条目被选中
-        builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(new String[]{"拍照", "录像"}, -1, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -178,7 +162,7 @@ public class WeChatPresenter implements IPickerPresenter {
         return true;
     }
 
-    @NonNull
+
     @Override
     public PickConstants getPickConstants(Context context) {
         return new PickConstants(context);

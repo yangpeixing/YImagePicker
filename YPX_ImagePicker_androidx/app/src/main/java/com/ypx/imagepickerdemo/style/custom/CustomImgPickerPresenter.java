@@ -21,9 +21,11 @@ import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.views.PickerUiProvider;
 import com.ypx.imagepicker.views.base.PickerControllerView;
+import com.ypx.imagepicker.views.base.PickerFolderItemView;
 import com.ypx.imagepicker.views.base.PickerItemView;
 import com.ypx.imagepicker.views.base.PreviewControllerView;
 import com.ypx.imagepicker.views.base.SingleCropControllerView;
+import com.ypx.imagepicker.views.wx.WXFolderItemView;
 import com.ypx.imagepicker.views.wx.WXTitleBar;
 import com.ypx.imagepickerdemo.R;
 
@@ -48,7 +50,7 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
     }
 
     @Override
-    public PickerUiConfig getUiConfig(Context context) {
+    public PickerUiConfig getUiConfig(@Nullable Context context) {
         PickerUiConfig uiConfig = new PickerUiConfig();
         uiConfig.setShowStatusBar(true);
         uiConfig.setStatusBarColor(Color.parseColor("#F5F5F5"));
@@ -93,6 +95,13 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
             public SingleCropControllerView getSingleCropControllerView(Context context) {
                 return new CustomCropControllerView(context);
             }
+
+            @Override
+            public PickerFolderItemView getFolderItemView(Context context) {
+                WXFolderItemView itemView = (WXFolderItemView) super.getFolderItemView(context);
+                itemView.setIndicatorColor(Color.parseColor("#859D7B"));
+                return itemView;
+            }
         });
         return uiConfig;
     }
@@ -106,12 +115,12 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
     }
 
     @Override
-    public boolean interceptPickerCompleteClick(Activity activity, ArrayList<ImageItem> selectedList, BaseSelectConfig selectConfig) {
+    public boolean interceptPickerCompleteClick(@Nullable Activity activity, ArrayList<ImageItem> selectedList, BaseSelectConfig selectConfig) {
         return false;
     }
 
     @Override
-    public boolean interceptPickerCancel(Activity activity, ArrayList<ImageItem> selectedList) {
+    public boolean interceptPickerCancel(@Nullable Activity activity, ArrayList<ImageItem> selectedList) {
         return false;
     }
 

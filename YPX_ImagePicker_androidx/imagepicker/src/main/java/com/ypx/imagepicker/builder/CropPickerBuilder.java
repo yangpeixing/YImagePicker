@@ -14,6 +14,7 @@ import com.ypx.imagepicker.activity.crop.MultiImageCropFragment;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -143,17 +144,18 @@ public class CropPickerBuilder {
     //--------------- 以下是小红书剪裁特有属性 -------------------------------------
 
     /**
-     * 在没有指定setFirstImageItem时，使用这个方法传入当前的第一张剪裁图片url,
+     * 在没有指定setFirstImageItem时，使用这个方法传入当前的第一张图片的宽高信息,
      * 会生成一个新的FirstImageItem，其剪裁模式根据图片宽高决定，如果已经指定了FirstImageItem，则该方法无效
      *
      * @param width  第一张图片的宽
      * @param height 第一张图片的高
      */
-    public CropPickerBuilder setFirstImageItem(int width, int height) {
+    public CropPickerBuilder setFirstImageItemSize(int width, int height) {
         if (width == 0 || height == 0 || selectConfig.hasFirstImageItem()) {
             return this;
         }
         ImageItem firstImageItem = new ImageItem();
+        firstImageItem.setVideo(false);
         firstImageItem.width = width;
         firstImageItem.height = height;
         if (Math.abs(width - height) < 5) {
@@ -164,6 +166,18 @@ public class CropPickerBuilder {
         return setFirstImageItem(firstImageItem);
     }
 
+    /**
+     * 强制指定留白模式，即一打开只有留白模式
+     *
+     * @param isAssignGap 指定留白
+     */
+    public CropPickerBuilder assignGapState(boolean isAssignGap) {
+        selectConfig.setAssignGapState(isAssignGap);
+        if (isAssignGap) {
+            setFirstImageItemSize(1, 1);
+        }
+        return this;
+    }
 
     /**
      * @param firstImageItem 设置之前选择的第一个item,用于指定默认剪裁模式,如果当前item是图片，
@@ -172,14 +186,16 @@ public class CropPickerBuilder {
      */
     public CropPickerBuilder setFirstImageItem(ImageItem firstImageItem) {
         if (firstImageItem != null) {
-            if (firstImageItem.isVideo() || (firstImageItem.width > 0 && firstImageItem.height > 0)) {
+            if (firstImageItem.isVideo() || selectConfig.hasFirstImageItem()) {
+                return this;
+            }
+            if ((firstImageItem.width > 0 && firstImageItem.height > 0)) {
                 selectConfig.setFirstImageItem(firstImageItem);
             }
         }
         return this;
     }
     //--------------- 以上是小红书剪裁特有属性 -------------------------------------
-
 
 
     /**

@@ -23,6 +23,7 @@ public class WXFolderItemView extends PickerFolderItemView {
     private TextView mName;
     private TextView mSize;
     private ImageView mIndicator;
+    private View mDivider;
 
     public WXFolderItemView(Context context) {
         super(context);
@@ -39,6 +40,8 @@ public class WXFolderItemView extends PickerFolderItemView {
         mName = view.findViewById(R.id.name);
         mSize = view.findViewById(R.id.size);
         mIndicator = view.findViewById(R.id.indicator);
+        mDivider= view.findViewById(R.id.mDivider);
+        setBackground(getResources().getDrawable(R.drawable.picker_selector_list_item_bg));
     }
 
     @Override
@@ -65,12 +68,23 @@ public class WXFolderItemView extends PickerFolderItemView {
         }
     }
 
-
     public void setIndicatorDrawable(Drawable drawable) {
         mIndicator.setImageDrawable(drawable);
     }
 
     public void setIndicatorColor(int color) {
         mIndicator.setColorFilter(color);
+    }
+
+    public void setDividerColor(int color) {
+        mDivider.setBackgroundColor(color);
+    }
+
+    public void setNameTextColor(int color) {
+        mName.setTextColor(color);
+    }
+
+    public void setCountTextColor(int color) {
+        mSize.setTextColor(color);
     }
 }

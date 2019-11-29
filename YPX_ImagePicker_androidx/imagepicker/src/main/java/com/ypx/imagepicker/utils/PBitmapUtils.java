@@ -37,6 +37,7 @@ public class PBitmapUtils {
      * @param uri 图片uri地址
      * @return 宽高信息
      */
+
     public static int[] getImageWidthHeight(Context c, Uri uri) {
         try {
             ParcelFileDescriptor parcelFileDescriptor = c.getContentResolver()

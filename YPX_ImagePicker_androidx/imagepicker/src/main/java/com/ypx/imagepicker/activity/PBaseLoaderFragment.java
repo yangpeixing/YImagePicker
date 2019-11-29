@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ypx.imagepicker.ImagePicker;
+import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -272,7 +273,7 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
                 @Override
                 public void onClick(View v) {
                     if (v == finalView.getCanClickToCompleteView()) {
-                            notifyOnImagePickComplete();
+                        notifyOnImagePickComplete();
                     } else if (v == finalView.getCanClickToToggleFolderListView()) {
                         toggleFolderList();
                     } else {
@@ -374,10 +375,15 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
 
     protected void addItemInImageSets(@NonNull List<ImageSet> imageSets,
                                       @NonNull List<ImageItem> imageItems,
-                                      @NonNull ImageItem imageItem,
-                                      @NonNull String firstImageSetName) {
+                                      @NonNull ImageItem imageItem) {
         imageItems.add(0, imageItem);
         if (imageSets.size() == 0) {
+            String firstImageSetName;
+            if (imageItem.isVideo()) {
+                firstImageSetName = getString(R.string.picker_str_all_video);
+            } else {
+                firstImageSetName = getString(R.string.picker_str_all_image);
+            }
             ImageSet imageSet = ImageSet.allImageSet(firstImageSetName);
             imageSet.cover = imageItem;
             imageSet.coverPath = imageItem.path;

@@ -307,7 +307,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
             return;
         }
         //将拍照返回的imageItem手动添加到第一个item上并选中
-        addItemInImageSets(imageSets, imageItems, imageItem, "全部图片");
+        addItemInImageSets(imageSets, imageItems, imageItem);
         mAdapter.refreshData(imageItems);
         mImageSetAdapter.refreshData(imageSets);
         onCheckItem(imageItem, PickerItemDisableCode.NORMAL);

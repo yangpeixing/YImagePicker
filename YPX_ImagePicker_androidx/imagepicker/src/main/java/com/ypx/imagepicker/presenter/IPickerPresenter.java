@@ -86,19 +86,32 @@ public interface IPickerPresenter extends Serializable {
     boolean interceptPickerCancel(@Nullable Activity activity, ArrayList<ImageItem> selectedList);
 
     /**
-     * 图片点击事件
+     * <p>
+     * 图片点击事件拦截，如果返回true，则不会执行选中操纵，如果要拦截此事件并且要执行选中
+     * 请调用如下代码：
+     * <p>
+     * adapter.preformCheckItem()
+     * <p>
+     *
+     * 此方法可以用来跳转到任意一个页面，比如自定义的预览
      *
      * @param context         上下文
      * @param imageItem       当前图片
      * @param selectImageList 当前选中列表
      * @param allSetImageList 当前文件夹所有图片
      * @param adapter         当前列表适配器，用于刷新数据
-     *                        <p>
-     *                        该方法只有在setPreview(false)的时候才会调用，默认点击图片会跳转预览页面。如果指定了剪裁模式，则不走该方法
+     * @return 是否拦截
      */
     boolean interceptItemClick(@Nullable Context context, ImageItem imageItem, ArrayList<ImageItem> selectImageList,
                                ArrayList<ImageItem> allSetImageList, BaseSelectConfig selectConfig, PickerItemAdapter adapter);
 
 
+    /**
+     * 拍照点击事件拦截
+     *
+     * @param activity  当前activity
+     * @param takePhoto 拍照接口
+     * @return 是否拦截
+     */
     boolean interceptCameraClick(@Nullable Activity activity, ITakePhoto takePhoto);
 }

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/picker_selector_list_item_bg"
     android:orientation="horizontal"
     android:paddingTop="10dp">
 
@@ -58,6 +57,7 @@
         android:src="@mipmap/pricker_drop_down_checked" />
 
     <View
+        android:id="@+id/mDivider"
         style="@style/horizontal_gray_divider"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="10dp" />

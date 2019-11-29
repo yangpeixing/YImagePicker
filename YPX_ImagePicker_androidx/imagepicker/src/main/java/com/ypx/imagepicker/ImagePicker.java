@@ -39,7 +39,7 @@ import java.util.Set;
  * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
 public class ImagePicker {
-    public static final String DEFAULT_FILE_NAME = "imagePicker";
+    public static String DEFAULT_FILE_NAME = "imagePicker";
     //选择返回的key
     public static final String INTENT_KEY_PICKER_RESULT = "pickerResult";
     //选择返回code

@@ -272,9 +272,11 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
     public void onClickItem(@NonNull ImageItem imageItem, int position, int disableItemCode) {
         //拍照
         if (position <= 0 && selectConfig.isShowCamera()) {
-            if (!presenter.interceptCameraClick(getWeakActivity(), this)) {
-                checkTakePhotoOrVideo();
+            //拦截拍照点击
+            if (presenter.interceptCameraClick(getWeakActivity(), this)) {
+                return;
             }
+            checkTakePhotoOrVideo();
             return;
         }
 
@@ -451,7 +453,23 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
         //如果已经存在了第一张选中图
         if (selectConfig.hasFirstImageItem()) {
             stateBtn.setVisibility(View.GONE);
-            setImageScaleState();
+            if (selectConfig.isAssignGapState()) {
+                if (selectList.size() == 0 || (selectList.get(0) != null
+                        && selectList.get(0).equals(currentImageItem))) {
+                    setImageScaleState();
+                } else {
+                    mTvFullOrGap.setVisibility(View.GONE);
+                    if (selectList.get(0).getCropMode() == ImageCropMode.ImageScale_GAP) {
+                        mCropView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        mCropView.setBackgroundColor(Color.WHITE);
+                    } else {
+                        mCropView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        mCropView.setBackgroundColor(Color.TRANSPARENT);
+                    }
+                }
+            } else {
+                setImageScaleState();
+            }
             return;
         }
 
@@ -529,6 +547,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
                     }
                 });
     }
+
 
     /**
      * 设置留白还是填充
@@ -751,7 +770,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
     @Override
     public void onTakePhotoResult(@Nullable ImageItem imageItem) {
         if (imageItem != null) {
-            addItemInImageSets(imageSets, imageItems, imageItem, "全部图片");
+            addItemInImageSets(imageSets, imageItems, imageItem);
             onCheckItem(imageItem, PickerItemDisableCode.NORMAL);
             imageGridAdapter.notifyDataSetChanged();
         }

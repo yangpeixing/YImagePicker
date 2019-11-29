@@ -11,7 +11,7 @@ import com.ypx.imagepicker.bean.ImageItem;
  */
 public class CropSelectConfig extends BaseSelectConfig {
     private ImageItem firstImageItem;
-  //  private String cropSaveFilePath = ImagePicker.cropPicSaveFilePath;
+    private boolean assignGapState = false;
 
     public CropSelectConfig() {
         setSinglePickImageOrVideoType(true);
@@ -26,15 +26,15 @@ public class CropSelectConfig extends BaseSelectConfig {
         this.firstImageItem = firstImageItem;
     }
 
-//    public String getCropSaveFilePath() {
-//        return cropSaveFilePath;
-//    }
-//
-//    public void setCropSaveFilePath(String cropSaveFilePath) {
-//        this.cropSaveFilePath = cropSaveFilePath;
-//    }
-
     public boolean hasFirstImageItem() {
         return firstImageItem != null && firstImageItem.width > 0 && firstImageItem.height > 0;
+    }
+
+    public boolean isAssignGapState() {
+        return assignGapState;
+    }
+
+    public void setAssignGapState(boolean assignGapState) {
+        this.assignGapState = assignGapState;
     }
 }

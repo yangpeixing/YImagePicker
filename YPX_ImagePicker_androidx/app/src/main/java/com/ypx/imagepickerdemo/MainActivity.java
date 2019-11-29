@@ -174,23 +174,23 @@ public class MainActivity extends AppCompatActivity {
                 mRbShield.setEnabled(false);
                 mRbSave.setEnabled(false);
                 mRbCrop.setEnabled(false);
-                mCbVideoSingle.setEnabled(true);
+                mCbShowOriginal.setEnabled(false);
                 mRbMulti.setChecked(true);
             } else if (checkedId == mRbWeChat.getId()) {
                 mCbClosePreview.setEnabled(true);
                 mCbImageOrVideo.setEnabled(true);
                 mRgNextPickType.setEnabled(true);
                 mRbCrop.setEnabled(true);
-                mCbVideoSingle.setEnabled(true);
+                mCbShowOriginal.setEnabled(true);
                 mRbMulti.setChecked(true);
                 mRbNew.setEnabled(true);
                 mRbShield.setEnabled(true);
                 mRbSave.setEnabled(true);
             } else if (checkedId == mRbCustom.getId()) {
                 mCbClosePreview.setEnabled(false);
-                mCbVideoSingle.setEnabled(false);
                 mCbImageOrVideo.setEnabled(true);
                 mRgNextPickType.setEnabled(true);
+                mCbShowOriginal.setEnabled(false);
                 mRbCrop.setEnabled(true);
                 mRbMulti.setChecked(true);
                 mRbNew.setEnabled(true);
@@ -244,20 +244,15 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void redBookPick(int count) {
-//        ImageItem imageItem = new ImageItem();
-//        imageItem.width = 1;
-//        imageItem.height = 1;
         ImagePicker.withCrop(new RedBookPresenter())//设置presenter
                 .setMaxCount(count)//设置选择数量
                 .showCamera(mCbShowCamera.isChecked())//设置显示拍照
                 .setColumnCount(4)//设置列数
                 .mimeTypes(getMimeTypes())//设置需要加载的文件类型
                 // .filterMimeType(MimeType.GIF)//设置需要过滤掉的文件类型
+                .assignGapState(false)
                 .setFirstImageItem(picList.size() > 0 ? picList.get(0) : null)//设置上一次选中的图片
-                // .setFirstImageItem(imageItem)
-                // .setFirstImageUrl(null)//设置上一次选中的图片地址
                 .setVideoSinglePick(mCbVideoSingle.isChecked())//设置视频单选
-                // .setCropPicSaveFilePath(ImagePicker.cropPicSaveFilePath)
                 .setSinglePickWithAutoComplete(mCbSingleAutoComplete.isChecked())
                 .setMaxVideoDuration(120000L)//设置可选区的最大视频时长
                 .setMinVideoDuration(5000L)
@@ -307,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
                 .mimeTypes(getMimeTypes())//设置要加载的文件类型，可指定单一类型
                 // .filterMimeType(MimeType.GIF)//设置需要过滤掉加载的文件类型
                 .setSelectMode(getSelectMode())
-                .setPreviewVideo(false)
+                .setPreviewVideo(true)
                 .showCamera(mCbShowCamera.isChecked())//显示拍照
                 .setPreview(!mCbClosePreview.isChecked())//是否开启预览
                 .setVideoSinglePick(mCbVideoSingle.isChecked())//设置视频单选

@@ -44,9 +44,9 @@ public class RedBookPresenter implements IPickerPresenter {
     @Override
     public void displayImage(View view, ImageItem item, int size, boolean isThumbnail) {
         if (isThumbnail) {
-            Glide.with(view.getContext()).load(item.getUri()).override(size).into((ImageView) view);
+            Glide.with(view.getContext()).load(item.path).override(size).into((ImageView) view);
         } else {
-            Glide.with(view.getContext()).load(item.getUri()).apply(new RequestOptions()
+            Glide.with(view.getContext()).load(item.path).apply(new RequestOptions()
                     .format(DecodeFormat.PREFER_ARGB_8888)).into((ImageView) view);
         }
     }
@@ -61,7 +61,7 @@ public class RedBookPresenter implements IPickerPresenter {
         uiConfig.setShowStatusBar(false);
         uiConfig.setStatusBarColor(Color.BLACK);
         uiConfig.setPickerBackgroundColor(Color.BLACK);
-        uiConfig.setFolderListOpenDirection(PickerUiConfig.DIRECTION_BOTTOM);
+        uiConfig.setFolderListOpenDirection(PickerUiConfig.DIRECTION_TOP);
         uiConfig.setFolderListOpenMaxMargin(PViewSizeUtils.dp(context, 200));
 
         uiConfig.setPickerUiProvider(new RedBookUiProvider());
@@ -102,8 +102,6 @@ public class RedBookPresenter implements IPickerPresenter {
 
     @Override
     public boolean interceptPickerCompleteClick(Activity activity, ArrayList<ImageItem> selectedList, BaseSelectConfig selectConfig) {
-        tip(activity, "拦截了完成按钮点击" + selectedList.size());
-      //  ImagePicker.closePickerWithCallback(selectedList);
         return false;
     }
 
