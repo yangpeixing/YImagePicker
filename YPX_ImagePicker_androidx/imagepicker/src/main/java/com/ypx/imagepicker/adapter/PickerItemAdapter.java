@@ -178,13 +178,17 @@ public class PickerItemAdapter extends RecyclerView.Adapter<PickerItemAdapter.It
             super(itemView);
             context = itemView.getContext();
             FrameLayout layout = itemView.findViewById(R.id.mRoot);
-            int width = (getScreenWidth() - dp_2()) / selectConfig.getColumnCount();
+            int width = (getScreenWidth() - dp(2)) / selectConfig.getColumnCount();
             PViewSizeUtils.setViewSize(layout, width, 1.00f);
 
             pickerItemView = uiConfig.getPickerUiProvider().getItemView(context);
             layout.removeAllViews();
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
+            params.bottomMargin = dp(1);
+            params.topMargin = dp(1);
+            params.rightMargin = dp(1);
+            params.leftMargin = dp(1);
             if (isCamera) {
                 layout.addView(pickerItemView.getCameraView(selectConfig, presenter), params);
             } else {
@@ -200,9 +204,9 @@ public class PickerItemAdapter extends RecyclerView.Adapter<PickerItemAdapter.It
             return outMetrics.widthPixels;
         }
 
-        int dp_2() {
+        int dp(int dp) {
             return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    (float) 2, context.getResources().getDisplayMetrics());
+                    (float) dp, context.getResources().getDisplayMetrics());
         }
     }
 

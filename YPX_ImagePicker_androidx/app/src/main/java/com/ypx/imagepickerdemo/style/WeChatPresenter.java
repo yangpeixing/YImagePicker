@@ -26,6 +26,8 @@ import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.views.PickerUiProvider;
+import com.ypx.imagepicker.views.base.PickerItemView;
+import com.ypx.imagepicker.views.wx.WXItemView;
 import com.ypx.imagepickerdemo.R;
 import com.ypx.imagepickerdemo.SecondActivity;
 
@@ -60,7 +62,14 @@ public class WeChatPresenter implements IPickerPresenter {
             uiConfig.setFolderListOpenMaxMargin(PViewSizeUtils.dp(context, 100));
         }
 
-        uiConfig.setPickerUiProvider(new PickerUiProvider());
+        uiConfig.setPickerUiProvider(new PickerUiProvider(){
+            @Override
+            public PickerItemView getItemView(Context context) {
+                WXItemView itemView= (WXItemView) super.getItemView(context);
+                itemView.setBackgroundColor(Color.parseColor("#303030"));
+                return itemView;
+            }
+        });
         return uiConfig;
     }
 

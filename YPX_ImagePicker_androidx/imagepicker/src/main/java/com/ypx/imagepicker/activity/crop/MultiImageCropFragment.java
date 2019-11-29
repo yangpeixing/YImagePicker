@@ -709,8 +709,8 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
 
     @Override
     protected void loadMediaItemsComplete(@NonNull ImageSet set) {
-        imageItems.clear();
         if (set.imageItems != null && set.imageItems.size() > 0) {
+            imageItems.clear();
             imageItems.addAll(set.imageItems);
             imageGridAdapter.notifyDataSetChanged();
             int firstImageIndex = getCanPressItemPosition();
