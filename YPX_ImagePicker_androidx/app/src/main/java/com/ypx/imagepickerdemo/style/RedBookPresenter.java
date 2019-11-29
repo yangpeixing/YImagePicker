@@ -15,21 +15,15 @@ import androidx.appcompat.app.AlertDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.request.RequestOptions;
-import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickConstants;
-import com.ypx.imagepicker.data.ITakePhoto;
+import com.ypx.imagepicker.data.ICameraExecutor;
+import com.ypx.imagepicker.data.IReloadExecutor;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
-import com.ypx.imagepicker.views.PickerUiProvider;
-import com.ypx.imagepicker.views.base.PickerControllerView;
-import com.ypx.imagepicker.views.base.PickerFolderItemView;
-import com.ypx.imagepicker.views.base.PickerItemView;
-import com.ypx.imagepicker.views.redbook.RedBookItemView;
-import com.ypx.imagepicker.views.redbook.RedBookTitleBar;
 import com.ypx.imagepicker.views.redbook.RedBookUiProvider;
 import com.ypx.imagepickerdemo.R;
 
@@ -145,12 +139,13 @@ public class RedBookPresenter implements IPickerPresenter {
                                       ArrayList<ImageItem> selectImageList,
                                       ArrayList<ImageItem> allSetImageList,
                                       BaseSelectConfig selectConfig,
-                                      PickerItemAdapter adapter) {
+                                      PickerItemAdapter adapter,
+                                      @Nullable IReloadExecutor reloadExecutor) {
         return false;
     }
 
     @Override
-    public boolean interceptCameraClick(@Nullable Activity activity, ITakePhoto takePhoto) {
+    public boolean interceptCameraClick(@Nullable Activity activity, ICameraExecutor takePhoto) {
         return false;
     }
 

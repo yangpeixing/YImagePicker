@@ -22,6 +22,7 @@ import com.ypx.imagepicker.activity.PBaseLoaderFragment;
 import com.ypx.imagepicker.activity.preview.MultiImagePreviewActivity;
 import com.ypx.imagepicker.adapter.PickerFolderAdapter;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
+import com.ypx.imagepicker.data.IReloadExecutor;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.adapter.PickerItemAdapter;
@@ -47,7 +48,8 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * Date: 2019/2/21
  * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
-public class MultiImagePickerFragment extends PBaseLoaderFragment implements View.OnClickListener, PickerItemAdapter.OnActionResult {
+public class MultiImagePickerFragment extends PBaseLoaderFragment implements View.OnClickListener,
+        PickerItemAdapter.OnActionResult, IReloadExecutor {
     private List<ImageSet> imageSets = new ArrayList<>();
     private ArrayList<ImageItem> imageItems = new ArrayList<>();
     private RecyclerView mRecyclerView;
@@ -356,7 +358,8 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         }
 
         //检测是否拦截了item点击
-        if (presenter.interceptItemClick(getWeakActivity(), item, selectList, imageItems, selectConfig, mAdapter)) {
+        if (presenter.interceptItemClick(getWeakActivity(), item, selectList, imageItems,
+                selectConfig, mAdapter, this)) {
             return;
         }
 
@@ -443,14 +446,11 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
                     @Override
                     public void onResult(ArrayList<ImageItem> mImageItems, boolean isCancel) {
                         if (isCancel) {
-                            selectList.clear();
-                            selectList.addAll(mImageItems);
-                            mAdapter.refreshData(imageItems);
-                            refreshCompleteState();
+                            reloadPickerWithList(mImageItems);
                         } else {
                             selectList.clear();
                             selectList.addAll(mImageItems);
-                            notifyOnImagePickComplete();
+                            notifyPickerComplete();
                         }
                     }
                 });
@@ -460,7 +460,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
      * 刷新选中图片列表，执行回调，退出页面
      */
     @Override
-    protected void notifyOnImagePickComplete() {
+    protected void notifyPickerComplete() {
         if (!presenter.interceptPickerCompleteClick(getWeakActivity(), selectList, selectConfig)) {
             if (onImagePickCompleteListener != null) {
                 onImagePickCompleteListener.onImagePickComplete(selectList);
@@ -490,5 +490,13 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         uiConfig = null;
         presenter = null;
         traverse(view);
+    }
+
+    @Override
+    public void reloadPickerWithList(List<ImageItem> selectedList) {
+        selectList.clear();
+        selectList.addAll(selectedList);
+        mAdapter.refreshData(imageItems);
+        refreshCompleteState();
     }
 }

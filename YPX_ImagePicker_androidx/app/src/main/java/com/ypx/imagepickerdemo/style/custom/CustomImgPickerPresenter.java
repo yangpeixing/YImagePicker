@@ -16,7 +16,8 @@ import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickConstants;
-import com.ypx.imagepicker.data.ITakePhoto;
+import com.ypx.imagepicker.data.ICameraExecutor;
+import com.ypx.imagepicker.data.IReloadExecutor;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.views.PickerUiProvider;
@@ -49,6 +50,7 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
         }
     }
 
+    @NonNull
     @Override
     public PickerUiConfig getUiConfig(@Nullable Context context) {
         PickerUiConfig uiConfig = new PickerUiConfig();
@@ -106,6 +108,12 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
         return uiConfig;
     }
 
+    @NonNull
+    @Override
+    public PickConstants getPickConstants(Context context) {
+        return new PickConstants(context);
+    }
+
     @Override
     public void tip(Context context, String msg) {
     }
@@ -125,20 +133,16 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
     }
 
     @Override
-    public boolean interceptItemClick(@Nullable Context context, ImageItem imageItem, ArrayList<ImageItem> selectImageList, ArrayList<ImageItem> allSetImageList, BaseSelectConfig selectConfig, PickerItemAdapter adapter) {
+    public boolean interceptItemClick(@Nullable Context context, ImageItem imageItem,
+                                      ArrayList<ImageItem> selectImageList,
+                                      ArrayList<ImageItem> allSetImageList,
+                                      BaseSelectConfig selectConfig, PickerItemAdapter adapter,
+                                      @Nullable IReloadExecutor reloadExecutor) {
         return false;
     }
 
     @Override
-    public boolean interceptCameraClick(@Nullable Activity activity, ITakePhoto takePhoto) {
+    public boolean interceptCameraClick(@Nullable Activity activity, ICameraExecutor takePhoto) {
         return false;
     }
-
-
-    @NonNull
-    @Override
-    public PickConstants getPickConstants(Context context) {
-        return new PickConstants(context);
-    }
-
 }

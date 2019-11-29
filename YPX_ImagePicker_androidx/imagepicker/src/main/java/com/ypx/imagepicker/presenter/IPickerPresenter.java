@@ -3,7 +3,6 @@ package com.ypx.imagepicker.presenter;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,7 +11,8 @@ import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickConstants;
-import com.ypx.imagepicker.data.ITakePhoto;
+import com.ypx.imagepicker.data.ICameraExecutor;
+import com.ypx.imagepicker.data.IReloadExecutor;
 import com.ypx.imagepicker.views.PickerUiConfig;
 
 import java.io.Serializable;
@@ -92,7 +92,7 @@ public interface IPickerPresenter extends Serializable {
      * <p>
      * adapter.preformCheckItem()
      * <p>
-     *
+     * <p>
      * 此方法可以用来跳转到任意一个页面，比如自定义的预览
      *
      * @param context         上下文
@@ -103,7 +103,8 @@ public interface IPickerPresenter extends Serializable {
      * @return 是否拦截
      */
     boolean interceptItemClick(@Nullable Context context, ImageItem imageItem, ArrayList<ImageItem> selectImageList,
-                               ArrayList<ImageItem> allSetImageList, BaseSelectConfig selectConfig, PickerItemAdapter adapter);
+                               ArrayList<ImageItem> allSetImageList, BaseSelectConfig selectConfig, PickerItemAdapter adapter,
+                               @Nullable IReloadExecutor reloadExecutor);
 
 
     /**
@@ -113,5 +114,5 @@ public interface IPickerPresenter extends Serializable {
      * @param takePhoto 拍照接口
      * @return 是否拦截
      */
-    boolean interceptCameraClick(@Nullable Activity activity, ITakePhoto takePhoto);
+    boolean interceptCameraClick(@Nullable Activity activity, ICameraExecutor takePhoto);
 }

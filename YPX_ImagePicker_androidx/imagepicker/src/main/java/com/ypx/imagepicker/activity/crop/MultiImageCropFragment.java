@@ -305,7 +305,8 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
 
     private boolean isInterceptItemClick(ImageItem imageItem) {
         return presenter.interceptItemClick(getWeakActivity(), imageItem, selectList,
-                (ArrayList<ImageItem>) imageItems, selectConfig, imageGridAdapter);
+                (ArrayList<ImageItem>) imageItems, selectConfig, imageGridAdapter,
+                null);
     }
 
     /**
@@ -619,7 +620,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
      * 刷新选中图片列表，执行回调，退出页面
      */
     @Override
-    protected void notifyOnImagePickComplete() {
+    protected void notifyPickerComplete() {
         ArrayList<ImageItem> cropUrlList;
         //如果当前选择的都是视频
         if (selectList.size() > 0 && selectList.get(0).isVideo()) {

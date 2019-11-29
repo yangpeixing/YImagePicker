@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
@@ -21,7 +20,8 @@ import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickConstants;
-import com.ypx.imagepicker.data.ITakePhoto;
+import com.ypx.imagepicker.data.ICameraExecutor;
+import com.ypx.imagepicker.data.IReloadExecutor;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
@@ -133,12 +133,13 @@ public class WeChatPresenter implements IPickerPresenter {
                                       ArrayList<ImageItem> selectImageList,
                                       ArrayList<ImageItem> allSetImageList,
                                       BaseSelectConfig selectConfig,
-                                      PickerItemAdapter adapter) {
+                                      PickerItemAdapter adapter,
+                                      @Nullable IReloadExecutor reloadExecutor) {
         return false;
     }
 
     @Override
-    public boolean interceptCameraClick(@Nullable final Activity activity, final ITakePhoto takePhoto) {
+    public boolean interceptCameraClick(@Nullable final Activity activity, final ICameraExecutor takePhoto) {
         if (activity == null || activity.isDestroyed()) {
             return false;
         }

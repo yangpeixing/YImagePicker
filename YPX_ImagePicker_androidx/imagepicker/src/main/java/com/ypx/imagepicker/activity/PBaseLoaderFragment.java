@@ -21,7 +21,7 @@ import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.PickConstants;
-import com.ypx.imagepicker.data.ITakePhoto;
+import com.ypx.imagepicker.data.ICameraExecutor;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
@@ -48,7 +48,7 @@ import static com.ypx.imagepicker.ImagePicker.REQ_STORAGE;
  * Date: 2019/2/21
  * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
-public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto {
+public abstract class PBaseLoaderFragment extends Fragment implements ICameraExecutor {
     //选中图片列表
     protected ArrayList<ImageItem> selectList = new ArrayList<>();
 
@@ -70,10 +70,22 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
     @NonNull
     protected abstract PickerUiConfig getUiConfig();
 
-    protected abstract void notifyOnImagePickComplete();
+    /**
+     * 执行回调
+     */
+    protected abstract void notifyPickerComplete();
 
+    /**
+     * 切换文件夹
+     */
     protected abstract void toggleFolderList();
 
+    /**
+     * 跳转预览页面
+     *
+     * @param isClickItem 是否是item点击
+     * @param index       当前图片位于预览列表数据源的索引
+     */
     protected abstract void intentPreview(boolean isClickItem, int index);
 
     /**
@@ -103,10 +115,10 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
     /**
      * @param imageItem 回调一张图片
      */
-    public void notifyOnSingleImagePickComplete(ImageItem imageItem) {
+    protected void notifyOnSingleImagePickComplete(ImageItem imageItem) {
         selectList.clear();
         selectList.add(imageItem);
-        notifyOnImagePickComplete();
+        notifyPickerComplete();
     }
 
 
@@ -115,7 +127,7 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
      *
      * @return true:超过
      */
-    protected boolean isOverMaxCount() {
+    private boolean isOverMaxCount() {
         if (selectList.size() >= getSelectConfig().getMaxCount()) {
             getPresenter().overMaxCountTip(getContext(), getSelectConfig().getMaxCount());
             return true;
@@ -251,6 +263,14 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
     protected PickerControllerView titleBar;
     protected PickerControllerView bottomBar;
 
+    /**
+     * 加载自定义控制器布局
+     *
+     * @param container 布局容器
+     * @param isTitle   是否是顶部栏
+     * @param uiConfig  ui配置
+     * @return 当前需要记载的控制器
+     */
     protected PickerControllerView inflateControllerView(ViewGroup container, boolean isTitle, PickerUiConfig uiConfig) {
         final BaseSelectConfig selectConfig = getSelectConfig();
         final IPickerPresenter presenter = getPresenter();
@@ -273,7 +293,7 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
                 @Override
                 public void onClick(View v) {
                     if (v == finalView.getCanClickToCompleteView()) {
-                        notifyOnImagePickComplete();
+                        notifyPickerComplete();
                     } else if (v == finalView.getCanClickToToggleFolderListView()) {
                         toggleFolderList();
                     } else {
@@ -298,6 +318,11 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
         return view;
     }
 
+    /**
+     * 控制器view执行切换文件夹操作
+     *
+     * @param isOpen 是否是打开文件夹
+     */
     protected void controllerViewOnTransitImageSet(boolean isOpen) {
         if (titleBar != null) {
             titleBar.onTransitImageSet(isOpen);
@@ -307,6 +332,11 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
         }
     }
 
+    /**
+     * 控制器view执行文件夹选择完成
+     *
+     * @param set 当前选择文件夹
+     */
     protected void controllerViewOnImageSetSelected(ImageSet set) {
         if (titleBar != null) {
             titleBar.onImageSetSelected(set);
@@ -316,6 +346,9 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
         }
     }
 
+    /**
+     * 刷新完成按钮
+     */
     protected void refreshCompleteState() {
         if (titleBar != null) {
             titleBar.refreshCompleteViewState(selectList, getSelectConfig());
@@ -326,6 +359,13 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
         }
     }
 
+    /**
+     * 设置文件夹列表的高度
+     *
+     * @param mFolderListRecyclerView 文件夹列表
+     * @param mImageSetMask           文件夹列表的灰色透明蒙层
+     * @param isCrop                  是否是小红书样式
+     */
     protected void setFolderListHeight(RecyclerView mFolderListRecyclerView, View mImageSetMask, boolean isCrop) {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFolderListRecyclerView.getLayoutParams();
         RelativeLayout.LayoutParams maskParams = (RelativeLayout.LayoutParams) mImageSetMask.getLayoutParams();
@@ -358,6 +398,13 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
         mImageSetMask.setLayoutParams(maskParams);
     }
 
+    /**
+     * 是否拦截不可点击的item
+     *
+     * @param disableItemCode     不可点击的item的code码
+     * @param isCheckOverMaxCount 是否校验超过最大数量时候的item
+     * @return 是否拦截掉
+     */
     protected boolean interceptClickDisableItem(int disableItemCode, boolean isCheckOverMaxCount) {
         if (disableItemCode != PickerItemDisableCode.NORMAL) {
             if (!isCheckOverMaxCount && disableItemCode == PickerItemDisableCode.DISABLE_OVER_MAX_COUNT) {
@@ -373,6 +420,14 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
     }
 
 
+    /**
+     * 添加一个图片到文件夹列表里。一般在拍照完成的回调里会执行该方法，用于手动添加
+     * 一个item到指定的文件夹列表里
+     *
+     * @param imageSets  当前的文件夹列表
+     * @param imageItems 当前文件夹列表里面的item数组
+     * @param imageItem  当前要插入的文件
+     */
     protected void addItemInImageSets(@NonNull List<ImageSet> imageSets,
                                       @NonNull List<ImageItem> imageItems,
                                       @NonNull ImageItem imageItem) {
@@ -400,6 +455,9 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
 
     private WeakReference<Activity> weakReference;
 
+    /**
+     * @return 获取弱引用的activity对象
+     */
     protected Activity getWeakActivity() {
         if (getActivity() != null) {
             if (weakReference == null) {
@@ -439,7 +497,6 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
         return !flag;
     }
 
-
     protected void traverse(View root) {
         if (root instanceof ViewGroup) {
             ViewGroup parent = (ViewGroup) root;
@@ -461,7 +518,6 @@ public abstract class PBaseLoaderFragment extends Fragment implements ITakePhoto
             parent.removeAllViews();
         }
     }
-
 
     /**
      * 设置是否显示状态栏

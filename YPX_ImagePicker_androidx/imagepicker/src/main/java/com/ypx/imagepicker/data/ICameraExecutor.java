@@ -4,7 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.ypx.imagepicker.bean.ImageItem;
 
-public interface ITakePhoto {
+public interface ICameraExecutor {
 
     void takePhoto();
 
