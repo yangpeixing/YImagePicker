@@ -66,7 +66,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             return;
         }
         if (imageSet != null) {
-            currentImageSet = imageSet.copy(!selectConfig.isCanPreviewVideo());
+            currentImageSet = imageSet.copy(false);
         }
         Intent intent = new Intent(activity, MultiImagePreviewActivity.class);
         intent.putExtra(INTENT_KEY_SELECT_LIST, selectList);
@@ -85,6 +85,31 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             }
         });
     }
+
+    private ArrayList<ImageItem> filterVideo(ArrayList<ImageItem> list) {
+        if (selectConfig.isCanPreviewVideo()) {
+            mImageList = new ArrayList<>(list);
+            return mImageList;
+        }
+        mImageList = new ArrayList<>();
+        int videoCount = 0;
+        int nowPosition = 0;
+        int i = 0;
+        for (ImageItem imageItem : list) {
+            if (!imageItem.isVideo() && !imageItem.isGif()) {
+                mImageList.add(imageItem);
+            } else {
+                videoCount++;
+            }
+            if (i == mCurrentItemPosition) {
+                nowPosition = i - videoCount;
+            }
+            i++;
+        }
+        mCurrentItemPosition = nowPosition;
+        return mImageList;
+    }
+
 
     /**
      * 预览回调
@@ -149,12 +174,13 @@ public class MultiImagePreviewActivity extends FragmentActivity {
      */
     private void loadMediaPreviewList() {
         if (currentImageSet == null) {
-            mImageList = new ArrayList<>(mSelectList);
+            mImageList = filterVideo(mSelectList);
             initViewPager();
         } else {
             if (currentImageSet.imageItems != null && currentImageSet.imageItems.size() > 0
                     && currentImageSet.imageItems.size() >= currentImageSet.count) {
-                mImageList = new ArrayList<>(currentImageSet.imageItems);
+                mImageList = filterVideo(currentImageSet.imageItems);
+                //mImageList = new ArrayList<>(currentImageSet.imageItems);
                 initViewPager();
             } else {
                 final ProgressDialog dialog = ProgressDialog.show(this, null,
@@ -164,7 +190,8 @@ public class MultiImagePreviewActivity extends FragmentActivity {
                             @Override
                             public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
                                 dialog.dismiss();
-                                mImageList = new ArrayList<>(imageItems);
+                                mImageList = filterVideo(imageItems);
+                                // mImageList = new ArrayList<>(imageItems);
                                 initViewPager();
                             }
                         });
@@ -210,6 +237,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     private void initViewPager() {
         TouchImageAdapter mAdapter = new TouchImageAdapter(this.getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
+        mViewPager.setOffscreenPageLimit(1);
         mViewPager.setCurrentItem(mCurrentItemPosition, false);
         ImageItem item = mImageList.get(mCurrentItemPosition);
         controllerView.onPageSelected(mCurrentItemPosition, item, mImageList.size());

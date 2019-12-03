@@ -1,5 +1,6 @@
 package com.ypx.imagepicker.helper;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.Gravity;
@@ -50,8 +51,9 @@ public class CropViewContainerHelper {
 
     private CropImageView mCropView;
 
-    public CropImageView loadCropView(Context context, final ImageItem imageItem, int mCropSize,
-                                      IPickerPresenter presenter, final onLoadComplete loadComplete) {
+    public CropImageView loadCropView(final Context context, final ImageItem imageItem, final int mCropSize,
+                                      final IPickerPresenter presenter, final onLoadComplete loadComplete) {
+        final Activity activity = (Activity) context;
         if (cropViewList.containsKey(imageItem) && cropViewList.get(imageItem) != null) {
             mCropView = cropViewList.get(imageItem);
         } else {
@@ -75,10 +77,9 @@ public class CropViewContainerHelper {
                 });
             }
 
-            if (presenter != null) {
-                presenter.displayImage(mCropView, imageItem, mCropSize, false);
-            }
+            DetailImageLoadHelper.displayDetailImage(activity, mCropView, presenter, imageItem);
         }
+
         if (getParent() != null) {
             getParent().removeAllViews();
             if (mCropView.getParent() != null) {
@@ -138,7 +139,7 @@ public class CropViewContainerHelper {
             if (view == null) {
                 continue;
             }
-            Bitmap bitmap =PBitmapUtils.getViewBitmap(view);
+            Bitmap bitmap = PBitmapUtils.getViewBitmap(view);
             String cropUrl = PBitmapUtils.saveBitmapToFile(view.getContext(), bitmap,
                     "crop_" + System.currentTimeMillis(),
                     Bitmap.CompressFormat.JPEG);

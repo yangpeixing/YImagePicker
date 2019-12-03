@@ -55,6 +55,24 @@ public class PBitmapUtils {
         return new int[]{0, 0};
     }
 
+    public static Bitmap getBitmapFromUri(Context c, Uri uri) {
+        try {
+            ParcelFileDescriptor parcelFileDescriptor = c.getContentResolver()
+                    .openFileDescriptor(uri, "r");
+            if (parcelFileDescriptor != null) {
+                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+                parcelFileDescriptor.close();
+                return image;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
     /**
      * 根据绝对路径得到图片的宽高，亲测比楼上速度快几十倍
      *

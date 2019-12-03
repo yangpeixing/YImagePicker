@@ -2,6 +2,7 @@ package com.ypx.imagepicker.activity.preview;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import androidx.fragment.app.Fragment;
 
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.helper.DetailImageLoadHelper;
+import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.utils.PickerFileProvider;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
@@ -43,7 +46,7 @@ public class SinglePreviewFragment extends Fragment {
             return;
         }
         layout = new RelativeLayout(getContext());
-        CropImageView imageView = new CropImageView(getActivity());
+        final CropImageView imageView = new CropImageView(getActivity());
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         // 启用图片缩放功能
         imageView.enable();
@@ -86,9 +89,14 @@ public class SinglePreviewFragment extends Fragment {
                 }
             }
         });
-        if (getActivity() instanceof MultiImagePreviewActivity) {
-            ((MultiImagePreviewActivity) getActivity()).getPresenter().displayImage(imageView, imageItem, imageView.getWidth(), false);
-        }
+
+        DetailImageLoadHelper.displayDetailImage(getActivity(), imageView,
+                ((MultiImagePreviewActivity) getActivity()).getPresenter(), imageItem);
+    }
+
+    private void disPlayImage(ImageView imageView, ImageItem imageItem) {
+        ((MultiImagePreviewActivity) getActivity()).getPresenter()
+                .displayImage(imageView, imageItem, imageView.getWidth(), false);
     }
 
     @Override

@@ -153,7 +153,6 @@ public class WeChatPresenter implements IPickerPresenter {
             return false;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        // -1代表没有条目被选中
         builder.setSingleChoiceItems(new String[]{"拍照", "录像"}, -1, new DialogInterface.OnClickListener() {
 
             @Override
@@ -166,8 +165,6 @@ public class WeChatPresenter implements IPickerPresenter {
                 }
             }
         });
-
-        // 最后一步 一定要记得 和Toast 一样 show出来
         builder.show();
         return true;
     }

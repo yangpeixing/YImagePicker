@@ -75,7 +75,7 @@ public class ImagePicker {
     }
 
     /**
-     * 直接调用拍照，默认图片存储路径为DCIM目录下Camera文件夹下
+     * 直接调用拍照，默认图片存储路径为DCIM目录下
      *
      * @param activity 调用activity
      * @param listener 拍照回调
@@ -88,7 +88,7 @@ public class ImagePicker {
     }
 
     /**
-     * 直接调用摄像头拍视频，默认视频存储路径为DCIM目录下Camera文件夹下
+     * 直接调用摄像头拍视频，默认视频存储路径为DCIM目录下
      *
      * @param activity 调用activity
      * @param listener 视频回调

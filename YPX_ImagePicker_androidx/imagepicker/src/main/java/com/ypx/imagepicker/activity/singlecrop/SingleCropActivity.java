@@ -14,12 +14,14 @@ import androidx.fragment.app.FragmentActivity;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PickerActivityManager;
+import com.ypx.imagepicker.activity.preview.MultiImagePreviewActivity;
 import com.ypx.imagepicker.bean.selectconfig.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.PickerActivityCallBack;
+import com.ypx.imagepicker.helper.DetailImageLoadHelper;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
@@ -113,7 +115,12 @@ public class SingleCropActivity extends FragmentActivity {
         cropView.setCircle(cropConfig.isCircle());
         ImageItem imageItem = new ImageItem();
         imageItem.path = url;
-        presenter.displayImage(cropView, imageItem, 0, false);
+        int[] size = PBitmapUtils.getImageWidthHeight(url);
+        imageItem.width = size[0];
+        imageItem.height = size[1];
+
+        DetailImageLoadHelper.displayDetailImage(this, cropView, presenter, imageItem);
+        // presenter.displayImage(cropView, imageItem, 0, false);
 
         setControllerView();
     }

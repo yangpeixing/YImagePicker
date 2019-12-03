@@ -450,6 +450,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
                         } else {
                             selectList.clear();
                             selectList.addAll(mImageItems);
+                            mAdapter.notifyDataSetChanged();
                             notifyPickerComplete();
                         }
                     }

@@ -21,6 +21,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -199,6 +200,23 @@ public class CropImageView extends ImageView {
     }
 
     @Override
+    public void setImageBitmap(Bitmap bm) {
+        if (bm == null || bm.getWidth() == 0 || bm.getHeight() == 0) {
+            return;
+        }
+
+        float ratio = bm.getWidth() * 1.00f / bm.getHeight() * 1.00f;
+        if (bm.getWidth() > 5000) {
+            bm = Bitmap.createScaledBitmap(bm, 5000, (int) (5000f / ratio), false);
+        }
+
+        if (bm.getHeight() > 10000) {
+            bm = Bitmap.createScaledBitmap(bm, (int) (10000f * ratio), 10000, false);
+        }
+        super.setImageBitmap(bm);
+    }
+
+    @Override
     public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
 
@@ -211,7 +229,6 @@ public class CropImageView extends ImageView {
             return;
 
         hasDrawable = true;
-
         if (drawable instanceof BitmapDrawable) {
             originalBitmap = ((BitmapDrawable) drawable).getBitmap();
         } else if (drawable instanceof AnimationDrawable) {
@@ -414,6 +431,9 @@ public class CropImageView extends ImageView {
         float widthScale = mCropRect.width() / mImgRect.width();
         float heightScale = mCropRect.height() / mImgRect.height();
         mScale = Math.min(widthScale, heightScale);
+        if (widthScale > mMaxScale) {
+            mMaxScale = widthScale;
+        }
         mAnimMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
         executeTranslate();
         resetBase();
@@ -783,6 +803,7 @@ public class CropImageView extends ImageView {
         if (!isBounceEnable) {
             return;
         }
+
         if (mScale < 1) {
             mTranslate.withScale(mScale, 1);
             mScale = 1;
@@ -790,9 +811,9 @@ public class CropImageView extends ImageView {
             mTranslate.withScale(mScale, mMaxScale);
             mScale = mMaxScale;
         }
-        float cx = mImgRect.left + mImgRect.width() / 2;
-        float cy = mImgRect.top + mImgRect.height() / 2;
 
+        float cx = mImgRect.left * 1.00f + mImgRect.width() / 2;
+        float cy = mImgRect.top * 1.00f + mImgRect.height() / 2;
         mScaleCenter.set(cx, cy);
         mRotateCenter.set(cx, cy);
 

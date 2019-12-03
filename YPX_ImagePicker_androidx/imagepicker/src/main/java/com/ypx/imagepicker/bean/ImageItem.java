@@ -1,14 +1,13 @@
 package com.ypx.imagepicker.bean;
 
+import android.content.ContentUris;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 
-import java.io.File;
 import java.io.Serializable;
-import java.net.FileNameMap;
-import java.net.URL;
-import java.net.URLConnection;
+
 
 /**
  * Description: 图片信息
@@ -40,6 +39,7 @@ public class ImageItem implements Serializable, Parcelable {
     private boolean isPress = false;
     private int selectIndex = -1;
     private int cropMode = ImageCropMode.ImageScale_FILL;
+    private String uriPath;
 
     public ImageItem() {
     }
@@ -198,8 +198,30 @@ public class ImageItem implements Serializable, Parcelable {
         this.mimeType = mimeType;
     }
 
+    public boolean isUriPath() {
+        return path.contains("content://");
+    }
+
     public Uri getUri() {
-        return Uri.parse(path);
+        if (uriPath != null && uriPath.length() > 0) {
+            return Uri.parse(uriPath);
+        }
+
+        if (isUriPath()) {
+            return Uri.parse(path);
+        }
+
+        Uri contentUri;
+        if (MimeType.isImage(mimeType)) {
+            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        } else if (MimeType.isVideo(mimeType)) {
+            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        } else {
+            contentUri = MediaStore.Files.getContentUri("external");
+        }
+        contentUri = ContentUris.withAppendedId(contentUri, id);
+        uriPath = contentUri.toString();
+        return contentUri;
     }
 
 
