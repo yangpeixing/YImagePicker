@@ -804,6 +804,11 @@ public class CropImageView extends ImageView {
             return;
         }
 
+        float cx = mImgRect.left * 1.00f + mImgRect.width() / 2;
+        float cy = mImgRect.top * 1.00f + mImgRect.height() / 2;
+
+        mRotateCenter.set(cx, cy);
+
         if (mScale < 1) {
             mTranslate.withScale(mScale, 1);
             mScale = 1;
@@ -812,18 +817,15 @@ public class CropImageView extends ImageView {
             mScale = mMaxScale;
         }
 
-        float cx = mImgRect.left * 1.00f + mImgRect.width() / 2;
-        float cy = mImgRect.top * 1.00f + mImgRect.height() / 2;
         mScaleCenter.set(cx, cy);
-        mRotateCenter.set(cx, cy);
-
+        Log.e("CropImageView", "onUp: " + mImgRect.toShortString() + "   x= " + mScaleCenter.x + " " + mScaleCenter.y);
         mTranslateX = 0;
         mTranslateY = 0;
 
         mTmpMatrix.reset();
         mTmpMatrix.postTranslate(-mBaseRect.left, -mBaseRect.top);
         mTmpMatrix.postTranslate(cx - mBaseRect.width() / 2, cy - mBaseRect.height() / 2);
-        mTmpMatrix.postScale(mScale, mScale, cx, cy);
+        mTmpMatrix.postScale(mScale, mScale, mScaleCenter.x, mScaleCenter.y);
         mTmpMatrix.postRotate(mDegrees, cx, cy);
         mTmpMatrix.mapRect(mTmpRect, mBaseRect);
 
@@ -912,6 +914,10 @@ public class CropImageView extends ImageView {
 
             if (Float.isNaN(scaleFactor) || Float.isInfinite(scaleFactor))
                 return false;
+
+//            if (mScale > mMaxScale) {
+//                return true;
+//            }
 
             mScale *= scaleFactor;
             mScaleCenter.set(detector.getFocusX(), detector.getFocusY());
@@ -1108,7 +1114,6 @@ public class CropImageView extends ImageView {
             } else {
                 from = mScale;
                 to = mMaxScale;
-
                 mScaleCenter.set(e.getX(), e.getY());
             }
 

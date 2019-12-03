@@ -26,6 +26,7 @@ import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PBitmapUtils;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.views.base.SingleCropControllerView;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
@@ -139,6 +140,9 @@ public class SingleCropActivity extends FragmentActivity {
         cropControllerView.getCompleteView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (PViewSizeUtils.onDoubleClick()) {
+                    return;
+                }
                 cropComplete();
             }
         });
@@ -148,30 +152,40 @@ public class SingleCropActivity extends FragmentActivity {
         if (cropView.isEditing()) {
             return;
         }
-        String cropUrl = generateCropFile("crop_" + System.currentTimeMillis());
-        if (cropUrl.startsWith("Exception:")) {
-            PickerError.CROP_EXCEPTION.setMessage(cropUrl);
-            PickerErrorExecutor.executeError(SingleCropActivity.this, PickerError.CROP_EXCEPTION.getCode());
-            return;
-        }
-        ImageItem item = new ImageItem();
-        item.path = cropUrl;
-        if (cropUrl.endsWith(PNG)) {
-            item.mimeType = MimeType.JPEG.toString();
-        } else {
-            item.mimeType = MimeType.PNG.toString();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String cropUrl = generateCropFile("crop_" + System.currentTimeMillis());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (cropUrl.startsWith("Exception:")) {
+                            PickerError.CROP_EXCEPTION.setMessage(cropUrl);
+                            PickerErrorExecutor.executeError(SingleCropActivity.this, PickerError.CROP_EXCEPTION.getCode());
+                            return;
+                        }
+                        ImageItem item = new ImageItem();
+                        item.path = cropUrl;
+                        if (cropUrl.endsWith(PNG)) {
+                            item.mimeType = MimeType.JPEG.toString();
+                        } else {
+                            item.mimeType = MimeType.PNG.toString();
+                        }
 
-        item.width = cropView.getCropWidth();
-        item.height = cropView.getCropHeight();
+                        item.width = cropView.getCropWidth();
+                        item.height = cropView.getCropHeight();
 
 
-        ArrayList<ImageItem> list = new ArrayList<>();
-        list.add(item);
-        if (presenter.interceptPickerCompleteClick(SingleCropActivity.this, list, cropConfig)) {
-            return;
-        }
-        notifyOnImagePickComplete(list);
+                        ArrayList<ImageItem> list = new ArrayList<>();
+                        list.add(item);
+                        if (presenter.interceptPickerCompleteClick(SingleCropActivity.this, list, cropConfig)) {
+                            return;
+                        }
+                        notifyOnImagePickComplete(list);
+                    }
+                });
+            }
+        }).start();
     }
 
     public String generateCropFile(String fileName) {

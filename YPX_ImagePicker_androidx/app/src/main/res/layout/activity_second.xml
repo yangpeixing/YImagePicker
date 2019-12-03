@@ -2,14 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical">
 
-    <TextView
+
+    <com.ypx.imagepickerdemo.ImagesViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:background="#E0E0E0"/>
+
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="10dp"
         android:onClick="click"
-        android:text="我是第二个界面，点击此按钮关闭选择器并回调选择数据" />
+        android:text="关闭并回调当前数据" />
 
 </LinearLayout>

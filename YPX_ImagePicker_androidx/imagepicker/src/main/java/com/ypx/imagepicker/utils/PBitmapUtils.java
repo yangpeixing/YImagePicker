@@ -138,7 +138,7 @@ public class PBitmapUtils {
         file = new File(file, fileName + "." + compressFormat.toString().toLowerCase());
         try {
             FileOutputStream b = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);// 把数据写入文件
+            bitmap.compress(compressFormat, 90, b);// 把数据写入文件
             b.flush();
             b.close();
             return file.getAbsolutePath();

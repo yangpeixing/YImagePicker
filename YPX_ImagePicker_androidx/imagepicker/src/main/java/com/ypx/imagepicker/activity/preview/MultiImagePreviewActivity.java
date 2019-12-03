@@ -66,7 +66,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             return;
         }
         if (imageSet != null) {
-            currentImageSet = imageSet.copy(false);
+            currentImageSet = imageSet.copy();
         }
         Intent intent = new Intent(activity, MultiImagePreviewActivity.class);
         intent.putExtra(INTENT_KEY_SELECT_LIST, selectList);

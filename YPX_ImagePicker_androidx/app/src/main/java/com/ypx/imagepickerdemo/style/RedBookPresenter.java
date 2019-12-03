@@ -3,6 +3,7 @@ package com.ypx.imagepickerdemo.style;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.request.RequestOptions;
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -26,6 +28,7 @@ import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.views.redbook.RedBookUiProvider;
 import com.ypx.imagepickerdemo.R;
+import com.ypx.imagepickerdemo.SecondActivity;
 
 import java.util.ArrayList;
 
@@ -95,8 +98,12 @@ public class RedBookPresenter implements IPickerPresenter {
     }
 
     @Override
-    public boolean interceptPickerCompleteClick(Activity activity, ArrayList<ImageItem> selectedList, BaseSelectConfig selectConfig) {
-        return false;
+    public boolean interceptPickerCompleteClick(final Activity activity, final ArrayList<ImageItem> selectedList, BaseSelectConfig selectConfig) {
+        tip(activity, "拦截了完成按钮点击" + selectedList.size());
+        Intent intent = new Intent(activity, SecondActivity.class);
+        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, selectedList);
+        activity.startActivity(intent);
+        return true;
     }
 
     /**
