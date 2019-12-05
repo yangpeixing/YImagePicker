@@ -105,7 +105,8 @@ public class RedBookPresenter implements IPickerPresenter {
     }
 
     @Override
-    public boolean interceptPickerCompleteClick(final Activity activity, final ArrayList<ImageItem> selectedList, BaseSelectConfig selectConfig) {
+    public boolean interceptPickerCompleteClick(final Activity activity, final ArrayList<ImageItem> selectedList,
+                                                BaseSelectConfig selectConfig) {
         tip(activity, "拦截了完成按钮点击" + selectedList.size());
         Intent intent = new Intent(activity, SecondActivity.class);
         intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, selectedList);
@@ -149,7 +150,7 @@ public class RedBookPresenter implements IPickerPresenter {
     }
 
     @Override
-    public boolean interceptItemClick(@Nullable Context context, ImageItem imageItem,
+    public boolean interceptItemClick(@Nullable Activity activity, ImageItem imageItem,
                                       ArrayList<ImageItem> selectImageList,
                                       ArrayList<ImageItem> allSetImageList,
                                       BaseSelectConfig selectConfig,

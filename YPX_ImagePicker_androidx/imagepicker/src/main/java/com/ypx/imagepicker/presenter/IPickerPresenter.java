@@ -113,14 +113,14 @@ public interface IPickerPresenter extends Serializable {
      * <p>
      * 此方法可以用来跳转到任意一个页面，比如自定义的预览
      *
-     * @param context         上下文
+     * @param activity         上下文
      * @param imageItem       当前图片
      * @param selectImageList 当前选中列表
      * @param allSetImageList 当前文件夹所有图片
      * @param adapter         当前列表适配器，用于刷新数据
      * @return 是否拦截
      */
-    boolean interceptItemClick(@Nullable Context context, ImageItem imageItem, ArrayList<ImageItem> selectImageList,
+    boolean interceptItemClick(@Nullable Activity activity, ImageItem imageItem, ArrayList<ImageItem> selectImageList,
                                ArrayList<ImageItem> allSetImageList, BaseSelectConfig selectConfig, PickerItemAdapter adapter,
                                @Nullable IReloadExecutor reloadExecutor);
 

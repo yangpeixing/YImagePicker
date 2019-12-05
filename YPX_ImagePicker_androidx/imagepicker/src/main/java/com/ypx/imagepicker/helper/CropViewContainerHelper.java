@@ -3,6 +3,7 @@ package com.ypx.imagepicker.helper;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,22 +135,29 @@ public class CropViewContainerHelper {
     }
 
     public ArrayList<ImageItem> generateCropUrls(List<ImageItem> selectList, int cropMode) {
-        ArrayList<ImageItem> cropUrlList = new ArrayList<>();
         for (ImageItem imageItem : selectList) {
             CropImageView view = cropViewList.get(imageItem);
             if (view == null) {
                 continue;
             }
-            Bitmap bitmap = PBitmapUtils.getViewBitmap(view);
+            view.requestLayout();
+            Bitmap bitmap;
+            if (imageItem.getCropMode() == ImageCropMode.ImageScale_GAP) {
+                bitmap = view.generateCropBitmapFromView(Color.WHITE);
+            } else {
+                bitmap = view.generateCropBitmap();
+            }
             String cropUrl = PBitmapUtils.saveBitmapToFile(view.getContext(), bitmap,
                     "crop_" + System.currentTimeMillis(),
                     Bitmap.CompressFormat.JPEG);
+            if (imageItem.getCropUrl() != null && imageItem.getCropUrl().length() > 0) {
+                new File(imageItem.getCropUrl()).delete();
+            }
             imageItem.setCropUrl(cropUrl);
             imageItem.setCropMode(cropMode);
             imageItem.setPress(false);
-            cropUrlList.add(imageItem);
         }
-        return cropUrlList;
+        return (ArrayList<ImageItem>) selectList;
     }
 
 

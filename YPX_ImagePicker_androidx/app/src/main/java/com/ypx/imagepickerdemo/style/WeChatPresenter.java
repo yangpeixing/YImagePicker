@@ -146,7 +146,7 @@ public class WeChatPresenter implements IPickerPresenter {
     }
 
     @Override
-    public boolean interceptItemClick(@Nullable Context context, ImageItem imageItem,
+    public boolean interceptItemClick(@Nullable Activity activity, ImageItem imageItem,
                                       ArrayList<ImageItem> selectImageList,
                                       ArrayList<ImageItem> allSetImageList,
                                       BaseSelectConfig selectConfig,

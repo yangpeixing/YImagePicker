@@ -621,10 +621,8 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
      */
     @Override
     protected void notifyPickerComplete() {
-        ArrayList<ImageItem> cropUrlList;
         //如果当前选择的都是视频
         if (selectList.size() > 0 && selectList.get(0).isVideo()) {
-            cropUrlList = selectList;
         } else {
             //正在编辑
             if (mCropView.isEditing()) {
@@ -638,11 +636,11 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
                 tip(getPickConstants().picker_str_wait_for_load);
                 return;
             }
-            cropUrlList = cropViewContainerHelper.generateCropUrls(selectList, cropMode);
+            selectList = cropViewContainerHelper.generateCropUrls(selectList, cropMode);
         }
 
         //如果拦截了完成操作，则执行自定义的拦截操作
-        if (!presenter.interceptPickerCompleteClick(getWeakActivity(), cropUrlList, selectConfig)) {
+        if (!presenter.interceptPickerCompleteClick(getWeakActivity(), selectList, selectConfig)) {
             if (null != imageListener) {
                 imageListener.onImagePickComplete(selectList);
             }

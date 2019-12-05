@@ -98,7 +98,9 @@ public class MultiPickerBuilder {
      * @param mimeTypes 文件类型集合
      */
     public MultiPickerBuilder filterMimeTypes(Set<MimeType> mimeTypes) {
-        selectConfig.getMimeTypes().removeAll(mimeTypes);
+        if (mimeTypes != null && selectConfig != null && selectConfig.getMimeTypes() != null) {
+            selectConfig.getMimeTypes().removeAll(mimeTypes);
+        }
         return this;
     }
 

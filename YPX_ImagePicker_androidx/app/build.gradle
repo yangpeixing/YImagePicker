@@ -18,6 +18,14 @@ android {
         }
     }
 
+    //打包改名
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            // 名称_android_版本号.apk
+            outputFileName = "picker_${defaultConfig.versionName}.apk"
+        }
+    }
+
     lintOptions {
         abortOnError false
     }
@@ -27,7 +35,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation project(path: ':imagepicker')
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-3'
     //implementation 'com.ypx.yimagepicker:androidx:2.4.6.2'
