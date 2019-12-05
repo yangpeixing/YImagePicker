@@ -1,7 +1,9 @@
 package com.ypx.imagepickerdemo.style.custom;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,6 +18,7 @@ import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickConstants;
+import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.data.ICameraExecutor;
 import com.ypx.imagepicker.data.IReloadExecutor;
 import com.ypx.imagepicker.views.PickerUiConfig;
@@ -120,6 +123,11 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
 
     @Override
     public void overMaxCountTip(Context context, int maxCount) {
+    }
+
+    @Override
+    public DialogInterface showProgressDialog(@Nullable Activity activity, ProgressSceneEnum progressSceneEnum) {
+        return ProgressDialog.show(activity, null, progressSceneEnum == ProgressSceneEnum.crop ? "正在剪裁..." : "正在加载...");
     }
 
     @Override

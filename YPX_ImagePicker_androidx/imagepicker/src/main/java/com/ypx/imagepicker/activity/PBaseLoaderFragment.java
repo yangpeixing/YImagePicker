@@ -2,6 +2,7 @@ package com.ypx.imagepicker.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.data.ICameraExecutor;
+import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
@@ -215,17 +217,29 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
      */
     protected void loadMediaItemsFromSet(final @NonNull ImageSet set) {
         if (set.imageItems == null || set.imageItems.size() == 0) {
+            DialogInterface dialogInterface = null;
+            if (!set.isAllMedia() && set.count > 1000) {
+                dialogInterface = getPresenter().
+                        showProgressDialog(getWeakActivity(), ProgressSceneEnum.loadMediaItem);
+            }
             final BaseSelectConfig selectConfig = getSelectConfig();
+            final DialogInterface finalDialogInterface = dialogInterface;
             ImagePicker.provideMediaItemsFromSetWithPreload(getActivity(), set, selectConfig.getMimeTypes(),
                     40, new MediaItemsDataSource.MediaItemPreloadProvider() {
                         @Override
                         public void providerMediaItems(ArrayList<ImageItem> imageItems) {
+                            if (finalDialogInterface != null) {
+                                finalDialogInterface.dismiss();
+                            }
                             set.imageItems = imageItems;
                             loadMediaItemsComplete(set);
                         }
                     }, new MediaItemsDataSource.MediaItemProvider() {
                         @Override
                         public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
+                            if (finalDialogInterface != null) {
+                                finalDialogInterface.dismiss();
+                            }
                             set.imageItems = imageItems;
                             loadMediaItemsComplete(set);
                             if (selectConfig.isShowImage() && selectConfig.isShowVideo()) {

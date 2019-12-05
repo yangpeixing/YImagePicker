@@ -5,6 +5,7 @@
     <string name="picker_str_all_video">所有视频</string>
     <string name="picker_str_all_image">所有图片</string>
     <string name="picker_str_mimetypes_empty">请至少选择一种文件加载类型!</string>
+    <string name="str_single_crop_error">剪裁异常，已为您重置图片，请重试！</string>
     <!-- can change, see PickConstants-->
     <string name="picker_str_camera_permission">您拒绝了拍照权限，如拒绝设置会导致该功能无法使用!是否前去设置？</string>
     <string name="picker_str_storage_permission">您拒绝了存储权限，如拒绝设置会导致该功能无法使用!是否前去设置？</string>

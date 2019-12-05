@@ -1,6 +1,7 @@
 package com.ypx.imagepicker.activity.singlecrop;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -14,11 +15,11 @@ import androidx.fragment.app.FragmentActivity;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PickerActivityManager;
-import com.ypx.imagepicker.activity.preview.MultiImagePreviewActivity;
 import com.ypx.imagepicker.bean.selectconfig.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
+import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.PickerActivityCallBack;
 import com.ypx.imagepicker.helper.DetailImageLoadHelper;
@@ -27,10 +28,10 @@ import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
+import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.views.base.SingleCropControllerView;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_CURRENT_IMAGE;
@@ -46,8 +47,6 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
 public class SingleCropActivity extends FragmentActivity {
-    private final String PNG = ".png";
-    private final String JPEG = ".jpg";
     private CropImageView cropView;
     private CropConfig cropConfig;
     private IPickerPresenter presenter;
@@ -55,22 +54,22 @@ public class SingleCropActivity extends FragmentActivity {
     /**
      * 跳转单图剪裁
      *
-     * @param context    跳转的activity
-     * @param presenter  IMultiPickerBindPresenter
+     * @param activity   跳转的activity
+     * @param presenter  IPickerPresenter
      * @param cropConfig 剪裁配置
-     * @param path       需要剪裁的图片的原始路径
+     * @param path       需要剪裁的图片的原始路径，可以为Uri相对路径
      * @param listener   剪裁回调
      */
-    public static void intentCrop(Activity context,
+    public static void intentCrop(Activity activity,
                                   IPickerPresenter presenter,
                                   CropConfig cropConfig,
                                   String path,
                                   final OnImagePickCompleteListener listener) {
-        Intent intent = new Intent(context, SingleCropActivity.class);
+        Intent intent = new Intent(activity, SingleCropActivity.class);
         intent.putExtra(INTENT_KEY_PRESENTER, presenter);
         intent.putExtra(INTENT_KEY_SELECT_CONFIG, cropConfig);
         intent.putExtra(INTENT_KEY_CURRENT_IMAGE, path);
-        PLauncher.init(context).startActivityForResult(intent, PickerActivityCallBack.create(listener));
+        PLauncher.init(activity).startActivityForResult(intent, PickerActivityCallBack.create(listener));
     }
 
 
@@ -87,7 +86,6 @@ public class SingleCropActivity extends FragmentActivity {
             PickerErrorExecutor.executeError(this, PickerError.PRESENTER_NOT_FOUND.getCode());
             return;
         }
-
         if (cropConfig == null) {
             PickerErrorExecutor.executeError(this, PickerError.SELECT_CONFIG_NOT_FOUND.getCode());
             return;
@@ -100,41 +98,39 @@ public class SingleCropActivity extends FragmentActivity {
 
         PickerActivityManager.addActivity(this);
         setContentView(R.layout.picker_activity_crop);
+
+        //初始化剪裁view
         cropView = findViewById(R.id.cropView);
-        cropView.setBackgroundColor(presenter.getUiConfig(this).getCropViewBackgroundColor());
         cropView.setMaxScale(7.0f);
         cropView.setRotateEnable(false);
         cropView.enable();
         cropView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         cropView.setBounceEnable(!cropConfig.isGap());
         cropView.setCropMargin(cropConfig.getCropRectMargin());
-        if (!cropConfig.isCircle()) {
-            cropView.setCropRatio(cropConfig.getCropRatioX(), cropConfig.getCropRatioY());
-        } else {
-            cropView.setCropRatio(1, 1);
-        }
         cropView.setCircle(cropConfig.isCircle());
+        cropView.setCropRatio(cropConfig.getCropRatioX(), cropConfig.getCropRatioY());
+
+        //生成一个imageItem
         ImageItem imageItem = new ImageItem();
         imageItem.path = url;
-        int[] size = PBitmapUtils.getImageWidthHeight(url);
-        imageItem.width = size[0];
-        imageItem.height = size[1];
+        imageItem.setVideo(false);
 
+        //加载图片
         DetailImageLoadHelper.displayDetailImage(this, cropView, presenter, imageItem);
-        // presenter.displayImage(cropView, imageItem, 0, false);
-
         setControllerView();
     }
 
+    /**
+     * 设置剪裁控制器View
+     */
     private void setControllerView() {
         FrameLayout mCropPanel = findViewById(R.id.mCropPanel);
-        SingleCropControllerView cropControllerView = presenter.getUiConfig(this)
-                .getPickerUiProvider()
+        PickerUiConfig uiConfig = presenter.getUiConfig(this);
+        findViewById(R.id.mRoot).setBackgroundColor(uiConfig.getCropViewBackgroundColor());
+        SingleCropControllerView cropControllerView = uiConfig.getPickerUiProvider()
                 .getSingleCropControllerView(this);
-
         mCropPanel.addView(cropControllerView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
-
         cropControllerView.setStatusBar();
         cropControllerView.setCropViewParams(cropView, (ViewGroup.MarginLayoutParams) cropView.getLayoutParams());
         cropControllerView.getCompleteView().setOnClickListener(new View.OnClickListener() {
@@ -143,71 +139,94 @@ public class SingleCropActivity extends FragmentActivity {
                 if (PViewSizeUtils.onDoubleClick()) {
                     return;
                 }
-                cropComplete();
+                generateCropFile("crop_" + System.currentTimeMillis());
             }
         });
     }
 
-    private void cropComplete() {
+
+    /**
+     * 剪裁完成
+     *
+     * @param cropUrl 剪裁生成的绝对路径
+     */
+    private void cropComplete(String cropUrl) {
+        //如果正在编辑中...
         if (cropView.isEditing()) {
             return;
         }
+        //剪裁异常
+        if (cropUrl == null || cropUrl.length() == 0 || cropUrl.startsWith("Exception:")) {
+            presenter.tip(this, getString(R.string.str_single_crop_error));
+            cropView.setCropRatio(cropConfig.getCropRatioX(), cropConfig.getCropRatioY());
+            return;
+        }
+        //回调剪裁数据
+        ImageItem item = new ImageItem();
+        item.path = cropUrl;
+        item.mimeType = cropConfig.isNeedPng() ? MimeType.PNG.toString() : MimeType.JPEG.toString();
+        item.width = cropView.getCropWidth();
+        item.height = cropView.getCropHeight();
+        notifyOnImagePickComplete(item);
+    }
+
+
+    /**
+     * 生成剪裁文件
+     *
+     * @param fileName 图片名称
+     */
+    public void generateCropFile(final String fileName) {
+        final DialogInterface dialog = presenter.showProgressDialog(this, ProgressSceneEnum.crop);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final String cropUrl = generateCropFile("crop_" + System.currentTimeMillis());
+                Bitmap bitmap;
+                if (cropConfig.isGap()) {
+                    bitmap = cropView.generateCropBitmapFromView(cropConfig.getCropGapBackgroundColor());
+                } else {
+                    bitmap = cropView.generateCropBitmap();
+                }
+                final String url = saveBitmapToFile(bitmap, fileName);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (cropUrl.startsWith("Exception:")) {
-                            PickerError.CROP_EXCEPTION.setMessage(cropUrl);
-                            PickerErrorExecutor.executeError(SingleCropActivity.this, PickerError.CROP_EXCEPTION.getCode());
-                            return;
+                        if (dialog != null) {
+                            dialog.dismiss();
                         }
-                        ImageItem item = new ImageItem();
-                        item.path = cropUrl;
-                        if (cropUrl.endsWith(PNG)) {
-                            item.mimeType = MimeType.JPEG.toString();
-                        } else {
-                            item.mimeType = MimeType.PNG.toString();
-                        }
-
-                        item.width = cropView.getCropWidth();
-                        item.height = cropView.getCropHeight();
-
-
-                        ArrayList<ImageItem> list = new ArrayList<>();
-                        list.add(item);
-                        if (presenter.interceptPickerCompleteClick(SingleCropActivity.this, list, cropConfig)) {
-                            return;
-                        }
-                        notifyOnImagePickComplete(list);
+                        cropComplete(url);
                     }
                 });
             }
         }).start();
     }
 
-    public String generateCropFile(String fileName) {
-        String cropUrl;
-        Bitmap bitmap;
-        if (cropConfig.isGap()) {
-            bitmap = cropView.generateCropBitmapFromView(cropConfig.getCropGapBackgroundColor());
-        } else {
-            bitmap = cropView.generateCropBitmap();
-        }
-
+    /**
+     * 保存bitmap到本地磁盘
+     *
+     * @param bitmap   图片bitmap
+     * @param fileName 图片名字
+     */
+    private String saveBitmapToFile(final Bitmap bitmap, final String fileName) {
+        final String cropUrl;
         Bitmap.CompressFormat format = cropConfig.isNeedPng() ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG;
         if (cropConfig.isSaveInDCIM()) {
-            cropUrl = PBitmapUtils.saveBitmapToDICM(this, bitmap, fileName, format).toString();
+            cropUrl = PBitmapUtils.saveBitmapToDICM(SingleCropActivity.this, bitmap, fileName, format).toString();
         } else {
-            cropUrl = PBitmapUtils.saveBitmapToFile(this, bitmap, fileName, format);
+            cropUrl = PBitmapUtils.saveBitmapToFile(SingleCropActivity.this, bitmap, fileName, format);
         }
-
         return cropUrl;
     }
 
-    private void notifyOnImagePickComplete(ArrayList<ImageItem> list) {
+
+    /**
+     * 回调当前剪裁图片信息
+     *
+     * @param imageItem 剪裁图片信息
+     */
+    private void notifyOnImagePickComplete(ImageItem imageItem) {
+        ArrayList<ImageItem> list = new ArrayList<>();
+        list.add(imageItem);
         Intent intent = new Intent();
         intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, list);
         setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);

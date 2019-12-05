@@ -2,6 +2,7 @@ package com.ypx.imagepicker.presenter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickConstants;
+import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.data.ICameraExecutor;
 import com.ypx.imagepicker.data.IReloadExecutor;
 import com.ypx.imagepicker.views.PickerUiConfig;
@@ -66,6 +68,22 @@ public interface IPickerPresenter extends Serializable {
      * @param maxCount 最大数量
      */
     void overMaxCountTip(@Nullable Context context, int maxCount);
+
+
+    /**
+     * 显示loading加载框，注意需要调用show方法
+     *
+     * @param activity          启动对话框的activity
+     * @param progressSceneEnum {@link ProgressSceneEnum}
+     *                          </p>
+     *                          当progressSceneEnum==当ProgressSceneEnum.loadMediaItem 时，代表在加载媒体文件时显示加载框
+     *                          目前框架内规定，当文件夹内媒体文件少于1000时，强制不显示加载框，大于1000时才会执行此方法
+     *
+     *                          </p>
+     *                          当progressSceneEnum==当ProgressSceneEnum.crop 时，代表是剪裁页面的加载框
+     * @return DialogInterface 对象，用于关闭加载框，返回null代表不显示加载框
+     */
+    DialogInterface showProgressDialog(@Nullable Activity activity, ProgressSceneEnum progressSceneEnum);
 
     /**
      * 拦截选择器完成按钮点击事件

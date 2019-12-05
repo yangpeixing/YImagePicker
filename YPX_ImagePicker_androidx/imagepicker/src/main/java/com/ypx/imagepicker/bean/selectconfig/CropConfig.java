@@ -77,6 +77,9 @@ public class CropConfig extends BaseSelectConfig {
 //    }
 
     public int getCropRatioX() {
+        if (isCircle) {
+            return 1;
+        }
         return cropRatioX;
     }
 
@@ -86,6 +89,9 @@ public class CropConfig extends BaseSelectConfig {
     }
 
     public int getCropRatioY() {
+        if (isCircle) {
+            return 1;
+        }
         return cropRatioY;
     }
 

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Set;
 
 
-
 /**
  * Description: 媒体数据
  * <p>
@@ -110,15 +109,16 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                     try {
                         item.id = getLong(cursor, MediaStore.Files.FileColumns._ID);
                         item.mimeType = getString(cursor, MediaStore.MediaColumns.MIME_TYPE);
-                        //androidQ上废弃了DATA绝对路径，需要手动拼凑Uri
-//                        if (MediaStoreConstants.isBeforeAndroidQ()) {
-//                            item.path = getString(cursor, MediaStore.Files.FileColumns.DATA);
-//                        } else {
-//                            item.path = getUri(item.id, item.mimeType).toString();
-//                        }
+                        //androidQ上废弃了DATA绝对路径，需要手动拼凑Uri，这里为了兼容大部分项目还没有适配androidQ的情况
+                        //默认path还是先取绝对路径，取不到或者异常才去取Uri路径
+                        /*if (MediaStoreConstants.isBeforeAndroidQ()) {
+                            item.path = getString(cursor, MediaStore.Files.FileColumns.DATA);
+                        } else {
+                            item.path = getUri(item.id, item.mimeType).toString();
+                        }*/
                         try {
                             item.path = getString(cursor, MediaStore.Files.FileColumns.DATA);
-                        }catch (Exception ignored){
+                        } catch (Exception ignored) {
 
                         }
 
@@ -156,20 +156,22 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                     else {
                         //如果媒体信息中不包含图片的宽高，则手动获取文件宽高
                         if (item.width == 0 || item.height == 0) {
-                            int[] size = PBitmapUtils.getImageWidthHeight(item.path);
-                            item.width = size[0];
-                            item.height = size[1];
+                            if (!item.isUriPath()) {
+                                int[] size = PBitmapUtils.getImageWidthHeight(item.path);
+                                item.width = size[0];
+                                item.height = size[1];
+                            }
                         }
                     }
-
+                    //添加到文件列表中国呢
                     imageItems.add(item);
-
+                    //回调预加载数据源
                     if (preloadProvider != null && imageItems.size() == preloadSize) {
                         notifyPreloadItem(context, imageItems);
                     }
                 } while (!context.isDestroyed() && !cursor.isClosed() && cursor.moveToNext());
             }
-
+            //手动生成一个虚拟的全部视频文件夹
             ImageSet allVideoSet = null;
             if (allVideoItems.size() > 0) {
                 allVideoSet = new ImageSet();
@@ -180,26 +182,17 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                 allVideoSet.imageItems = allVideoItems;
                 allVideoSet.name = context.getResources().getString(R.string.picker_str_all_video);
             }
-
-            final ImageSet finalAllVideoSet = allVideoSet;
-            context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (context.isDestroyed()) {
-                        return;
-                    }
-                    if (mediaItemProvider != null) {
-                        mediaItemProvider.providerMediaItems(imageItems, finalAllVideoSet);
-                    }
-
-                    if (mLoaderManager != null) {
-                        mLoaderManager.destroyLoader(LOADER_ID);
-                    }
-                }
-            });
+            //回调所有数据
+            notifyMediaItem(context, imageItems, allVideoSet);
         }
     };
 
+    /**
+     * 回调预加载的媒体文件，主线程
+     *
+     * @param context    FragmentActivity
+     * @param imageItems 预加载列表
+     */
     private void notifyPreloadItem(final FragmentActivity context, final ArrayList<ImageItem> imageItems) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -209,6 +202,32 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                 }
                 preloadProvider.providerMediaItems(imageItems);
                 preloadProvider = null;
+            }
+        });
+    }
+
+    /**
+     * 回调所有数据
+     *
+     * @param context     FragmentActivity
+     * @param imageItems  所有文件
+     * @param allVideoSet 当加载所有媒体库文件时，默认会生成一个全部视频的文件夹，是本地虚拟的文件夹
+     */
+    private void notifyMediaItem(final FragmentActivity context, final ArrayList<ImageItem> imageItems,
+                                 final ImageSet allVideoSet) {
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (context.isDestroyed()) {
+                    return;
+                }
+                if (mediaItemProvider != null) {
+                    mediaItemProvider.providerMediaItems(imageItems, allVideoSet);
+                }
+
+                if (mLoaderManager != null) {
+                    mLoaderManager.destroyLoader(LOADER_ID);
+                }
             }
         });
     }

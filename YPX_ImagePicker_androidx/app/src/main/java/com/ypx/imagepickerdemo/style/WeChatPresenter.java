@@ -1,6 +1,7 @@
 package com.ypx.imagepickerdemo.style;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickConstants;
+import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.data.ICameraExecutor;
 import com.ypx.imagepicker.data.IReloadExecutor;
 import com.ypx.imagepicker.views.PickerUiConfig;
@@ -62,10 +64,10 @@ public class WeChatPresenter implements IPickerPresenter {
             uiConfig.setFolderListOpenMaxMargin(PViewSizeUtils.dp(context, 100));
         }
 
-        uiConfig.setPickerUiProvider(new PickerUiProvider(){
+        uiConfig.setPickerUiProvider(new PickerUiProvider() {
             @Override
             public PickerItemView getItemView(Context context) {
-                WXItemView itemView= (WXItemView) super.getItemView(context);
+                WXItemView itemView = (WXItemView) super.getItemView(context);
                 itemView.setBackgroundColor(Color.parseColor("#303030"));
                 return itemView;
             }
@@ -99,6 +101,12 @@ public class WeChatPresenter implements IPickerPresenter {
     public void overMaxCountTip(Context context, int maxCount) {
         tip(context, "最多选择" + maxCount + "个文件");
     }
+
+    @Override
+    public DialogInterface showProgressDialog(@Nullable Activity activity, ProgressSceneEnum progressSceneEnum) {
+        return ProgressDialog.show(activity, null, progressSceneEnum == ProgressSceneEnum.crop ? "正在剪裁..." : "正在加载...");
+    }
+
 
     @Override
     public boolean interceptPickerCompleteClick(Activity activity, ArrayList<ImageItem> selectedList, BaseSelectConfig selectConfig) {

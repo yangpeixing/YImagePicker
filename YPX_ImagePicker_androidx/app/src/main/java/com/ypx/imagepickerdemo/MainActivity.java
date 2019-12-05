@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioButton mRbTakePhoto;
     private RadioButton mRbTakePhotoAndCrop;
     private RadioButton mRbSingle;
+    private CheckBox mCbFilterVideoPreview;
     private CheckBox mCbSingleAutoComplete;
     private CheckBox mCbCircle;
     private TextView mCropX;
@@ -136,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         mRbTakePhoto = findViewById(R.id.rb_takePhoto);
         mRbTakePhotoAndCrop = findViewById(R.id.rb_takePhotoAndCrop);
         mCbCircle = findViewById(R.id.cb_circle);
+        mCbFilterVideoPreview = findViewById(R.id.cb_filterVideoPreview);
         mCropX = findViewById(R.id.mCropX);
         mXSeekBar = findViewById(R.id.mXSeekBar);
         mCropY = findViewById(R.id.mCropY);
@@ -302,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
                 .mimeTypes(getMimeTypes())//设置要加载的文件类型，可指定单一类型
                 // .filterMimeType(MimeType.GIF)//设置需要过滤掉加载的文件类型
                 .setSelectMode(getSelectMode())
-                .setPreviewVideo(true)
+                .setPreviewVideo(!mCbFilterVideoPreview.isChecked())
                 .showCamera(mCbShowCamera.isChecked())//显示拍照
                 .setPreview(!mCbClosePreview.isChecked())//是否开启预览
                 .setVideoSinglePick(mCbVideoSingle.isChecked())//设置视频单选
@@ -354,7 +356,6 @@ public class MainActivity extends AppCompatActivity {
                 .cropRectMinMargin(mMarginSeekBar.getProgress())
                 .cropStyle(mCbGap.isChecked() ? CropConfig.STYLE_GAP : CropConfig.STYLE_FILL)
                 .cropGapBackgroundColor(mCbGapBackground.isChecked() ? Color.TRANSPARENT : Color.RED)
-                // .cropSaveFilePath(ImagePicker.cropPicSaveFilePath)
                 .setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());
         if (mCbCircle.isChecked()) {
             builder.cropAsCircle();
@@ -384,7 +385,6 @@ public class MainActivity extends AppCompatActivity {
         CropConfig cropConfig = new CropConfig();
         cropConfig.setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());//设置剪裁比例
         cropConfig.setCropRectMargin(mMarginSeekBar.getProgress());//设置剪裁框间距，单位px
-        // cropConfig.setCropSaveFilePath(ImagePicker.cropPicSaveFilePath);
         cropConfig.setCircle(mCbCircle.isChecked());//是否圆形剪裁
         cropConfig.setCropStyle(mCbGap.isChecked() ? CropConfig.STYLE_GAP : CropConfig.STYLE_FILL);
         cropConfig.setCropGapBackgroundColor(mCbGapBackground.isChecked() ? Color.TRANSPARENT : Color.RED);

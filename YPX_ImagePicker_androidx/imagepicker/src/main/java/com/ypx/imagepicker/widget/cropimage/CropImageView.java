@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -1436,19 +1437,18 @@ public class CropImageView extends ImageView {
         executeTranslate();
     }
 
-    public Bitmap generateCropBitmapFromView(int backgroundColor) {
+    public Bitmap generateCropBitmapFromView(final int backgroundColor) {
         setShowImageRectLine(false);
         aspectX = 0;
         aspectY = 0;
-        setVisibility(INVISIBLE);
-        setBackgroundColor(backgroundColor);
         invalidate();
-        Bitmap bitmap = PBitmapUtils.getViewBitmap(this);
+
+        Bitmap bitmap = PBitmapUtils.getViewBitmap(CropImageView.this);
         try {
             bitmap = Bitmap.createBitmap(bitmap, (int) mCropRect.left, (int) mCropRect.top,
                     (int) mCropRect.width(), (int) mCropRect.height());
             if (isCircle) {
-                bitmap = createCircleBitmap(bitmap);
+                bitmap = createCircleBitmap(bitmap, backgroundColor);
             }
         } catch (Exception ignored) {
         }
@@ -1517,25 +1517,32 @@ public class CropImageView extends ImageView {
         try {
             bitmap1 = Bitmap.createBitmap(originalBitmap, (int) endX, (int) endY, (int) endW, (int) endH);
             if (isCircle) {
-                bitmap1 = createCircleBitmap(bitmap1);
+                bitmap1 = createCircleBitmap(bitmap1, Color.TRANSPARENT);
             }
         } catch (Exception ignored) {
-            return generateCropBitmapFromView(Color.BLACK);
+            bitmap1 = generateCropBitmapFromView(Color.BLACK);
         }
-
         return bitmap1;
     }
 
 
-    private Bitmap createCircleBitmap(Bitmap resource) {
+    private Bitmap createCircleBitmap(Bitmap resource, int backgroundColor) {
         int width = resource.getWidth();
         Paint paint = new Paint();
         paint.setAntiAlias(true);
-        Bitmap circleBitmap = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888);
+        Bitmap circleBitmap = Bitmap.createBitmap(resource.getWidth(), resource.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(circleBitmap);
+        if (backgroundColor != Color.TRANSPARENT) {
+            paint.setColor(backgroundColor);
+        }
         canvas.drawCircle(width / 2, width / 2, width / 2, paint);
         //设置画笔为取交集模式
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        if (backgroundColor == Color.TRANSPARENT) {
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        } else {
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
+        }
+
         //裁剪图片
         canvas.drawBitmap(resource, 0, 0, paint);
         return circleBitmap;

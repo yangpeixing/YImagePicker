@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 
+
 import java.io.Serializable;
 
 
@@ -17,32 +18,47 @@ import java.io.Serializable;
  */
 public class ImageItem implements Serializable, Parcelable {
     private static final long serialVersionUID = 3429291195776736078L;
+    //媒体文件ID,可通过此id查询此媒体文件的所有信息
     public long id;
+    //媒体文件宽
     public int width;
+    //高
     public int height;
+    //生成或者更新时间
     public long time;
-    public String mimeType;
-    public String timeFormat;
+    //时常（仅针对视频）
     public long duration;
+    //文件类型
+    public String mimeType;
+    //更新时间格式化 例如：2019年12月  本周内 等
+    public String timeFormat;
+    //时常格式化  00：00：00
     public String durationFormat;
-    public String videoImageUri;
+    //是否是视频文件
+    private boolean isVideo = false;
 
-    // 加入滤镜后的原图图片地址,如果无滤镜返回原图地址
-    public String imageFilterPath = "";
-    // 原图地址
+    //视频缩略图地址，默认是null，并没有扫描视频缩略图，这里提供此变量便于使用者自己塞入使用
+    private String videoImageUri;
+    // 加入滤镜后的原图图片地址,如果无滤镜返回原图地址，这里提供此变量便于使用者自己app塞入地址使用
+    private String imageFilterPath = "";
+
+    //androidQ上废弃了DATA绝对路径，需要手动拼凑Uri，这里为了兼容大部分项目还没有适配androidQ的情况
+    //默认path还是先取绝对路径，取不到或者异常才去取Uri路径
     public String path;
-    // 剪裁后的图片地址（从 imageFilterPath 计算出来，已经带了滤镜）
+    //直接拿到Uri路径，在媒体库里，一定会有Uri路径
+    private String uriPath;
+    // 剪裁后的图片绝对地址（从imageFilterPath 计算出来，已经带了滤镜）
     private String cropUrl;
 
-    private boolean isVideo = false;
+    //以下是UI上用到的临时变量
     private boolean isSelect = false;
     private boolean isPress = false;
     private int selectIndex = -1;
     private int cropMode = ImageCropMode.ImageScale_FILL;
-    private String uriPath;
 
     public ImageItem() {
     }
+
 
     protected ImageItem(Parcel in) {
         id = in.readLong();

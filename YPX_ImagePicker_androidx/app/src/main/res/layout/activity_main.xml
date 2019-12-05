@@ -249,13 +249,19 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <CheckBox
                 android:id="@+id/cb_singleAutoComplete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="单选时,点击item直接回调,无需选中" />
+
+            <CheckBox
+                android:id="@+id/cb_filterVideoPreview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="大图预览时，过滤掉视频预览" />
 
         </LinearLayout>
 

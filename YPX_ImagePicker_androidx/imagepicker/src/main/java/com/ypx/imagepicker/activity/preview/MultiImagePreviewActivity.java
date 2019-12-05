@@ -2,6 +2,7 @@ package com.ypx.imagepicker.activity.preview;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -21,11 +22,11 @@ import com.ypx.imagepicker.activity.PickerActivityManager;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
+import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
-import com.ypx.imagepicker.utils.PConstantsUtil;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.views.wx.WXPreviewControllerView;
 import com.ypx.imagepicker.views.base.PreviewControllerView;
@@ -160,7 +161,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
         presenter = (IPickerPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
         mCurrentItemPosition = getIntent().getIntExtra(INTENT_KEY_CURRENT_INDEX, 0);
-        ArrayList<ImageItem> list = (ArrayList<ImageItem>) getIntent().getSerializableExtra(INTENT_KEY_SELECT_LIST);
+        ArrayList list = (ArrayList) getIntent().getSerializableExtra(INTENT_KEY_SELECT_LIST);
         if (list == null || presenter == null) {
             return true;
         }
@@ -180,18 +181,18 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             if (currentImageSet.imageItems != null && currentImageSet.imageItems.size() > 0
                     && currentImageSet.imageItems.size() >= currentImageSet.count) {
                 mImageList = filterVideo(currentImageSet.imageItems);
-                //mImageList = new ArrayList<>(currentImageSet.imageItems);
                 initViewPager();
             } else {
-                final ProgressDialog dialog = ProgressDialog.show(this, null,
-                        PConstantsUtil.getString(this, presenter).picker_str_loading);
+                final DialogInterface dialogInterface = getPresenter().
+                        showProgressDialog(this, ProgressSceneEnum.loadMediaItem);
                 ImagePicker.provideMediaItemsFromSet(this, currentImageSet, selectConfig.getMimeTypes(),
                         new MediaItemsDataSource.MediaItemProvider() {
                             @Override
                             public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
-                                dialog.dismiss();
+                                if (dialogInterface != null) {
+                                    dialogInterface.dismiss();
+                                }
                                 mImageList = filterVideo(imageItems);
-                                // mImageList = new ArrayList<>(imageItems);
                                 initViewPager();
                             }
                         });
@@ -281,7 +282,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
 
     class TouchImageAdapter extends FragmentStatePagerAdapter {
         TouchImageAdapter(FragmentManager fm) {
-            super(fm);
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             if (mImageList == null) {
                 mImageList = new ArrayList<>();
             }

@@ -424,9 +424,10 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         ImagePicker.crop(getActivity(), presenter, selectConfig, path, new OnImagePickCompleteListener() {
             @Override
             public void onImagePickComplete(ArrayList<ImageItem> items) {
-                if (onImagePickCompleteListener != null) {
-                    onImagePickCompleteListener.onImagePickComplete(items);
-                }
+                selectList.clear();
+                selectList.addAll(items);
+                mAdapter.notifyDataSetChanged();
+                notifyPickerComplete();
             }
         });
     }
@@ -462,10 +463,11 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
      */
     @Override
     protected void notifyPickerComplete() {
-        if (!presenter.interceptPickerCompleteClick(getWeakActivity(), selectList, selectConfig)) {
-            if (onImagePickCompleteListener != null) {
-                onImagePickCompleteListener.onImagePickComplete(selectList);
-            }
+        if (presenter.interceptPickerCompleteClick(getWeakActivity(), selectList, selectConfig)) {
+            return;
+        }
+        if (onImagePickCompleteListener != null) {
+            onImagePickCompleteListener.onImagePickComplete(selectList);
         }
     }
 
