@@ -11,7 +11,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:allowBackup="true">
+        android:allowBackup="true"
+        android:requestLegacyExternalStorage="true"
+        tools:targetApi="q"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

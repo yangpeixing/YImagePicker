@@ -269,6 +269,17 @@ public class MultiPickerBuilder {
         return this;
     }
 
+    /**
+     * 剪裁完成的图片是否保存在DCIM目录下
+     *
+     * @param isSaveInDCIM true：存储在系统目录DCIM下 false：存储在 data/包名/files/imagePicker/ 目录下
+     *
+     */
+    public MultiPickerBuilder cropSaveInDCIM(boolean isSaveInDCIM) {
+        selectConfig.saveInDCIM(isSaveInDCIM);
+        return this;
+    }
+
     //—————————————————————— 以上为单图剪裁的属性 ——————————————————————
 
     /**

@@ -451,7 +451,7 @@
                     android:layout_weight="1"
                     android:max="6"
                     android:min="1"
-                    android:progress="0" />
+                    android:progress="1" />
 
             </LinearLayout>
 

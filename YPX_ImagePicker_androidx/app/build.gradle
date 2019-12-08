@@ -38,5 +38,5 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation project(path: ':imagepicker')
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-3'
-    //implementation 'com.ypx.yimagepicker:androidx:2.4.6.2'
+    //implementation 'com.ypx.yimagepicker:androidx:3.0'
 }

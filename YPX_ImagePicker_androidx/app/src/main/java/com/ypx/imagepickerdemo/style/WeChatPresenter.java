@@ -28,7 +28,10 @@ import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.views.PickerUiProvider;
+import com.ypx.imagepicker.views.base.PickerFolderItemView;
 import com.ypx.imagepicker.views.base.PickerItemView;
+import com.ypx.imagepicker.views.base.SingleCropControllerView;
+import com.ypx.imagepicker.views.wx.WXFolderItemView;
 import com.ypx.imagepicker.views.wx.WXItemView;
 import com.ypx.imagepickerdemo.R;
 import com.ypx.imagepickerdemo.SecondActivity;
@@ -55,10 +58,22 @@ public class WeChatPresenter implements IPickerPresenter {
     @Override
     public PickerUiConfig getUiConfig(Context context) {
         PickerUiConfig uiConfig = new PickerUiConfig();
+        //设置是否显示标题栏
         uiConfig.setShowStatusBar(true);
+        //设置标题栏颜色
         uiConfig.setStatusBarColor(Color.parseColor("#F5F5F5"));
+        //设置选择器背景
         uiConfig.setPickerBackgroundColor(Color.BLACK);
+        //设置单图剪裁背景色
+        uiConfig.setSingleCropBackgroundColor(Color.BLACK);
+        //设置预览页面背景色
+        uiConfig.setPreviewBackgroundColor(Color.BLACK);
+        //设置选择器文件夹打开方向
         uiConfig.setFolderListOpenDirection(PickerUiConfig.DIRECTION_BOTTOM);
+        //设置文件夹列表距离顶部/底部边距
+        uiConfig.setFolderListOpenMaxMargin(0);
+        //设置小红书剪裁区域的背景色
+        uiConfig.setCropViewBackgroundColor(Color.BLACK);
 
         if (context != null) {
             uiConfig.setFolderListOpenMaxMargin(PViewSizeUtils.dp(context, 100));
@@ -70,6 +85,18 @@ public class WeChatPresenter implements IPickerPresenter {
                 WXItemView itemView = (WXItemView) super.getItemView(context);
                 itemView.setBackgroundColor(Color.parseColor("#303030"));
                 return itemView;
+            }
+
+            @Override
+            public PickerFolderItemView getFolderItemView(Context context) {
+                WXFolderItemView itemView = new WXFolderItemView(context);
+                itemView.setIndicatorColor(context.getResources().getColor(R.color.wx));
+                return itemView;
+            }
+
+            @Override
+            public SingleCropControllerView getSingleCropControllerView(Context context) {
+                return super.getSingleCropControllerView(context);
             }
         });
         return uiConfig;

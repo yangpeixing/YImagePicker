@@ -22,6 +22,7 @@ public class PickerUiConfig {
      */
     private int pickerBackgroundColor = Color.BLACK;
     private int previewBackgroundColor = Color.BLACK;
+    private int singleCropBackgroundColor = Color.BLACK;
     private int folderListOpenDirection = DIRECTION_TOP;
     private int folderListOpenMaxMargin = 0;
     private boolean isShowStatusBar;
@@ -53,6 +54,14 @@ public class PickerUiConfig {
             return Color.WHITE;
         }
         return pickerBackgroundColor;
+    }
+
+    public int getSingleCropBackgroundColor() {
+        return singleCropBackgroundColor;
+    }
+
+    public void setSingleCropBackgroundColor(int singleCropBackgroundColor) {
+        this.singleCropBackgroundColor = singleCropBackgroundColor;
     }
 
     public void setPickerBackgroundColor(int pickerBackgroundColor) {

@@ -126,7 +126,7 @@ public class SingleCropActivity extends FragmentActivity {
     private void setControllerView() {
         FrameLayout mCropPanel = findViewById(R.id.mCropPanel);
         PickerUiConfig uiConfig = presenter.getUiConfig(this);
-        findViewById(R.id.mRoot).setBackgroundColor(uiConfig.getCropViewBackgroundColor());
+        findViewById(R.id.mRoot).setBackgroundColor(uiConfig.getSingleCropBackgroundColor());
         SingleCropControllerView cropControllerView = uiConfig.getPickerUiProvider()
                 .getSingleCropControllerView(this);
         mCropPanel.addView(cropControllerView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
