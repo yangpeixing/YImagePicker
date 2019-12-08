@@ -351,7 +351,6 @@ public class MainActivity extends AppCompatActivity {
         MultiPickerBuilder builder = ImagePicker.withMulti(presenter)//指定presenter
                 .setColumnCount(4)//设置列数
                 .mimeTypes(getMimeTypes())//设置要加载的文件类型，可指定单一类型
-                .setSelectMode()
                 // .filterMimeType(MimeType.GIF)//设置需要过滤掉加载的文件类型
                 .showCamera(mCbShowCamera.isChecked())//显示拍照
                 .cropRectMinMargin(mMarginSeekBar.getProgress())
@@ -408,7 +407,6 @@ public class MainActivity extends AppCompatActivity {
         CropConfig cropConfig = new CropConfig();
         cropConfig.setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());//设置剪裁比例
         cropConfig.setCropRectMargin(mMarginSeekBar.getProgress());//设置剪裁框间距，单位px
-        cropConfig.saveInDCIM(false);
         // cropConfig.setCropSaveFilePath(ImagePicker.cropPicSaveFilePath);
         cropConfig.setCircle(mCbCircle.isChecked());//是否圆形剪裁
         cropConfig.setCropStyle(mCbGap.isChecked() ? CropConfig.STYLE_GAP : CropConfig.STYLE_FILL);
