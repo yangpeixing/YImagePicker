@@ -308,8 +308,8 @@ public class MainActivity extends AppCompatActivity {
                 .showCamera(mCbShowCamera.isChecked())//显示拍照
                 .setPreview(!mCbClosePreview.isChecked())//是否开启预览
                 .setVideoSinglePick(mCbVideoSingle.isChecked())//设置视频单选
-                .setSinglePickImageOrVideoType(mCbImageOrVideo.isChecked())//设置图片和视频单一类型选择
                 .setSinglePickWithAutoComplete(mCbSingleAutoComplete.isChecked())
+                .setSinglePickImageOrVideoType(mCbImageOrVideo.isChecked())//设置图片和视频单一类型选择
                 .setMaxVideoDuration(120000L)//设置视频可选取的最大时长
                 .setMinVideoDuration(5000L)
                 .setLastImageList(mRbSave.isChecked() ? picList : null)//设置上一次操作的图片列表，下次选择时默认恢复上一次选择的状态
@@ -381,6 +381,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void takePhotoAndCrop() {
+        ImagePicker.DEFAULT_FILE_NAME = "自定义目录名字";
+        boolean isOpenOriginal = ImagePicker.isOriginalImage;
         //配置剪裁属性
         CropConfig cropConfig = new CropConfig();
         cropConfig.setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());//设置剪裁比例
@@ -388,6 +390,7 @@ public class MainActivity extends AppCompatActivity {
         cropConfig.setCircle(mCbCircle.isChecked());//是否圆形剪裁
         cropConfig.setCropStyle(mCbGap.isChecked() ? CropConfig.STYLE_GAP : CropConfig.STYLE_FILL);
         cropConfig.setCropGapBackgroundColor(mCbGapBackground.isChecked() ? Color.TRANSPARENT : Color.RED);
+        cropConfig.saveInDCIM(false);
         ImagePicker.takePhotoAndCrop(this, new WeChatPresenter(), cropConfig, new OnImagePickCompleteListener() {
             @Override
             public void onImagePickComplete(ArrayList<ImageItem> items) {

@@ -20,6 +20,7 @@
  - 支持自定义回调类型
  - 支持直接回调媒体相册列表及文件列表
  - 支持选择器所有文案定制
+ - 支持多种特殊需求覆盖，支持自定义选择器拦截事件
  - androidx版本已全面适配androidQ
  - 支持直接拍摄视频、图片等
  - 轻量级，aar大小不超过300K，无so库，无任何第三方依赖
@@ -33,7 +34,7 @@
 ```java
 implementation 'com.ypx.yimagepicker:androidx:3.0'
 ```
-**support版本：暂未更新** （不支持targetSdkVersion>=29,最高兼容28）
+**support版本：暂未更新，后期可能不再维护，请使用者尽早切换androidx** （不支持targetSdkVersion>=29,最高兼容28）
 ```java
 implementation 'com.ypx.yimagepicker:support:2.4.6'
 ```
@@ -51,7 +52,7 @@ YImagePicker与主项目通过IPickerPresenter进行交互与解耦，presenter�
 ### 效果图集
  - **demo效果**
  
-![demo效果](https://www.pgyer.com/image/view/app_screenshots/f8150c0603fcec8213909b1b7c82747f-528)
+![demo效果](https://www.pgyer.com/image/view/app_screenshots/307e5ef3956be346304a968b574c504f-528)
 
  - **小红书样式**
 
@@ -76,11 +77,11 @@ YImagePicker与主项目通过IPickerPresenter进行交互与解耦，presenter�
  ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/15483adb087360ff49e831cb988adce1-528)
  ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/4cf64a6afb74b6457103bd04debb7e58-528)
 
-
+### [点击查看特殊需求定制](https://github.com/yangpeixing/YImagePicker/wiki/questions)
 ### [点击查看3.x详细API文档](https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x)
  
 ### 微信图片选择
-支持视频、GIF、长图选择，支持选择状态保存。调用前请按照demo实现IMultiPickerBindPresenter接口 ，示例如下：
+支持视频、GIF、长图选择，支持选择状态保存。调用前请按照demo实现IPickerPresenter接口 ，示例如下：
 ```java
 ImagePicker.withMulti(new WeChatPresenter())//指定presenter                                 //设置选择的最大数 
         .setMaxCount(9)  
@@ -119,7 +120,7 @@ ImagePicker.withMulti(new WeChatPresenter())//指定presenter                   
         });                                                                                                                              
 ```
 ### 小红书图片选择
-高仿小红书图片剪裁框架，支持视频以及多图剪裁、支持视频预览，支持UI自定义，支持fragment样式侵入。调用前请按照demo实现ICropPickerBindPresenter接口 ，示例如下：
+高仿小红书图片剪裁框架，支持视频以及多图剪裁、支持视频预览，支持UI自定义，支持fragment样式侵入。调用前请按照demo实现IPickerPresenter接口 ，示例如下：
 ```java
 ImagePicker.withCrop(new RedBookPresenter())//设置presenter                
         .setMaxCount(9)//设置选择数量                                          
@@ -321,9 +322,7 @@ ImagePicker.provideMediaItemsFromSetWithPreload(this, imageSet, mimeTypes, prelo
         });
 ```
 
-### presenter指定、自定义选择器样式、自定义预览和剪裁样式、自定义提示常量、设置选择器调用失败回调、自定义回调类型
-详细使用方法请[查看详细API文档](https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x)
-
+### 使用前请务必阅读[选择器问题解答汇总](https://github.com/yangpeixing/YImagePicker/wiki/questions)以及 [3.x使用文档](https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x)
 
 ### 版本记录
 [查看详细版本记录](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker版本记录)

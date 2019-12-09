@@ -179,6 +179,7 @@ public class WeChatPresenter implements IPickerPresenter {
                                       BaseSelectConfig selectConfig,
                                       PickerItemAdapter adapter,
                                       @Nullable IReloadExecutor reloadExecutor) {
+
         return false;
     }
 
