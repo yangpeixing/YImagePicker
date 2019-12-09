@@ -44,8 +44,9 @@ YImagePicker与主项目通过IPickerPresenter进行交互与解耦，presenter�
 
 调用选择器之前必须实现 IPickerPresenter 接口
 
+[选择器问题解答汇总](https://github.com/yangpeixing/YImagePicker/wiki/questions)
+
 [点击查看3.x详细API文档](https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x)
- 
 
 [apk体验地址 - 密码：123456](https://www.pgyer.com/imagepicker) 
 
@@ -76,9 +77,6 @@ YImagePicker与主项目通过IPickerPresenter进行交互与解耦，presenter�
  
  ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/15483adb087360ff49e831cb988adce1-528)
  ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/4cf64a6afb74b6457103bd04debb7e58-528)
-
-### [点击查看特殊需求定制](https://github.com/yangpeixing/YImagePicker/wiki/questions)
-### [点击查看3.x详细API文档](https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x)
  
 ### 微信图片选择
 支持视频、GIF、长图选择，支持选择状态保存。调用前请按照demo实现IPickerPresenter接口 ，示例如下：
