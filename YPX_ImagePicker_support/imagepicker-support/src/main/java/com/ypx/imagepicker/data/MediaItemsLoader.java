@@ -41,7 +41,7 @@ public class MediaItemsLoader extends CursorLoader {
             MediaStore.Files.FileColumns.HEIGHT,
             MediaStore.MediaColumns.MIME_TYPE,
             MediaStore.MediaColumns.SIZE,
-            MediaStore.Video.Media.DURATION,
+            "duration",
             MediaStore.Files.FileColumns.DATE_MODIFIED};
 
     private static final String ORDER_BY = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";

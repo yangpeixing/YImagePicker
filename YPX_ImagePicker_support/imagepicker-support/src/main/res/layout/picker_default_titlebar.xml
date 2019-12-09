@@ -10,7 +10,7 @@
         android:id="@+id/mTitleRoot"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:gravity="center"
+        android:gravity="start"
         android:orientation="horizontal"
         android:paddingStart="40dp"
         android:paddingEnd="40dp">
@@ -38,7 +38,7 @@
 
     <ImageView
         android:id="@+id/iv_back"
-        android:layout_width="40dp"
+        android:layout_width="50dp"
         android:layout_height="50dp"
         android:scaleType="centerInside"
         android:src="@mipmap/picker_icon_back_black" />

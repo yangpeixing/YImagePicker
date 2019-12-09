@@ -21,6 +21,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -33,7 +34,7 @@ import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
-import com.ypx.imagepicker.utils.PFileUtil;
+import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 
 /**
@@ -199,6 +200,23 @@ public class CropImageView extends ImageView {
     }
 
     @Override
+    public void setImageBitmap(Bitmap bm) {
+        if (bm == null || bm.getWidth() == 0 || bm.getHeight() == 0) {
+            return;
+        }
+
+        float ratio = bm.getWidth() * 1.00f / bm.getHeight() * 1.00f;
+        if (bm.getWidth() > 5000) {
+            bm = Bitmap.createScaledBitmap(bm, 5000, (int) (5000f / ratio), false);
+        }
+
+        if (bm.getHeight() > 10000) {
+            bm = Bitmap.createScaledBitmap(bm, (int) (10000f * ratio), 10000, false);
+        }
+        super.setImageBitmap(bm);
+    }
+
+    @Override
     public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
 
@@ -211,7 +229,6 @@ public class CropImageView extends ImageView {
             return;
 
         hasDrawable = true;
-
         if (drawable instanceof BitmapDrawable) {
             originalBitmap = ((BitmapDrawable) drawable).getBitmap();
         } else if (drawable instanceof AnimationDrawable) {
@@ -414,6 +431,9 @@ public class CropImageView extends ImageView {
         float widthScale = mCropRect.width() / mImgRect.width();
         float heightScale = mCropRect.height() / mImgRect.height();
         mScale = Math.min(widthScale, heightScale);
+        if (widthScale > mMaxScale) {
+            mMaxScale = widthScale;
+        }
         mAnimMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
         executeTranslate();
         resetBase();
@@ -783,6 +803,12 @@ public class CropImageView extends ImageView {
         if (!isBounceEnable) {
             return;
         }
+
+        float cx = mImgRect.left * 1.00f + mImgRect.width() / 2;
+        float cy = mImgRect.top * 1.00f + mImgRect.height() / 2;
+
+        mRotateCenter.set(cx, cy);
+
         if (mScale < 1) {
             mTranslate.withScale(mScale, 1);
             mScale = 1;
@@ -790,19 +816,16 @@ public class CropImageView extends ImageView {
             mTranslate.withScale(mScale, mMaxScale);
             mScale = mMaxScale;
         }
-        float cx = mImgRect.left + mImgRect.width() / 2;
-        float cy = mImgRect.top + mImgRect.height() / 2;
 
         mScaleCenter.set(cx, cy);
-        mRotateCenter.set(cx, cy);
-
+        Log.e("CropImageView", "onUp: " + mImgRect.toShortString() + "   x= " + mScaleCenter.x + " " + mScaleCenter.y);
         mTranslateX = 0;
         mTranslateY = 0;
 
         mTmpMatrix.reset();
         mTmpMatrix.postTranslate(-mBaseRect.left, -mBaseRect.top);
         mTmpMatrix.postTranslate(cx - mBaseRect.width() / 2, cy - mBaseRect.height() / 2);
-        mTmpMatrix.postScale(mScale, mScale, cx, cy);
+        mTmpMatrix.postScale(mScale, mScale, mScaleCenter.x, mScaleCenter.y);
         mTmpMatrix.postRotate(mDegrees, cx, cy);
         mTmpMatrix.mapRect(mTmpRect, mBaseRect);
 
@@ -891,6 +914,10 @@ public class CropImageView extends ImageView {
 
             if (Float.isNaN(scaleFactor) || Float.isInfinite(scaleFactor))
                 return false;
+
+//            if (mScale > mMaxScale) {
+//                return true;
+//            }
 
             mScale *= scaleFactor;
             mScaleCenter.set(detector.getFocusX(), detector.getFocusY());
@@ -1087,7 +1114,6 @@ public class CropImageView extends ImageView {
             } else {
                 from = mScale;
                 to = mMaxScale;
-
                 mScaleCenter.set(e.getX(), e.getY());
             }
 
@@ -1410,19 +1436,18 @@ public class CropImageView extends ImageView {
         executeTranslate();
     }
 
-    public Bitmap generateCropBitmapFromView(int backgroundColor) {
+    public Bitmap generateCropBitmapFromView(final int backgroundColor) {
         setShowImageRectLine(false);
         aspectX = 0;
         aspectY = 0;
-        setVisibility(INVISIBLE);
-        setBackgroundColor(backgroundColor);
         invalidate();
-        Bitmap bitmap = PFileUtil.getViewBitmap(this);
+
+        Bitmap bitmap = PBitmapUtils.getViewBitmap(CropImageView.this);
         try {
             bitmap = Bitmap.createBitmap(bitmap, (int) mCropRect.left, (int) mCropRect.top,
                     (int) mCropRect.width(), (int) mCropRect.height());
             if (isCircle) {
-                bitmap = createCircleBitmap(bitmap);
+                bitmap = createCircleBitmap(bitmap, backgroundColor);
             }
         } catch (Exception ignored) {
         }
@@ -1491,25 +1516,32 @@ public class CropImageView extends ImageView {
         try {
             bitmap1 = Bitmap.createBitmap(originalBitmap, (int) endX, (int) endY, (int) endW, (int) endH);
             if (isCircle) {
-                bitmap1 = createCircleBitmap(bitmap1);
+                bitmap1 = createCircleBitmap(bitmap1, Color.TRANSPARENT);
             }
         } catch (Exception ignored) {
-            return generateCropBitmapFromView(Color.BLACK);
+            bitmap1 = generateCropBitmapFromView(Color.BLACK);
         }
-
         return bitmap1;
     }
 
 
-    private Bitmap createCircleBitmap(Bitmap resource) {
+    private Bitmap createCircleBitmap(Bitmap resource, int backgroundColor) {
         int width = resource.getWidth();
         Paint paint = new Paint();
         paint.setAntiAlias(true);
-        Bitmap circleBitmap = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888);
+        Bitmap circleBitmap = Bitmap.createBitmap(resource.getWidth(), resource.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(circleBitmap);
+        if (backgroundColor != Color.TRANSPARENT) {
+            paint.setColor(backgroundColor);
+        }
         canvas.drawCircle(width / 2, width / 2, width / 2, paint);
         //设置画笔为取交集模式
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        if (backgroundColor == Color.TRANSPARENT) {
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        } else {
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
+        }
+
         //裁剪图片
         canvas.drawBitmap(resource, 0, 0, paint);
         return circleBitmap;

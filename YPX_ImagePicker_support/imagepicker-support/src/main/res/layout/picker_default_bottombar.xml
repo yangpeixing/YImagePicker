@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_alignParentBottom="true"
+    android:clickable="true"
+    android:focusable="true">
+
+    <Button
+        android:id="@+id/mDirButton"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:background="@null"
+        android:drawableEnd="@mipmap/picker_text_indicator"
+        android:drawablePadding="4dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxWidth="180dp"
+        android:maxLines="1"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:singleLine="true"
+        android:text=""
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
+
+
+    <TextView
+        android:id="@+id/mPreview"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:text="预览"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toStartOf="@id/mPreview"
+        android:layout_toEndOf="@id/mDirButton">
+
+        <CheckBox
+            android:id="@+id/mCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:button="@null"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:text="原图"
+            android:textColor="@color/white_F5" />
+
+    </FrameLayout>
+
+
+</RelativeLayout>

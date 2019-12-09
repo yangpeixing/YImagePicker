@@ -1,5 +1,6 @@
 package com.ypx.imagepicker.bean;
 
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -39,9 +40,25 @@ public class ImageSet implements Serializable {
         imageSet.cover = this.cover;
         imageSet.isSelected = this.isSelected;
         imageSet.imageItems = new ArrayList<>();
-        for (ImageItem item : this.imageItems) {
-            ImageItem newItem = item.copy(item);
-            imageSet.imageItems.add(newItem);
+        imageSet.imageItems.addAll(this.imageItems);
+        return imageSet;
+    }
+
+    public ImageSet copy(boolean isFilterVideo) {
+        ImageSet imageSet = new ImageSet();
+        imageSet.name = this.name;
+        imageSet.coverPath = this.coverPath;
+        imageSet.cover = this.cover;
+        imageSet.isSelected = this.isSelected;
+        imageSet.imageItems = new ArrayList<>();
+        if (imageItems != null && imageItems.size() > 0) {
+            for (ImageItem item : this.imageItems) {
+                if (isFilterVideo && item.isVideo()) {
+                    continue;
+                }
+                ImageItem newItem = item.copy();
+                imageSet.imageItems.add(newItem);
+            }
         }
         return imageSet;
     }

@@ -1,6 +1,13 @@
 package com.ypx.imagepicker.bean;
 
+import android.content.ContentUris;
+import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.provider.MediaStore;
+
 import java.io.Serializable;
+
 
 /**
  * Description: 图片信息
@@ -8,26 +15,41 @@ import java.io.Serializable;
  * Author: peixing.yang
  * Date: 2019/2/21
  */
-public class ImageItem implements Serializable {
+public class ImageItem implements Serializable, Parcelable {
     private static final long serialVersionUID = 3429291195776736078L;
+    //媒体文件ID,可通过此id查询此媒体文件的所有信息
     public long id;
+    //媒体文件宽
     public int width;
+    //高
     public int height;
+    //生成或者更新时间
     public long time;
-    public String mimeType;
-    public String timeFormat;
+    //时常（仅针对视频）
     public long duration;
+    //文件类型
+    public String mimeType;
+    //更新时间格式化 例如：2019年12月  本周内 等
+    public String timeFormat;
+    //时常格式化  00：00：00
     public String durationFormat;
-    public String videoImageUri;
+    //是否是视频文件
+    private boolean isVideo = false;
 
-    // 加入滤镜后的原图图片地址,如果无滤镜返回原图地址
-    public String imageFilterPath = "";
-    // 原图地址
+    //视频缩略图地址，默认是null，并没有扫描视频缩略图，这里提供此变量便于使用者自己塞入使用
+    private String videoImageUri;
+    // 加入滤镜后的原图图片地址,如果无滤镜返回原图地址，这里提供此变量便于使用者自己app塞入地址使用
+    private String imageFilterPath = "";
+
+    //androidQ上废弃了DATA绝对路径，需要手动拼凑Uri，这里为了兼容大部分项目还没有适配androidQ的情况
+    //默认path还是先取绝对路径，取不到或者异常才去取Uri路径
     public String path;
-    // 剪裁后的图片地址（从 imageFilterPath 计算出来，已经带了滤镜）
+    //直接拿到Uri路径，在媒体库里，一定会有Uri路径
+    private String uriPath;
+    // 剪裁后的图片绝对地址（从imageFilterPath 计算出来，已经带了滤镜）
     private String cropUrl;
 
-    private boolean isVideo = false;
+    //以下是UI上用到的临时变量
     private boolean isSelect = false;
     private boolean isPress = false;
     private int selectIndex = -1;
@@ -36,9 +58,38 @@ public class ImageItem implements Serializable {
     public ImageItem() {
     }
 
-    public ImageItem(String path) {
-        this.path = path;
+
+    protected ImageItem(Parcel in) {
+        id = in.readLong();
+        width = in.readInt();
+        height = in.readInt();
+        time = in.readLong();
+        mimeType = in.readString();
+        timeFormat = in.readString();
+        duration = in.readLong();
+        durationFormat = in.readString();
+        videoImageUri = in.readString();
+        imageFilterPath = in.readString();
+        path = in.readString();
+        cropUrl = in.readString();
+        isVideo = in.readByte() != 0;
+        isSelect = in.readByte() != 0;
+        isPress = in.readByte() != 0;
+        selectIndex = in.readInt();
+        cropMode = in.readInt();
     }
+
+    public static final Creator<ImageItem> CREATOR = new Creator<ImageItem>() {
+        @Override
+        public ImageItem createFromParcel(Parcel in) {
+            return new ImageItem(in);
+        }
+
+        @Override
+        public ImageItem[] newArray(int size) {
+            return new ImageItem[size];
+        }
+    };
 
     public String getVideoImageUri() {
         if (videoImageUri == null || videoImageUri.length() == 0) {
@@ -56,12 +107,6 @@ public class ImageItem implements Serializable {
 
     public void setImageFilterPath(String imageFilterPath) {
         this.imageFilterPath = imageFilterPath;
-    }
-
-    public ImageItem(String path, long duration, String videoImageUri) {
-        this.path = path;
-        this.duration = duration;
-        this.videoImageUri = videoImageUri;
     }
 
     public String getLastImageFilterPath() {
@@ -168,17 +213,32 @@ public class ImageItem implements Serializable {
         this.mimeType = mimeType;
     }
 
-    public ImageItem(String path, long time) {
-        this.path = path;
-        this.time = time;
+    public boolean isUriPath() {
+        return path.contains("content://");
     }
 
-    public ImageItem(String path, int width, int height, long time) {
-        this.path = path;
-        this.time = time;
-        this.width = width;
-        this.height = height;
+    public Uri getUri() {
+        if (uriPath != null && uriPath.length() > 0) {
+            return Uri.parse(uriPath);
+        }
+
+        if (isUriPath()) {
+            return Uri.parse(path);
+        }
+
+        Uri contentUri;
+        if (MimeType.isImage(mimeType)) {
+            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        } else if (MimeType.isVideo(mimeType)) {
+            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        } else {
+            contentUri = MediaStore.Files.getContentUri("external");
+        }
+        contentUri = ContentUris.withAppendedId(contentUri, id);
+        uriPath = contentUri.toString();
+        return contentUri;
     }
+
 
     public float getWidthHeightRatio() {
         if (height == 0) {
@@ -221,20 +281,45 @@ public class ImageItem implements Serializable {
         return super.equals(o);
     }
 
-    public ImageItem copy(ImageItem item) {
+    public ImageItem copy() {
         ImageItem newItem = new ImageItem();
-        newItem.path = item.path;
-        newItem.isVideo = item.isVideo;
-        newItem.duration = item.duration;
-        newItem.height = item.height;
-        newItem.width = item.width;
-        newItem.cropMode = item.cropMode;
-        newItem.cropUrl = item.cropUrl;
-        newItem.durationFormat = item.durationFormat;
-        newItem.id = item.id;
+        newItem.path = this.path;
+        newItem.isVideo = this.isVideo;
+        newItem.duration = this.duration;
+        newItem.height = this.height;
+        newItem.width = this.width;
+        newItem.cropMode = this.cropMode;
+        newItem.cropUrl = this.cropUrl;
+        newItem.durationFormat = this.durationFormat;
+        newItem.id = this.id;
         newItem.isPress = false;
         newItem.isSelect = false;
         return newItem;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeInt(width);
+        dest.writeInt(height);
+        dest.writeLong(time);
+        dest.writeString(mimeType);
+        dest.writeString(timeFormat);
+        dest.writeLong(duration);
+        dest.writeString(durationFormat);
+        dest.writeString(videoImageUri);
+        dest.writeString(imageFilterPath);
+        dest.writeString(path);
+        dest.writeString(cropUrl);
+        dest.writeByte((byte) (isVideo ? 1 : 0));
+        dest.writeByte((byte) (isSelect ? 1 : 0));
+        dest.writeByte((byte) (isPress ? 1 : 0));
+        dest.writeInt(selectIndex);
+        dest.writeInt(cropMode);
+    }
 }

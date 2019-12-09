@@ -1,6 +1,9 @@
 package com.ypx.imagepicker.helper;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.View;
@@ -11,8 +14,8 @@ import android.widget.ImageView;
 
 import com.ypx.imagepicker.bean.ImageCropMode;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
-import com.ypx.imagepicker.utils.PFileUtil;
+import com.ypx.imagepicker.presenter.IPickerPresenter;
+import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 import java.io.File;
@@ -50,7 +53,9 @@ public class CropViewContainerHelper {
 
     private CropImageView mCropView;
 
-    public CropImageView loadCropView(Context context, ImageItem imageItem, int mCropSize, ICropPickerBindPresenter presenter) {
+    public CropImageView loadCropView(final Context context, final ImageItem imageItem, final int mCropSize,
+                                      final IPickerPresenter presenter, final onLoadComplete loadComplete) {
+        final Activity activity = (Activity) context;
         if (cropViewList.containsKey(imageItem) && cropViewList.get(imageItem) != null) {
             mCropView = cropViewList.get(imageItem);
         } else {
@@ -61,10 +66,22 @@ public class CropViewContainerHelper {
             mCropView.setMaxScale(7.0f);
             mCropView.setCanShowTouchLine(true);
             mCropView.setShowImageRectLine(true);
-            if (presenter != null) {
-                presenter.displayCropImage(mCropView, imageItem);
+            if (imageItem.width == 0 || imageItem.height == 0) {
+                mCropView.setOnImageLoadListener(new CropImageView.onImageLoadListener() {
+                    @Override
+                    public void onImageLoaded(float w, float h) {
+                        imageItem.width = (int) w;
+                        imageItem.height = (int) h;
+                        if (loadComplete != null) {
+                            loadComplete.loadComplete();
+                        }
+                    }
+                });
             }
+
+            DetailImageLoadHelper.displayDetailImage(activity, mCropView, presenter, imageItem);
         }
+
         if (getParent() != null) {
             getParent().removeAllViews();
             if (mCropView.getParent() != null) {
@@ -75,6 +92,10 @@ public class CropViewContainerHelper {
             getParent().addView(mCropView, params);
         }
         return mCropView;
+    }
+
+    public interface onLoadComplete {
+        void loadComplete();
     }
 
     public void addCropView(CropImageView view, ImageItem imageItem) {
@@ -113,18 +134,30 @@ public class CropViewContainerHelper {
         invisibleContainer.setVisibility(View.INVISIBLE);
     }
 
-    public ArrayList<ImageItem> generateCropUrls(List<ImageItem> selectList, String savePath, int cropMode) {
-        ArrayList<ImageItem> cropUrlList = new ArrayList<>();
+    public ArrayList<ImageItem> generateCropUrls(List<ImageItem> selectList, int cropMode) {
         for (ImageItem imageItem : selectList) {
-            View view = cropViewList.get(imageItem);
-            File f = new File(savePath, "crop_" + System.currentTimeMillis() + ".jpg");
-            String cropUrl = PFileUtil.saveBitmapToLocalWithJPEG(view, f.getAbsolutePath());
+            CropImageView view = cropViewList.get(imageItem);
+            if (view == null) {
+                continue;
+            }
+            view.requestLayout();
+            Bitmap bitmap;
+            if (imageItem.getCropMode() == ImageCropMode.ImageScale_GAP) {
+                bitmap = view.generateCropBitmapFromView(Color.WHITE);
+            } else {
+                bitmap = view.generateCropBitmap();
+            }
+            String cropUrl = PBitmapUtils.saveBitmapToFile(view.getContext(), bitmap,
+                    "crop_" + System.currentTimeMillis(),
+                    Bitmap.CompressFormat.JPEG);
+            if (imageItem.getCropUrl() != null && imageItem.getCropUrl().length() > 0) {
+                new File(imageItem.getCropUrl()).delete();
+            }
             imageItem.setCropUrl(cropUrl);
             imageItem.setCropMode(cropMode);
             imageItem.setPress(false);
-            cropUrlList.add(imageItem);
         }
-        return cropUrlList;
+        return (ArrayList<ImageItem>) selectList;
     }
 
 

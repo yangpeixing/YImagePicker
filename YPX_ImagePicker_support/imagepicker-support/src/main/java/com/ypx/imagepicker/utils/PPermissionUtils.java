@@ -27,24 +27,24 @@ import com.ypx.imagepicker.ImagePicker;
 public class PPermissionUtils {
     private Context context;
 
-    public static boolean checkCameraPermissions(Activity activity) {
+    public static boolean hasCameraPermissions(Activity activity) {
         if (Build.VERSION.SDK_INT >= 23) {
             if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 activity.requestPermissions(new String[]{Manifest.permission.CAMERA}, ImagePicker.REQ_CAMERA);
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
-    public static boolean checkStoragePermissions(Activity activity) {
+    public static boolean hasStoragePermissions(Activity activity) {
         if (Build.VERSION.SDK_INT >= 23) {
             if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 activity.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, ImagePicker.REQ_STORAGE);
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public static PPermissionUtils create(Context context) {

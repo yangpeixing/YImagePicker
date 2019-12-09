@@ -24,18 +24,19 @@ import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
-import com.example.imagepicker_support.style.CustomImgPickerPresenter;
-import com.example.imagepicker_support.style.RedBookCropPresenter;
-import com.example.imagepicker_support.style.WXImgPickerPresenter;
+import com.example.imagepicker_support.style.RedBookPresenter;
+import com.example.imagepicker_support.style.WeChatPresenter;
+import com.example.imagepicker_support.style.custom.CustomImgPickerPresenter;
 import com.ypx.imagepicker.ImagePicker;
-import com.ypx.imagepicker.bean.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
+import com.ypx.imagepicker.bean.SelectMode;
+import com.ypx.imagepicker.bean.selectconfig.CropConfig;
 import com.ypx.imagepicker.builder.MultiPickerBuilder;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
-import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
+import com.ypx.imagepicker.presenter.IPickerPresenter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox mCbPreviewCanEdit;
     private CheckBox mCbVideoSingle;
     private CheckBox mCbImageOrVideo;
+    private CheckBox mCbShowOriginal;
     private RadioButton mRbNew;
     private RadioButton mRbShield;
     private RadioButton mRbSave;
@@ -73,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
     private RadioButton mRbTakePhoto;
     private RadioButton mRbTakePhotoAndCrop;
     private RadioButton mRbSingle;
+    private CheckBox mCbFilterVideoPreview;
+    private CheckBox mCbSingleAutoComplete;
     private CheckBox mCbCircle;
     private TextView mCropX;
     private SeekBar mXSeekBar;
@@ -123,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         mCbPreviewCanEdit = findViewById(R.id.cb_previewCanEdit);
         mCbVideoSingle = findViewById(R.id.cb_videoSingle);
         mCbImageOrVideo = findViewById(R.id.cb_imageOrVideo);
+        mCbShowOriginal = findViewById(R.id.cb_showOriginal);
         mRbNew = findViewById(R.id.rb_new);
         mRbShield = findViewById(R.id.rb_shield);
         mRbSave = findViewById(R.id.rb_save);
@@ -132,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         mRbTakePhoto = findViewById(R.id.rb_takePhoto);
         mRbTakePhotoAndCrop = findViewById(R.id.rb_takePhotoAndCrop);
         mCbCircle = findViewById(R.id.cb_circle);
+        mCbFilterVideoPreview = findViewById(R.id.cb_filterVideoPreview);
         mCropX = findViewById(R.id.mCropX);
         mXSeekBar = findViewById(R.id.mXSeekBar);
         mCropY = findViewById(R.id.mCropY);
@@ -144,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
         mRgOpenType = findViewById(R.id.rg_openType);
         mRbAutoCrop = findViewById(R.id.rb_autoCrop);
         mRgOpenType2 = findViewById(R.id.rg_openType2);
+        mCbSingleAutoComplete = findViewById(R.id.cb_singleAutoComplete);
         mRgStyle.setOnCheckedChangeListener(listener);
         mRbMulti.setOnCheckedChangeListener(listener4);
         mRbCrop.setOnCheckedChangeListener(listener4);
@@ -169,23 +176,23 @@ public class MainActivity extends AppCompatActivity {
                 mRbShield.setEnabled(false);
                 mRbSave.setEnabled(false);
                 mRbCrop.setEnabled(false);
-                mCbVideoSingle.setEnabled(true);
+                mCbShowOriginal.setEnabled(false);
                 mRbMulti.setChecked(true);
             } else if (checkedId == mRbWeChat.getId()) {
                 mCbClosePreview.setEnabled(true);
                 mCbImageOrVideo.setEnabled(true);
                 mRgNextPickType.setEnabled(true);
                 mRbCrop.setEnabled(true);
-                mCbVideoSingle.setEnabled(true);
+                mCbShowOriginal.setEnabled(true);
                 mRbMulti.setChecked(true);
                 mRbNew.setEnabled(true);
                 mRbShield.setEnabled(true);
                 mRbSave.setEnabled(true);
             } else if (checkedId == mRbCustom.getId()) {
                 mCbClosePreview.setEnabled(false);
-                mCbVideoSingle.setEnabled(false);
                 mCbImageOrVideo.setEnabled(true);
                 mRgNextPickType.setEnabled(true);
+                mCbShowOriginal.setEnabled(false);
                 mRbCrop.setEnabled(true);
                 mRbMulti.setChecked(true);
                 mRbNew.setEnabled(true);
@@ -239,18 +246,18 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void redBookPick(int count) {
-        ImagePicker.withCrop(new RedBookCropPresenter())//设置presenter
+        ImagePicker.withCrop(new RedBookPresenter())//设置presenter
                 .setMaxCount(count)//设置选择数量
                 .showCamera(mCbShowCamera.isChecked())//设置显示拍照
                 .setColumnCount(4)//设置列数
-                .mimeType(getMimeTypes())//设置需要加载的文件类型
+                .mimeTypes(getMimeTypes())//设置需要加载的文件类型
                 // .filterMimeType(MimeType.GIF)//设置需要过滤掉的文件类型
+                .assignGapState(false)
                 .setFirstImageItem(picList.size() > 0 ? picList.get(0) : null)//设置上一次选中的图片
-                // .setFirstImageUrl(null)//设置上一次选中的图片地址
                 .setVideoSinglePick(mCbVideoSingle.isChecked())//设置视频单选
-                .setCropPicSaveFilePath(ImagePicker.cropPicSaveFilePath)
+                .setSinglePickWithAutoComplete(mCbSingleAutoComplete.isChecked())
                 .setMaxVideoDuration(120000L)//设置可选区的最大视频时长
-                .setMinVideoDuration(60000L)
+                .setMinVideoDuration(5000L)
                 .pick(this, new OnImagePickCompleteListener2() {
                     @Override
                     public void onPickFailed(PickerError error) {
@@ -272,19 +279,39 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    private int getSelectMode() {
+        if (mRbSingle.isChecked()) {
+            return SelectMode.MODE_SINGLE;
+        }
+
+        if (mRbMulti.isChecked()) {
+            return SelectMode.MODE_MULTI;
+        }
+
+        if (mRbCrop.isChecked()) {
+            return SelectMode.MODE_CROP;
+        }
+
+        return SelectMode.MODE_MULTI;
+    }
+
     private void pick(int count) {
-        IMultiPickerBindPresenter presenter = mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter();
+        final IPickerPresenter presenter = mRbWeChat.isChecked() ? new WeChatPresenter() : new CustomImgPickerPresenter();
         ImagePicker.withMulti(presenter)//指定presenter
                 .setMaxCount(count)//设置选择的最大数
                 .setColumnCount(4)//设置列数
-                .mimeType(getMimeTypes())//设置要加载的文件类型，可指定单一类型
+                .setOriginal(mCbShowOriginal.isChecked())
+                .mimeTypes(getMimeTypes())//设置要加载的文件类型，可指定单一类型
                 // .filterMimeType(MimeType.GIF)//设置需要过滤掉加载的文件类型
+                .setSelectMode(getSelectMode())
+                .setPreviewVideo(!mCbFilterVideoPreview.isChecked())
                 .showCamera(mCbShowCamera.isChecked())//显示拍照
                 .setPreview(!mCbClosePreview.isChecked())//是否开启预览
                 .setVideoSinglePick(mCbVideoSingle.isChecked())//设置视频单选
+                .setSinglePickWithAutoComplete(mCbSingleAutoComplete.isChecked())
                 .setSinglePickImageOrVideoType(mCbImageOrVideo.isChecked())//设置图片和视频单一类型选择
                 .setMaxVideoDuration(120000L)//设置视频可选取的最大时长
-                .setMinVideoDuration(60000L)
+                .setMinVideoDuration(5000L)
                 .setLastImageList(mRbSave.isChecked() ? picList : null)//设置上一次操作的图片列表，下次选择时默认恢复上一次选择的状态
                 .setShieldList(mRbShield.isChecked() ? picList : null)//设置需要屏蔽掉的图片列表，下次选择时已屏蔽的文件不可选择
                 .pick(this, new OnImagePickCompleteListener() {
@@ -301,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void preview(int pos) {
-        IMultiPickerBindPresenter presenter = mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter();
+        IPickerPresenter presenter = mRbWeChat.isChecked() ? new WeChatPresenter() : new CustomImgPickerPresenter();
         if (mCbPreviewCanEdit.isChecked()) {
             //开启编辑预览
             ImagePicker.preview(this, presenter, picList, pos, new OnImagePickCompleteListener() {
@@ -320,16 +347,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void crop() {
-        IMultiPickerBindPresenter presenter = mRbWeChat.isChecked() ? new WXImgPickerPresenter() : new CustomImgPickerPresenter();
+        IPickerPresenter presenter = mRbWeChat.isChecked() ? new WeChatPresenter() : new CustomImgPickerPresenter();
         MultiPickerBuilder builder = ImagePicker.withMulti(presenter)//指定presenter
                 .setColumnCount(4)//设置列数
-                .mimeType(getMimeTypes())//设置要加载的文件类型，可指定单一类型
+                .mimeTypes(getMimeTypes())//设置要加载的文件类型，可指定单一类型
                 // .filterMimeType(MimeType.GIF)//设置需要过滤掉加载的文件类型
                 .showCamera(mCbShowCamera.isChecked())//显示拍照
                 .cropRectMinMargin(mMarginSeekBar.getProgress())
                 .cropStyle(mCbGap.isChecked() ? CropConfig.STYLE_GAP : CropConfig.STYLE_FILL)
                 .cropGapBackgroundColor(mCbGapBackground.isChecked() ? Color.TRANSPARENT : Color.RED)
-                .cropSaveFilePath(ImagePicker.cropPicSaveFilePath)
                 .setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());
         if (mCbCircle.isChecked()) {
             builder.cropAsCircle();
@@ -355,15 +381,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void takePhotoAndCrop() {
+        ImagePicker.DEFAULT_FILE_NAME = "自定义目录名字";
+        boolean isOpenOriginal = ImagePicker.isOriginalImage;
         //配置剪裁属性
         CropConfig cropConfig = new CropConfig();
         cropConfig.setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());//设置剪裁比例
         cropConfig.setCropRectMargin(mMarginSeekBar.getProgress());//设置剪裁框间距，单位px
-        cropConfig.setCropSaveFilePath(ImagePicker.cropPicSaveFilePath);
         cropConfig.setCircle(mCbCircle.isChecked());//是否圆形剪裁
         cropConfig.setCropStyle(mCbGap.isChecked() ? CropConfig.STYLE_GAP : CropConfig.STYLE_FILL);
         cropConfig.setCropGapBackgroundColor(mCbGapBackground.isChecked() ? Color.TRANSPARENT : Color.RED);
-        ImagePicker.takePhotoAndCrop(this, new WXImgPickerPresenter(), cropConfig, new OnImagePickCompleteListener() {
+        cropConfig.saveInDCIM(false);
+        ImagePicker.takePhotoAndCrop(this, new WeChatPresenter(), cropConfig, new OnImagePickCompleteListener() {
             @Override
             public void onImagePickComplete(ArrayList<ImageItem> items) {
                 //剪裁回调，主线程
@@ -382,11 +410,11 @@ public class MainActivity extends AppCompatActivity {
         CropConfig cropConfig = new CropConfig();
         cropConfig.setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());//设置剪裁比例
         cropConfig.setCropRectMargin(mMarginSeekBar.getProgress());//设置剪裁框间距，单位px
-        cropConfig.setCropSaveFilePath(ImagePicker.cropPicSaveFilePath);
+        // cropConfig.setCropSaveFilePath(ImagePicker.cropPicSaveFilePath);
         cropConfig.setCircle(mCbCircle.isChecked());//是否圆形剪裁
         cropConfig.setCropStyle(mCbGap.isChecked() ? CropConfig.STYLE_GAP : CropConfig.STYLE_FILL);
         cropConfig.setCropGapBackgroundColor(mCbGapBackground.isChecked() ? Color.TRANSPARENT : Color.RED);
-        ImagePicker.crop(this, new WXImgPickerPresenter(), cropConfig, picList.get(0).path, new OnImagePickCompleteListener2() {
+        ImagePicker.crop(this, new WeChatPresenter(), cropConfig, picList.get(0).path, new OnImagePickCompleteListener2() {
             @Override
             public void onPickFailed(PickerError error) {
                 Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -559,5 +587,17 @@ public class MainActivity extends AppCompatActivity {
             mimeTypes.add(MimeType.THREEGPP);
         }
         return mimeTypes;
+    }
+
+    @Override
+    public void finish() {
+
+        mCbAVI.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        }, 2000);
+        super.finish();
     }
 }

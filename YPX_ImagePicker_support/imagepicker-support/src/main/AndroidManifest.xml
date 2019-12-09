@@ -1,5 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.ypx.imagepicker">
 
 
@@ -18,19 +17,18 @@
         android:allowBackup="true"
         android:supportsRtl="true">
         <activity
-            android:name=".activity.crop.ImagePickAndCropActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:name=".activity.crop.MultiImageCropActivity" />
+
+        <activity
+            android:name=".activity.preview.MultiImagePreviewActivity"
+            android:multiprocess="true" />
+
+        <activity
+            android:name=".activity.singlecrop.SingleCropActivity"
+            android:multiprocess="true" />
 
         <activity
             android:name=".activity.multi.MultiImagePickerActivity"
-            android:multiprocess="true" />
-
-        <activity
-            android:name=".activity.multi.MultiImagePreviewActivity"
-            android:multiprocess="true" />
-
-        <activity
-            android:name=".activity.multi.SingleCropActivity"
             android:multiprocess="true" />
 
         <provider

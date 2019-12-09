@@ -8,12 +8,12 @@ import com.ypx.imagepicker.activity.multi.MultiImagePickerActivity;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerFragment;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
-import com.ypx.imagepicker.bean.MultiSelectConfig;
 import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.bean.SelectMode;
+import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
-import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
+import com.ypx.imagepicker.presenter.IPickerPresenter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,66 +29,21 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * Author: peixing.yang
  * Date: 2018/9/19 16:56
  */
-public class MultiPickerBuilder extends PBaseBuilder {
+public class MultiPickerBuilder {
     private MultiSelectConfig selectConfig;
-    private IMultiPickerBindPresenter presenter;
+    private IPickerPresenter presenter;
 
-    public MultiPickerBuilder(IMultiPickerBindPresenter presenter) {
+    public MultiPickerBuilder(IPickerPresenter presenter) {
         this.presenter = presenter;
         this.selectConfig = new MultiSelectConfig();
     }
 
     /**
-     * @param config 选择配置
+     * @param isAutoComplete 设置单选模式下是否点击item就自动回调
      */
-    public MultiPickerBuilder withMultiSelectConfig(MultiSelectConfig config) {
-        this.selectConfig = config;
+    public MultiPickerBuilder setSinglePickWithAutoComplete(boolean isAutoComplete) {
+        selectConfig.setSinglePickAutoComplete(isAutoComplete);
         return this;
-    }
-
-    /**
-     * 直接开启相册选择
-     *
-     * @param context  页面调用者
-     * @param listener 选择器选择回调
-     */
-    public void pick(Activity context, final OnImagePickCompleteListener listener) {
-        if (selectConfig.getMaxCount() == 1) {
-            selectConfig.setSelectMode(SelectMode.MODE_SINGLE);
-        }
-        checkVideoAndImage();
-        if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
-            PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
-            presenter.tip(context, context.getResources().getString(R.string.picker_str_mimetypes_empty));
-            return;
-        }
-        MultiImagePickerActivity.intent(context, selectConfig, presenter, listener);
-    }
-
-    /**
-     * 调用剪裁
-     *
-     * @param context  页面调用者
-     * @param listener 选择器剪裁回调，只支持一张图片
-     */
-    public void crop(Activity context, OnImagePickCompleteListener listener) {
-        setMaxCount(1);
-        filterMimeType(MimeType.ofVideo());
-        setSinglePickImageOrVideoType(false);
-        setVideoSinglePick(false);
-        setShieldList(null);
-        setLastImageList(null);
-        setPreview(false);
-        selectConfig.setSelectMode(SelectMode.MODE_CROP);
-        if (selectConfig.isCircle()) {
-            selectConfig.setCropRatio(1, 1);
-        }
-        if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
-            PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
-            presenter.tip(context, context.getResources().getString(R.string.picker_str_mimetypes_empty));
-            return;
-        }
-        MultiImagePickerActivity.intent(context, selectConfig, presenter, listener);
     }
 
     /**
@@ -125,46 +80,16 @@ public class MultiPickerBuilder extends PBaseBuilder {
     }
 
     /**
-     * 设置剪裁最小间距，默认充满
-     *
-     * @param margin 间距
-     */
-    public MultiPickerBuilder cropRectMinMargin(int margin) {
-        selectConfig.setCropRectMargin(margin);
-        return this;
-    }
-
-    public MultiPickerBuilder cropStyle(int style) {
-        selectConfig.setCropStyle(style);
-        return this;
-    }
-
-    public MultiPickerBuilder cropGapBackgroundColor(int color) {
-        selectConfig.setCropGapBackgroundColor(color);
-        return this;
-    }
-
-    /**
-     * 设置剪裁图片保存路径
-     *
-     * @param path 路径+图片名字
-     */
-    public MultiPickerBuilder cropSaveFilePath(String path) {
-        selectConfig.setCropSaveFilePath(path);
-        return this;
-    }
-
-    /**
      * 设置文件加载类型
      *
      * @param mimeTypes 文件类型数组
      */
-    public MultiPickerBuilder mimeType(MimeType... mimeTypes) {
+    public MultiPickerBuilder mimeTypes(MimeType... mimeTypes) {
         if (mimeTypes == null || mimeTypes.length == 0) {
             return this;
         }
         Set<MimeType> mimeTypeSet = new HashSet<>(Arrays.asList(mimeTypes));
-        return mimeType(mimeTypeSet);
+        return mimeTypes(mimeTypeSet);
     }
 
     /**
@@ -172,8 +97,10 @@ public class MultiPickerBuilder extends PBaseBuilder {
      *
      * @param mimeTypes 文件类型集合
      */
-    public MultiPickerBuilder filterMimeType(Set<MimeType> mimeTypes) {
-        selectConfig.getMimeTypes().removeAll(mimeTypes);
+    public MultiPickerBuilder filterMimeTypes(Set<MimeType> mimeTypes) {
+        if (mimeTypes != null && selectConfig != null && selectConfig.getMimeTypes() != null) {
+            selectConfig.getMimeTypes().removeAll(mimeTypes);
+        }
         return this;
     }
 
@@ -182,12 +109,12 @@ public class MultiPickerBuilder extends PBaseBuilder {
      *
      * @param mimeTypes 需要过滤的文件类型数组
      */
-    public MultiPickerBuilder filterMimeType(MimeType... mimeTypes) {
+    public MultiPickerBuilder filterMimeTypes(MimeType... mimeTypes) {
         if (mimeTypes == null || mimeTypes.length == 0) {
             return this;
         }
         Set<MimeType> mimeTypeSet = new HashSet<>(Arrays.asList(mimeTypes));
-        return filterMimeType(mimeTypeSet);
+        return filterMimeTypes(mimeTypeSet);
     }
 
     /**
@@ -195,53 +122,11 @@ public class MultiPickerBuilder extends PBaseBuilder {
      *
      * @param mimeTypes 需要过滤的文件类型集合
      */
-    public MultiPickerBuilder mimeType(Set<MimeType> mimeTypes) {
+    public MultiPickerBuilder mimeTypes(Set<MimeType> mimeTypes) {
         if (mimeTypes == null || mimeTypes.size() == 0) {
             return this;
         }
         selectConfig.setMimeTypes(mimeTypes);
-        return this;
-    }
-
-    /**
-     * @param showImage 加载图片
-     * @deprecated replaced by <code>mimeType(MimeType.ofImage())</code>
-     */
-    public MultiPickerBuilder showImage(boolean showImage) {
-        if (!showImage) {
-            Set<MimeType> mimeTypes = selectConfig.getMimeTypes();
-            mimeTypes.removeAll(MimeType.ofImage());
-            selectConfig.setMimeTypes(mimeTypes);
-        }
-        selectConfig.setShowImage(showImage);
-        return this;
-    }
-
-    /**
-     * @param showVideo 加载视频
-     * @deprecated replaced by <code>mimeType(MimeType.ofVideo())</code>
-     */
-    public MultiPickerBuilder showVideo(boolean showVideo) {
-        if (!showVideo) {
-            Set<MimeType> mimeTypes = selectConfig.getMimeTypes();
-            mimeTypes.removeAll(MimeType.ofVideo());
-            selectConfig.setMimeTypes(mimeTypes);
-        }
-        selectConfig.setShowVideo(showVideo);
-        return this;
-    }
-
-    /**
-     * @param showGif 加载GIF
-     * @deprecated replaced by <code>filterMimeType(MimeType.GIF)</code>
-     */
-    public MultiPickerBuilder showGif(boolean showGif) {
-        if (!showGif) {
-            Set<MimeType> mimeTypes = selectConfig.getMimeTypes();
-            mimeTypes.remove(MimeType.GIF);
-            selectConfig.setMimeTypes(mimeTypes);
-        }
-        selectConfig.setLoadGif(showGif);
         return this;
     }
 
@@ -252,23 +137,6 @@ public class MultiPickerBuilder extends PBaseBuilder {
         selectConfig.setColumnCount(columnCount);
         return this;
     }
-
-    /**
-     * 设置圆形剪裁
-     */
-    public MultiPickerBuilder cropAsCircle() {
-        selectConfig.setCircle(true);
-        return this;
-    }
-
-    /**
-     * @param isPreview 是否开启预览
-     */
-    public MultiPickerBuilder setPreview(boolean isPreview) {
-        selectConfig.setPreview(isPreview);
-        return this;
-    }
-
 
     /**
      * @param showCamera 显示拍照item
@@ -296,6 +164,32 @@ public class MultiPickerBuilder extends PBaseBuilder {
     }
 
 
+    //—————————————————————— 以下为微信选择器特有的属性 ——————————————————————
+
+    /**
+     * @param isPreview 视频是否支持预览
+     */
+    public MultiPickerBuilder setPreviewVideo(boolean isPreview) {
+        selectConfig.setCanPreviewVideo(isPreview);
+        return this;
+    }
+
+    /**
+     * @param isPreview 是否开启预览
+     */
+    public MultiPickerBuilder setPreview(boolean isPreview) {
+        selectConfig.setPreview(isPreview);
+        return this;
+    }
+
+    /**
+     * @param isOriginal 设置是否支持原图选项
+     */
+    public MultiPickerBuilder setOriginal(boolean isOriginal) {
+        selectConfig.setShowOriginalCheckBox(isOriginal);
+        return this;
+    }
+
     /**
      * @param imageList 设置屏蔽项，默认打开选择器不可选择屏蔽列表的媒体文件
      * @param <T>       String or ImageItem
@@ -320,6 +214,42 @@ public class MultiPickerBuilder extends PBaseBuilder {
         return this;
     }
 
+
+    //—————————————————————— 以下为单图剪裁的属性 ——————————————————————
+
+    /**
+     * 设置剪裁最小间距，默认充满
+     *
+     * @param margin 间距
+     */
+    public MultiPickerBuilder cropRectMinMargin(int margin) {
+        selectConfig.setCropRectMargin(margin);
+        return this;
+    }
+
+    /**
+     * 设置剪裁模式，
+     * <p>
+     * MultiSelectConfig.STYLE_FILL:充满模式
+     * MultiSelectConfig.STYLE_GAP：留白模式
+     *
+     * @param style MultiSelectConfig.STYLE_FILL or  MultiSelectConfig.STYLE_GAP
+     */
+    public MultiPickerBuilder cropStyle(int style) {
+        selectConfig.setCropStyle(style);
+        return this;
+    }
+
+    /**
+     * 设置留白剪裁模式下背景色，如果设置成透明色，则默认生成png图片
+     *
+     * @param color 背景色
+     */
+    public MultiPickerBuilder cropGapBackgroundColor(int color) {
+        selectConfig.setCropGapBackgroundColor(color);
+        return this;
+    }
+
     /**
      * 设置单张图片剪裁比例
      *
@@ -329,6 +259,114 @@ public class MultiPickerBuilder extends PBaseBuilder {
     public MultiPickerBuilder setCropRatio(int x, int y) {
         selectConfig.setCropRatio(x, y);
         return this;
+    }
+
+    /**
+     * 开启圆形剪裁
+     */
+    public MultiPickerBuilder cropAsCircle() {
+        selectConfig.setCircle(true);
+        return this;
+    }
+
+    /**
+     * 剪裁完成的图片是否保存在DCIM目录下
+     *
+     * @param isSaveInDCIM true：存储在系统目录DCIM下 false：存储在 data/包名/files/imagePicker/ 目录下
+     *
+     */
+    public MultiPickerBuilder cropSaveInDCIM(boolean isSaveInDCIM) {
+        selectConfig.saveInDCIM(isSaveInDCIM);
+        return this;
+    }
+
+    //—————————————————————— 以上为单图剪裁的属性 ——————————————————————
+
+    /**
+     * @param config 选择配置
+     */
+    public MultiPickerBuilder withMultiSelectConfig(MultiSelectConfig config) {
+        this.selectConfig = config;
+        return this;
+    }
+
+    /**
+     * fragment模式调用
+     *
+     * @param completeListener 选择回调
+     * @return MultiImagePickerFragment
+     */
+    public MultiImagePickerFragment pickWithFragment(OnImagePickCompleteListener completeListener) {
+        checkVideoAndImage();
+        MultiImagePickerFragment mFragment = new MultiImagePickerFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(INTENT_KEY_SELECT_CONFIG, selectConfig);
+        bundle.putSerializable(INTENT_KEY_PRESENTER, presenter);
+        mFragment.setArguments(bundle);
+        mFragment.setOnImagePickCompleteListener(completeListener);
+        return mFragment;
+    }
+
+    /**
+     * 直接开启相册选择
+     *
+     * @param context  页面调用者
+     * @param listener 选择器选择回调
+     */
+    public void pick(Activity context, final OnImagePickCompleteListener listener) {
+        checkVideoAndImage();
+        if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
+            PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
+            presenter.tip(context, context.getResources().getString(R.string.picker_str_mimetypes_empty));
+            return;
+        }
+        MultiImagePickerActivity.intent(context, selectConfig, presenter, listener);
+    }
+
+    /**
+     * 调用单图剪裁
+     *
+     * @param context  页面调用者
+     * @param listener 选择器剪裁回调，只支持一张图片
+     */
+    public void crop(Activity context, OnImagePickCompleteListener listener) {
+        setMaxCount(1);
+        filterMimeTypes(MimeType.ofVideo());
+        setSinglePickImageOrVideoType(false);
+        setSinglePickWithAutoComplete(true);
+        setVideoSinglePick(false);
+        setShieldList(null);
+        setLastImageList(null);
+        setPreview(false);
+        selectConfig.setSelectMode(SelectMode.MODE_CROP);
+        if (selectConfig.isCircle()) {
+            selectConfig.setCropRatio(1, 1);
+        }
+        if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
+            PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
+            presenter.tip(context, context.getResources().getString(R.string.picker_str_mimetypes_empty));
+            return;
+        }
+        MultiImagePickerActivity.intent(context, selectConfig, presenter, listener);
+    }
+
+    /**
+     * 检测文件加载类型中是否全是图片或视频
+     */
+    private void checkVideoAndImage() {
+        if (selectConfig == null) {
+            return;
+        }
+        selectConfig.setShowVideo(false);
+        selectConfig.setShowImage(false);
+        for (MimeType mimeType : selectConfig.getMimeTypes()) {
+            if (MimeType.ofVideo().contains(mimeType)) {
+                selectConfig.setShowVideo(true);
+            }
+            if (MimeType.ofImage().contains(mimeType)) {
+                selectConfig.setShowImage(true);
+            }
+        }
     }
 
     /**
@@ -348,42 +386,5 @@ public class MultiPickerBuilder extends PBaseBuilder {
             }
         }
         return items;
-    }
-
-    private Bundle getFragmentArguments() {
-        checkVideoAndImage();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(INTENT_KEY_SELECT_CONFIG, selectConfig);
-        bundle.putSerializable(INTENT_KEY_PRESENTER, presenter);
-        return bundle;
-    }
-
-    /**
-     * fragment模式调用
-     *
-     * @param completeListener 选择回调
-     * @return MultiImagePickerFragment
-     */
-    public MultiImagePickerFragment pickWithFragment(OnImagePickCompleteListener completeListener) {
-        MultiImagePickerFragment mFragment = new MultiImagePickerFragment();
-        mFragment.setArguments(getFragmentArguments());
-        mFragment.setOnImagePickCompleteListener(completeListener);
-        return mFragment;
-    }
-
-    private void checkVideoAndImage() {
-        if (selectConfig == null) {
-            return;
-        }
-        selectConfig.setShowVideo(false);
-        selectConfig.setShowImage(false);
-        for (MimeType mimeType : selectConfig.getMimeTypes()) {
-            if (MimeType.ofVideo().contains(mimeType)) {
-                selectConfig.setShowVideo(true);
-            }
-            if (MimeType.ofImage().contains(mimeType)) {
-                selectConfig.setShowImage(true);
-            }
-        }
     }
 }

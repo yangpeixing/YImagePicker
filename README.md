@@ -34,9 +34,9 @@
 ```java
 implementation 'com.ypx.yimagepicker:androidx:3.0'
 ```
-**support版本：暂未更新，后期可能不再维护，请使用者尽早切换androidx** （不支持targetSdkVersion>=29,最高兼容28）
+**support版本：后期可能不再维护，请使用者尽早切换androidx** （support依赖最高兼容28）
 ```java
-implementation 'com.ypx.yimagepicker:support:2.4.6'
+implementation 'com.ypx.yimagepicker:support:3.0'
 ```
 
 ### 核心原理

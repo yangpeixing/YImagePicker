@@ -2,17 +2,18 @@ package com.ypx.imagepicker;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 
-import com.ypx.imagepicker.activity.preview.MediaPreviewActivity;
+import com.ypx.imagepicker.activity.PickerActivityManager;
+import com.ypx.imagepicker.activity.preview.MultiImagePreviewActivity;
 import com.ypx.imagepicker.activity.singlecrop.SingleCropActivity;
-import com.ypx.imagepicker.bean.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
+import com.ypx.imagepicker.bean.selectconfig.CropConfig;
+import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
 import com.ypx.imagepicker.builder.CropPickerBuilder;
 import com.ypx.imagepicker.builder.MultiPickerBuilder;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
@@ -20,10 +21,9 @@ import com.ypx.imagepicker.data.MediaSetsDataSource;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
-import com.ypx.imagepicker.presenter.ICropPickerBindPresenter;
-import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
+import com.ypx.imagepicker.presenter.IPickerPresenter;
+import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.utils.PDateUtil;
-import com.ypx.imagepicker.utils.PFileUtil;
 import com.ypx.imagepicker.utils.PPermissionUtils;
 
 import java.io.File;
@@ -38,6 +38,7 @@ import java.util.Set;
  * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
 public class ImagePicker {
+    public static String DEFAULT_FILE_NAME = "imagePicker";
     //选择返回的key
     public static final String INTENT_KEY_PICKER_RESULT = "pickerResult";
     //选择返回code
@@ -48,53 +49,56 @@ public class ImagePicker {
     public static final int REQ_STORAGE = 1432;
 
     /**
-     * 图片剪裁的保存路径
+     * 是否选中原图
      */
-    public static String cropPicSaveFilePath = Environment.getExternalStorageDirectory().toString() +
-            File.separator + "Crop" + File.separator;
+    public static boolean isOriginalImage = false;
+
 
     /**
      * 小红书样式剪裁activity形式
      *
-     * @param bindPresenter 数据交互类
+     * @param presenter 数据交互类
      */
-    public static CropPickerBuilder withCrop(ICropPickerBindPresenter bindPresenter) {
-        return new CropPickerBuilder(bindPresenter);
+    public static CropPickerBuilder withCrop(IPickerPresenter presenter) {
+        return new CropPickerBuilder(presenter);
     }
 
     /**
      * 微信样式多选
      *
-     * @param iMultiPickerBindPresenter 选择器UI提供者
+     * @param presenter 选择器UI提供者
      * @return 微信样式多选
      */
-    public static MultiPickerBuilder withMulti(IMultiPickerBindPresenter iMultiPickerBindPresenter) {
-        return new MultiPickerBuilder(iMultiPickerBindPresenter);
+    public static MultiPickerBuilder withMulti(IPickerPresenter presenter) {
+        return new MultiPickerBuilder(presenter);
     }
 
     /**
-     * 直接调用拍照，默认图片存储路径为DCIM目录下Camera文件夹下
+     * 直接调用拍照，默认图片存储路径为DCIM目录下
      *
      * @param activity 调用activity
      * @param listener 拍照回调
      */
     public static void takePhoto(Activity activity, OnImagePickCompleteListener listener) {
         String fileName = "IMG_" + System.currentTimeMillis();
-        String path = PFileUtil.getDCIMOutputPath(fileName, ".jpg");
+        String path = PBitmapUtils.getDCIMDirectory().getAbsolutePath() +
+                File.separator + fileName + ".jpg";
         takePhoto(activity, path, listener);
     }
 
     /**
-     * 直接调用摄像头拍视频，默认视频存储路径为DCIM目录下Camera文件夹下
+     * 直接调用摄像头拍视频，默认视频存储路径为DCIM目录下
      *
      * @param activity 调用activity
      * @param listener 视频回调
      */
     public static void takeVideo(Activity activity, OnImagePickCompleteListener listener) {
         String fileName = "VIDEO_" + System.currentTimeMillis();
-        String path = PFileUtil.getDCIMOutputPath(fileName, ".mp4");
+        String path = PBitmapUtils.getDCIMDirectory().getAbsolutePath() +
+                File.separator + fileName + ".mp4";
         takeVideo(activity, path, listener);
     }
+
     /**
      * 直接调用拍照
      *
@@ -103,20 +107,23 @@ public class ImagePicker {
      * @param listener 拍照回调
      */
     public static void takePhoto(final Activity activity, final String savePath, final OnImagePickCompleteListener listener) {
-        if (PPermissionUtils.checkCameraPermissions(activity) || listener == null) {
+        if (!PPermissionUtils.hasCameraPermissions(activity) || listener == null) {
             return;
         }
-        PLauncher.init(activity).startActivityForResult(PFileUtil.getTakePhotoIntent(activity, savePath), new PLauncher.Callback() {
+        PLauncher.init(activity).startActivityForResult(PBitmapUtils.getTakePhotoIntent(activity, savePath), new PLauncher.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode != Activity.RESULT_OK || savePath == null || savePath.trim().length() == 0) {
                     PickerErrorExecutor.executeError(listener, PickerError.TAKE_PHOTO_FAILED.getCode());
                     return;
                 }
-                PFileUtil.refreshGalleryAddPic(activity, savePath);
-                ImageItem item = new ImageItem(savePath, System.currentTimeMillis());
-                item.width = PFileUtil.getImageWidthHeight(savePath)[0];
-                item.height = PFileUtil.getImageWidthHeight(savePath)[1];
+                PBitmapUtils.refreshGalleryAddPic(activity, savePath);
+                ImageItem item = new ImageItem();
+                item.path = savePath;
+                item.mimeType = MimeType.JPEG.toString();
+                item.time = System.currentTimeMillis();
+                item.width = PBitmapUtils.getImageWidthHeight(savePath)[0];
+                item.height = PBitmapUtils.getImageWidthHeight(savePath)[1];
                 item.mimeType = MimeType.JPEG.toString();
                 ArrayList<ImageItem> list = new ArrayList<>();
                 list.add(item);
@@ -133,21 +140,23 @@ public class ImagePicker {
      * @param listener 视频回调
      */
     public static void takeVideo(final Activity activity, final String savePath, final OnImagePickCompleteListener listener) {
-        if (PPermissionUtils.checkCameraPermissions(activity) || listener == null) {
+        if (!PPermissionUtils.hasCameraPermissions(activity) || listener == null) {
             return;
         }
-        PLauncher.init(activity).startActivityForResult(PFileUtil.getTakeVideoIntent(activity, savePath), new PLauncher.Callback() {
+        PLauncher.init(activity).startActivityForResult(PBitmapUtils.getTakeVideoIntent(activity, savePath), new PLauncher.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode != Activity.RESULT_OK || savePath == null || savePath.trim().length() == 0) {
                     PickerErrorExecutor.executeError(listener, PickerError.TAKE_PHOTO_FAILED.getCode());
                     return;
                 }
-                PFileUtil.refreshGalleryAddPic(activity, savePath);
-                ImageItem item = new ImageItem(savePath, System.currentTimeMillis());
+                PBitmapUtils.refreshGalleryAddPic(activity, savePath);
+                ImageItem item = new ImageItem();
+                item.path = savePath;
+                item.time = System.currentTimeMillis();
                 item.mimeType = MimeType.MP4.toString();
                 item.setVideo(true);
-                item.duration = PFileUtil.getLocalVideoDuration(savePath);
+                item.duration = PBitmapUtils.getLocalVideoDuration(savePath);
                 item.setDurationFormat(PDateUtil.getVideoDuration(item.duration));
                 ArrayList<ImageItem> list = new ArrayList<>();
                 list.add(item);
@@ -165,7 +174,7 @@ public class ImagePicker {
      * @param cropConfig 剪裁配置
      * @param listener   剪裁回调
      */
-    public static void takePhotoAndCrop(final Activity activity, final IMultiPickerBindPresenter presenter,
+    public static void takePhotoAndCrop(final Activity activity, final IPickerPresenter presenter,
                                         final CropConfig cropConfig, @NonNull final OnImagePickCompleteListener listener) {
         if (presenter == null) {
             PickerErrorExecutor.executeError(activity, PickerError.PRESENTER_NOT_FOUND.getCode());
@@ -194,7 +203,7 @@ public class ImagePicker {
      * @param cropImagePath 需要剪裁的图片路径
      * @param listener      剪裁回调
      */
-    public static void crop(final Activity activity, final IMultiPickerBindPresenter presenter,
+    public static void crop(final Activity activity, final IPickerPresenter presenter,
                             final CropConfig cropConfig, String cropImagePath, final OnImagePickCompleteListener listener) {
         if (presenter == null || cropConfig == null || listener == null) {
             PickerErrorExecutor.executeError(activity, PickerError.PRESENTER_NOT_FOUND.getCode());
@@ -212,12 +221,22 @@ public class ImagePicker {
      * @param listener  编辑回调
      * @param <T>       String or ImageItem
      */
-    public static <T> void preview(Activity context, final IMultiPickerBindPresenter presenter, ArrayList<T> imageList,
-                                   int pos, OnImagePickCompleteListener listener) {
+    public static <T> void preview(Activity context, final IPickerPresenter presenter, ArrayList<T> imageList,
+                                   int pos, final OnImagePickCompleteListener listener) {
         if (imageList == null || imageList.size() == 0) {
             return;
         }
-        MediaPreviewActivity.intent(context, presenter, transitArray(imageList), pos, listener);
+        MultiSelectConfig selectConfig = new MultiSelectConfig();
+        selectConfig.setMaxCount(imageList.size());
+        MultiImagePreviewActivity.intent(context, null, transitArray(imageList),
+                selectConfig, presenter, pos, new MultiImagePreviewActivity.PreviewResult() {
+                    @Override
+                    public void onResult(ArrayList<ImageItem> imageItems, boolean isCancel) {
+                        if (listener != null) {
+                            listener.onImagePickComplete(imageItems);
+                        }
+                    }
+                });
     }
 
     /**
@@ -251,10 +270,9 @@ public class ImagePicker {
     public static void provideMediaSets(FragmentActivity activity,
                                         Set<MimeType> mimeTypeSet,
                                         MediaSetsDataSource.MediaSetProvider provider) {
-        if (PPermissionUtils.checkStoragePermissions(activity)) {
-            return;
+        if (PPermissionUtils.hasStoragePermissions(activity)) {
+            MediaSetsDataSource.create(activity).setMimeTypeSet(mimeTypeSet).loadMediaSets(provider);
         }
-        MediaSetsDataSource.create(activity).setMimeTypeSet(mimeTypeSet).loadMediaSets(provider);
     }
 
     /**
@@ -269,10 +287,9 @@ public class ImagePicker {
                                                 ImageSet set,
                                                 Set<MimeType> mimeTypeSet,
                                                 MediaItemsDataSource.MediaItemProvider provider) {
-        if (PPermissionUtils.checkStoragePermissions(activity)) {
-            return;
+        if (PPermissionUtils.hasStoragePermissions(activity)) {
+            MediaItemsDataSource.create(activity, set).setMimeTypeSet(mimeTypeSet).loadMediaItems(provider);
         }
-        MediaItemsDataSource.create(activity, set).setMimeTypeSet(mimeTypeSet).loadMediaItems(provider);
     }
 
     /**
@@ -291,14 +308,13 @@ public class ImagePicker {
                                                            int preloadSize,
                                                            MediaItemsDataSource.MediaItemPreloadProvider preloadProvider,
                                                            MediaItemsDataSource.MediaItemProvider provider) {
-        if (PPermissionUtils.checkStoragePermissions(activity)) {
-            return;
+        if (PPermissionUtils.hasStoragePermissions(activity)) {
+            MediaItemsDataSource dataSource = MediaItemsDataSource.create(activity, set)
+                    .setMimeTypeSet(mimeTypeSet)
+                    .preloadSize(preloadSize);
+            dataSource.setPreloadProvider(preloadProvider);
+            dataSource.loadMediaItems(provider);
         }
-        MediaItemsDataSource dataSource = MediaItemsDataSource.create(activity, set)
-                .setMimeTypeSet(mimeTypeSet)
-                .preloadSize(preloadSize);
-        dataSource.setPreloadProvider(preloadProvider);
-        dataSource.loadMediaItems(provider);
     }
 
 
@@ -324,5 +340,32 @@ public class ImagePicker {
      */
     public static void clearAllCache() {
 
+    }
+
+    /**
+     * 关闭选择器并回调数据
+     *
+     * @param list 回调数组
+     */
+    public static void closePickerWithCallback(ArrayList<ImageItem> list) {
+        Activity activity = PickerActivityManager.getLastActivity();
+        if (activity == null || list == null || list.size() == 0) {
+            return;
+        }
+        Intent intent = new Intent();
+        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, list);
+        activity.setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
+        activity.finish();
+    }
+
+    /**
+     * 关闭选择器并回调数据
+     *
+     * @param imageItem 回调数据
+     */
+    public static void closePickerWithCallback(ImageItem imageItem) {
+        ArrayList<ImageItem> imageItems = new ArrayList<>();
+        imageItems.add(imageItem);
+        closePickerWithCallback(imageItems);
     }
 }

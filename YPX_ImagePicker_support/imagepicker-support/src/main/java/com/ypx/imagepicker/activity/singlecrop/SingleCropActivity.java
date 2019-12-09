@@ -1,36 +1,36 @@
 package com.ypx.imagepicker.activity.singlecrop;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.bean.CropConfig;
+import com.ypx.imagepicker.activity.PickerActivityManager;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
-import com.ypx.imagepicker.bean.PickerUiConfig;
+import com.ypx.imagepicker.bean.selectconfig.CropConfig;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
+import com.ypx.imagepicker.data.PickerActivityCallBack;
+import com.ypx.imagepicker.data.ProgressSceneEnum;
+import com.ypx.imagepicker.helper.DetailImageLoadHelper;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
-import com.ypx.imagepicker.presenter.IMultiPickerBindPresenter;
-import com.ypx.imagepicker.utils.PConstantsUtil;
-import com.ypx.imagepicker.utils.PFileUtil;
-import com.ypx.imagepicker.utils.PStatusBarUtil;
+import com.ypx.imagepicker.presenter.IPickerPresenter;
+import com.ypx.imagepicker.utils.PBitmapUtils;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
+import com.ypx.imagepicker.views.PickerUiConfig;
+import com.ypx.imagepicker.views.base.SingleCropControllerView;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_CURRENT_IMAGE;
@@ -46,41 +46,31 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
  */
 public class SingleCropActivity extends FragmentActivity {
-    private final String PNG = ".png";
-    private final String JPEG = ".jpg";
     private CropImageView cropView;
-    private PickerUiConfig uiConfig;
     private CropConfig cropConfig;
-    private IMultiPickerBindPresenter presenter;
+    private IPickerPresenter presenter;
 
     /**
      * 跳转单图剪裁
      *
-     * @param context    跳转的activity
-     * @param presenter  IMultiPickerBindPresenter
+     * @param activity   跳转的activity
+     * @param presenter  IPickerPresenter
      * @param cropConfig 剪裁配置
-     * @param path       需要剪裁的图片的原始路径
+     * @param path       需要剪裁的图片的原始路径，可以为Uri相对路径
      * @param listener   剪裁回调
      */
-    public static void intentCrop(Activity context, IMultiPickerBindPresenter presenter, CropConfig cropConfig,
-                                  String path, final OnImagePickCompleteListener listener) {
-        Intent intent = new Intent(context, SingleCropActivity.class);
+    public static void intentCrop(Activity activity,
+                                  IPickerPresenter presenter,
+                                  CropConfig cropConfig,
+                                  String path,
+                                  final OnImagePickCompleteListener listener) {
+        Intent intent = new Intent(activity, SingleCropActivity.class);
         intent.putExtra(INTENT_KEY_PRESENTER, presenter);
         intent.putExtra(INTENT_KEY_SELECT_CONFIG, cropConfig);
         intent.putExtra(INTENT_KEY_CURRENT_IMAGE, path);
-        PLauncher.init(context).startActivityForResult(intent, new PLauncher.Callback() {
-            @Override
-            public void onActivityResult(int resultCode, Intent data) {
-                if (resultCode == ImagePicker.REQ_PICKER_RESULT_CODE &&
-                        data.hasExtra(ImagePicker.INTENT_KEY_PICKER_RESULT) && listener != null) {
-                    ArrayList list = (ArrayList) data.getSerializableExtra(ImagePicker.INTENT_KEY_PICKER_RESULT);
-                    listener.onImagePickComplete(list);
-                } else if (listener instanceof OnImagePickCompleteListener2) {
-                    ((OnImagePickCompleteListener2) listener).onPickFailed(PickerError.valueOf(resultCode));
-                }
-            }
-        });
+        PLauncher.init(activity).startActivityForResult(intent, PickerActivityCallBack.create(listener));
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,29 +79,26 @@ public class SingleCropActivity extends FragmentActivity {
             PickerErrorExecutor.executeError(this, PickerError.PRESENTER_NOT_FOUND.getCode());
             return;
         }
-        presenter = (IMultiPickerBindPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
+        presenter = (IPickerPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
         cropConfig = (CropConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
         if (presenter == null) {
             PickerErrorExecutor.executeError(this, PickerError.PRESENTER_NOT_FOUND.getCode());
             return;
         }
-
         if (cropConfig == null) {
             PickerErrorExecutor.executeError(this, PickerError.SELECT_CONFIG_NOT_FOUND.getCode());
             return;
         }
-        uiConfig = presenter.getUiConfig(this);
-        if (uiConfig == null) {
-            uiConfig = new PickerUiConfig();
-        }
         String url = getIntent().getStringExtra(INTENT_KEY_CURRENT_IMAGE);
-        if (url == null || url.trim().length() == 0 || !new File(url).exists()) {
+        if (url == null || url.trim().length() == 0) {
             PickerErrorExecutor.executeError(this, PickerError.CROP_URL_NOT_FOUND.getCode());
             return;
         }
-        String imagePath = "file://" + url;
+
+        PickerActivityManager.addActivity(this);
         setContentView(R.layout.picker_activity_crop);
-        setTitleBar();
+
+        //初始化剪裁view
         cropView = findViewById(R.id.cropView);
         cropView.setMaxScale(7.0f);
         cropView.setRotateEnable(false);
@@ -119,95 +106,135 @@ public class SingleCropActivity extends FragmentActivity {
         cropView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         cropView.setBounceEnable(!cropConfig.isGap());
         cropView.setCropMargin(cropConfig.getCropRectMargin());
-        if (!cropConfig.isCircle()) {
-            cropView.setCropRatio(cropConfig.getCropRatioX(), cropConfig.getCropRatioY());
-        } else {
-            cropView.setCropRatio(1, 1);
-        }
         cropView.setCircle(cropConfig.isCircle());
-        presenter.displayPerViewImage(cropView, imagePath);
+        cropView.setCropRatio(cropConfig.getCropRatioX(), cropConfig.getCropRatioY());
+
+        //生成一个imageItem
+        ImageItem imageItem = new ImageItem();
+        imageItem.path = url;
+        imageItem.setVideo(false);
+
+        //加载图片
+        DetailImageLoadHelper.displayDetailImage(this, cropView, presenter, imageItem);
+        setControllerView();
     }
 
-    private void setTitleBar() {
-        ViewGroup top_bar = findViewById(R.id.top_bar);
-        TextView tv_title = findViewById(R.id.tv_title);
-        TextView tv_rightBtn = findViewById(R.id.tv_rightBtn);
-        ImageView iv_back = findViewById(R.id.iv_back);
-        if (uiConfig.isImmersionBar()) {
-            PStatusBarUtil.setStatusBar(this, Color.TRANSPARENT, true,
-                    PStatusBarUtil.isDarkColor(uiConfig.getTitleBarBackgroundColor()));
-
-            top_bar.setPadding(0, PStatusBarUtil.getStatusBarHeight(this), 0, 0);
-        }
-        iv_back.setImageDrawable(getResources().getDrawable(uiConfig.getBackIconID()));
-        top_bar.setBackgroundColor(uiConfig.getTitleBarBackgroundColor());
-        iv_back.setColorFilter(uiConfig.getBackIconColor());
-        tv_title.setTextColor(uiConfig.getTitleColor());
-        tv_title.setText(PConstantsUtil.getString(this, presenter).picker_str_crop_title);
-        ((LinearLayout) findViewById(R.id.mTitleRoot)).setGravity(uiConfig.getTitleBarGravity());
-        if (uiConfig.getOkBtnSelectBackground() == null) {
-            tv_rightBtn.setPadding(0, 0, 0, 0);
-        }
-        tv_rightBtn.setBackground(uiConfig.getOkBtnSelectBackground());
-        tv_rightBtn.setTextColor(uiConfig.getOkBtnSelectTextColor());
-
-        tv_rightBtn.setOnClickListener(new View.OnClickListener() {
+    /**
+     * 设置剪裁控制器View
+     */
+    private void setControllerView() {
+        FrameLayout mCropPanel = findViewById(R.id.mCropPanel);
+        PickerUiConfig uiConfig = presenter.getUiConfig(this);
+        findViewById(R.id.mRoot).setBackgroundColor(uiConfig.getSingleCropBackgroundColor());
+        SingleCropControllerView cropControllerView = uiConfig.getPickerUiProvider()
+                .getSingleCropControllerView(this);
+        mCropPanel.addView(cropControllerView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        cropControllerView.setStatusBar();
+        cropControllerView.setCropViewParams(cropView, (ViewGroup.MarginLayoutParams) cropView.getLayoutParams());
+        cropControllerView.getCompleteView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (cropView.isEditing()) {
+                if (PViewSizeUtils.onDoubleClick()) {
                     return;
                 }
-                String cropUrl = generateCropFile(cropConfig.getCropSaveFilePath(), "crop_" + System.currentTimeMillis());
-                if (cropUrl.startsWith("Exception:")) {
-                    PickerError.CROP_EXCEPTION.setMessage(cropUrl);
-                    PickerErrorExecutor.executeError(SingleCropActivity.this, PickerError.CROP_EXCEPTION.getCode());
-                    return;
-                }
-                ImageItem item = new ImageItem();
-                item.path = cropUrl;
-                if (cropUrl.endsWith(PNG)) {
-                    item.mimeType = MimeType.JPEG.toString();
+                generateCropFile("crop_" + System.currentTimeMillis());
+            }
+        });
+    }
+
+
+    /**
+     * 剪裁完成
+     *
+     * @param cropUrl 剪裁生成的绝对路径
+     */
+    private void cropComplete(String cropUrl) {
+        //如果正在编辑中...
+        if (cropView.isEditing()) {
+            return;
+        }
+        //剪裁异常
+        if (cropUrl == null || cropUrl.length() == 0 || cropUrl.startsWith("Exception:")) {
+            presenter.tip(this, getString(R.string.str_single_crop_error));
+            cropView.setCropRatio(cropConfig.getCropRatioX(), cropConfig.getCropRatioY());
+            return;
+        }
+        //回调剪裁数据
+        ImageItem item = new ImageItem();
+        item.path = cropUrl;
+        item.mimeType = cropConfig.isNeedPng() ? MimeType.PNG.toString() : MimeType.JPEG.toString();
+        item.width = cropView.getCropWidth();
+        item.height = cropView.getCropHeight();
+        notifyOnImagePickComplete(item);
+    }
+
+
+    /**
+     * 生成剪裁文件
+     *
+     * @param fileName 图片名称
+     */
+    public void generateCropFile(final String fileName) {
+        final DialogInterface dialog = presenter.showProgressDialog(this, ProgressSceneEnum.crop);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap bitmap;
+                if (cropConfig.isGap()) {
+                    bitmap = cropView.generateCropBitmapFromView(cropConfig.getCropGapBackgroundColor());
                 } else {
-                    item.mimeType = MimeType.PNG.toString();
+                    bitmap = cropView.generateCropBitmap();
                 }
-
-                item.width = cropView.getCropWidth();
-                item.height = cropView.getCropHeight();
-                ArrayList<ImageItem> list = new ArrayList<>();
-                list.add(item);
-                notifyOnImagePickComplete(list);
+                final String url = saveBitmapToFile(bitmap, fileName);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+                        cropComplete(url);
+                    }
+                });
             }
-        });
-
-        iv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        }).start();
     }
 
-    public String generateCropFile(String filePath, String fileName) {
-        File f = new File(filePath, fileName + (cropConfig.isNeedPng() ? PNG : JPEG));
-        String cropUrl;
-        Bitmap bitmap;
-        if (cropConfig.isGap()) {
-            bitmap = cropView.generateCropBitmapFromView(cropConfig.getCropGapBackgroundColor());
+    /**
+     * 保存bitmap到本地磁盘
+     *
+     * @param bitmap   图片bitmap
+     * @param fileName 图片名字
+     */
+    private String saveBitmapToFile(final Bitmap bitmap, final String fileName) {
+        final String cropUrl;
+        Bitmap.CompressFormat format = cropConfig.isNeedPng() ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG;
+        if (cropConfig.isSaveInDCIM()) {
+            cropUrl = PBitmapUtils.saveBitmapToDICM(SingleCropActivity.this, bitmap, fileName, format).toString();
         } else {
-            bitmap = cropView.generateCropBitmap();
-        }
-        if (cropConfig.isNeedPng()) {
-            cropUrl = PFileUtil.saveBitmapToLocalWithPNG(bitmap, f.getAbsolutePath());
-        } else {
-            cropUrl = PFileUtil.saveBitmapToLocalWithJPEG(bitmap, f.getAbsolutePath());
+            cropUrl = PBitmapUtils.saveBitmapToFile(SingleCropActivity.this, bitmap, fileName, format);
         }
         return cropUrl;
     }
 
-    private void notifyOnImagePickComplete(ArrayList<ImageItem> list) {
+
+    /**
+     * 回调当前剪裁图片信息
+     *
+     * @param imageItem 剪裁图片信息
+     */
+    private void notifyOnImagePickComplete(ImageItem imageItem) {
+        ArrayList<ImageItem> list = new ArrayList<>();
+        list.add(imageItem);
         Intent intent = new Intent();
         intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, list);
         setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PickerActivityManager.removeActivity(this);
     }
 }

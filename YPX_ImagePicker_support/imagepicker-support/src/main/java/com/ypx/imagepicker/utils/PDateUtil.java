@@ -13,6 +13,9 @@ import java.util.Date;
 public class PDateUtil {
 
     public static String getStrTime(long cc_time) {
+        if (cc_time == 0) {
+            return "";
+        }
         if (String.valueOf(cc_time).length() <= 10) {
             cc_time = cc_time * 1000L;
         }
@@ -159,20 +162,20 @@ public class PDateUtil {
         Long milliSecond = ms - day * dd - hour * hh - minute * mi - second * ss;
 
         StringBuffer sb = new StringBuffer();
-        if(day > 0) {
-            sb.append(day+"天");
+        if (day > 0) {
+            sb.append(day + "天");
         }
-        if(hour > 0) {
-            sb.append(hour+"小时");
+        if (hour > 0) {
+            sb.append(hour + "小时");
         }
-        if(minute > 0) {
-            sb.append(minute+"分钟");
+        if (minute > 0) {
+            sb.append(minute + "分钟");
         }
-        if(second > 0) {
-            sb.append(second+"秒");
+        if (second > 0) {
+            sb.append(second + "秒");
         }
-        if(milliSecond > 0) {
-            sb.append(milliSecond+"毫秒");
+        if (milliSecond > 0) {
+            sb.append(milliSecond + "毫秒");
         }
         return sb.toString();
     }

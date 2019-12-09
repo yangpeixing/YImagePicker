@@ -2,19 +2,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/picker_default_titlebar" />
+    <!--    <include layout="@layout/picker_default_titlebar" />-->
+
+    <FrameLayout
+        android:id="@+id/titleBarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <FrameLayout
+        android:id="@+id/bottomBarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/top_bar">
+        android:layout_above="@id/bottomBarContainer"
+        android:layout_below="@id/titleBarContainer">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/mRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/black"
-            android:paddingBottom="51dp" />
+            android:paddingStart="1dp"
+            android:paddingEnd="1dp" />
 
         <TextView
             android:id="@+id/tv_time"
@@ -31,58 +44,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#a0000000"
-            android:paddingTop="50dp"
             android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/mSetRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
             android:background="#ffffff"
             android:divider="@null"
             android:overScrollMode="never"
             android:visibility="gone" />
-
-        <RelativeLayout
-            android:id="@+id/footer_panel"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:background="#303030"
-            android:clickable="true"
-            android:focusable="true">
-
-            <Button
-                android:id="@+id/btn_dir"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:background="@null"
-                android:drawableEnd="@mipmap/picker_text_indicator"
-                android:drawablePadding="4dp"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:singleLine="true"
-                android:text="全部图片"
-                android:textColor="#ffffff"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/tv_preview"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:gravity="center"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:text="预览"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-        </RelativeLayout>
 
     </RelativeLayout>
 

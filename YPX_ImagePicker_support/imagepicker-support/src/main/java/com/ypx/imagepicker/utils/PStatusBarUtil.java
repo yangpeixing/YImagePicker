@@ -190,4 +190,19 @@ public class PStatusBarUtil {
             return PViewSizeUtils.dp(activity, 20);
         }
     }
+
+
+    public static void fullScreenWithCheckNotch(Activity activity, int statusBarColor) {
+        if (PStatusBarUtil.hasNotchInScreen(activity)) {
+            PStatusBarUtil.setStatusBar(activity, statusBarColor, false, true);
+        } else {
+            activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+    }
+
+    public static void fullScreen(Activity activity) {
+        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
 }

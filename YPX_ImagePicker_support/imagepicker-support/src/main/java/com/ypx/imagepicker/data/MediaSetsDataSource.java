@@ -8,20 +8,18 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
-
-import com.ypx.imagepicker.bean.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
+import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Set;
 
-import static com.ypx.imagepicker.data.MediaSetsConstants.COLUMN_BUCKET_DISPLAY_NAME;
-import static com.ypx.imagepicker.data.MediaSetsConstants.COLUMN_BUCKET_ID;
-import static com.ypx.imagepicker.data.MediaSetsConstants.COLUMN_COUNT;
-import static com.ypx.imagepicker.data.MediaSetsConstants.COLUMN_URI;
-import static com.ypx.imagepicker.data.MediaSetsConstants.DATA;
+import static com.ypx.imagepicker.data.MediaStoreConstants.COLUMN_BUCKET_DISPLAY_NAME;
+import static com.ypx.imagepicker.data.MediaStoreConstants.COLUMN_BUCKET_ID;
+import static com.ypx.imagepicker.data.MediaStoreConstants.COLUMN_COUNT;
+import static com.ypx.imagepicker.data.MediaStoreConstants.COLUMN_URI;
 
 
 /**
@@ -78,10 +76,7 @@ public class MediaSetsDataSource implements LoaderManager.LoaderCallbacks<Cursor
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Context context = mContext.get();
-//        if (!MediaSetsConstants.isAfterAndroidQ()) {
-//            return MediaSetsLoader.create(context, mimeTypeSet, isLoadVideo, isLoadImage);
-//        }
-        return MediaSetsLoader_29.create(context, mimeTypeSet, isLoadVideo, isLoadImage);
+        return MediaSetsLoader.create(context, mimeTypeSet, isLoadVideo, isLoadImage);
     }
 
     @Override
@@ -96,11 +91,7 @@ public class MediaSetsDataSource implements LoaderManager.LoaderCallbacks<Cursor
                 ImageSet imageSet = new ImageSet();
                 imageSet.id = getString(cursor, COLUMN_BUCKET_ID);
                 imageSet.name = getString(cursor, COLUMN_BUCKET_DISPLAY_NAME);
-                String path = getString(cursor, COLUMN_URI);
-                if (path == null || path.equals("")) {
-                    path = getString(cursor, DATA);
-                }
-                imageSet.coverPath = path;
+                imageSet.coverPath = getString(cursor, COLUMN_URI);
                 imageSet.count = getInt(cursor, COLUMN_COUNT);
                 imageSetList.add(imageSet);
             } while (!context.isDestroyed() && cursor.moveToNext() && !cursor.isClosed());

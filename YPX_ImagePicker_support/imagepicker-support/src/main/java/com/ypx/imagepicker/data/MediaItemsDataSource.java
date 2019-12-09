@@ -9,14 +9,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
-
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.bean.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
+import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
+import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.utils.PDateUtil;
-import com.ypx.imagepicker.utils.PFileUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -34,23 +33,16 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
     private WeakReference<FragmentActivity> mContext;
     private LoaderManager mLoaderManager;
     private MediaItemProvider mediaItemProvider;
-    private boolean isLoadVideo;
     private int preloadSize = 40;
     private Set<MimeType> mimeTypeSet = MimeType.ofAll();
 
     public MediaItemsDataSource setMimeTypeSet(BaseSelectConfig config) {
         mimeTypeSet = config.getMimeTypes();
-        isLoadVideo = config.isShowVideo();
         return this;
     }
 
     public MediaItemsDataSource setMimeTypeSet(Set<MimeType> mimeTypeSet) {
         this.mimeTypeSet = mimeTypeSet;
-        for (MimeType mimeType : mimeTypeSet) {
-            if (MimeType.ofVideo().contains(mimeType)) {
-                isLoadVideo = true;
-            }
-        }
         return this;
     }
 
@@ -86,93 +78,120 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
         return MediaItemsLoader.newInstance(context, set, mimeTypeSet);
     }
 
+    private Cursor cursor;
+    private Thread thread;
+
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, final Cursor cursor) {
         final FragmentActivity context = mContext.get();
-        if (context == null) {
+        if (context == null | cursor == null || cursor.isClosed()) {
             return;
         }
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final ArrayList<ImageItem> imageItems = new ArrayList<>();
-                ArrayList<ImageItem> allVideoItems = new ArrayList<>();
-                if (!context.isDestroyed() && !cursor.isClosed() && cursor.moveToFirst()) {
-                    do {
-                        ImageItem item = new ImageItem();
-                        item.id = getLong(cursor, MediaStore.Files.FileColumns._ID);
-                        item.mimeType = getString(cursor, MediaStore.MediaColumns.MIME_TYPE);
-                        item.path = getString(cursor, MediaStore.Files.FileColumns.DATA);
-                        item.width = getInt(cursor, MediaStore.Files.FileColumns.WIDTH);
-                        item.height = getInt(cursor, MediaStore.Files.FileColumns.HEIGHT);
-                        item.duration = getLong(cursor, MediaStore.Video.Media.DURATION);
-                        item.setVideo(MimeType.isVideo(item.mimeType));
-                        if (item.path == null || item.path.length() == 0) {
-                            continue;
-                        }
-                        if (item.isVideo() && item.duration == 0) {
-                            continue;
-                        }
-                        if (item.duration > 0) {
-                            item.durationFormat = PDateUtil.getVideoDuration(item.duration);
-                        }
-                        item.time = getLong(cursor, MediaStore.Files.FileColumns.DATE_MODIFIED);
-                        if (item.time > 0) {
-                            item.timeFormat = PDateUtil.getStrTime(item.time);
-                        }
-
-                        if (item.width == 0 || item.height == 0) {
-                            int[] size = PFileUtil.getImageWidthHeight(item.path);
-                            item.width = size[0];
-                            item.height = size[1];
-                        }
-
-                        if (set.isAllMedia() && isLoadVideo) {
-                            if (item.isVideo()) {
-                                allVideoItems.add(item);
-                            }
-                        }
-                        imageItems.add(item);
-
-                        if (preloadProvider != null && imageItems.size() == preloadSize) {
-                            notifyPreloadItem(context, imageItems);
-                        }
-                    } while (!context.isDestroyed() && !cursor.isClosed() && cursor.moveToNext());
-                }
-
-                ImageSet allVideoSet = null;
-                if (allVideoItems.size() > 0) {
-                    allVideoSet = new ImageSet();
-                    allVideoSet.id = ImageSet.ID_ALL_VIDEO;
-                    allVideoSet.coverPath = allVideoItems.get(0).path;
-                    allVideoSet.cover = allVideoItems.get(0);
-                    allVideoSet.count = allVideoItems.size();
-                    allVideoSet.imageItems = allVideoItems;
-                    allVideoSet.name = context.getResources().getString(R.string.picker_str_all_video);
-                }
-
-                final ImageSet finalAllVideoSet = allVideoSet;
-                context.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (context.isDestroyed()) {
-                            return;
-                        }
-                        if (mediaItemProvider != null) {
-                            mediaItemProvider.providerMediaItems(imageItems, finalAllVideoSet);
-                        }
-
-                        if (mLoaderManager != null) {
-                            mLoaderManager.destroyLoader(LOADER_ID);
-                        }
-                    }
-                });
-            }
-        }).start();
-
+        this.cursor = cursor;
+        if (thread != null && thread.isAlive()) {
+            return;
+        }
+        thread = new Thread(runnable);
+        thread.start();
     }
 
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            final FragmentActivity context = mContext.get();
+            final ArrayList<ImageItem> imageItems = new ArrayList<>();
+            ArrayList<ImageItem> allVideoItems = new ArrayList<>();
+            if (!context.isDestroyed() && !cursor.isClosed() && cursor.moveToFirst()) {
+                do {
+                    ImageItem item = new ImageItem();
+                    try {
+                        item.id = getLong(cursor, MediaStore.Files.FileColumns._ID);
+                        item.mimeType = getString(cursor, MediaStore.MediaColumns.MIME_TYPE);
+                        //androidQ上废弃了DATA绝对路径，需要手动拼凑Uri，这里为了兼容大部分项目还没有适配androidQ的情况
+                        //默认path还是先取绝对路径，取不到或者异常才去取Uri路径
+                        /*if (MediaStoreConstants.isBeforeAndroidQ()) {
+                            item.path = getString(cursor, MediaStore.Files.FileColumns.DATA);
+                        } else {
+                            item.path = getUri(item.id, item.mimeType).toString();
+                        }*/
+                        try {
+                            item.path = getString(cursor, MediaStore.Files.FileColumns.DATA);
+                        } catch (Exception ignored) {
+
+                        }
+
+                        if (item.path == null || item.path.length() == 0) {
+                            item.path = item.getUri().toString();
+                        }
+                        item.width = getInt(cursor, MediaStore.Files.FileColumns.WIDTH);
+                        item.height = getInt(cursor, MediaStore.Files.FileColumns.HEIGHT);
+                        item.setVideo(MimeType.isVideo(item.mimeType));
+                        item.time = getLong(cursor, MediaStore.Files.FileColumns.DATE_MODIFIED);
+                        item.timeFormat = PDateUtil.getStrTime(item.time);
+                    } catch (Exception e) {
+                        continue;
+                    }
+
+                    //没有查询到路径
+                    if (item.path == null || item.path.length() == 0) {
+                        continue;
+                    }
+
+                    //视频
+                    if (item.isVideo()) {
+                        item.duration = getLong(cursor, "duration");
+                        if (item.duration == 0) {
+                            continue;
+                        }
+                        item.durationFormat = PDateUtil.getVideoDuration(item.duration);
+
+                        //如果当前加载的是全部文件，需要拼凑一个全部视频的虚拟文件夹
+                        if (set.isAllMedia()) {
+                            allVideoItems.add(item);
+                        }
+                    }
+                    //图片
+                    else {
+                        //如果媒体信息中不包含图片的宽高，则手动获取文件宽高
+                        if (item.width == 0 || item.height == 0) {
+                            if (!item.isUriPath()) {
+                                int[] size = PBitmapUtils.getImageWidthHeight(item.path);
+                                item.width = size[0];
+                                item.height = size[1];
+                            }
+                        }
+                    }
+                    //添加到文件列表中国呢
+                    imageItems.add(item);
+                    //回调预加载数据源
+                    if (preloadProvider != null && imageItems.size() == preloadSize) {
+                        notifyPreloadItem(context, imageItems);
+                    }
+                } while (!context.isDestroyed() && !cursor.isClosed() && cursor.moveToNext());
+            }
+            //手动生成一个虚拟的全部视频文件夹
+            ImageSet allVideoSet = null;
+            if (allVideoItems.size() > 0) {
+                allVideoSet = new ImageSet();
+                allVideoSet.id = ImageSet.ID_ALL_VIDEO;
+                allVideoSet.coverPath = allVideoItems.get(0).path;
+                allVideoSet.cover = allVideoItems.get(0);
+                allVideoSet.count = allVideoItems.size();
+                allVideoSet.imageItems = allVideoItems;
+                allVideoSet.name = context.getResources().getString(R.string.picker_str_all_video);
+            }
+            //回调所有数据
+            notifyMediaItem(context, imageItems, allVideoSet);
+        }
+    };
+
+    /**
+     * 回调预加载的媒体文件，主线程
+     *
+     * @param context    FragmentActivity
+     * @param imageItems 预加载列表
+     */
     private void notifyPreloadItem(final FragmentActivity context, final ArrayList<ImageItem> imageItems) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -182,6 +201,32 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                 }
                 preloadProvider.providerMediaItems(imageItems);
                 preloadProvider = null;
+            }
+        });
+    }
+
+    /**
+     * 回调所有数据
+     *
+     * @param context     FragmentActivity
+     * @param imageItems  所有文件
+     * @param allVideoSet 当加载所有媒体库文件时，默认会生成一个全部视频的文件夹，是本地虚拟的文件夹
+     */
+    private void notifyMediaItem(final FragmentActivity context, final ArrayList<ImageItem> imageItems,
+                                 final ImageSet allVideoSet) {
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (context.isDestroyed()) {
+                    return;
+                }
+                if (mediaItemProvider != null) {
+                    mediaItemProvider.providerMediaItems(imageItems, allVideoSet);
+                }
+
+                if (mLoaderManager != null) {
+                    mLoaderManager.destroyLoader(LOADER_ID);
+                }
             }
         });
     }
