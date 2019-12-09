@@ -53,7 +53,7 @@ YImagePicker与主项目通过IPickerPresenter进行交互与解耦，presenter�
 ### 效果图集
  - **demo效果**
  
-![demo效果](https://www.pgyer.com/image/view/app_screenshots/307e5ef3956be346304a968b574c504f-528)
+![demo效果](https://www.pgyer.com/image/view/app_screenshots/f9ae16cb5ffeacdf89efd06c191081b1-528)
 
  - **小红书样式**
 
