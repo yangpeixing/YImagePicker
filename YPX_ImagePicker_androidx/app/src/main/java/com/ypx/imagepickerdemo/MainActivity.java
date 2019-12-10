@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {
-                        //图片剪裁回调，主线程
+                        //图片剪裁回调，主线 程
                         //注意：剪裁回调里的ImageItem中getCropUrl()才是剪裁过后的图片地址
                         for (ImageItem item : items) {
                             if (item.getCropUrl() != null && item.getCropUrl().length() > 0) {
@@ -353,6 +353,7 @@ public class MainActivity extends AppCompatActivity {
                 .mimeTypes(getMimeTypes())//设置要加载的文件类型，可指定单一类型
                 // .filterMimeType(MimeType.GIF)//设置需要过滤掉加载的文件类型
                 .showCamera(mCbShowCamera.isChecked())//显示拍照
+                .cropSaveInDCIM(false)
                 .cropRectMinMargin(mMarginSeekBar.getProgress())
                 .cropStyle(mCbGap.isChecked() ? CropConfig.STYLE_GAP : CropConfig.STYLE_FILL)
                 .cropGapBackgroundColor(mCbGapBackground.isChecked() ? Color.TRANSPARENT : Color.RED)

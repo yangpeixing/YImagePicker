@@ -3,7 +3,7 @@
 
 本文档更新于:2019/12/08 下午9点39分
 
-[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=3.0-beta) ](https://bintray.com/yangpeixing/yimagepicker/androidx/3.0-beta/link)
+[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=3.0.1) ](https://bintray.com/yangpeixing/yimagepicker/androidx/3.0.1/link)
  - 支持无缝切换小红书剪裁样式、微信图片多选样式
  - 支持选择器所有ui自定义，包括标题栏、底部栏、列表item、文件夹item等
  - 支持13种视频图片格式混合加载，支持过滤掉指定格式文件
@@ -32,7 +32,7 @@
 **androidx版本：**
 
 ```java
-implementation 'com.ypx.yimagepicker:androidx:3.0'
+implementation 'com.ypx.yimagepicker:androidx:3.0.1'
 ```
 **support版本：后期可能不再维护，请使用者尽早切换androidx** （support依赖最高兼容28）
 ```java

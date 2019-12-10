@@ -43,7 +43,7 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/21
- * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x
  */
 public class MultiImagePreviewActivity extends FragmentActivity {
     static ImageSet currentImageSet;

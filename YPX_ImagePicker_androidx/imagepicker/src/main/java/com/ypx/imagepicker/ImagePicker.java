@@ -36,7 +36,7 @@ import java.util.Set;
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/28
- * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x
  */
 public class ImagePicker {
     public static String DEFAULT_FILE_NAME = "imagePicker";

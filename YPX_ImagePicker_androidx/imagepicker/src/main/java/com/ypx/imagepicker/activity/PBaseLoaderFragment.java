@@ -48,7 +48,7 @@ import static com.ypx.imagepicker.ImagePicker.REQ_STORAGE;
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/21
- * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x
  */
 public abstract class PBaseLoaderFragment extends Fragment implements ICameraExecutor {
     //选中图片列表
