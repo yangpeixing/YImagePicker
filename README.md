@@ -1,7 +1,7 @@
 ### 关于YImagePicker 
 [点击查看2.x版本readme](https://github.com/yangpeixing/YImagePicker/blob/master/README_2_x.md)
 
-本文档更新于:2019/12/08 下午9点39分
+本文档更新于:2019/12/27 上午10点12分
 
 [ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=3.0.1) ](https://bintray.com/yangpeixing/yimagepicker/androidx/3.0.1/link)
  - 支持无缝切换小红书剪裁样式、微信图片多选样式
@@ -42,7 +42,7 @@ implementation 'com.ypx.yimagepicker:support:3.0'
 ### 核心原理
 YImagePicker与主项目通过IPickerPresenter进行交互与解耦，presenter采用序列化接口的方式实现。使用者需要自行实现presenter的方法。选择器回调采用嵌入fragment的方式实现，类似于Glide或RxPermisson.原理上还是使用OnActivityResult,但无需再配置requestCode并且支持跨进程回调。
 
-调用选择器之前必须实现 IPickerPresenter 接口
+调用选择器之前必须实现 [IPickerPresenter](https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x#自定义IPickerPresenter)  接口
 
 [选择器问题解答汇总](https://github.com/yangpeixing/YImagePicker/wiki/questions)
 
@@ -80,8 +80,11 @@ YImagePicker与主项目通过IPickerPresenter进行交互与解耦，presenter�
  
 ### 微信图片选择
 支持视频、GIF、长图选择，支持选择状态保存。调用前请按照demo实现IPickerPresenter接口 ，示例如下：
+[WeChatPresenter](https://github.com/yangpeixing/YImagePicker/blob/master/YPX_ImagePicker_androidx/app/src/main/java/com/ypx/imagepickerdemo/style/WeChatPresenter.java) 
+
 ```java
-ImagePicker.withMulti(new WeChatPresenter())//指定presenter                                 //设置选择的最大数 
+ImagePicker.withMulti(new WeChatPresenter())//指定presenter                                 
+        //设置选择的最大数 
         .setMaxCount(9)  
         //设置列数                                                  
         .setColumnCount(4)      
@@ -100,10 +103,10 @@ ImagePicker.withMulti(new WeChatPresenter())//指定presenter                   
         //当单选或者视频单选时，点击item直接回调，无需点击完成按钮          
         .setSinglePickWithAutoComplete(false)
         .setOriginal(true)  //显示原图     
-        //设置单选模，当maxCount==1时，可执行单选（下次选中会取消上一次选中）
+        //设置单选模式，当maxCount==1时，可执行单选（下次选中会取消上一次选中）
         .setSelectMode(SelectMode.MODE_SINGLE)   
         //设置视频可选取的最大时长
-        .setMaxVideoDuration(2000L)  
+        .setMaxVideoDuration(1200000L)  
         //设置视频可选取的最小时长                                  
         .setMinVideoDuration(60000L) 
         //设置上一次操作的图片列表，下次选择时默认恢复上一次选择的状态 
@@ -119,6 +122,7 @@ ImagePicker.withMulti(new WeChatPresenter())//指定presenter                   
 ```
 ### 小红书图片选择
 高仿小红书图片剪裁框架，支持视频以及多图剪裁、支持视频预览，支持UI自定义，支持fragment样式侵入。调用前请按照demo实现IPickerPresenter接口 ，示例如下：
+[RedBookPresenter](https://github.com/yangpeixing/YImagePicker/blob/master/YPX_ImagePicker_androidx/app/src/main/java/com/ypx/imagepickerdemo/style/RedBookPresenter.java) 
 ```java
 ImagePicker.withCrop(new RedBookPresenter())//设置presenter                
         .setMaxCount(9)//设置选择数量                                          
@@ -130,7 +134,7 @@ ImagePicker.withCrop(new RedBookPresenter())//设置presenter
         .setFirstImageItem(null)//设置上一次选中的图片                             
         .setFirstImageItemSize(1,1)//设置上一次选中的图片地址                        
         .setVideoSinglePick(true)//设置视频单选                                
-        .setMaxVideoDuration(2000L)//设置可选区的最大视频时长                        
+        .setMaxVideoDuration(1200000L)//设置可选区的最大视频时长                        
         .setMinVideoDuration(60000L)//设置视频可选取的最小时长                       
         .pick(this, new OnImagePickCompleteListener() {                  
             @Override                                                    
@@ -344,33 +348,37 @@ ImagePicker.provideMediaItemsFromSetWithPreload(this, imageSet, mimeTypes, prelo
 
 ### 下个版本排期
 时间：2020年1月中旬
- 1. 剪裁支持输出大小
- 2. 剪裁支持旋转（尽量）
- 3. 支持darkmode模式
- 4. 支持activity自定义跳转动画
- 5. 内置新版本微信样式，知乎样式等
- 6. 支持切换视频底层框架（吐槽：官方videoView太难用了~~/(ㄒoㄒ)/~~）
- 7. **等你来提**
+ 1. [剪裁支持输出大小](https://github.com/yangpeixing/YImagePicker/issues/19)
+ 2. [剪裁支持旋转（尽量)](https://github.com/yangpeixing/YImagePicker/issues/32)
+ 3. [自定义所有文本](https://github.com/yangpeixing/YImagePicker/issues/45)
+ 4. [视频录制的最大/最小时间](https://github.com/yangpeixing/YImagePicker/issues/43)
+ 5. [文件大小加载限制](https://github.com/yangpeixing/YImagePicker/issues/41)
+ 6. [原图功能优化](https://github.com/yangpeixing/YImagePicker/issues/38)
+ 7. 支持darkmode模式
+ 8. 支持activity自定义跳转动画
+ 9. 内置新版本微信样式，知乎样式等
+ 10. 支持切换视频底层框架（吐槽：官方videoView太难用了~~/(ㄒoㄒ)/~~）
+ 11. **等你来提**
 
  永不TODO：
  1. 不会支持图片压缩，请使用者自行使用luBan
  2. 不会支持图片和视频高级编辑（滤镜、贴纸等）
 
 ### 感谢
-- 本框架媒体库查询部分借鉴于知乎开源框架Matisee，并在其基础上拓展并延伸，让查询更富有定制性，在此对原作者表示感谢。
+- 本框架媒体库查询部分借鉴于知乎开源框架Matisee，并在其基础上拓展并延伸，让查询更富有定制性，在此对Matisee原作者表示感谢。
 
 - 本库来源于mars App,想要体验城市最新的吃喝玩乐，欢迎读者下载体验mars!
 
-- 感谢所有支持或Star本项目的使用者，感谢所有给我提Issue的朋友们 ~~ 鞠躬 ~~！
+- 感谢所有支持或star本项目的使用者，感谢所有给我提issue的朋友们 ！
 
 ### 心声
 
-因本人最近顺利的当了爸爸，需要照顾老婆和小孩，所以有些时候消息回复的不是很及时，很多问题没能够给使用者及时的回复，在这里由衷的表示歉意。 YImagePicker从当初的只支持微信图片选择器到支持小红书样式，再到各种自定义，可谓花费了我近一年多的时光，可能有人觉得这个项目很简单，但是从开源性的角度上来说，很多时候代码不是我们想怎么写就怎么写的。为了达成统一风格，本人也借鉴了不下于20多个图片选择库。但是随着业务的复杂和机型的多样，不得不一遍一遍重构，其中带来了不少的问题，也学习到了很多。在我的计划中，本库3.0版本算是一次较大的更新，相比2.x有着更优异的性能和定制性。虽然定制性很强，但是代码逻辑还是有些复杂，架构可能还需要不断调整。使用者在使用的过程中会出现各种各样的问题，还请不要对本库放弃，可以大胆的加我联系方式并反馈给我（喷我），如果BUG紧急，我也会加班完善它，至于那些取消star或者不看好本框架的，我也只能说声抱歉，没有解决掉你们的痛点。还是那句老话，没有什么是完美的，但我会力所能及~
+ YImagePicker从当初的只支持微信图片选择器到支持小红书样式，再到各种自定义，可谓花费了我近一年多的时光，可能有人觉得这个项目很简单，但是从开源性的角度上来说，很多时候代码不是我们想怎么写就怎么写的。为了达成统一风格，本人也借鉴了不下于20多个图片选择库。但是随着业务的复杂和机型的多样，不得不一遍遍重构，其中带来了不少的问题，也学习到了很多。在我的计划中，本库3.0版本算是一次较大的更新，相比2.x有着更优异的稳定性和定制性。但这绝不是最优版本，随着越来越多的定制化需求，架构可能会面临一次又一次的更新。所以使用者在使用的过程中如果出现各种各样的问题，还请不要放弃本库，可以直接加我联系方式并反馈给我（喷我），如果有更好的建议，也可以给我提request，我们一起完善此框架。最后说一句，没有什么是完美的，但我会力所能及~
 
 
 - 作者：[calorYang](https://blog.csdn.net/qq_16674697)
 - 邮箱：313930500@qq.com
-- Q Q: 313930500 
+- QQ号: 313930500 
 - 微信：calor0616 
 - 博客：[CSDN](https://blog.csdn.net/qq_16674697)
 
