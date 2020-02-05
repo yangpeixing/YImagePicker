@@ -28,6 +28,7 @@ import com.ypx.imagepicker.data.IReloadExecutor;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
+import com.ypx.imagepicker.views.base.PickerControllerView;
 import com.ypx.imagepicker.views.redbook.RedBookUiProvider;
 import com.ypx.imagepickerdemo.R;
 import com.ypx.imagepickerdemo.SecondActivity;
@@ -63,7 +64,12 @@ public class RedBookPresenter implements IPickerPresenter {
         uiConfig.setFolderListOpenDirection(PickerUiConfig.DIRECTION_TOP);
         uiConfig.setFolderListOpenMaxMargin(PViewSizeUtils.dp(context, 200));
 
-        uiConfig.setPickerUiProvider(new RedBookUiProvider());
+        uiConfig.setPickerUiProvider(new RedBookUiProvider() {
+            @Override
+            public PickerControllerView getBottomBar(Context context) {
+                return super.getBottomBar(context);
+            }
+        });
         return uiConfig;
     }
 
@@ -172,8 +178,8 @@ public class RedBookPresenter implements IPickerPresenter {
     @Override
     public PickConstants getPickConstants(Context context) {
         PickConstants pickConstants = new PickConstants(context);
-        pickConstants.picker_str_only_select_image = "我是自定义文本";
-        //以下省略若干常量配置
-        return new PickConstants(context);
+        pickConstants.picker_str_folder_image_unit = "哈哈哈哈";
+        pickConstants.picker_str_folder_item_all = "所有文件";
+        return pickConstants;
     }
 }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
  */
 public class MultiSelectConfig extends CropConfig {
     private boolean isShowOriginalCheckBox;
+    private boolean isDefaultOriginal;
     private boolean isCanEditPic;
     private boolean isCanPreviewVideo = true;
     private boolean isPreview = true;
@@ -51,6 +52,14 @@ public class MultiSelectConfig extends CropConfig {
 
     public void setShowOriginalCheckBox(boolean showOriginalCheckBox) {
         isShowOriginalCheckBox = showOriginalCheckBox;
+    }
+
+    public boolean isDefaultOriginal() {
+        return isDefaultOriginal;
+    }
+
+    public void setDefaultOriginal(boolean defaultOriginal) {
+        isDefaultOriginal = defaultOriginal;
     }
 
     public boolean isCanEditPic() {

@@ -14,18 +14,17 @@ import androidx.annotation.Nullable;
 
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
-import com.ypx.imagepicker.bean.selectconfig.CropSelectConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
-import com.ypx.imagepicker.utils.PConstantsUtil;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.views.base.PickerItemView;
 
 /**
  * Time: 2019/11/13 16:17
  * Author:ypx
- * Description:
+ * Description:小红书样式item
  */
 public class RedBookItemView extends PickerItemView {
     private ImageView imageView;
@@ -33,6 +32,7 @@ public class RedBookItemView extends PickerItemView {
     private TextView mTvIndex;
     private TextView mTvDuration;
     private BaseSelectConfig selectConfig;
+    private int themeColor = Color.RED;
 
     public RedBookItemView(Context context) {
         super(context);
@@ -51,7 +51,7 @@ public class RedBookItemView extends PickerItemView {
      */
     @Override
     protected int getLayoutId() {
-        return R.layout.picker_item_imagegrid;
+        return R.layout.picker_item;
     }
 
     /**
@@ -68,11 +68,11 @@ public class RedBookItemView extends PickerItemView {
 
     @Override
     public View getCameraView(BaseSelectConfig selectConfig, IPickerPresenter presenter) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.picker_grid_item_camera, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.picker_item_camera, null);
         TextView mTvvCamera = view.findViewById(R.id.tv_camera);
         mTvvCamera.setText(selectConfig.isOnlyShowVideo() ?
-                PConstantsUtil.getString(getContext(), presenter).picker_str_take_video :
-                PConstantsUtil.getString(getContext(), presenter).picker_str_take_photo);
+                PickConstants.getConstants(getContext()).picker_str_item_take_video :
+                PickConstants.getConstants(getContext()).picker_str_item_take_photo);
         return view;
     }
 
@@ -117,7 +117,7 @@ public class RedBookItemView extends PickerItemView {
 
         if (indexOfSelectedList >= 0) {
             mTvIndex.setText(String.format("%d", indexOfSelectedList + 1));
-            mTvIndex.setBackground(PCornerUtils.cornerDrawableAndStroke(Color.RED, dp(12), dp(1), Color.WHITE));
+            mTvIndex.setBackground(PCornerUtils.cornerDrawableAndStroke(themeColor, dp(12), dp(1), Color.WHITE));
         } else {
             mTvIndex.setBackground(getResources().getDrawable(R.mipmap.picker_icon_unselect));
             mTvIndex.setText("");
@@ -125,7 +125,6 @@ public class RedBookItemView extends PickerItemView {
 
         if (imageItem.isPress()) {
             mVMask.setVisibility(View.VISIBLE);
-            int themeColor = Color.RED;
             int halfColor = Color.argb(100, Color.red(themeColor), Color.green(themeColor), Color.blue(themeColor));
             Drawable maskDrawable = PCornerUtils.cornerDrawableAndStroke(halfColor, 0, dp(2), themeColor);
             mVMask.setBackground(maskDrawable);

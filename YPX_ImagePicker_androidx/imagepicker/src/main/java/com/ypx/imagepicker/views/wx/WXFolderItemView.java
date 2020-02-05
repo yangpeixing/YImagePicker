@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.views.base.PickerFolderItemView;
 
@@ -31,7 +32,7 @@ public class WXFolderItemView extends PickerFolderItemView {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.picker_list_item_folder;
+        return R.layout.picker_folder_item;
     }
 
     @Override
@@ -60,7 +61,7 @@ public class WXFolderItemView extends PickerFolderItemView {
     @Override
     public void loadItem(ImageSet imageSet) {
         mName.setText(imageSet.name);
-        mSize.setText(String.format("%d%s", imageSet.count, getResources().getString(R.string.picker_str_piece)));
+        mSize.setText(String.format("%d%s", imageSet.count, PickConstants.getConstants(getContext()).picker_str_folder_image_unit));
         if (imageSet.isSelected) {
             mIndicator.setVisibility(View.VISIBLE);
         } else {

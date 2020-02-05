@@ -49,6 +49,7 @@ public class SinglePreviewFragment extends Fragment {
         final CropImageView imageView = new CropImageView(getActivity());
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         // 启用图片缩放功能
+        imageView.setBounceEnable(true);
         imageView.enable();
         imageView.setShowImageRectLine(false);
         imageView.setCanShowTouchLine(false);

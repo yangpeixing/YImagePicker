@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ypx.imagepicker.ImagePicker;
-import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -30,7 +29,6 @@ import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.data.MediaSetsDataSource;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
-import com.ypx.imagepicker.utils.PConstantsUtil;
 import com.ypx.imagepicker.utils.PPermissionUtils;
 import com.ypx.imagepicker.views.PickerUiProvider;
 import com.ypx.imagepicker.views.base.PickerControllerView;
@@ -287,7 +285,6 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
      */
     protected PickerControllerView inflateControllerView(ViewGroup container, boolean isTitle, PickerUiConfig uiConfig) {
         final BaseSelectConfig selectConfig = getSelectConfig();
-        final IPickerPresenter presenter = getPresenter();
         PickerUiProvider uiProvider = uiConfig.getPickerUiProvider();
         PickerControllerView view = isTitle ? uiProvider.getTitleBar(getWeakActivity()) :
                 uiProvider.getBottomBar(getWeakActivity());
@@ -295,11 +292,11 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
             container.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             if (selectConfig.isShowVideo() && selectConfig.isShowImage()) {
-                view.setTitle(PConstantsUtil.getString(getContext(), presenter).picker_str_multi_title);
+                view.setTitle(getPickConstants().picker_str_title_all);
             } else if (selectConfig.isShowVideo()) {
-                view.setTitle(PConstantsUtil.getString(getContext(), presenter).picker_str_multi_title_video);
+                view.setTitle(getPickConstants().picker_str_title_video);
             } else {
-                view.setTitle(PConstantsUtil.getString(getContext(), presenter).picker_str_multi_title_image);
+                view.setTitle(getPickConstants().picker_str_title_image);
             }
             final PickerControllerView finalView = view;
 
@@ -449,9 +446,9 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
         if (imageSets.size() == 0) {
             String firstImageSetName;
             if (imageItem.isVideo()) {
-                firstImageSetName = getString(R.string.picker_str_all_video);
+                firstImageSetName = PickConstants.getConstants(getActivity()).picker_str_folder_item_video;
             } else {
-                firstImageSetName = getString(R.string.picker_str_all_image);
+                firstImageSetName = PickConstants.getConstants(getActivity()).picker_str_folder_item_image;
             }
             ImageSet imageSet = ImageSet.allImageSet(firstImageSetName);
             imageSet.cover = imageItem;
@@ -483,7 +480,7 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
     }
 
     protected PickConstants getPickConstants() {
-        return PConstantsUtil.getString(getActivity(), getPresenter());
+        return PickConstants.getConstants(getActivity());
     }
 
     protected void tip(String msg) {
@@ -519,7 +516,7 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
                 final View child = parent.getChildAt(i);
                 if (child instanceof ViewGroup) {
                     child.setBackground(null);
-                    traverse((ViewGroup) child);
+                    traverse(child);
                 } else {
                     if (child != null) {
                         child.setBackground(null);

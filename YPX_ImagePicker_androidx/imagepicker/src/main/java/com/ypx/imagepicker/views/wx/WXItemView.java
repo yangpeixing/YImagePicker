@@ -11,11 +11,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
-import com.ypx.imagepicker.utils.PConstantsUtil;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.views.base.PickerItemView;
 import com.ypx.imagepicker.widget.ShowTypeImageView;
@@ -59,11 +59,11 @@ public class WXItemView extends PickerItemView {
     @SuppressLint("InflateParams")
     @Override
     public View getCameraView(BaseSelectConfig selectConfig, IPickerPresenter presenter) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.picker_grid_item_camera, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.picker_item_camera, null);
         TextView mTvvCamera = view.findViewById(R.id.tv_camera);
         mTvvCamera.setText(selectConfig.isOnlyShowVideo() ?
-                PConstantsUtil.getString(getContext(), presenter).picker_str_take_video :
-                PConstantsUtil.getString(getContext(), presenter).picker_str_take_photo);
+                PickConstants.getConstants(getContext()).picker_str_item_take_video :
+                PickConstants.getConstants(getContext()).picker_str_item_take_photo);
         return view;
     }
 

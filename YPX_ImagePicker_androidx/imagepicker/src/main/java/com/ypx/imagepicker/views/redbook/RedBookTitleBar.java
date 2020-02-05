@@ -13,9 +13,9 @@ import androidx.annotation.Nullable;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.utils.PCornerUtils;
-import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.views.base.PickerControllerView;
 
 import java.util.ArrayList;
@@ -26,13 +26,11 @@ import java.util.ArrayList;
  * Description: 微信标题栏
  */
 public class RedBookTitleBar extends PickerControllerView {
-
-    private int ImageSetArrowIconID;
-    private ImageView mBackImg;
     private TextView mTvTitle;
     private ImageView mArrowImg;
     private TextView mTvNext;
     private TextView mTvSelectNum;
+    private int themeColor = Color.RED;
 
     public RedBookTitleBar(Context context) {
         super(context);
@@ -52,18 +50,17 @@ public class RedBookTitleBar extends PickerControllerView {
     }
 
     public void setImageSetArrowIconID(int imageSetArrowIconID) {
-        ImageSetArrowIconID = imageSetArrowIconID;
         mArrowImg.setImageDrawable(getResources().getDrawable(imageSetArrowIconID));
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.picker_multi_crop_titlebar;
+        return R.layout.picker_redbook_titlebar;
     }
 
     @Override
     protected void initView(View view) {
-        mBackImg = view.findViewById(R.id.mBackImg);
+        ImageView mBackImg = view.findViewById(R.id.mBackImg);
         mTvTitle = view.findViewById(R.id.mTvSetName);
         mArrowImg = view.findViewById(R.id.mArrowImg);
         mTvNext = view.findViewById(R.id.mTvNext);
@@ -81,7 +78,8 @@ public class RedBookTitleBar extends PickerControllerView {
         mArrowImg.setColorFilter(Color.WHITE);
         mTvTitle.setTextColor(Color.WHITE);
         mTvNext.setTextColor(Color.WHITE);
-        mTvNext.setBackground(PCornerUtils.cornerDrawable(Color.parseColor("#50B0B0B0"), PViewSizeUtils.dp(getContext(), 30)));
+        mTvNext.setBackground(PCornerUtils.cornerDrawable(Color.parseColor("#50B0B0B0"), dp(30)));
+        mTvNext.setText(PickConstants.getConstants(getContext()).picker_str_title_right);
     }
 
     @Override
@@ -130,11 +128,11 @@ public class RedBookTitleBar extends PickerControllerView {
     public void refreshCompleteViewState(ArrayList<ImageItem> selectedList, BaseSelectConfig selectConfig) {
         if (selectedList != null && selectedList.size() == 0) {
             mTvNext.setEnabled(false);
-            mTvNext.setBackground(PCornerUtils.cornerDrawable(Color.parseColor("#50B0B0B0"), PViewSizeUtils.dp(getContext(), 30)));
+            mTvNext.setBackground(PCornerUtils.cornerDrawable(Color.parseColor("#50B0B0B0"), dp(30)));
             mTvSelectNum.setVisibility(View.GONE);
         } else {
             mTvNext.setEnabled(true);
-            mTvNext.setBackground(PCornerUtils.cornerDrawable(Color.parseColor("#ff2442"), PViewSizeUtils.dp(getContext(), 30)));
+            mTvNext.setBackground(PCornerUtils.cornerDrawable(themeColor, dp(30)));
         }
     }
 }

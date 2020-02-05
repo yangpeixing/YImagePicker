@@ -21,6 +21,7 @@ import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PBaseLoaderFragment;
 import com.ypx.imagepicker.activity.preview.MultiImagePreviewActivity;
 import com.ypx.imagepicker.adapter.PickerFolderAdapter;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.data.IReloadExecutor;
 import com.ypx.imagepicker.views.PickerUiConfig;
@@ -71,7 +72,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.picker_activity_images_grid, container, false);
+        view = inflater.inflate(R.layout.picker_activity_multipick, container, false);
         return view;
     }
 
@@ -104,7 +105,8 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         super.onViewCreated(view, savedInstanceState);
         mContext = getActivity();
         if (isIntentDataValid()) {
-            ImagePicker.isOriginalImage = false;
+            ImagePicker.pickConstants = presenter.getPickConstants(getActivity().getApplicationContext());
+            ImagePicker.isOriginalImage = selectConfig.isDefaultOriginal();
             uiConfig = presenter.getUiConfig(getWeakActivity());
             setStatusBar();
             findView();
@@ -271,7 +273,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     protected void loadMediaSetsComplete(@Nullable List<ImageSet> imageSetList) {
         if (imageSetList == null || imageSetList.size() == 0 ||
                 (imageSetList.size() == 1 && imageSetList.get(0).count == 0)) {
-            tip(getPickConstants().picker_str_media_not_found);
+            tip(getPickConstants().picker_str_tip_media_empty);
             return;
         }
         this.imageSets = imageSetList;
@@ -377,7 +379,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
 
         //如果当前是视频，且不支持视频预览，则拦截掉点击
         if (item.isVideo() && !selectConfig.isCanPreviewVideo()) {
-            tip(getString(R.string.str_cant_preview_video));
+            tip(PickConstants.getConstants(getActivity()).picker_str_tip_cant_preview_video);
             return;
         }
 
@@ -467,6 +469,9 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
             return;
         }
         if (onImagePickCompleteListener != null) {
+            for (ImageItem imageItem : selectList) {
+                imageItem.isOriginalImage = ImagePicker.isOriginalImage;
+            }
             onImagePickCompleteListener.onImagePickComplete(selectList);
         }
     }

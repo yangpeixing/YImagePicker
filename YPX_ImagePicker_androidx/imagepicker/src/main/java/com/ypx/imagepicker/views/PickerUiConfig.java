@@ -3,23 +3,25 @@ package com.ypx.imagepicker.views;
 import android.graphics.Color;
 
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.views.PickerUiProvider;
-
-import java.lang.ref.WeakReference;
 
 /**
  * Time: 2019/11/13 15:54
  * Author:ypx
- * Description:
+ * Description:选择器ui样式配置类
  */
 public class PickerUiConfig {
-    public static final int DIRECTION_TOP = 1;
-
-    public static final int DIRECTION_BOTTOM = 2;
 
     /**
-     * 选择器的背景色
+     * 文件夹列表从上往下弹入
      */
+    public static final int DIRECTION_TOP = 1;
+
+    /**
+     * 文件夹列表从底部往上弹入
+     */
+    public static final int DIRECTION_BOTTOM = 2;
+
+    //全局相关属性
     private int pickerBackgroundColor = Color.BLACK;
     private int previewBackgroundColor = Color.BLACK;
     private int singleCropBackgroundColor = Color.BLACK;
@@ -27,15 +29,16 @@ public class PickerUiConfig {
     private int folderListOpenMaxMargin = 0;
     private boolean isShowStatusBar;
     private int statusBarColor;
+    private int videoPauseIconID;
 
-
+    //小红书剪裁相关属性
     private int cropViewBackgroundColor = Color.BLACK;
     private int fullIconID;
     private int fitIconID;
     private int gapIconID;
     private int FillIconID;
-    private int videoPauseIconID;
 
+    //选择器ui提供类
     private PickerUiProvider pickerUiProvider;
 
     public PickerUiProvider getPickerUiProvider() {

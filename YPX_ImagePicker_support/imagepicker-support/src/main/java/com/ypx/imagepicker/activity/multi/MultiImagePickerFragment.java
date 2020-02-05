@@ -223,7 +223,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
      *
      * @param position 位置
      */
-    private void selectImageFromSet(final int position, boolean isTransit) {
+    private void selectImageFromSet(int position, boolean isTransit) {
         currentImageSet = imageSets.get(position);
         if (isTransit) {
             toggleFolderList();
@@ -280,10 +280,13 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     }
 
     @Override
-    protected void loadMediaItemsComplete(ImageSet set) {
-        this.imageItems = set.imageItems;
-        controllerViewOnImageSetSelected(set);
-        mAdapter.refreshData(imageItems);
+    protected synchronized void loadMediaItemsComplete(ImageSet set) {
+        if (currentImageSet == null || set.id.equals(currentImageSet.id)) {
+            this.imageItems.clear();
+            this.imageItems.addAll(set.imageItems);
+            controllerViewOnImageSetSelected(set);
+            mAdapter.refreshData(imageItems);
+        }
     }
 
     @Override

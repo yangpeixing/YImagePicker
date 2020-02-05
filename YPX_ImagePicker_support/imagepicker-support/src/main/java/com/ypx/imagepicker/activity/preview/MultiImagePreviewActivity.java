@@ -187,11 +187,11 @@ public class MultiImagePreviewActivity extends FragmentActivity {
                 ImagePicker.provideMediaItemsFromSet(this, currentImageSet, selectConfig.getMimeTypes(),
                         new MediaItemsDataSource.MediaItemProvider() {
                             @Override
-                            public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
+                            public void providerMediaItems(ImageSet imageSet, ImageSet allVideoSet) {
                                 if (dialogInterface != null) {
                                     dialogInterface.dismiss();
                                 }
-                                mImageList = filterVideo(imageItems);
+                                mImageList = filterVideo(imageSet.imageItems);
                                 initViewPager();
                             }
                         });

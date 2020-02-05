@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -13,7 +12,6 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +20,7 @@ import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.adapter.MultiPreviewAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
@@ -55,7 +54,7 @@ public class WXPreviewControllerView extends PreviewControllerView {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.picker_wx_preview;
+        return R.layout.picker_wx_preview_bottombar;
     }
 
 
@@ -69,6 +68,9 @@ public class WXPreviewControllerView extends PreviewControllerView {
         mBottomBar.setClickable(true);
         setOriginalCheckBoxDrawable(R.mipmap.picker_wechat_unselect, R.mipmap.picker_wechat_select);
         setSelectCheckBoxDrawable(R.mipmap.picker_wechat_unselect, R.mipmap.picker_wechat_select);
+        mOriginalCheckBox.setText(PickConstants.getConstants(getContext()).picker_str_bottom_original);
+        mSelectCheckBox.setText(PickConstants.getConstants(getContext()).picker_str_bottom_choose);
+
     }
 
     @Override
@@ -196,9 +198,7 @@ public class WXPreviewControllerView extends PreviewControllerView {
 
         if (!imageItem.isVideo() && isShowOriginal) {
             mOriginalCheckBox.setVisibility(VISIBLE);
-            if (ImagePicker.isOriginalImage) {
-                mOriginalCheckBox.setChecked(true);
-            }
+            mOriginalCheckBox.setChecked(ImagePicker.isOriginalImage);
         } else {
             mOriginalCheckBox.setVisibility(GONE);
         }

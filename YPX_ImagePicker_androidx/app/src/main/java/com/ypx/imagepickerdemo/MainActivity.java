@@ -1,9 +1,11 @@
 package com.ypx.imagepickerdemo;
 
 import android.annotation.SuppressLint;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -304,6 +307,7 @@ public class MainActivity extends AppCompatActivity {
                 .mimeTypes(getMimeTypes())//设置要加载的文件类型，可指定单一类型
                 // .filterMimeType(MimeType.GIF)//设置需要过滤掉加载的文件类型
                 .setSelectMode(getSelectMode())
+                .setDefaultOriginal(false)
                 .setPreviewVideo(!mCbFilterVideoPreview.isChecked())
                 .showCamera(mCbShowCamera.isChecked())//显示拍照
                 .setPreview(!mCbClosePreview.isChecked())//是否开启预览
@@ -314,7 +318,12 @@ public class MainActivity extends AppCompatActivity {
                 .setMinVideoDuration(5000L)
                 .setLastImageList(mRbSave.isChecked() ? picList : null)//设置上一次操作的图片列表，下次选择时默认恢复上一次选择的状态
                 .setShieldList(mRbShield.isChecked() ? picList : null)//设置需要屏蔽掉的图片列表，下次选择时已屏蔽的文件不可选择
-                .pick(this, new OnImagePickCompleteListener() {
+                .pick(this, new OnImagePickCompleteListener2() {
+                    @Override
+                    public void onPickFailed(PickerError error) {
+                        Toast.makeText(MainActivity.this, "取消了", Toast.LENGTH_SHORT).show();
+                    }
+
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {
                         //图片选择回调，主线程
@@ -383,7 +392,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void takePhotoAndCrop() {
         ImagePicker.DEFAULT_FILE_NAME = "自定义目录名字";
-        boolean isOpenOriginal = ImagePicker.isOriginalImage;
         //配置剪裁属性
         CropConfig cropConfig = new CropConfig();
         cropConfig.setCropRatio(mXSeekBar.getProgress(), mYSeekBar.getProgress());//设置剪裁比例
@@ -592,7 +600,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-
         mCbAVI.postDelayed(new Runnable() {
             @Override
             public void run() {

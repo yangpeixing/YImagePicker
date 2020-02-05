@@ -47,7 +47,7 @@ public class PickerFolderAdapter extends RecyclerView.Adapter<PickerFolderAdapte
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.picker_image_grid_item_root, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.picker_item_root, parent, false);
         return new ViewHolder(view, uiConfig);
     }
 

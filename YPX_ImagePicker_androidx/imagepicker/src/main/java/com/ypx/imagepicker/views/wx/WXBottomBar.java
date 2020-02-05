@@ -14,6 +14,7 @@ import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
 import com.ypx.imagepicker.utils.PCornerUtils;
@@ -30,6 +31,7 @@ public class WXBottomBar extends PickerControllerView {
     private Button mDirButton;
     private TextView mPreview;
     private CheckBox mCheckBox;
+    private String previewText;
 
     public WXBottomBar(Context context) {
         super(context);
@@ -58,6 +60,9 @@ public class WXBottomBar extends PickerControllerView {
                 ImagePicker.isOriginalImage = isChecked;
             }
         });
+        previewText = PickConstants.getConstants(getContext()).picker_str_bottom_preview;
+        mPreview.setText(previewText);
+        mCheckBox.setText(PickConstants.getConstants(getContext()).picker_str_bottom_original);
     }
 
 
@@ -99,9 +104,7 @@ public class WXBottomBar extends PickerControllerView {
             MultiSelectConfig selectConfig1 = (MultiSelectConfig) selectConfig;
             if (selectConfig1.isShowOriginalCheckBox()) {
                 mCheckBox.setVisibility(View.VISIBLE);
-                if (ImagePicker.isOriginalImage) {
-                    mCheckBox.setChecked(true);
-                }
+                mCheckBox.setChecked(ImagePicker.isOriginalImage);
             } else {
                 mCheckBox.setVisibility(View.GONE);
             }
@@ -112,10 +115,10 @@ public class WXBottomBar extends PickerControllerView {
         }
 
         if (selectedList.size() > 0) {
-            mPreview.setText(String.format("%s(%d)", getResources().getString(R.string.picker_str_preview), selectedList.size()));
+            mPreview.setText(String.format("%s(%d)", previewText, selectedList.size()));
             mPreview.setTextColor(getResources().getColor(R.color.white_F5));
         } else {
-            mPreview.setText(String.format("%s", getResources().getString(R.string.picker_str_preview)));
+            mPreview.setText(String.format("%s", previewText));
             mPreview.setTextColor(Color.parseColor("#50FFFFFF"));
         }
     }

@@ -11,9 +11,9 @@ import android.util.LongSparseArray;
 
 import androidx.loader.content.CursorLoader;
 
-import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
+import com.ypx.imagepicker.bean.PickConstants;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -118,11 +118,11 @@ public class MediaSetsLoader extends CursorLoader {
 
         String name = "";
         if (isLoadImage && isLoadVideo) {
-            name = getContext().getResources().getString(R.string.picker_str_all);
+            name = PickConstants.getConstants(getContext()).picker_str_folder_item_all;
         } else if (isLoadImage) {
-            name = getContext().getResources().getString(R.string.picker_str_all_image);
+            name = PickConstants.getConstants(getContext()).picker_str_folder_item_image;
         } else if (isLoadVideo) {
-            name = getContext().getResources().getString(R.string.picker_str_all_video);
+            name = PickConstants.getConstants(getContext()).picker_str_folder_item_video;
         }
 
         allAlbum.addRow(new String[]{ImageSet.ID_ALL_MEDIA, ImageSet.ID_ALL_MEDIA, name,

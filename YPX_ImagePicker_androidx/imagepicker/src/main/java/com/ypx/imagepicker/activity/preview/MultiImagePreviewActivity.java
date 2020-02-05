@@ -1,7 +1,6 @@
 package com.ypx.imagepicker.activity.preview;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -127,7 +126,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             finish();
         } else {
             PickerActivityManager.addActivity(this);
-            setContentView(R.layout.picker_activity_image_pre);
+            setContentView(R.layout.picker_activity_preview);
             setUI();
             loadMediaPreviewList();
         }

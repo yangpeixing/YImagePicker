@@ -40,7 +40,7 @@
             android:button="@null"
             android:drawablePadding="5dp"
             android:gravity="center"
-            android:text="原图"
+            android:text="@string/picker_str_bottom_original"
             android:textColor="@color/white_F5" />
 
         <CheckBox
@@ -54,7 +54,7 @@
             android:drawablePadding="4dp"
             android:includeFontPadding="true"
             android:paddingStart="4dp"
-            android:text="选择"
+            android:text="@string/picker_str_bottom_choose"
             android:textColor="#ffffff" />
 
     </RelativeLayout>

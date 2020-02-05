@@ -47,11 +47,11 @@ public interface IPickerPresenter extends Serializable {
     /**
      * 动态配置提示文本
      *
-     * @param context context
+     * @param applicationContext context
      * @return PickConstants
      */
     @NonNull
-    PickConstants getPickConstants(@Nullable Context context);
+    PickConstants getPickConstants(@Nullable Context applicationContext);
 
     /**
      * 提示
@@ -113,7 +113,7 @@ public interface IPickerPresenter extends Serializable {
      * <p>
      * 此方法可以用来跳转到任意一个页面，比如自定义的预览
      *
-     * @param activity         上下文
+     * @param activity        上下文
      * @param imageItem       当前图片
      * @param selectImageList 当前选中列表
      * @param allSetImageList 当前文件夹所有图片

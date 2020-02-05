@@ -32,7 +32,7 @@ import com.ypx.imagepicker.views.base.PickerFolderItemView;
 import com.ypx.imagepicker.views.base.PickerItemView;
 import com.ypx.imagepicker.views.base.SingleCropControllerView;
 import com.ypx.imagepicker.views.wx.WXFolderItemView;
-import com.ypx.imagepicker.views.wx.WXItemView;
+import com.ypx.imagepickerdemo.AlohaActivity;
 import com.ypx.imagepickerdemo.R;
 import com.ypx.imagepickerdemo.SecondActivity;
 
@@ -58,9 +58,9 @@ public class WeChatPresenter implements IPickerPresenter {
     @Override
     public PickerUiConfig getUiConfig(Context context) {
         PickerUiConfig uiConfig = new PickerUiConfig();
-        //设置是否显示标题栏
+        //设置是否显示状态栏
         uiConfig.setShowStatusBar(true);
-        //设置标题栏颜色
+        //设置状态栏颜色
         uiConfig.setStatusBarColor(Color.parseColor("#F5F5F5"));
         //设置选择器背景
         uiConfig.setPickerBackgroundColor(Color.BLACK);
@@ -82,7 +82,7 @@ public class WeChatPresenter implements IPickerPresenter {
         uiConfig.setPickerUiProvider(new PickerUiProvider() {
             @Override
             public PickerItemView getItemView(Context context) {
-                WXItemView itemView = (WXItemView) super.getItemView(context);
+                WXItemViewNew itemView = new WXItemViewNew(context);
                 itemView.setBackgroundColor(Color.parseColor("#303030"));
                 return itemView;
             }
@@ -131,17 +131,19 @@ public class WeChatPresenter implements IPickerPresenter {
 
     @Override
     public DialogInterface showProgressDialog(@Nullable Activity activity, ProgressSceneEnum progressSceneEnum) {
-        return ProgressDialog.show(activity, null, progressSceneEnum == ProgressSceneEnum.crop ? "正在剪裁..." : "正在加载...");
+        return ProgressDialog.show(activity, null, progressSceneEnum == ProgressSceneEnum.crop ?
+                "正在剪裁..." : "正在加载...");
     }
 
 
     @Override
     public boolean interceptPickerCompleteClick(Activity activity, ArrayList<ImageItem> selectedList, BaseSelectConfig selectConfig) {
-        tip(activity, "拦截了完成按钮点击" + selectedList.size());
-        Intent intent = new Intent(activity, SecondActivity.class);
-        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, selectedList);
-        activity.startActivity(intent);
-        return true;
+        return false;
+//        tip(activity, "拦截了完成按钮点击" + selectedList.size());
+//        Intent intent = new Intent(activity, AlohaActivity.class);
+//        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, selectedList);
+//        activity.startActivity(intent);
+//        return true;
     }
 
     @Override
@@ -208,7 +210,8 @@ public class WeChatPresenter implements IPickerPresenter {
 
     @Override
     public PickConstants getPickConstants(Context context) {
-        return new PickConstants(context);
+        PickConstants pickConstants = new PickConstants(context);
+        return pickConstants;
     }
 
 }

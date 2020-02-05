@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
-import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
@@ -112,7 +112,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                         //androidQ上废弃了DATA绝对路径，需要手动拼凑Uri，这里为了兼容大部分项目还没有适配androidQ的情况
                         //默认path还是先取绝对路径，取不到或者异常才去取Uri路径
                         /*if (MediaStoreConstants.isBeforeAndroidQ()) {
-                            item.path = getString(cursor, MediaStore.Files.FileColumns.DATA);
+                            item.path = getConstants(cursor, MediaStore.Files.FileColumns.DATA);
                         } else {
                             item.path = getUri(item.id, item.mimeType).toString();
                         }*/
@@ -129,7 +129,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                         item.height = getInt(cursor, MediaStore.Files.FileColumns.HEIGHT);
                         item.setVideo(MimeType.isVideo(item.mimeType));
                         item.time = getLong(cursor, MediaStore.Files.FileColumns.DATE_MODIFIED);
-                        item.timeFormat = PDateUtil.getStrTime(item.time);
+                        item.timeFormat = PDateUtil.getStrTime(context, item.time);
                     } catch (Exception e) {
                         continue;
                     }
@@ -163,7 +163,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                             }
                         }
                     }
-                    //添加到文件列表中国呢
+                    //添加到文件列表中
                     imageItems.add(item);
                     //回调预加载数据源
                     if (preloadProvider != null && imageItems.size() == preloadSize) {
@@ -180,7 +180,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                 allVideoSet.cover = allVideoItems.get(0);
                 allVideoSet.count = allVideoItems.size();
                 allVideoSet.imageItems = allVideoItems;
-                allVideoSet.name = context.getResources().getString(R.string.picker_str_all_video);
+                allVideoSet.name = PickConstants.getConstants(context).picker_str_folder_item_video;
             }
             //回调所有数据
             notifyMediaItem(context, imageItems, allVideoSet);

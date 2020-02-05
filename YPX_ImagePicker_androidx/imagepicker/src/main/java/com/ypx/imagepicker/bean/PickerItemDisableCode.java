@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
-import com.ypx.imagepicker.utils.PConstantsUtil;
 
 import java.util.ArrayList;
 
@@ -27,28 +26,28 @@ public class PickerItemDisableCode {
         String message = "";
         switch (code) {
             case DISABLE_IN_SHIELD:
-                message = PConstantsUtil.getString(context, presenter).picker_str_shield;
+                message = PickConstants.getConstants(context).picker_str_tip_shield;
                 break;
             case DISABLE_OVER_MAX_COUNT:
                 presenter.overMaxCountTip(context, selectConfig.getMaxCount());
                 message = "";
                 break;
             case DISABLE_ONLY_SELECT_IMAGE:
-                message = PConstantsUtil.getString(context, presenter).picker_str_only_select_image;
+                message = PickConstants.getConstants(context).picker_str_tip_only_select_image;
                 break;
             case DISABLE_ONLY_SELECT_VIDEO:
-                message = PConstantsUtil.getString(context, presenter).picker_str_only_select_video;
+                message = PickConstants.getConstants(context).picker_str_tip_only_select_video;
                 break;
             case DISABLE_VIDEO_OVER_MAX_DURATION:
-                message = PConstantsUtil.getString(context, presenter).picker_str_video_over_max_duration
+                message = PickConstants.getConstants(context).picker_str_str_video_over_max_duration
                         + selectConfig.getMaxVideoDurationFormat();
                 break;
             case DISABLE_VIDEO_LESS_MIN_DURATION:
-                message = PConstantsUtil.getString(context, presenter).picker_str_video_less_min_duration
+                message = PickConstants.getConstants(context).picker_str_tip_video_less_min_duration
                         + selectConfig.getMinVideoDurationFormat();
                 break;
             case DISABLE_VIDEO_ONLY_SINGLE_PICK:
-                message = "只能选择一个视频!";
+                message = PickConstants.getConstants(context).picker_str_tip_only_select_one_video;
                 break;
         }
         return message;

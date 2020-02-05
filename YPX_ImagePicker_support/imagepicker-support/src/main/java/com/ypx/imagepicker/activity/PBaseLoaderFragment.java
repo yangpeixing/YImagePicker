@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -215,7 +216,7 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
      *
      * @param set 文件夹
      */
-    protected void loadMediaItemsFromSet(final @NonNull ImageSet set) {
+    protected void loadMediaItemsFromSet(@NonNull ImageSet set) {
         if (set.imageItems == null || set.imageItems.size() == 0) {
             DialogInterface dialogInterface = null;
             if (!set.isAllMedia() && set.count > 1000) {
@@ -227,21 +228,17 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
             ImagePicker.provideMediaItemsFromSetWithPreload(getActivity(), set, selectConfig.getMimeTypes(),
                     40, new MediaItemsDataSource.MediaItemPreloadProvider() {
                         @Override
-                        public void providerMediaItems(ArrayList<ImageItem> imageItems) {
-                            if (finalDialogInterface != null) {
-                                finalDialogInterface.dismiss();
-                            }
-                            set.imageItems = imageItems;
-                            loadMediaItemsComplete(set);
+                        public void providerMediaItems(ImageSet imageSet) {
+                            loadMediaItemsComplete(imageSet);
                         }
+
                     }, new MediaItemsDataSource.MediaItemProvider() {
                         @Override
-                        public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
+                        public void providerMediaItems(ImageSet imageSet, ImageSet allVideoSet) {
                             if (finalDialogInterface != null) {
                                 finalDialogInterface.dismiss();
                             }
-                            set.imageItems = imageItems;
-                            loadMediaItemsComplete(set);
+                            loadMediaItemsComplete(imageSet);
                             if (selectConfig.isShowImage() && selectConfig.isShowVideo()) {
                                 refreshAllVideoSet(allVideoSet);
                             }

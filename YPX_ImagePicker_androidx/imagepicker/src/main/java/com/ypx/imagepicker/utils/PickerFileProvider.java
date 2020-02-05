@@ -22,7 +22,8 @@ public class PickerFileProvider extends FileProvider {
         if (android.os.Build.VERSION.SDK_INT < 24) {
             uri = Uri.fromFile(file);
         } else {
-            uri = getUriForFile(context, context.getApplication().getPackageName() + ".picker.fileprovider", file);
+            uri = getUriForFile(context, context.getApplication().getPackageName()
+                    + ".picker.fileprovider", file);
         }
 
         return uri;

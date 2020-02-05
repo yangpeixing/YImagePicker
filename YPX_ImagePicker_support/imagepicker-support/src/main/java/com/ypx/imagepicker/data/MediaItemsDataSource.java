@@ -154,16 +154,17 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                     //图片
                     else {
                         //如果媒体信息中不包含图片的宽高，则手动获取文件宽高
-                        if (item.width == 0 || item.height == 0) {
-                            if (!item.isUriPath()) {
-                                int[] size = PBitmapUtils.getImageWidthHeight(item.path);
-                                item.width = size[0];
-                                item.height = size[1];
-                            }
-                        }
+//                        if (item.width == 0 || item.height == 0) {
+//                            if (!item.isUriPath()) {
+//                                int[] size = PBitmapUtils.getImageWidthHeight(item.path);
+//                                item.width = size[0];
+//                                item.height = size[1];
+//                            }
+//                        }
                     }
                     //添加到文件列表中国呢
                     imageItems.add(item);
+                    set.imageItems = new ArrayList<>(imageItems);
                     //回调预加载数据源
                     if (preloadProvider != null && imageItems.size() == preloadSize) {
                         notifyPreloadItem(context, imageItems);
@@ -181,6 +182,8 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                 allVideoSet.imageItems = allVideoItems;
                 allVideoSet.name = context.getResources().getString(R.string.picker_str_all_video);
             }
+
+            set.imageItems = new ArrayList<>(imageItems);
             //回调所有数据
             notifyMediaItem(context, imageItems, allVideoSet);
         }
@@ -199,8 +202,10 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                 if (context.isDestroyed()) {
                     return;
                 }
-                preloadProvider.providerMediaItems(imageItems);
-                preloadProvider = null;
+                if (preloadProvider != null) {
+                    preloadProvider.providerMediaItems(set);
+                    preloadProvider = null;
+                }
             }
         });
     }
@@ -221,7 +226,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                     return;
                 }
                 if (mediaItemProvider != null) {
-                    mediaItemProvider.providerMediaItems(imageItems, allVideoSet);
+                    mediaItemProvider.providerMediaItems(set, allVideoSet);
                 }
 
                 if (mLoaderManager != null) {
@@ -237,7 +242,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
     }
 
     public interface MediaItemProvider {
-        void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet);
+        void providerMediaItems(ImageSet imageSet, ImageSet allVideoSet);
     }
 
     private MediaItemPreloadProvider preloadProvider;
@@ -247,7 +252,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
     }
 
     public interface MediaItemPreloadProvider {
-        void providerMediaItems(ArrayList<ImageItem> imageItems);
+        void providerMediaItems(ImageSet imageSet);
     }
 
     private long getLong(Cursor data, String text) {

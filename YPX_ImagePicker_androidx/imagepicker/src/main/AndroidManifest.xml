@@ -19,19 +19,26 @@
         android:supportsRtl="true">
         <activity
             android:name=".activity.crop.MultiImageCropActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activity.preview.MultiImagePreviewActivity"
-            android:multiprocess="true" />
+            android:multiprocess="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activity.singlecrop.SingleCropActivity"
-            android:multiprocess="true" />
+            android:multiprocess="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activity.multi.MultiImagePickerActivity"
-            android:multiprocess="true" />
+            android:multiprocess="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name=".utils.PickerFileProvider"

@@ -3,11 +3,13 @@ package com.ypx.imagepicker.builder;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerActivity;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerFragment;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
@@ -191,6 +193,14 @@ public class MultiPickerBuilder {
     }
 
     /**
+     * @param isOriginal 设置原图选项默认值，true则代表默认打开原图，false代表不打开
+     */
+    public MultiPickerBuilder setDefaultOriginal(boolean isOriginal) {
+        selectConfig.setDefaultOriginal(isOriginal);
+        return this;
+    }
+
+    /**
      * @param imageList 设置屏蔽项，默认打开选择器不可选择屏蔽列表的媒体文件
      * @param <T>       String or ImageItem
      */
@@ -273,7 +283,6 @@ public class MultiPickerBuilder {
      * 剪裁完成的图片是否保存在DCIM目录下
      *
      * @param isSaveInDCIM true：存储在系统目录DCIM下 false：存储在 data/包名/files/imagePicker/ 目录下
-     *
      */
     public MultiPickerBuilder cropSaveInDCIM(boolean isSaveInDCIM) {
         selectConfig.saveInDCIM(isSaveInDCIM);
@@ -317,7 +326,7 @@ public class MultiPickerBuilder {
         checkVideoAndImage();
         if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
             PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
-            presenter.tip(context, context.getResources().getString(R.string.picker_str_mimetypes_empty));
+            presenter.tip(context, PickConstants.getConstants(context).picker_str_tip_mimeTypes_empty);
             return;
         }
         MultiImagePickerActivity.intent(context, selectConfig, presenter, listener);
@@ -344,7 +353,7 @@ public class MultiPickerBuilder {
         }
         if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
             PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
-            presenter.tip(context, context.getResources().getString(R.string.picker_str_mimetypes_empty));
+            presenter.tip(context, PickConstants.getConstants(context).picker_str_tip_mimeTypes_empty);
             return;
         }
         MultiImagePickerActivity.intent(context, selectConfig, presenter, listener);

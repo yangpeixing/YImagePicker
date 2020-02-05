@@ -1,4 +1,4 @@
-include ':app', ':imagepicker'
+include ':app', ':imagePicker'
 
 //include ':imagePicker'
 //project(':imagePicker').projectDir = new File('E:/YohoMars/imagePicker')

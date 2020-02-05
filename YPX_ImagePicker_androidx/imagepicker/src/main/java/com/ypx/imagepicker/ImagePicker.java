@@ -1,6 +1,8 @@
 package com.ypx.imagepicker;
 
 import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
@@ -9,6 +11,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.ypx.imagepicker.activity.PickerActivityManager;
 import com.ypx.imagepicker.activity.preview.MultiImagePreviewActivity;
 import com.ypx.imagepicker.activity.singlecrop.SingleCropActivity;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
@@ -54,6 +57,7 @@ public class ImagePicker {
      */
     public static boolean isOriginalImage = false;
 
+    public static PickConstants pickConstants;
 
     /**
      * 小红书样式剪裁activity形式

@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ypx.imagepicker.R;
+import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.views.base.SingleCropControllerView;
@@ -16,6 +17,7 @@ import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 public class WXSingleCropControllerView extends SingleCropControllerView {
     private TextView mCompleteBtn;
+    private TextView mTitle;
 
     public WXSingleCropControllerView(Context context) {
         super(context);
@@ -23,13 +25,14 @@ public class WXSingleCropControllerView extends SingleCropControllerView {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.picker_wx_crop;
+        return R.layout.picker_wx_crop_titlebar;
     }
 
     @Override
     protected void initView(View view) {
         RelativeLayout mTitleBar = view.findViewById(R.id.mTitleBar);
         ImageView mIvBack = view.findViewById(R.id.iv_back);
+        mTitle=view.findViewById(R.id.tv_title);
         mCompleteBtn = view.findViewById(R.id.tv_rightBtn);
         mTitleBar.setBackgroundColor(Color.WHITE);
         mCompleteBtn.setBackground(PCornerUtils.cornerDrawable(getResources().getColor(R.color.wx), dp(2)));
@@ -39,6 +42,8 @@ public class WXSingleCropControllerView extends SingleCropControllerView {
                 onBackPressed();
             }
         });
+        mCompleteBtn.setText(PickConstants.getConstants(getContext()).picker_str_title_crop_right);
+        mTitle.setText(PickConstants.getConstants(getContext()).picker_str_title_crop);
     }
 
     @Override

@@ -79,7 +79,7 @@ public class PickerItemAdapter extends RecyclerView.Adapter<PickerItemAdapter.It
     @Override
     public PickerItemAdapter.ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ItemViewHolder(LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.picker_image_grid_item_root, parent, false),
+                inflate(R.layout.picker_item_root, parent, false),
                 viewType == ITEM_TYPE_CAMERA,
                 selectConfig, presenter, uiConfig);
     }
