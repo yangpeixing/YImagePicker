@@ -23,6 +23,7 @@ import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.data.ICameraExecutor;
 import com.ypx.imagepicker.data.ProgressSceneEnum;
+import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
@@ -33,6 +34,7 @@ import com.ypx.imagepicker.utils.PPermissionUtils;
 import com.ypx.imagepicker.views.PickerUiProvider;
 import com.ypx.imagepicker.views.base.PickerControllerView;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -176,7 +178,10 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
         } else {
-            ImagePicker.takeVideo(getActivity(), new OnImagePickCompleteListener() {
+            String fileName = "VIDEO_" + System.currentTimeMillis();
+            String path = PBitmapUtils.getDCIMDirectory().getAbsolutePath() +
+                    File.separator + fileName + ".mp4";
+            ImagePicker.takeVideo(getActivity(), path, getSelectConfig().getMaxVideoDuration(), new OnImagePickCompleteListener() {
                 @Override
                 public void onImagePickComplete(ArrayList<ImageItem> items) {
                     if (items != null && items.size() > 0 && items.get(0) != null) {

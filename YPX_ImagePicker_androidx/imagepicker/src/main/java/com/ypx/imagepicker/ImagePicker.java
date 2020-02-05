@@ -145,10 +145,22 @@ public class ImagePicker {
      * @param listener 视频回调
      */
     public static void takeVideo(final Activity activity, final String savePath, final OnImagePickCompleteListener listener) {
+        takeVideo(activity, savePath, -1, listener);
+    }
+
+    /**
+     * 直接调用摄像头拍视频
+     *
+     * @param activity    activity
+     * @param savePath    视频保存路径
+     * @param maxDuration 视频最大时长
+     * @param listener    视频回调
+     */
+    public static void takeVideo(final Activity activity, final String savePath, long maxDuration, final OnImagePickCompleteListener listener) {
         if (!PPermissionUtils.hasCameraPermissions(activity) || listener == null) {
             return;
         }
-        PLauncher.init(activity).startActivityForResult(PBitmapUtils.getTakeVideoIntent(activity, savePath), new PLauncher.Callback() {
+        PLauncher.init(activity).startActivityForResult(PBitmapUtils.getTakeVideoIntent(activity, savePath, maxDuration), new PLauncher.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode != Activity.RESULT_OK || savePath == null || savePath.trim().length() == 0) {

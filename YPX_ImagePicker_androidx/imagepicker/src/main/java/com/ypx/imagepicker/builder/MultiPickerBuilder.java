@@ -120,7 +120,7 @@ public class MultiPickerBuilder {
     }
 
     /**
-     * 设置需要过滤掉的文件加载类型
+     * 设置需要加载的文件类型
      *
      * @param mimeTypes 需要过滤的文件类型集合
      */

@@ -284,7 +284,7 @@ public class PBitmapUtils {
         return intent;
     }
 
-    public static Intent getTakeVideoIntent(Activity activity, String savePath) {
+    public static Intent getTakeVideoIntent(Activity activity, String savePath, long maxDuration) {
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             Uri imageUri = PickerFileProvider.getUriForFile(activity, new File(savePath));
@@ -298,6 +298,9 @@ public class PBitmapUtils {
                 }
             }
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            if (maxDuration > 1) {
+                intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, maxDuration / 1000);
+            }
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
         return intent;

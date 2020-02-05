@@ -49,5 +49,10 @@
     <string name="picker_str_this_week">本周</string>
     <string name="picker_str_this_months">这个月</string>
     <string name="picker_str_time_format">yyyy年mm月</string>
+    <string name="picker_str_day">天</string>
+    <string name="picker_str_hour">小时</string>
+    <string name="picker_str_minute">分钟</string>
+    <string name="picker_str_second">秒</string>
+    <string name="picker_str_milli">毫秒</string>
 
 </resources>

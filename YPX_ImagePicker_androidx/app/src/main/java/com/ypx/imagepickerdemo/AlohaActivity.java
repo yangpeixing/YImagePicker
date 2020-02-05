@@ -259,9 +259,11 @@ public class AlohaActivity extends Activity {
                     @Override
                     public void run() {
                         dialog.dismiss();
-                        Intent intent = new Intent(AlohaActivity.this, SecondActivity.class);
-                        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, imageItems);
-                        startActivity(intent);
+//                        Intent intent = new Intent(AlohaActivity.this, SecondActivity.class);
+//                        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, imageItems);
+//                        startActivity(intent);
+//                        finish();
+                        ImagePicker.closePickerWithCallback(imageItems);
                         finish();
                     }
                 });

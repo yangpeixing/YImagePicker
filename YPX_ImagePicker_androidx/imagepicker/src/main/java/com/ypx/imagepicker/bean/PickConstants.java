@@ -94,6 +94,11 @@ public class PickConstants {
     public String picker_str_this_week;
     public String picker_str_this_months;
     public String picker_str_time_format;
+    public String picker_str_day;
+    public String picker_str_hour;
+    public String picker_str_minute;
+    public String picker_str_second;
+    public String picker_str_milli;
 
     public PickConstants(Context context) {
         Field[] field = getClass().getFields();

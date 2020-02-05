@@ -3,7 +3,6 @@ package com.ypx.imagepicker.builder;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.CropSelectConfig;
 import com.ypx.imagepicker.bean.MimeType;

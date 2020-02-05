@@ -80,7 +80,7 @@ public class PDateUtil {
     /*
      * 毫秒转化
      */
-    public static String formatTime(Long ms) {
+    public static String formatTime(Context context,Long ms) {
         Integer ss = 1000;
         Integer mi = ss * 60;
         Integer hh = mi * 60;
@@ -94,19 +94,19 @@ public class PDateUtil {
 
         StringBuilder sb = new StringBuilder();
         if (day > 0) {
-            sb.append(day).append("天");
+            sb.append(day).append(PickConstants.getConstants(context).picker_str_day);
         }
         if (hour > 0) {
-            sb.append(hour).append("小时");
+            sb.append(hour).append(PickConstants.getConstants(context).picker_str_hour);
         }
         if (minute > 0) {
-            sb.append(minute).append("分钟");
+            sb.append(minute).append(PickConstants.getConstants(context).picker_str_minute);
         }
         if (second > 0) {
-            sb.append(second).append("秒");
+            sb.append(second).append(PickConstants.getConstants(context).picker_str_second);
         }
         if (milliSecond > 0) {
-            sb.append(milliSecond).append("毫秒");
+            sb.append(milliSecond).append(PickConstants.getConstants(context).picker_str_milli);
         }
         return sb.toString();
     }

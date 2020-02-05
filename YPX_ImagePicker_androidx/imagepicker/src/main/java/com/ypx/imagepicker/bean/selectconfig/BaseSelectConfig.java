@@ -1,5 +1,7 @@
 package com.ypx.imagepicker.bean.selectconfig;
 
+import android.content.Context;
+
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.SelectMode;
@@ -18,7 +20,7 @@ public class BaseSelectConfig implements Serializable {
     private int maxCount;
     private int minCount;
     private long minVideoDuration = 0;
-    private long maxVideoDuration = 120000L;
+    private long maxVideoDuration = 1200000000L;
     private int columnCount = 4;
     private boolean isShowCamera;
     private boolean isVideoSinglePick = true;
@@ -71,12 +73,12 @@ public class BaseSelectConfig implements Serializable {
         return maxVideoDuration;
     }
 
-    public String getMaxVideoDurationFormat() {
-        return PDateUtil.formatTime(maxVideoDuration);
+    public String getMaxVideoDurationFormat(Context context) {
+        return PDateUtil.formatTime(context,maxVideoDuration);
     }
 
-    public String getMinVideoDurationFormat() {
-        return PDateUtil.formatTime(minVideoDuration);
+    public String getMinVideoDurationFormat(Context context) {
+        return PDateUtil.formatTime(context,minVideoDuration);
     }
 
     public void setMaxVideoDuration(long maxVideoDuration) {

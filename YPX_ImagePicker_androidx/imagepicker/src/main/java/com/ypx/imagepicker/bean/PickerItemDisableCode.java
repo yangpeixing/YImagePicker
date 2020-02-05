@@ -40,11 +40,11 @@ public class PickerItemDisableCode {
                 break;
             case DISABLE_VIDEO_OVER_MAX_DURATION:
                 message = PickConstants.getConstants(context).picker_str_str_video_over_max_duration
-                        + selectConfig.getMaxVideoDurationFormat();
+                        + selectConfig.getMaxVideoDurationFormat(context);
                 break;
             case DISABLE_VIDEO_LESS_MIN_DURATION:
                 message = PickConstants.getConstants(context).picker_str_tip_video_less_min_duration
-                        + selectConfig.getMinVideoDurationFormat();
+                        + selectConfig.getMinVideoDurationFormat(context);
                 break;
             case DISABLE_VIDEO_ONLY_SINGLE_PICK:
                 message = PickConstants.getConstants(context).picker_str_tip_only_select_one_video;
