@@ -2,6 +2,7 @@ package com.ypx.imagepicker.data;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
@@ -10,7 +11,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
-import com.ypx.imagepicker.bean.PickConstants;
+import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
@@ -122,9 +123,15 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
 
                         }
 
-                        if (item.path == null || item.path.length() == 0) {
-                            item.path = item.getUri().toString();
+                        Uri urlPath = item.getUri();
+                        if (urlPath != null) {
+                            item.setUriPath(urlPath.toString());
                         }
+
+                        if (item.path == null || item.path.length() == 0) {
+                            item.path = urlPath.toString();
+                        }
+
                         item.width = getInt(cursor, MediaStore.Files.FileColumns.WIDTH);
                         item.height = getInt(cursor, MediaStore.Files.FileColumns.HEIGHT);
                         item.setVideo(MimeType.isVideo(item.mimeType));
@@ -180,7 +187,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                 allVideoSet.cover = allVideoItems.get(0);
                 allVideoSet.count = allVideoItems.size();
                 allVideoSet.imageItems = allVideoItems;
-                allVideoSet.name = PickConstants.getConstants(context).picker_str_folder_item_video;
+                allVideoSet.name = context.getString(R.string.picker_str_folder_item_video);
             }
             //回调所有数据
             notifyMediaItem(context, imageItems, allVideoSet);

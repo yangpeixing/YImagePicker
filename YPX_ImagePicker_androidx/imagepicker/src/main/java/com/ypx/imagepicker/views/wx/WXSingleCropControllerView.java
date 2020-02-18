@@ -9,7 +9,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.views.base.SingleCropControllerView;
@@ -42,8 +41,8 @@ public class WXSingleCropControllerView extends SingleCropControllerView {
                 onBackPressed();
             }
         });
-        mCompleteBtn.setText(PickConstants.getConstants(getContext()).picker_str_title_crop_right);
-        mTitle.setText(PickConstants.getConstants(getContext()).picker_str_title_crop);
+        mCompleteBtn.setText(getContext().getString(R.string.picker_str_title_crop_right));
+        mTitle.setText(getContext().getString(R.string.picker_str_title_crop));
     }
 
     @Override

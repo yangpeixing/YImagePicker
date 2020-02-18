@@ -1,6 +1,5 @@
 package com.ypx.imagepicker.bean.selectconfig;
 
-import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
 
 

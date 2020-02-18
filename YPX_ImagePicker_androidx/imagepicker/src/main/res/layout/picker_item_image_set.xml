@@ -6,8 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="1dp"
     android:background="@drawable/picker_selector_list_item_bg"
-    android:clickable="true"
-    android:orientation="vertical">
+    android:clickable="true">
 
     <ImageView
         android:id="@+id/iv_image"

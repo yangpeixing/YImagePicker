@@ -3,8 +3,6 @@ package com.ypx.imagepicker.bean.selectconfig;
 import android.graphics.Color;
 import android.util.Size;
 
-import com.ypx.imagepicker.ImagePicker;
-import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.widget.cropimage.Info;
 
 /**

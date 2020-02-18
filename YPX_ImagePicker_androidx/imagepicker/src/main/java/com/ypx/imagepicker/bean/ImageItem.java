@@ -1,12 +1,14 @@
 package com.ypx.imagepicker.bean;
 
 import android.content.ContentUris;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 
 
+import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.widget.cropimage.Info;
 
 import java.io.Serializable;
@@ -54,6 +56,7 @@ public class ImageItem implements Serializable, Parcelable {
     // 剪裁后的图片绝对地址（从imageFilterPath 计算出来，已经带了滤镜）
     private String cropUrl;
 
+
     //以下是UI上用到的临时变量
     private boolean isSelect = false;
     private boolean isPress = false;
@@ -63,6 +66,28 @@ public class ImageItem implements Serializable, Parcelable {
     private Info cropRestoreInfo;
 
     public ImageItem() {
+    }
+
+    public static ImageItem withPath(Context context, String path) {
+        ImageItem imageItem = new ImageItem();
+        imageItem.path = path;
+        if (imageItem.isUriPath()) {
+            Uri uri = Uri.parse(path);
+            imageItem.setUriPath(uri.toString());
+            int[] size = PBitmapUtils.getImageWidthHeight(context, uri);
+            imageItem.width = size[0];
+            imageItem.height = size[1];
+        } else {
+            Uri uri = PBitmapUtils.getImageContentUri(context, path);
+            if (uri != null) {
+                imageItem.setUriPath(uri.toString());
+            }
+            int[] size = PBitmapUtils.getImageWidthHeight(path);
+            imageItem.width = size[0];
+            imageItem.height = size[1];
+        }
+        imageItem.setVideo(false);
+        return imageItem;
     }
 
 
@@ -281,17 +306,7 @@ public class ImageItem implements Serializable, Parcelable {
             return Uri.parse(path);
         }
 
-        Uri contentUri;
-        if (MimeType.isImage(mimeType)) {
-            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        } else if (MimeType.isVideo(mimeType)) {
-            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-        } else {
-            contentUri = MediaStore.Files.getContentUri("external");
-        }
-        contentUri = ContentUris.withAppendedId(contentUri, id);
-        uriPath = contentUri.toString();
-        return contentUri;
+        return PBitmapUtils.getContentUri(mimeType, id);
     }
 
 
@@ -336,6 +351,10 @@ public class ImageItem implements Serializable, Parcelable {
         return super.equals(o);
     }
 
+    public void setUriPath(String uriPath) {
+        this.uriPath = uriPath;
+    }
+
     public ImageItem copy() {
         ImageItem newItem = new ImageItem();
         newItem.path = this.path;
@@ -352,6 +371,11 @@ public class ImageItem implements Serializable, Parcelable {
         newItem.cropRestoreInfo = cropRestoreInfo;
         newItem.isOriginalImage = isOriginalImage;
         return newItem;
+    }
+
+    public boolean isEmpty() {
+        return (path == null || path.length() == 0)
+                && (uriPath == null || uriPath.length() == 0);
     }
 
 }

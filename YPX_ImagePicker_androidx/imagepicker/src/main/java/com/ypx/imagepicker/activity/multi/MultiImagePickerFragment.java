@@ -21,7 +21,6 @@ import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PBaseLoaderFragment;
 import com.ypx.imagepicker.activity.preview.MultiImagePreviewActivity;
 import com.ypx.imagepicker.adapter.PickerFolderAdapter;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.data.IReloadExecutor;
 import com.ypx.imagepicker.views.PickerUiConfig;
@@ -105,7 +104,6 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         super.onViewCreated(view, savedInstanceState);
         mContext = getActivity();
         if (isIntentDataValid()) {
-            ImagePicker.pickConstants = presenter.getPickConstants(getActivity().getApplicationContext());
             ImagePicker.isOriginalImage = selectConfig.isDefaultOriginal();
             uiConfig = presenter.getUiConfig(getWeakActivity());
             setStatusBar();
@@ -273,7 +271,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     protected void loadMediaSetsComplete(@Nullable List<ImageSet> imageSetList) {
         if (imageSetList == null || imageSetList.size() == 0 ||
                 (imageSetList.size() == 1 && imageSetList.get(0).count == 0)) {
-            tip(getPickConstants().picker_str_tip_media_empty);
+            tip(getString(R.string.picker_str_tip_media_empty));
             return;
         }
         this.imageSets = imageSetList;
@@ -302,7 +300,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     public void onTakePhotoResult(@NonNull ImageItem imageItem) {
         //剪裁模式下，直接跳转剪裁页面
         if (selectConfig.getSelectMode() == SelectMode.MODE_CROP) {
-            intentCrop(imageItem.path);
+            intentCrop(imageItem);
             return;
         }
         //单选模式下，直接回调出去
@@ -354,7 +352,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
             if (item.isGif() || item.isVideo()) {
                 notifyOnSingleImagePickComplete(item);
             } else {
-                intentCrop(item.path);
+                intentCrop(item);
             }
             return;
         }
@@ -379,7 +377,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
 
         //如果当前是视频，且不支持视频预览，则拦截掉点击
         if (item.isVideo() && !selectConfig.isCanPreviewVideo()) {
-            tip(PickConstants.getConstants(getActivity()).picker_str_tip_cant_preview_video);
+            tip(getActivity().getString(R.string.picker_str_tip_cant_preview_video));
             return;
         }
 
@@ -420,10 +418,10 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     /**
      * 跳转剪裁页面
      *
-     * @param path 图片路径
+     * @param imageItem 图片信息
      */
-    private void intentCrop(String path) {
-        ImagePicker.crop(getActivity(), presenter, selectConfig, path, new OnImagePickCompleteListener() {
+    private void intentCrop(ImageItem imageItem) {
+        ImagePicker.crop(getActivity(), presenter, selectConfig, imageItem, new OnImagePickCompleteListener() {
             @Override
             public void onImagePickComplete(ArrayList<ImageItem> items) {
                 selectList.clear();

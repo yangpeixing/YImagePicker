@@ -235,6 +235,14 @@ public class MultiImagePreviewActivity extends FragmentActivity {
      * 初始化viewpager
      */
     private void initViewPager() {
+        if (mImageList == null || mImageList.size() == 0) {
+            getPresenter().tip(this, getString(R.string.picker_str_preview_empty));
+            finish();
+            return;
+        }
+        if (mCurrentItemPosition < 0) {
+            mCurrentItemPosition = 0;
+        }
         TouchImageAdapter mAdapter = new TouchImageAdapter(this.getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
         mViewPager.setOffscreenPageLimit(1);

@@ -2,6 +2,7 @@ package com.ypx.imagepicker.bean;
 
 import android.content.Context;
 
+import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 
@@ -26,28 +27,28 @@ public class PickerItemDisableCode {
         String message = "";
         switch (code) {
             case DISABLE_IN_SHIELD:
-                message = PickConstants.getConstants(context).picker_str_tip_shield;
+                message = context.getString(R.string.picker_str_tip_shield);
                 break;
             case DISABLE_OVER_MAX_COUNT:
                 presenter.overMaxCountTip(context, selectConfig.getMaxCount());
                 message = "";
                 break;
             case DISABLE_ONLY_SELECT_IMAGE:
-                message = PickConstants.getConstants(context).picker_str_tip_only_select_image;
+                message = context.getString(R.string.picker_str_tip_only_select_image);
                 break;
             case DISABLE_ONLY_SELECT_VIDEO:
-                message = PickConstants.getConstants(context).picker_str_tip_only_select_video;
+                message = context.getString(R.string.picker_str_tip_only_select_video);
                 break;
             case DISABLE_VIDEO_OVER_MAX_DURATION:
-                message = PickConstants.getConstants(context).picker_str_str_video_over_max_duration
+                message = context.getString(R.string.picker_str_str_video_over_max_duration)
                         + selectConfig.getMaxVideoDurationFormat(context);
                 break;
             case DISABLE_VIDEO_LESS_MIN_DURATION:
-                message = PickConstants.getConstants(context).picker_str_tip_video_less_min_duration
+                message = context.getString(R.string.picker_str_tip_video_less_min_duration)
                         + selectConfig.getMinVideoDurationFormat(context);
                 break;
             case DISABLE_VIDEO_ONLY_SINGLE_PICK:
-                message = PickConstants.getConstants(context).picker_str_tip_only_select_one_video;
+                message = context.getString(R.string.picker_str_tip_only_select_one_video);
                 break;
         }
         return message;

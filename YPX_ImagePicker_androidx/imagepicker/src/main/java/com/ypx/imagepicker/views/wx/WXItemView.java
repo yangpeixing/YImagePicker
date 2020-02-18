@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
@@ -62,8 +61,8 @@ public class WXItemView extends PickerItemView {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.picker_item_camera, null);
         TextView mTvvCamera = view.findViewById(R.id.tv_camera);
         mTvvCamera.setText(selectConfig.isOnlyShowVideo() ?
-                PickConstants.getConstants(getContext()).picker_str_item_take_video :
-                PickConstants.getConstants(getContext()).picker_str_item_take_photo);
+                getContext().getString(R.string.picker_str_item_take_video) :
+                getContext().getString(R.string.picker_str_item_take_photo));
         return view;
     }
 

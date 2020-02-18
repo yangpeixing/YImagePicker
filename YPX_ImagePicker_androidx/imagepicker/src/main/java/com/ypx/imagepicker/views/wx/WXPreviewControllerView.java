@@ -20,7 +20,6 @@ import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.adapter.MultiPreviewAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
@@ -68,8 +67,8 @@ public class WXPreviewControllerView extends PreviewControllerView {
         mBottomBar.setClickable(true);
         setOriginalCheckBoxDrawable(R.mipmap.picker_wechat_unselect, R.mipmap.picker_wechat_select);
         setSelectCheckBoxDrawable(R.mipmap.picker_wechat_unselect, R.mipmap.picker_wechat_select);
-        mOriginalCheckBox.setText(PickConstants.getConstants(getContext()).picker_str_bottom_original);
-        mSelectCheckBox.setText(PickConstants.getConstants(getContext()).picker_str_bottom_choose);
+        mOriginalCheckBox.setText(getContext().getString(R.string.picker_str_bottom_original));
+        mSelectCheckBox.setText(getContext().getString(R.string.picker_str_bottom_choose));
 
     }
 

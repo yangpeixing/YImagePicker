@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.bean.PickConstants;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,15 +24,15 @@ public class PDateUtil {
         }
         Date date = new Date(cc_time);
         if (isToday(date)) {
-            return PickConstants.getConstants(context).picker_str_today;
+            return context.getString(R.string.picker_str_today);
         }
         if (isThisWeek(date)) {
-            return PickConstants.getConstants(context).picker_str_this_week;
+            return context.getString(R.string.picker_str_this_week);
         }
         if (isThisMonth(date)) {
-            return PickConstants.getConstants(context).picker_str_this_months;
+            return context.getString(R.string.picker_str_this_months);
         }
-        return new SimpleDateFormat(PickConstants.getConstants(context).picker_str_time_format).format(date);
+        return new SimpleDateFormat(context.getString(R.string.picker_str_time_format)).format(date);
     }
 
     //判断选择的日期是否是本周
@@ -94,19 +92,19 @@ public class PDateUtil {
 
         StringBuilder sb = new StringBuilder();
         if (day > 0) {
-            sb.append(day).append(PickConstants.getConstants(context).picker_str_day);
+            sb.append(day).append(context.getString(R.string.picker_str_day));
         }
         if (hour > 0) {
-            sb.append(hour).append(PickConstants.getConstants(context).picker_str_hour);
+            sb.append(hour).append(context.getString(R.string.picker_str_hour));
         }
         if (minute > 0) {
-            sb.append(minute).append(PickConstants.getConstants(context).picker_str_minute);
+            sb.append(minute).append(context.getString(R.string.picker_str_minute));
         }
         if (second > 0) {
-            sb.append(second).append(PickConstants.getConstants(context).picker_str_second);
+            sb.append(second).append(context.getString(R.string.picker_str_second));
         }
         if (milliSecond > 0) {
-            sb.append(milliSecond).append(PickConstants.getConstants(context).picker_str_milli);
+            sb.append(milliSecond).append(context.getString(R.string.picker_str_milli));
         }
         return sb.toString();
     }

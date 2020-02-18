@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.data.ICameraExecutor;
 import com.ypx.imagepicker.data.IReloadExecutor;
@@ -43,15 +42,6 @@ public interface IPickerPresenter extends Serializable {
      */
     @NonNull
     PickerUiConfig getUiConfig(@Nullable Context context);
-
-    /**
-     * 动态配置提示文本
-     *
-     * @param applicationContext context
-     * @return PickConstants
-     */
-    @NonNull
-    PickConstants getPickConstants(@Nullable Context applicationContext);
 
     /**
      * 提示

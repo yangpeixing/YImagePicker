@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -14,7 +15,6 @@ import androidx.fragment.app.FragmentActivity;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PickerActivityManager;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
@@ -35,7 +35,6 @@ import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 import java.util.ArrayList;
 
-import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_CURRENT_IMAGE;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
 
@@ -48,6 +47,7 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x
  */
 public class SingleCropActivity extends FragmentActivity {
+    public static final String INTENT_KEY_CURRENT_IMAGE_ITEM = "currentImageItem";
     private CropImageView cropView;
     private CropConfigParcelable cropConfig;
     private IPickerPresenter presenter;
@@ -67,10 +67,18 @@ public class SingleCropActivity extends FragmentActivity {
                                   CropConfig cropConfig,
                                   String path,
                                   final OnImagePickCompleteListener listener) {
+        intentCrop(activity, presenter, cropConfig, ImageItem.withPath(activity, path), listener);
+    }
+
+    public static void intentCrop(Activity activity,
+                                  IPickerPresenter presenter,
+                                  CropConfig cropConfig,
+                                  ImageItem item,
+                                  final OnImagePickCompleteListener listener) {
         Intent intent = new Intent(activity, SingleCropActivity.class);
         intent.putExtra(INTENT_KEY_PRESENTER, presenter);
         intent.putExtra(INTENT_KEY_SELECT_CONFIG, cropConfig.getCropInfo());
-        intent.putExtra(INTENT_KEY_CURRENT_IMAGE, path);
+        intent.putExtra(INTENT_KEY_CURRENT_IMAGE_ITEM, (Parcelable) item);
         PLauncher.init(activity).startActivityForResult(intent, PickerActivityCallBack.create(listener));
     }
 
@@ -92,8 +100,8 @@ public class SingleCropActivity extends FragmentActivity {
             PickerErrorExecutor.executeError(this, PickerError.SELECT_CONFIG_NOT_FOUND.getCode());
             return;
         }
-        String url = getIntent().getStringExtra(INTENT_KEY_CURRENT_IMAGE);
-        if (url == null || url.trim().length() == 0) {
+        currentImageItem = getIntent().getParcelableExtra(INTENT_KEY_CURRENT_IMAGE_ITEM);
+        if (currentImageItem == null || currentImageItem.isEmpty()) {
             PickerErrorExecutor.executeError(this, PickerError.CROP_URL_NOT_FOUND.getCode());
             return;
         }
@@ -110,14 +118,6 @@ public class SingleCropActivity extends FragmentActivity {
         cropView.setCropMargin(cropConfig.getCropRectMargin());
         cropView.setCircle(cropConfig.isCircle());
         cropView.setCropRatio(cropConfig.getCropRatioX(), cropConfig.getCropRatioY());
-
-        //生成一个imageItem
-        currentImageItem = new ImageItem();
-        currentImageItem.path = url;
-        int[] size = PBitmapUtils.getImageWidthHeight(url);
-        currentImageItem.width = size[0];
-        currentImageItem.height = size[1];
-        currentImageItem.setVideo(false);
 
         //恢复上一次剪裁属性
         if (cropConfig.getCropRestoreInfo() != null) {
@@ -166,7 +166,7 @@ public class SingleCropActivity extends FragmentActivity {
         }
         //剪裁异常
         if (cropUrl == null || cropUrl.length() == 0 || cropUrl.startsWith("Exception:")) {
-            presenter.tip(this, PickConstants.getConstants(this).picker_str_tip_singleCrop_error);
+            presenter.tip(this,getString(R.string.picker_str_tip_singleCrop_error));
             cropView.setCropRatio(cropConfig.getCropRatioX(), cropConfig.getCropRatioY());
             return;
         }
@@ -226,7 +226,7 @@ public class SingleCropActivity extends FragmentActivity {
         final String cropUrl;
         Bitmap.CompressFormat format = cropConfig.isNeedPng() ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG;
         if (cropConfig.isSaveInDCIM()) {
-            cropUrl = PBitmapUtils.saveBitmapToDICM(SingleCropActivity.this, bitmap, fileName, format).toString();
+            cropUrl = PBitmapUtils.saveBitmapToDCIM(SingleCropActivity.this, bitmap, fileName, format).toString();
         } else {
             cropUrl = PBitmapUtils.saveBitmapToFile(SingleCropActivity.this, bitmap, fileName, format);
         }

@@ -3,7 +3,6 @@ package com.ypx.imagepickerdemo;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -259,10 +258,6 @@ public class AlohaActivity extends Activity {
                     @Override
                     public void run() {
                         dialog.dismiss();
-//                        Intent intent = new Intent(AlohaActivity.this, SecondActivity.class);
-//                        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, imageItems);
-//                        startActivity(intent);
-//                        finish();
                         ImagePicker.closePickerWithCallback(imageItems);
                         finish();
                     }

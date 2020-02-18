@@ -3,18 +3,12 @@ package com.ypx.imagepickerdemo;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.Glide;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
-import com.ypx.imagepickerdemo.style.RedBookPresenter;
 
 import java.util.ArrayList;
 

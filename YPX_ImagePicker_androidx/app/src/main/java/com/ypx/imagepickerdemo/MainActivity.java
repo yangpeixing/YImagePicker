@@ -1,11 +1,9 @@
 package com.ypx.imagepickerdemo;
 
 import android.annotation.SuppressLint;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +21,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.selectconfig.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -309,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
                 .setSelectMode(getSelectMode())
                 .setDefaultOriginal(false)
                 .setPreviewVideo(!mCbFilterVideoPreview.isChecked())
-                .showCamera(mCbShowCamera.isChecked())//显示拍照
+                .showCamera(true)//显示拍照
                 .setPreview(!mCbClosePreview.isChecked())//是否开启预览
                 .setVideoSinglePick(mCbVideoSingle.isChecked())//设置视频单选
                 .setSinglePickWithAutoComplete(mCbSingleAutoComplete.isChecked())
@@ -381,13 +377,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void takePhoto() {
-        ImagePicker.takePhoto(this, new OnImagePickCompleteListener() {
-            @Override
-            public void onImagePickComplete(ArrayList<ImageItem> items) {
-                picList.addAll(items);
-                refreshGridLayout();
-            }
-        });
+        ImagePicker.takePhoto(this, null,
+                true, new OnImagePickCompleteListener() {
+                    @Override
+                    public void onImagePickComplete(ArrayList<ImageItem> items) {
+                        picList.addAll(items);
+                        refreshGridLayout();
+                    }
+                });
     }
 
     private void takePhotoAndCrop() {
@@ -439,20 +436,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startPick() {
-//        ImagePicker.provideMediaSets(this, MimeType.ofAll(), new MediaSetsDataSource.MediaSetProvider() {
-//            @Override
-//            public void providerMediaSets(ArrayList<ImageSet> imageSets) {
-//                Log.e("startPick", "providerMediaSets: " + imageSets.size());
-//            }
-//        });
-
-//        ImagePicker.provideAllMediaItems(this, getMimeTypes(), new MediaItemsDataSource.MediaItemProvider() {
-//            @Override
-//            public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
-//                Log.e("startPick", "providerMediaSets: " + imageItems.size());
-//            }
-//        });
-
         if (mRbCrop.isChecked()) {
             crop();
         } else if (mRbTakePhoto.isChecked()) {
@@ -522,7 +505,7 @@ public class MainActivity extends AppCompatActivity {
     public void setPicItemClick(RelativeLayout layout, final int pos) {
         ImageView iv_pic = (ImageView) layout.getChildAt(0);
         ImageView iv_close = (ImageView) layout.getChildAt(1);
-        Glide.with(this).load(picList.get(pos).path).into(iv_pic);
+        new WeChatPresenter().displayImage(iv_pic, picList.get(pos), 0, true);
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

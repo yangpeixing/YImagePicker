@@ -16,14 +16,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ypx.imagepicker.ImagePicker;
+import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.data.ICameraExecutor;
 import com.ypx.imagepicker.data.ProgressSceneEnum;
-import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
@@ -34,7 +33,6 @@ import com.ypx.imagepicker.utils.PPermissionUtils;
 import com.ypx.imagepicker.views.PickerUiProvider;
 import com.ypx.imagepicker.views.base.PickerControllerView;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -159,14 +157,15 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
         } else {
-            ImagePicker.takePhoto(getActivity(), new OnImagePickCompleteListener() {
-                @Override
-                public void onImagePickComplete(ArrayList<ImageItem> items) {
-                    if (items != null && items.size() > 0 && items.get(0) != null) {
-                        onTakePhotoResult(items.get(0));
-                    }
-                }
-            });
+            ImagePicker.takePhoto(getActivity(), null,
+                    true, new OnImagePickCompleteListener() {
+                        @Override
+                        public void onImagePickComplete(ArrayList<ImageItem> items) {
+                            if (items != null && items.size() > 0 && items.get(0) != null) {
+                                onTakePhotoResult(items.get(0));
+                            }
+                        }
+                    });
         }
     }
 
@@ -178,17 +177,15 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
         } else {
-            String fileName = "VIDEO_" + System.currentTimeMillis();
-            String path = PBitmapUtils.getDCIMDirectory().getAbsolutePath() +
-                    File.separator + fileName + ".mp4";
-            ImagePicker.takeVideo(getActivity(), path, getSelectConfig().getMaxVideoDuration(), new OnImagePickCompleteListener() {
-                @Override
-                public void onImagePickComplete(ArrayList<ImageItem> items) {
-                    if (items != null && items.size() > 0 && items.get(0) != null) {
-                        onTakePhotoResult(items.get(0));
-                    }
-                }
-            });
+            ImagePicker.takeVideo(getActivity(), null, getSelectConfig().getMaxVideoDuration(),
+                    true, new OnImagePickCompleteListener() {
+                        @Override
+                        public void onImagePickComplete(ArrayList<ImageItem> items) {
+                            if (items != null && items.size() > 0 && items.get(0) != null) {
+                                onTakePhotoResult(items.get(0));
+                            }
+                        }
+                    });
         }
     }
 
@@ -263,14 +260,16 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
                 //申请成功，可以拍照
                 takePhoto();
             } else {
-                PPermissionUtils.create(getContext()).showSetPermissionDialog(getPickConstants().picker_str_camera_permission);
+                PPermissionUtils.create(getContext()).showSetPermissionDialog(
+                        getString(R.string.picker_str_camera_permission));
             }
         } else if (requestCode == REQ_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //申请成功，可以拍照
                 loadMediaSets();
             } else {
-                PPermissionUtils.create(getContext()).showSetPermissionDialog(getPickConstants().picker_str_storage_permission);
+                PPermissionUtils.create(getContext()).
+                        showSetPermissionDialog(getString(R.string.picker_str_storage_permission));
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -297,11 +296,11 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
             container.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             if (selectConfig.isShowVideo() && selectConfig.isShowImage()) {
-                view.setTitle(getPickConstants().picker_str_title_all);
+                view.setTitle(getString(R.string.picker_str_title_all));
             } else if (selectConfig.isShowVideo()) {
-                view.setTitle(getPickConstants().picker_str_title_video);
+                view.setTitle(getString(R.string.picker_str_title_video));
             } else {
-                view.setTitle(getPickConstants().picker_str_title_image);
+                view.setTitle(getString(R.string.picker_str_title_image));
             }
             final PickerControllerView finalView = view;
 
@@ -451,9 +450,9 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
         if (imageSets.size() == 0) {
             String firstImageSetName;
             if (imageItem.isVideo()) {
-                firstImageSetName = PickConstants.getConstants(getActivity()).picker_str_folder_item_video;
+                firstImageSetName = getActivity().getString(R.string.picker_str_folder_item_video);
             } else {
-                firstImageSetName = PickConstants.getConstants(getActivity()).picker_str_folder_item_image;
+                firstImageSetName = getActivity().getString(R.string.picker_str_folder_item_image);
             }
             ImageSet imageSet = ImageSet.allImageSet(firstImageSetName);
             imageSet.cover = imageItem;
@@ -482,10 +481,6 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
             return weakReference.get();
         }
         return null;
-    }
-
-    protected PickConstants getPickConstants() {
-        return PickConstants.getConstants(getActivity());
     }
 
     protected void tip(String msg) {

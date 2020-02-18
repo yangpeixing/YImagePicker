@@ -3,7 +3,7 @@ package com.ypx.imagepicker.builder;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.ypx.imagepicker.bean.PickConstants;
+import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.selectconfig.CropSelectConfig;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
@@ -217,7 +217,7 @@ public class CropPickerBuilder {
         checkVideoAndImage();
         if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
             PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
-            presenter.tip(activity, PickConstants.getConstants(activity).picker_str_tip_mimeTypes_empty);
+            presenter.tip(activity, activity.getString(R.string.picker_str_tip_mimeTypes_empty));
             return;
         }
         MultiImageCropActivity.intent(activity, presenter, selectConfig, listener);

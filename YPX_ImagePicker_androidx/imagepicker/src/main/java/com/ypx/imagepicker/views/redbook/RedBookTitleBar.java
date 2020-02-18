@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.views.base.PickerControllerView;
@@ -79,7 +78,7 @@ public class RedBookTitleBar extends PickerControllerView {
         mTvTitle.setTextColor(Color.WHITE);
         mTvNext.setTextColor(Color.WHITE);
         mTvNext.setBackground(PCornerUtils.cornerDrawable(Color.parseColor("#50B0B0B0"), dp(30)));
-        mTvNext.setText(PickConstants.getConstants(getContext()).picker_str_title_right);
+        mTvNext.setText(getContext().getString(R.string.picker_str_title_right));
     }
 
     @Override

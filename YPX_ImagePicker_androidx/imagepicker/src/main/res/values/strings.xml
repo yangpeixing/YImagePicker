@@ -29,9 +29,13 @@
     <string name="picker_str_item_take_video">拍摄视频</string>
     <string name="picker_str_item_take_photo">拍摄照片</string>
 
-    <!--  tip -->
+    <!--  permission -->
     <string name="picker_str_camera_permission">您拒绝了拍照权限，如拒绝设置会导致该功能无法使用!是否前去设置？</string>
     <string name="picker_str_storage_permission">您拒绝了存储权限，如拒绝设置会导致该功能无法使用!是否前去设置？</string>
+    <string name="picker_str_permission_refuse_setting">拒绝设置</string>
+    <string name="picker_str_permission_go_setting">前去设置</string>
+
+    <!--  tip -->
     <string name="picker_str_tip_mimeTypes_empty">请至少选择一种文件加载类型!</string>
     <string name="picker_str_tip_singleCrop_error">剪裁异常，已为您重置图片，请重试！</string>
     <string name="picker_str_tip_shield">该文件已选过或无法选择!</string>
@@ -54,5 +58,7 @@
     <string name="picker_str_minute">分钟</string>
     <string name="picker_str_second">秒</string>
     <string name="picker_str_milli">毫秒</string>
+    <string name="picker_str_preview_empty">预览数据为空！</string>
+
 
 </resources>

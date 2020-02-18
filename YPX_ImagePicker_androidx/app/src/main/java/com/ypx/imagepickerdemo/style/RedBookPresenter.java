@@ -21,7 +21,6 @@ import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.data.ICameraExecutor;
 import com.ypx.imagepicker.data.IReloadExecutor;
@@ -43,14 +42,16 @@ public class RedBookPresenter implements IPickerPresenter {
 
     @Override
     public void displayImage(View view, ImageItem item, int size, boolean isThumbnail) {
-        if (isThumbnail) {
-            Glide.with(view.getContext()).load(item.path).override(size).into((ImageView) view);
+        if (item.getUri() != null) {
+            Glide.with(view.getContext()).load(item.getUri()).apply(new RequestOptions()
+                    .format(isThumbnail ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888))
+                    .into((ImageView) view);
         } else {
             Glide.with(view.getContext()).load(item.path).apply(new RequestOptions()
-                    .format(DecodeFormat.PREFER_ARGB_8888)).into((ImageView) view);
+                    .format(isThumbnail ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888))
+                    .into((ImageView) view);
         }
     }
-
     /**
      * @param context 上下文
      * @return PickerUiConfig UI配置类
@@ -168,18 +169,5 @@ public class RedBookPresenter implements IPickerPresenter {
     @Override
     public boolean interceptCameraClick(@Nullable Activity activity, ICameraExecutor takePhoto) {
         return false;
-    }
-
-    /**
-     * @param context context
-     * @return 配置选择器一些提示文本和常量
-     */
-    @NonNull
-    @Override
-    public PickConstants getPickConstants(Context context) {
-        PickConstants pickConstants = new PickConstants(context);
-        pickConstants.picker_str_folder_image_unit = "哈哈哈哈";
-        pickConstants.picker_str_folder_item_all = "所有文件";
-        return pickConstants;
     }
 }

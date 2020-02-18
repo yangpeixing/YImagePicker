@@ -3,13 +3,11 @@ package com.ypx.imagepicker.builder;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerActivity;
 import com.ypx.imagepicker.activity.multi.MultiImagePickerFragment;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
@@ -326,7 +324,7 @@ public class MultiPickerBuilder {
         checkVideoAndImage();
         if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
             PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
-            presenter.tip(context, PickConstants.getConstants(context).picker_str_tip_mimeTypes_empty);
+            presenter.tip(context, context.getString(R.string.picker_str_tip_mimeTypes_empty));
             return;
         }
         MultiImagePickerActivity.intent(context, selectConfig, presenter, listener);
@@ -353,7 +351,7 @@ public class MultiPickerBuilder {
         }
         if (selectConfig.getMimeTypes() == null || selectConfig.getMimeTypes().size() == 0) {
             PickerErrorExecutor.executeError(listener, PickerError.MIMETYPES_EMPTY.getCode());
-            presenter.tip(context, PickConstants.getConstants(context).picker_str_tip_mimeTypes_empty);
+            presenter.tip(context, context.getString(R.string.picker_str_tip_mimeTypes_empty));
             return;
         }
         MultiImagePickerActivity.intent(context, selectConfig, presenter, listener);

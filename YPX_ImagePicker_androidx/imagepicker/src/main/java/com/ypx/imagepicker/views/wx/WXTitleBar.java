@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.views.base.PickerControllerView;
@@ -62,7 +61,7 @@ public class WXTitleBar extends PickerControllerView {
         setShowArrow(false);
         setBackgroundColor(getResources().getColor(R.color.white_F5));
         setImageSetArrowIconID(R.mipmap.picker_arrow_down);
-        completeText = PickConstants.getConstants(getContext()).picker_str_title_right;
+        completeText = getContext().getString(R.string.picker_str_title_right);
         selectDrawable = PCornerUtils.cornerDrawable(getResources().getColor(R.color.wx), dp(2));
         unSelectDrawable = PCornerUtils.cornerDrawable(getResources().getColor(R.color.wx_half), dp(2));
         unSelectColor = Color.WHITE;

@@ -1,8 +1,6 @@
 package com.ypx.imagepicker;
 
 import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
@@ -11,7 +9,6 @@ import androidx.fragment.app.FragmentActivity;
 import com.ypx.imagepicker.activity.PickerActivityManager;
 import com.ypx.imagepicker.activity.preview.MultiImagePreviewActivity;
 import com.ypx.imagepicker.activity.singlecrop.SingleCropActivity;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
@@ -22,15 +19,12 @@ import com.ypx.imagepicker.builder.CropPickerBuilder;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.data.MediaSetsDataSource;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.helper.CameraCompat;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
-import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.builder.MultiPickerBuilder;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
-import com.ypx.imagepicker.utils.PBitmapUtils;
-import com.ypx.imagepicker.utils.PDateUtil;
 import com.ypx.imagepicker.utils.PPermissionUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -57,8 +51,6 @@ public class ImagePicker {
      */
     public static boolean isOriginalImage = false;
 
-    public static PickConstants pickConstants;
-
     /**
      * 小红书样式剪裁activity形式
      *
@@ -79,107 +71,43 @@ public class ImagePicker {
     }
 
     /**
-     * 直接调用拍照，默认图片存储路径为DCIM目录下
+     * 兼容安卓10拍照.因为安卓Q禁止直接写入文件到系统DCIM文件下，所以拍照入参必须是私有目录路径
+     * 如果想让拍摄的照片写入外部存储中，则需要copy一份文件到DCIM目录中并刷新媒体库
      *
-     * @param activity 调用activity
-     * @param listener 拍照回调
+     * @param activity     调用拍照的页面
+     * @param imageName    图片名称
+     * @param isCopyInDCIM 是否copy到DCIM中
+     * @param listener     拍照回调
      */
-    public static void takePhoto(Activity activity, OnImagePickCompleteListener listener) {
-        String fileName = "IMG_" + System.currentTimeMillis();
-        String path = PBitmapUtils.getDCIMDirectory().getAbsolutePath() +
-                File.separator + fileName + ".jpg";
-        takePhoto(activity, path, listener);
-    }
-
-    /**
-     * 直接调用摄像头拍视频，默认视频存储路径为DCIM目录下
-     *
-     * @param activity 调用activity
-     * @param listener 视频回调
-     */
-    public static void takeVideo(Activity activity, OnImagePickCompleteListener listener) {
-        String fileName = "VIDEO_" + System.currentTimeMillis();
-        String path = PBitmapUtils.getDCIMDirectory().getAbsolutePath() +
-                File.separator + fileName + ".mp4";
-        takeVideo(activity, path, listener);
-    }
-
-    /**
-     * 直接调用拍照
-     *
-     * @param activity 调用activity
-     * @param savePath 照片保存路径+文件名
-     * @param listener 拍照回调
-     */
-    public static void takePhoto(final Activity activity, final String savePath, final OnImagePickCompleteListener listener) {
-        if (!PPermissionUtils.hasCameraPermissions(activity) || listener == null) {
-            return;
+    public static void takePhoto(Activity activity,
+                                 String imageName,
+                                 boolean isCopyInDCIM,
+                                 OnImagePickCompleteListener listener) {
+        if (imageName == null || imageName.length() == 0) {
+            imageName = "Img_" + System.currentTimeMillis();
         }
-        PLauncher.init(activity).startActivityForResult(PBitmapUtils.getTakePhotoIntent(activity, savePath), new PLauncher.Callback() {
-            @Override
-            public void onActivityResult(int resultCode, Intent data) {
-                if (resultCode != Activity.RESULT_OK || savePath == null || savePath.trim().length() == 0) {
-                    PickerErrorExecutor.executeError(listener, PickerError.TAKE_PHOTO_FAILED.getCode());
-                    return;
-                }
-                PBitmapUtils.refreshGalleryAddPic(activity, savePath);
-                ImageItem item = new ImageItem();
-                item.path = savePath;
-                item.mimeType = MimeType.JPEG.toString();
-                item.time = System.currentTimeMillis();
-                item.width = PBitmapUtils.getImageWidthHeight(savePath)[0];
-                item.height = PBitmapUtils.getImageWidthHeight(savePath)[1];
-                item.mimeType = MimeType.JPEG.toString();
-                ArrayList<ImageItem> list = new ArrayList<>();
-                list.add(item);
-                listener.onImagePickComplete(list);
-            }
-        });
+        CameraCompat.takePhoto(activity, imageName, isCopyInDCIM, listener);
     }
 
     /**
-     * 直接调用摄像头拍视频
+     * 兼容安卓10拍摄视频.因为安卓Q禁止直接写入文件到系统DCIM文件下，所以拍照入参必须是私有目录路径
+     * 如果想让拍摄的照片写入外部存储中，则需要copy一份文件到DCIM目录中并刷新媒体库
      *
-     * @param activity activity
-     * @param savePath 视频保存路径
-     * @param listener 视频回调
+     * @param activity     activity
+     * @param videoName    视频名称
+     * @param maxDuration  视频最大时长
+     * @param isCopyInDCIM 是否copy到DCIM中
+     * @param listener     视频回调
      */
-    public static void takeVideo(final Activity activity, final String savePath, final OnImagePickCompleteListener listener) {
-        takeVideo(activity, savePath, -1, listener);
-    }
-
-    /**
-     * 直接调用摄像头拍视频
-     *
-     * @param activity    activity
-     * @param savePath    视频保存路径
-     * @param maxDuration 视频最大时长
-     * @param listener    视频回调
-     */
-    public static void takeVideo(final Activity activity, final String savePath, long maxDuration, final OnImagePickCompleteListener listener) {
-        if (!PPermissionUtils.hasCameraPermissions(activity) || listener == null) {
-            return;
+    public static void takeVideo(Activity activity,
+                                 String videoName,
+                                 long maxDuration,
+                                 boolean isCopyInDCIM,
+                                 OnImagePickCompleteListener listener) {
+        if (videoName == null || videoName.length() == 0) {
+            videoName = "Video_" + System.currentTimeMillis();
         }
-        PLauncher.init(activity).startActivityForResult(PBitmapUtils.getTakeVideoIntent(activity, savePath, maxDuration), new PLauncher.Callback() {
-            @Override
-            public void onActivityResult(int resultCode, Intent data) {
-                if (resultCode != Activity.RESULT_OK || savePath == null || savePath.trim().length() == 0) {
-                    PickerErrorExecutor.executeError(listener, PickerError.TAKE_PHOTO_FAILED.getCode());
-                    return;
-                }
-                PBitmapUtils.refreshGalleryAddPic(activity, savePath);
-                ImageItem item = new ImageItem();
-                item.path = savePath;
-                item.time = System.currentTimeMillis();
-                item.mimeType = MimeType.MP4.toString();
-                item.setVideo(true);
-                item.duration = PBitmapUtils.getLocalVideoDuration(savePath);
-                item.setDurationFormat(PDateUtil.getVideoDuration(item.duration));
-                ArrayList<ImageItem> list = new ArrayList<>();
-                list.add(item);
-                listener.onImagePickComplete(list);
-            }
-        });
+        CameraCompat.takeVideo(activity, videoName, maxDuration, isCopyInDCIM, listener);
     }
 
 
@@ -191,8 +119,10 @@ public class ImagePicker {
      * @param cropConfig 剪裁配置
      * @param listener   剪裁回调
      */
-    public static void takePhotoAndCrop(final Activity activity, final IPickerPresenter presenter,
-                                        final CropConfig cropConfig, @NonNull final OnImagePickCompleteListener listener) {
+    public static void takePhotoAndCrop(final Activity activity,
+                                        final IPickerPresenter presenter,
+                                        final CropConfig cropConfig,
+                                        @NonNull final OnImagePickCompleteListener listener) {
         if (presenter == null) {
             PickerErrorExecutor.executeError(activity, PickerError.PRESENTER_NOT_FOUND.getCode());
             return;
@@ -201,11 +131,11 @@ public class ImagePicker {
             PickerErrorExecutor.executeError(activity, PickerError.SELECT_CONFIG_NOT_FOUND.getCode());
             return;
         }
-        takePhoto(activity, new OnImagePickCompleteListener() {
+        takePhoto(activity, null, false, new OnImagePickCompleteListener() {
             @Override
             public void onImagePickComplete(ArrayList<ImageItem> items) {
                 if (items != null && items.size() > 0) {
-                    SingleCropActivity.intentCrop(activity, presenter, cropConfig, items.get(0).path, listener);
+                    SingleCropActivity.intentCrop(activity, presenter, cropConfig, items.get(0), listener);
                 }
             }
         });
@@ -217,16 +147,36 @@ public class ImagePicker {
      * @param activity      调用activity
      * @param presenter     选择器样式类，主要负责返回UIConfig
      * @param cropConfig    剪裁配置
-     * @param cropImagePath 需要剪裁的图片路径
+     * @param cropImagePath 需要剪裁的图片路径,可以是uri路径
      * @param listener      剪裁回调
      */
     public static void crop(final Activity activity, final IPickerPresenter presenter,
-                            final CropConfig cropConfig, String cropImagePath, final OnImagePickCompleteListener listener) {
+                            final CropConfig cropConfig, String cropImagePath,
+                            final OnImagePickCompleteListener listener) {
         if (presenter == null || cropConfig == null || listener == null) {
             PickerErrorExecutor.executeError(activity, PickerError.PRESENTER_NOT_FOUND.getCode());
             return;
         }
         SingleCropActivity.intentCrop(activity, presenter, cropConfig, cropImagePath, listener);
+    }
+
+    /**
+     * 直接调用拍照并剪裁
+     *
+     * @param activity   调用activity
+     * @param presenter  选择器样式类，主要负责返回UIConfig
+     * @param cropConfig 剪裁配置
+     * @param imageItem  需要剪裁的图片信息
+     * @param listener   剪裁回调
+     */
+    public static void crop(final Activity activity, final IPickerPresenter presenter,
+                            final CropConfig cropConfig, ImageItem imageItem,
+                            final OnImagePickCompleteListener listener) {
+        if (presenter == null || cropConfig == null || listener == null) {
+            PickerErrorExecutor.executeError(activity, PickerError.PRESENTER_NOT_FOUND.getCode());
+            return;
+        }
+        SingleCropActivity.intentCrop(activity, presenter, cropConfig, imageItem, listener);
     }
 
     /**

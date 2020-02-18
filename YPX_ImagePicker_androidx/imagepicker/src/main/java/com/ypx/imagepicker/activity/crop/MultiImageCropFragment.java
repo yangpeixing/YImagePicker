@@ -24,7 +24,6 @@ import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PBaseLoaderFragment;
 import com.ypx.imagepicker.adapter.PickerFolderAdapter;
 import com.ypx.imagepicker.adapter.PickerItemAdapter;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
@@ -117,7 +116,6 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
     public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (isIntentDataValid()) {
-            ImagePicker.pickConstants = presenter.getPickConstants(getActivity().getApplicationContext());
             ImagePicker.isOriginalImage = false;
             uiConfig = presenter.getUiConfig(getWeakActivity());
             setStatusBar();
@@ -248,7 +246,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
             return;
         }
         if (onDoubleClick()) {
-            tip(PickConstants.getConstants(getActivity()).picker_str_tip_action_frequently);
+            tip(getActivity().getString(R.string.picker_str_tip_action_frequently));
             return;
         }
         if (view == stateBtn) {
@@ -600,7 +598,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
      * 留白情况下，显示充满状态
      */
     private void gapState() {
-        mTvFullOrGap.setText(getPickConstants().picker_str_redBook_full);
+        mTvFullOrGap.setText(getString(R.string.picker_str_redBook_full));
         mCropView.setBackgroundColor(Color.WHITE);
         mTvFullOrGap.setCompoundDrawablesWithIntrinsicBounds(getResources().
                 getDrawable(uiConfig.getFillIconID()), null, null, null);
@@ -610,7 +608,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
      * 充满情况下，显示留白状态
      */
     private void fullState() {
-        mTvFullOrGap.setText(getPickConstants().picker_str_redBook_gap);
+        mTvFullOrGap.setText(getString(R.string.picker_str_redBook_gap));
         mCropView.setBackgroundColor(Color.TRANSPARENT);
         mTvFullOrGap.setCompoundDrawablesWithIntrinsicBounds(getResources().
                 getDrawable(uiConfig.getGapIconID()), null, null, null);
@@ -634,7 +632,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
                     && (mCropView.getDrawable() == null ||
                     mCropView.getDrawable().getIntrinsicHeight() == 0 ||
                     mCropView.getDrawable().getIntrinsicWidth() == 0)) {
-                tip(getPickConstants().picker_str_tip_shield);
+                tip(getString(R.string.picker_str_tip_shield));
                 return;
             }
             selectList = cropViewContainerHelper.generateCropUrls(selectList, cropMode);
@@ -698,7 +696,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
     protected void loadMediaSetsComplete(@Nullable List<ImageSet> imageSetList) {
         if (imageSetList == null || imageSetList.size() == 0 ||
                 (imageSetList.size() == 1 && imageSetList.get(0).count == 0)) {
-            tip(getPickConstants().picker_str_tip_media_empty);
+            tip(getString(R.string.picker_str_tip_media_empty));
             return;
         }
         this.imageSets = imageSetList;

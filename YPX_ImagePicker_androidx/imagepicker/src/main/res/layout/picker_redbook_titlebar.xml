@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/titleBar"
     android:layout_width="match_parent"
-    android:layout_height="55dp"
-    android:orientation="horizontal">
+    android:layout_height="55dp">
 
     <ImageView
         android:id="@+id/mBackImg"

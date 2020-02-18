@@ -14,7 +14,6 @@ import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
 import com.ypx.imagepicker.utils.PCornerUtils;
@@ -60,9 +59,9 @@ public class WXBottomBar extends PickerControllerView {
                 ImagePicker.isOriginalImage = isChecked;
             }
         });
-        previewText = PickConstants.getConstants(getContext()).picker_str_bottom_preview;
+        previewText = getContext().getString(R.string.picker_str_bottom_preview);
         mPreview.setText(previewText);
-        mCheckBox.setText(PickConstants.getConstants(getContext()).picker_str_bottom_original);
+        mCheckBox.setText(getContext().getString(R.string.picker_str_bottom_original));
     }
 
 

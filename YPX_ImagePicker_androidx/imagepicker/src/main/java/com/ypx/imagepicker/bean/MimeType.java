@@ -3,6 +3,7 @@ package com.ypx.imagepicker.bean;
 
 import androidx.collection.ArraySet;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
@@ -40,8 +41,7 @@ public enum MimeType {
             "mpg"
     )),
     MP4("video/mp4", arraySetOf(
-            "mp4",
-            "m4v"
+            "mp4"
     )),
     QUICKTIME("video/quicktime", arraySetOf(
             "mov"
@@ -73,6 +73,14 @@ public enum MimeType {
     MimeType(String mimeTypeName, Set<String> extensions) {
         mMimeTypeName = mimeTypeName;
         mExtensions = extensions;
+    }
+
+    public Set<String> getExtensions() {
+        return mExtensions;
+    }
+
+    public String getSuffix() {
+        return new ArrayList<>(mExtensions).get(0);
     }
 
     public static Set<MimeType> ofAll() {

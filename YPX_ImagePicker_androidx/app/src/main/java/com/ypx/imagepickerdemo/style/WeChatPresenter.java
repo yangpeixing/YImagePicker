@@ -20,7 +20,6 @@ import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.data.ICameraExecutor;
 import com.ypx.imagepicker.data.IReloadExecutor;
@@ -34,7 +33,6 @@ import com.ypx.imagepicker.views.base.SingleCropControllerView;
 import com.ypx.imagepicker.views.wx.WXFolderItemView;
 import com.ypx.imagepickerdemo.AlohaActivity;
 import com.ypx.imagepickerdemo.R;
-import com.ypx.imagepickerdemo.SecondActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -47,11 +45,14 @@ public class WeChatPresenter implements IPickerPresenter {
 
     @Override
     public void displayImage(View view, ImageItem item, int size, boolean isThumbnail) {
-        if (isThumbnail) {
-            Glide.with(view.getContext()).load(item.path).override(size).into((ImageView) view);
+        if (item.getUri() != null) {
+            Glide.with(view.getContext()).load(item.getUri()).apply(new RequestOptions()
+                    .format(isThumbnail ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888))
+                    .into((ImageView) view);
         } else {
             Glide.with(view.getContext()).load(item.path).apply(new RequestOptions()
-                    .format(DecodeFormat.PREFER_ARGB_8888)).into((ImageView) view);
+                    .format(isThumbnail ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888))
+                    .into((ImageView) view);
         }
     }
 
@@ -205,12 +206,4 @@ public class WeChatPresenter implements IPickerPresenter {
         builder.show();
         return true;
     }
-
-
-    @Override
-    public PickConstants getPickConstants(Context context) {
-        PickConstants pickConstants = new PickConstants(context);
-        return pickConstants;
-    }
-
 }
