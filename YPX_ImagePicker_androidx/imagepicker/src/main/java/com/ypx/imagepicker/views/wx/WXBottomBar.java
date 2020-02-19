@@ -3,6 +3,7 @@ package com.ypx.imagepicker.views.wx;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -125,6 +126,10 @@ public class WXBottomBar extends PickerControllerView {
 
     public void setCheckBoxDrawable(int unCheckDrawableID, int checkedDrawableID) {
         PCornerUtils.setCheckBoxDrawable(mCheckBox, checkedDrawableID, unCheckDrawableID);
+    }
+
+    public void setCheckBoxDrawable(Drawable unCheckDrawable, Drawable checkedDrawable) {
+        PCornerUtils.setCheckBoxDrawable(mCheckBox, checkedDrawable, unCheckDrawable);
     }
 
     public void setBottomBarColor(int bottomBarColor) {

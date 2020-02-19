@@ -62,8 +62,10 @@ public class WXTitleBar extends PickerControllerView {
         setBackgroundColor(getResources().getColor(R.color.white_F5));
         setImageSetArrowIconID(R.mipmap.picker_arrow_down);
         completeText = getContext().getString(R.string.picker_str_title_right);
-        selectDrawable = PCornerUtils.cornerDrawable(getResources().getColor(R.color.wx), dp(2));
-        unSelectDrawable = PCornerUtils.cornerDrawable(getResources().getColor(R.color.wx_half), dp(2));
+        selectDrawable = PCornerUtils.cornerDrawable(getThemeColor(), dp(2));
+        int halfColor = Color.argb(100, Color.red(getThemeColor()), Color.green(getThemeColor()),
+                Color.blue(getThemeColor()));
+        unSelectDrawable = PCornerUtils.cornerDrawable(halfColor, dp(2));
         unSelectColor = Color.WHITE;
         selectColor = Color.WHITE;
 

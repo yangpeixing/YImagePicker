@@ -3,6 +3,8 @@ package com.ypx.imagepicker.views.wx;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -52,7 +54,9 @@ public class WXItemView extends PickerItemView {
         mVideoLayout = view.findViewById(R.id.mVideoLayout);
 
         mCheckBox.setClickable(false);
-        setCheckBoxDrawable(R.mipmap.picker_wechat_unselect, R.mipmap.picker_wechat_select);
+        Drawable unSelectDrawable = getResources().getDrawable(R.mipmap.picker_wechat_unselect);
+        unSelectDrawable.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        setCheckBoxDrawable(unSelectDrawable, getResources().getDrawable(R.mipmap.picker_wechat_select));
     }
 
     @SuppressLint("InflateParams")
@@ -117,5 +121,9 @@ public class WXItemView extends PickerItemView {
 
     public void setCheckBoxDrawable(int unCheckDrawableID, int checkedDrawableID) {
         PCornerUtils.setCheckBoxDrawable(mCheckBox, checkedDrawableID, unCheckDrawableID);
+    }
+
+    public void setCheckBoxDrawable(Drawable unCheckDrawable, Drawable checkedDrawable) {
+        PCornerUtils.setCheckBoxDrawable(mCheckBox, checkedDrawable, unCheckDrawable);
     }
 }

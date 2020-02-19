@@ -32,6 +32,9 @@ import com.ypx.imagepickerdemo.style.WeChatPresenter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 高仿Aloha app的多图剪裁页面，支持对多张图进行统一剪裁尺寸修改
+ */
 public class AlohaActivity extends Activity {
 
     private final float ratio_3_4 = 3.00f / 4.00f;

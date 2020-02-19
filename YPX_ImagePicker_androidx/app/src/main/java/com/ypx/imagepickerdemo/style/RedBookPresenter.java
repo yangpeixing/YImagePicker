@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
@@ -27,10 +26,9 @@ import com.ypx.imagepicker.data.IReloadExecutor;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
-import com.ypx.imagepicker.views.base.PickerControllerView;
 import com.ypx.imagepicker.views.redbook.RedBookUiProvider;
 import com.ypx.imagepickerdemo.R;
-import com.ypx.imagepickerdemo.SecondActivity;
+import com.ypx.imagepickerdemo.preview.PreviewResultListActivity;
 
 import java.util.ArrayList;
 
@@ -59,18 +57,14 @@ public class RedBookPresenter implements IPickerPresenter {
     @Override
     public PickerUiConfig getUiConfig(Context context) {
         PickerUiConfig uiConfig = new PickerUiConfig();
+        uiConfig.setThemeColor(Color.RED);
         uiConfig.setShowStatusBar(false);
         uiConfig.setStatusBarColor(Color.BLACK);
         uiConfig.setPickerBackgroundColor(Color.BLACK);
         uiConfig.setFolderListOpenDirection(PickerUiConfig.DIRECTION_TOP);
         uiConfig.setFolderListOpenMaxMargin(PViewSizeUtils.dp(context, 200));
 
-        uiConfig.setPickerUiProvider(new RedBookUiProvider() {
-            @Override
-            public PickerControllerView getBottomBar(Context context) {
-                return super.getBottomBar(context);
-            }
-        });
+        uiConfig.setPickerUiProvider(new RedBookUiProvider());
         return uiConfig;
     }
 
@@ -115,7 +109,7 @@ public class RedBookPresenter implements IPickerPresenter {
     public boolean interceptPickerCompleteClick(final Activity activity, final ArrayList<ImageItem> selectedList,
                                                 BaseSelectConfig selectConfig) {
         tip(activity, "拦截了完成按钮点击" + selectedList.size());
-        Intent intent = new Intent(activity, SecondActivity.class);
+        Intent intent = new Intent(activity, PreviewResultListActivity.class);
         intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, selectedList);
         activity.startActivity(intent);
         return true;

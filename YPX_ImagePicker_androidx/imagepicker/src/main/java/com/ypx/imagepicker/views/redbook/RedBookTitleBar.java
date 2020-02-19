@@ -29,7 +29,6 @@ public class RedBookTitleBar extends PickerControllerView {
     private ImageView mArrowImg;
     private TextView mTvNext;
     private TextView mTvSelectNum;
-    private int themeColor = Color.RED;
 
     public RedBookTitleBar(Context context) {
         super(context);
@@ -131,7 +130,7 @@ public class RedBookTitleBar extends PickerControllerView {
             mTvSelectNum.setVisibility(View.GONE);
         } else {
             mTvNext.setEnabled(true);
-            mTvNext.setBackground(PCornerUtils.cornerDrawable(themeColor, dp(30)));
+            mTvNext.setBackground(PCornerUtils.cornerDrawable(getThemeColor(), dp(30)));
         }
     }
 }

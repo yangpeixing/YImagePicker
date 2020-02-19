@@ -27,10 +27,12 @@ import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.views.PickerUiProvider;
+import com.ypx.imagepicker.views.base.PickerControllerView;
 import com.ypx.imagepicker.views.base.PickerFolderItemView;
 import com.ypx.imagepicker.views.base.PickerItemView;
+import com.ypx.imagepicker.views.base.PreviewControllerView;
 import com.ypx.imagepicker.views.base.SingleCropControllerView;
-import com.ypx.imagepicker.views.wx.WXFolderItemView;
+import com.ypx.imagepicker.views.wx.WXItemView;
 import com.ypx.imagepickerdemo.AlohaActivity;
 import com.ypx.imagepickerdemo.R;
 
@@ -43,6 +45,17 @@ import java.util.ArrayList;
  */
 public class WeChatPresenter implements IPickerPresenter {
 
+    /**
+     * 图片加载，在安卓10上，外部存储的图片路径只能用Uri加载，私有目录的图片可以用绝对路径加载
+     * 所以这个方法务必需要区分有uri和无uri的情况
+     * 一般媒体库直接扫描出来的图片是含有uri的，而剪裁生成的图片保存在私有目录中，因此没有uri，只有绝对路径
+     * 所以这里需要做一个兼容处理
+     *
+     * @param view        imageView
+     * @param item        图片信息
+     * @param size        加载尺寸
+     * @param isThumbnail 是否是缩略图
+     */
     @Override
     public void displayImage(View view, ImageItem item, int size, boolean isThumbnail) {
         if (item.getUri() != null) {
@@ -56,9 +69,27 @@ public class WeChatPresenter implements IPickerPresenter {
         }
     }
 
+    /**
+     * 设置自定义ui显示样式，不可返回null
+     * 该方法返回一个PickerUiConfig对象
+     *
+     * <p>
+     * 该对象可以配置如下信息：
+     * 1.主题色
+     * 2.相关页面背景色
+     * 3.选择器标题栏，底部栏，item，文件夹列表item，预览页面，剪裁页面的定制
+     * <p>
+     * <p>
+     * 详细使用方法参考 (@link https://github.com/yangpeixing/YImagePicker/blob/master/YPX_ImagePicker_androidx/app/src/main/java/com/ypx/imagepickerdemo/style/WeChatPresenter.java)
+     *
+     * @param context 上下文
+     * @return PickerUiConfig
+     */
     @Override
     public PickerUiConfig getUiConfig(Context context) {
         PickerUiConfig uiConfig = new PickerUiConfig();
+        //设置主题色
+        uiConfig.setThemeColor(Color.parseColor("#09C768"));
         //设置是否显示状态栏
         uiConfig.setShowStatusBar(true);
         //设置状态栏颜色
@@ -75,26 +106,46 @@ public class WeChatPresenter implements IPickerPresenter {
         uiConfig.setFolderListOpenMaxMargin(0);
         //设置小红书剪裁区域的背景色
         uiConfig.setCropViewBackgroundColor(Color.BLACK);
-
+        //设置文件夹列表距离底部/顶部的最大间距。通俗点就是设置文件夹列表的高
         if (context != null) {
             uiConfig.setFolderListOpenMaxMargin(PViewSizeUtils.dp(context, 100));
         }
 
+        //自定义选择器标题栏，底部栏，item，文件夹列表item，预览页面，剪裁页面
         uiConfig.setPickerUiProvider(new PickerUiProvider() {
+            //定制选择器标题栏，默认实现为 WXTitleBar
+            @Override
+            public PickerControllerView getTitleBar(Context context) {
+                return super.getTitleBar(context);
+            }
+
+            //定制选择器底部栏，返回null即代表没有底部栏，默认实现为 WXBottomBar
+            @Override
+            public PickerControllerView getBottomBar(Context context) {
+                return super.getBottomBar(context);
+            }
+
+            //定制选择器item,默认实现为 WXItemView
             @Override
             public PickerItemView getItemView(Context context) {
-                WXItemViewNew itemView = new WXItemViewNew(context);
+                WXItemView itemView = (WXItemView) super.getItemView(context);
                 itemView.setBackgroundColor(Color.parseColor("#303030"));
                 return itemView;
             }
 
+            //定制选择器文件夹列表item,默认实现为 WXFolderItemView
             @Override
             public PickerFolderItemView getFolderItemView(Context context) {
-                WXFolderItemView itemView = new WXFolderItemView(context);
-                itemView.setIndicatorColor(context.getResources().getColor(R.color.wx));
-                return itemView;
+                return super.getFolderItemView(context);
             }
 
+            //定制选择器预览页面,默认实现为 WXPreviewControllerView
+            @Override
+            public PreviewControllerView getPreviewControllerView(Context context) {
+                return super.getPreviewControllerView(context);
+            }
+
+            //定制选择器单图剪裁页面,默认实现为 WXSingleCropControllerView
             @Override
             public SingleCropControllerView getSingleCropControllerView(Context context) {
                 return super.getSingleCropControllerView(context);
@@ -102,7 +153,6 @@ public class WeChatPresenter implements IPickerPresenter {
         });
         return uiConfig;
     }
-
 
     /**
      * 提示
@@ -130,13 +180,34 @@ public class WeChatPresenter implements IPickerPresenter {
         tip(context, "最多选择" + maxCount + "个文件");
     }
 
+    /**
+     * 显示loading加载框，注意需要调用show方法
+     *
+     * @param activity          启动加载框的activity
+     * @param progressSceneEnum {@link ProgressSceneEnum}
+     *
+     *                          <p>
+     *                          当progressSceneEnum==当ProgressSceneEnum.loadMediaItem 时，代表在加载媒体文件时显示加载框
+     *                          目前框架内规定，当文件夹内媒体文件少于1000时，强制不显示加载框，大于1000时才会执行此方法
+     *                          </p>
+     *                          <p>
+     *                          当progressSceneEnum==当ProgressSceneEnum.crop 时，代表是剪裁页面的加载框
+     *                          </p>
+     * @return DialogInterface 对象，用于关闭加载框，返回null代表不显示加载框
+     */
     @Override
     public DialogInterface showProgressDialog(@Nullable Activity activity, ProgressSceneEnum progressSceneEnum) {
         return ProgressDialog.show(activity, null, progressSceneEnum == ProgressSceneEnum.crop ?
                 "正在剪裁..." : "正在加载...");
     }
 
-
+    /**
+     * 拦截选择器完成按钮点击事件
+     *
+     * @param activity     当前选择器activity
+     * @param selectedList 已选中的列表
+     * @return true:则拦截选择器完成回调， false，执行默认的选择器回调
+     */
     @Override
     public boolean interceptPickerCompleteClick(Activity activity, ArrayList<ImageItem> selectedList, BaseSelectConfig selectConfig) {
         tip(activity, "拦截了完成按钮点击" + selectedList.size());
@@ -146,6 +217,13 @@ public class WeChatPresenter implements IPickerPresenter {
         return true;
     }
 
+    /**
+     * 拦截选择器取消操作，用于弹出二次确认框
+     *
+     * @param activity     当前选择器页面
+     * @param selectedList 当前已经选择的文件列表
+     * @return true:则拦截选择器取消， false，不处理选择器取消操作
+     */
     @Override
     public boolean interceptPickerCancel(final Activity activity, ArrayList<ImageItem> selectedList) {
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
@@ -174,6 +252,23 @@ public class WeChatPresenter implements IPickerPresenter {
         return true;
     }
 
+    /**
+     * <p>
+     * 图片点击事件拦截，如果返回true，则不会执行选中操纵，如果要拦截此事件并且要执行选中
+     * 请调用如下代码：
+     * <p>
+     * adapter.preformCheckItem()
+     * <p>
+     * <p>
+     * 此方法可以用来跳转到任意一个页面，比如自定义的预览
+     *
+     * @param activity        上下文
+     * @param imageItem       当前图片
+     * @param selectImageList 当前选中列表
+     * @param allSetImageList 当前文件夹所有图片
+     * @param adapter         当前列表适配器，用于刷新数据
+     * @return 是否拦截
+     */
     @Override
     public boolean interceptItemClick(@Nullable Activity activity, ImageItem imageItem,
                                       ArrayList<ImageItem> selectImageList,
@@ -181,10 +276,16 @@ public class WeChatPresenter implements IPickerPresenter {
                                       BaseSelectConfig selectConfig,
                                       PickerItemAdapter adapter,
                                       @Nullable IReloadExecutor reloadExecutor) {
-
         return false;
     }
 
+    /**
+     * 拍照点击事件拦截
+     *
+     * @param activity  当前activity
+     * @param takePhoto 拍照接口
+     * @return 是否拦截
+     */
     @Override
     public boolean interceptCameraClick(@Nullable final Activity activity, final ICameraExecutor takePhoto) {
         if (activity == null || activity.isDestroyed()) {

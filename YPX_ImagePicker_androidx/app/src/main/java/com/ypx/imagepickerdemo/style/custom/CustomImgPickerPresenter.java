@@ -61,11 +61,7 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
         PickerUiConfig uiConfig = new PickerUiConfig();
         uiConfig.setShowStatusBar(true);
         uiConfig.setStatusBarColor(Color.parseColor("#F5F5F5"));
-
-        // uiConfig.setPreviewBackgroundColor(Color.BLACK);
         uiConfig.setPickerBackgroundColor(Color.WHITE);
-        // uiConfig.setCropViewBackgroundColor(Color.WHITE);
-
         uiConfig.setFolderListOpenDirection(PickerUiConfig.DIRECTION_TOP);
         uiConfig.setFolderListOpenMaxMargin(0);
 
@@ -75,7 +71,8 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
                 WXTitleBar titleBar = (WXTitleBar) super.getTitleBar(context);
                 titleBar.setCompleteText("下一步");
                 titleBar.setCompleteBackground(null, null);
-                titleBar.setCompleteTextColor(Color.parseColor("#859D7B"), Color.parseColor("#50859D7B"));
+                titleBar.setCompleteTextColor(Color.parseColor("#859D7B"),
+                        Color.parseColor("#50859D7B"));
                 titleBar.centerTitle();
                 titleBar.setShowArrow(true);
                 titleBar.setCanToggleFolderList(true);

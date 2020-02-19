@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white_F5">#F5F5F5</color>
-
-    <color name="wx">#09C768</color>
-    <color name="wx_half">#5009C768</color>
 </resources>

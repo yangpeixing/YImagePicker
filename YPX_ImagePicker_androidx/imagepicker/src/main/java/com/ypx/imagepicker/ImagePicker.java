@@ -2,6 +2,7 @@ package com.ypx.imagepicker;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -50,6 +51,8 @@ public class ImagePicker {
      * 是否选中原图
      */
     public static boolean isOriginalImage = false;
+
+    private static int themeColor = Color.RED;
 
     /**
      * 小红书样式剪裁activity形式
@@ -334,5 +337,13 @@ public class ImagePicker {
         ArrayList<ImageItem> imageItems = new ArrayList<>();
         imageItems.add(imageItem);
         closePickerWithCallback(imageItems);
+    }
+
+    public static int getThemeColor() {
+        return themeColor;
+    }
+
+    public static void setThemeColor(int themeColor) {
+        ImagePicker.themeColor = themeColor;
     }
 }

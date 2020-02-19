@@ -42,6 +42,7 @@ public class WXFolderItemView extends PickerFolderItemView {
         mIndicator = view.findViewById(R.id.indicator);
         mDivider= view.findViewById(R.id.mDivider);
         setBackground(getResources().getDrawable(R.drawable.picker_selector_list_item_bg));
+        mIndicator.setColorFilter(getThemeColor());
     }
 
     @Override
@@ -51,6 +52,7 @@ public class WXFolderItemView extends PickerFolderItemView {
 
     @Override
     public void displayCoverImage(String coverUrl, IPickerPresenter presenter) {
+        mIndicator.setColorFilter(getThemeColor());
         ImageItem imageItem = new ImageItem();
         imageItem.path = coverUrl;
         presenter.displayImage(mCover, imageItem, mCover.getMeasuredWidth(), true);

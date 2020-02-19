@@ -147,4 +147,12 @@ public class PCornerUtils {
         checkBox.setCompoundDrawablesWithIntrinsicBounds(checkBoxDrawable, null, null, null);
     }
 
+    public static void setCheckBoxDrawable(CheckBox checkBox, Drawable selectedDrawable, Drawable unSelectedDrawable) {
+        StateListDrawable checkBoxDrawable = new StateListDrawable();
+        checkBoxDrawable.addState(new int[]{android.R.attr.state_selected},selectedDrawable);
+        checkBoxDrawable.addState(new int[]{android.R.attr.state_checked}, selectedDrawable);
+        checkBoxDrawable.addState(new int[]{}, unSelectedDrawable);
+        checkBox.setCompoundDrawablesWithIntrinsicBounds(checkBoxDrawable, null, null, null);
+    }
+
 }

@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 
+import com.ypx.imagepicker.ImagePicker;
+
 /**
  * Time: 2019/11/11 14:33
  * Author:ypx
@@ -69,5 +71,9 @@ public abstract class PBaseLayout extends LinearLayout {
         if (getContext() instanceof Activity) {
             ((Activity) getContext()).onBackPressed();
         }
+    }
+
+    protected int getThemeColor() {
+        return ImagePicker.getThemeColor();
     }
 }

@@ -1,4 +1,4 @@
-package com.ypx.imagepickerdemo;
+package com.ypx.imagepickerdemo.preview;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.bumptech.glide.Glide;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.helper.DetailImageLoadHelper;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;

@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
@@ -34,7 +35,7 @@ public class WXSingleCropControllerView extends SingleCropControllerView {
         mTitle=view.findViewById(R.id.tv_title);
         mCompleteBtn = view.findViewById(R.id.tv_rightBtn);
         mTitleBar.setBackgroundColor(Color.WHITE);
-        mCompleteBtn.setBackground(PCornerUtils.cornerDrawable(getResources().getColor(R.color.wx), dp(2)));
+        mCompleteBtn.setBackground(PCornerUtils.cornerDrawable(ImagePicker.getThemeColor(), dp(2)));
         mIvBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

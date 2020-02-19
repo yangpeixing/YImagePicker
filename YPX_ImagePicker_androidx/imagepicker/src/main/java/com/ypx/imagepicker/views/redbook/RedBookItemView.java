@@ -31,7 +31,6 @@ public class RedBookItemView extends PickerItemView {
     private TextView mTvIndex;
     private TextView mTvDuration;
     private BaseSelectConfig selectConfig;
-    private int themeColor = Color.RED;
 
     public RedBookItemView(Context context) {
         super(context);
@@ -116,7 +115,7 @@ public class RedBookItemView extends PickerItemView {
 
         if (indexOfSelectedList >= 0) {
             mTvIndex.setText(String.format("%d", indexOfSelectedList + 1));
-            mTvIndex.setBackground(PCornerUtils.cornerDrawableAndStroke(themeColor, dp(12), dp(1), Color.WHITE));
+            mTvIndex.setBackground(PCornerUtils.cornerDrawableAndStroke(getThemeColor(), dp(12), dp(1), Color.WHITE));
         } else {
             mTvIndex.setBackground(getResources().getDrawable(R.mipmap.picker_icon_unselect));
             mTvIndex.setText("");
@@ -124,8 +123,9 @@ public class RedBookItemView extends PickerItemView {
 
         if (imageItem.isPress()) {
             mVMask.setVisibility(View.VISIBLE);
-            int halfColor = Color.argb(100, Color.red(themeColor), Color.green(themeColor), Color.blue(themeColor));
-            Drawable maskDrawable = PCornerUtils.cornerDrawableAndStroke(halfColor, 0, dp(2), themeColor);
+            int halfColor = Color.argb(100, Color.red(getThemeColor()), Color.green(getThemeColor()),
+                    Color.blue(getThemeColor()));
+            Drawable maskDrawable = PCornerUtils.cornerDrawableAndStroke(halfColor, 0, dp(2), getThemeColor());
             mVMask.setBackground(maskDrawable);
         } else {
             mVMask.setVisibility(View.GONE);

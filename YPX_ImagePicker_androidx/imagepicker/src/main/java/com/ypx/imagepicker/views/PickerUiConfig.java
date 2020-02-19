@@ -2,6 +2,7 @@ package com.ypx.imagepicker.views;
 
 import android.graphics.Color;
 
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 
 /**
@@ -40,6 +41,11 @@ public class PickerUiConfig {
 
     //选择器ui提供类
     private PickerUiProvider pickerUiProvider;
+
+    /**
+     * 主题色
+     */
+    private int themeColor;
 
     public PickerUiProvider getPickerUiProvider() {
         if (pickerUiProvider == null) {
@@ -179,5 +185,14 @@ public class PickerUiConfig {
 
     public void setVideoPauseIconID(int videoPauseIconID) {
         this.videoPauseIconID = videoPauseIconID;
+    }
+
+    public int getThemeColor() {
+        return themeColor;
+    }
+
+    public void setThemeColor(int themeColor) {
+        this.themeColor = themeColor;
+        ImagePicker.setThemeColor(themeColor);
     }
 }

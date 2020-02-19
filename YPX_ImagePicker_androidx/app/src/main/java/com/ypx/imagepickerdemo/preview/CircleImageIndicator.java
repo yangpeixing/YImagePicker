@@ -1,4 +1,4 @@
-package com.ypx.imagepickerdemo;
+package com.ypx.imagepickerdemo.preview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
