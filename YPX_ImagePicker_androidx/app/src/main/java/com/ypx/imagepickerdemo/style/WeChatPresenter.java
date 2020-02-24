@@ -34,6 +34,7 @@ import com.ypx.imagepicker.views.base.PreviewControllerView;
 import com.ypx.imagepicker.views.base.SingleCropControllerView;
 import com.ypx.imagepicker.views.wx.WXItemView;
 import com.ypx.imagepickerdemo.AlohaActivity;
+import com.ypx.imagepickerdemo.MainActivity;
 import com.ypx.imagepickerdemo.R;
 
 import java.lang.ref.WeakReference;
@@ -210,11 +211,14 @@ public class WeChatPresenter implements IPickerPresenter {
      */
     @Override
     public boolean interceptPickerCompleteClick(Activity activity, ArrayList<ImageItem> selectedList, BaseSelectConfig selectConfig) {
-        tip(activity, "拦截了完成按钮点击" + selectedList.size());
-        Intent intent = new Intent(activity, AlohaActivity.class);
-        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, selectedList);
-        activity.startActivity(intent);
-        return true;
+        if (MainActivity.isAutoJumpAlohaActivity) {
+            tip(activity, "拦截了完成按钮点击" + selectedList.size());
+            Intent intent = new Intent(activity, AlohaActivity.class);
+            intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, selectedList);
+            activity.startActivity(intent);
+            return true;
+        }
+        return false;
     }
 
     /**

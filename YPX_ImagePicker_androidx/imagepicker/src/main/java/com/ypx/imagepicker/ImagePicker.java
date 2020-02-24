@@ -3,6 +3,7 @@ package com.ypx.imagepicker;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -223,8 +224,14 @@ public class ImagePicker {
                 items.add(imageItem);
             } else if (t instanceof ImageItem) {
                 items.add((ImageItem) t);
+            } else if (t instanceof Uri) {
+                Uri uri = (Uri) t;
+                ImageItem imageItem = new ImageItem();
+                imageItem.path = uri.toString();
+                imageItem.setUriPath(uri.toString());
+                items.add(imageItem);
             } else {
-                throw new RuntimeException("ImageList item must be instanceof String or ImageItem");
+                throw new RuntimeException("ImageList item must be instanceof String or Uri or ImageItem");
             }
         }
         return items;

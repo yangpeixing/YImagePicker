@@ -446,6 +446,10 @@ public class CropImageView extends ImageView {
         mAnimMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
         executeTranslate();
         resetBase();
+
+        if (widthScale > mMaxScale) {
+            mMaxScale = widthScale;
+        }
     }
 
     private void initFitStart() {
