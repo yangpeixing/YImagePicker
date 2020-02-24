@@ -1,17 +1,15 @@
 ### 关于YImagePicker 
 [点击查看2.x版本readme](https://github.com/yangpeixing/YImagePicker/blob/master/README_2_x.md)
 
-本文档更新于:2019/12/27 上午10点12分
+本文档更新于:2020/2/24 上午10点12分
 
-[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=3.0.1) ](https://bintray.com/yangpeixing/yimagepicker/androidx/3.0.1/link)
- - 支持无缝切换小红书剪裁样式、微信图片多选样式
- - 支持选择器所有ui自定义，包括标题栏、底部栏、列表item、文件夹item等
+[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=3.1) ](https://bintray.com/yangpeixing/yimagepicker/androidx/3.1/link)
+ - 支持小红书多图剪裁、微信多图选择、单图剪裁、多图批量剪裁、大图预览
+ - 支持自定义所有UI，包括标题栏、底部栏、列表item、文件夹item、剪裁页面、预览页面等
  - 支持13种视频图片格式混合加载，支持过滤掉指定格式文件
- - 支持大图预览，支持超长图、超大图，拒绝too lagre
- - 支持单图自定义比例剪裁，可定制剪裁边距
- - 支持单图圆形剪裁
- - 支持单图留白剪裁（仿最新微信图片头像选择），支持生成透明背景图
- - 小红书剪裁样式支持视频多选和预览
+ - 支持大图预览，支持超长图、超大图，拒绝too lagre(已修复单图剪裁长图)
+ - 支持自定义剪裁比例、剪裁边距、圆形剪裁、镂空/充满剪裁（仿最新微信图片头像选择）
+ - 支持视频多选和预览
  - 支持只选择图片或者视频类型
  - 支持恢复上一次选中的图片状态（微信样式）
  - 支持屏蔽指定媒体文件（微信样式）
@@ -19,20 +17,22 @@
  - 支持选择器调用失败回调
  - 支持自定义回调类型
  - 支持直接回调媒体相册列表及文件列表
- - 支持选择器所有文案定制
+ - 支持选择器所有文案修改、国际化定制
  - 支持多种特殊需求覆盖，支持自定义选择器拦截事件
- - androidx版本已全面适配androidQ
- - 支持直接拍摄视频、图片等
+ - 已全面适配androidQ
+ - 支持直接拍摄视频、照片等
  - 轻量级，aar大小不超过300K，无so库，无任何第三方依赖
  - 支持androidx和support
  - 永久维护
+
+
 
 
 ### 引入依赖
 **androidx版本：**
 
 ```java
-implementation 'com.ypx.yimagepicker:androidx:3.0.1'
+implementation 'com.ypx.yimagepicker:androidx:3.1'
 ```
 **support版本：后期可能不再维护，请使用者尽早切换androidx** （support依赖最高兼容28）
 ```java
@@ -78,6 +78,11 @@ YImagePicker与主项目通过IPickerPresenter进行交互与解耦，presenter�
  ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/15483adb087360ff49e831cb988adce1-528)
  ![自定义比例剪裁](https://app-screenshot.pgyer.com/image/view/app_screenshots/4cf64a6afb74b6457103bd04debb7e58-528)
  
+ 
+ - **多图剪裁页面(仿aloha)**
+ 
+ ![aloha](https://www.pgyer.com/image/view/app_screenshots/a35c837bd25612c9b04f097f99457d62-528)
+ 
 ### 微信图片选择
 支持视频、GIF、长图选择，支持选择状态保存。调用前请按照demo实现IPickerPresenter接口 ，示例如下：
 [WeChatPresenter](https://github.com/yangpeixing/YImagePicker/blob/master/YPX_ImagePicker_androidx/app/src/main/java/com/ypx/imagepickerdemo/style/WeChatPresenter.java) 
@@ -102,10 +107,13 @@ ImagePicker.withMulti(new WeChatPresenter())//指定presenter
         .setSinglePickImageOrVideoType(true) 
         //当单选或者视频单选时，点击item直接回调，无需点击完成按钮          
         .setSinglePickWithAutoComplete(false)
-        .setOriginal(true)  //显示原图     
+		//显示原图  
+        .setOriginal(true)  
+		//显示原图时默认原图选项开关  
+		.setDefaultOriginal(false)
         //设置单选模式，当maxCount==1时，可执行单选（下次选中会取消上一次选中）
         .setSelectMode(SelectMode.MODE_SINGLE)   
-        //设置视频可选取的最大时长
+        //设置视频可选取的最大时长,同时也是视频可录制的最大时长
         .setMaxVideoDuration(1200000L)  
         //设置视频可选取的最小时长                                  
         .setMinVideoDuration(60000L) 
@@ -147,11 +155,12 @@ ImagePicker.withCrop(new RedBookPresenter())//设置presenter
 ### 预览
 支持多图预览和自定义预览界面，支持加载大图，超长图和高清图，示例如下：
 ```java
-//配置需要预览的所有图片列表
+//配置需要预览的所有图片列表,其中imageitem可替换为Uri或者String(绝对路径)
 ArrayList<ImageItem> allPreviewImageList = new ArrayList<>();
+
 //默认选中的图片索引
 int defaultPosition = 0;
-//开启编辑预览
+//开启预览
 ImagePicker.preview(this, new WXImgPickerPresenter(), allPreviewImageList, defaultPosition, new OnImagePickCompleteListener() {
         @Override
         public void onImagePickComplete(ArrayList<ImageItem> items) {
@@ -160,10 +169,15 @@ ImagePicker.preview(this, new WXImgPickerPresenter(), allPreviewImageList, defau
     });                                                           
 ```
 
-### 拍照
-支持直接打开摄像头拍照，示例如下：
+### 拍照 3.1版本已变更
+支持直接打开摄像头拍照，3.1版本去除了原有的拍照保存路径,新增了isCopyInDCIM入参,代表是否将拍照的图片copy一份到外部DCIM目录中
+因为安卓Q禁止直接写入文件到系统DCIM文件下，所以拍照入参必须是私有目录路径.所以废弃掉原有的imagepath入参
+如果想让拍摄的照片写入外部存储中，则需要copy一份文件到DCIM目录中并刷新媒体库
+示例如下：
 ```java
-ImagePicker.takePhoto(this, "拍照保存路径", new OnImagePickCompleteListener() {
+String name="图片名称,不要加后缀";//可为null
+boolean isCopyInDCIM=true;//copy一份保存到系统相册文件
+ImagePicker.takePhoto(this,name,isCopyInDCIM, new OnImagePickCompleteListener() {
         @Override
         public void onImagePickComplete(ArrayList<ImageItem> items) {
             //拍照回调，主线程
@@ -171,13 +185,16 @@ ImagePicker.takePhoto(this, "拍照保存路径", new OnImagePickCompleteListene
     });
 ```
 
-### 拍摄视频
-支持直接打开摄像头拍视频，示例如下：
+### 拍摄视频 3.1版本已变更
+支持直接打开摄像头拍视频，3.1已变更,变更理由参考拍照 示例如下：
 ```java
-ImagePicker.takeVideo(this, "视频保存路径", new OnImagePickCompleteListener() {
+String name="视频名称,不要加后缀";//可为null
+long maxDuration=10000l;//可录制的最大时常,单位毫秒ms
+boolean isCopyInDCIM=true;//copy一份保存到系统相册文件
+ImagePicker.takeVideo(this,name,maxDuration, isCopyInDCIM,new OnImagePickCompleteListener() {
         @Override
         public void onImagePickComplete(ArrayList<ImageItem> items) {
-            //拍照回调，主线程
+            //视频回调，主线程
         }
     });
 ```
@@ -214,6 +231,8 @@ ImagePicker.withMulti(new WeChatPresenter())
 ```java
 //配置剪裁属性
 CropConfig cropConfig = new CropConfig();
+//设置上一次剪裁矩阵位置信息,用于恢复上一次剪裁,Info类型从imageitem或者cropimageview中取,可为null
+cropConfig.setCropRestoreInfo(new Info());
  //设置剪裁比例
 cropConfig.setCropRatio(1, 1);
 //设置剪裁框间距，单位px
@@ -240,6 +259,8 @@ ImagePicker.takePhotoAndCrop(this, new WXImgPickerPresenter(), cropConfig,
 支持直接跳转剪裁页面，示例如下：
 ```java
 CropConfig cropConfig = new CropConfig();
+//设置上一次剪裁矩阵位置信息,用于恢复上一次剪裁,Info类型从imageitem或者cropimageview中取,可为null
+cropConfig.setCropRestoreInfo(new Info());
  //设置剪裁比例
 cropConfig.setCropRatio(1, 1);
 //设置剪裁框间距，单位px
@@ -330,35 +351,30 @@ ImagePicker.provideMediaItemsFromSetWithPreload(this, imageSet, mimeTypes, prelo
 [查看详细版本记录](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker版本记录)
 
 
-#### 3.0版本 [2019.12.08]
-1. 【优化】重构了2.x版本选择器架构，去除原繁琐死板的ui配置，彻底解耦ui层和逻辑层
-2. 【优化】合并了原两个presenter为一个IPickerPresenter，降低使用者的使用成本
-3. 【优化】全面适配androidQ,本框架中生成的图片地址，只有两种，要么DCIM目录，要么为data/包名/files/imagepicker/ 目录下
-4. 【优化】小红书剪裁图片剪裁质量，告别原有剪裁view的形式，改成剪裁原图
-5. 【优化】presenter优化，新增了更多的人性化配置，让用户无需改动源码的情况下，轻松胜任任何需求
-6. 【bug修复】修复了单图剪裁主界面卡死
-7. 【bug修复】修复了长图预览toolarge崩溃
-8. 【bug修复】修复android10上机器加载不出图片问题
-9. 【新增】新增预览视频配置项
-10. 【新增】微信样式新增原图选项
-11. 【新增】剪裁图片新增saveInDCIM方法，用于指定剪裁图片生成目录，替代了原来的cropImageSaveFilePath方法
-12. 【去除】cropImageSaveFilePath方法，用saveInDCIM替代
-13. 【调整】原来所有mimetype方法更名为mimetypes
-14. 【优化】其他更多性能优化
+#### 3.1版本 [2020.02.24]
+1. [优化]isOriginalImage加入到imageitem里
+2. [变更]自定义文本统一,删除了PickerConstants类,presenter中无需对选择器文案进行修改,若需要修改文案,则直接复制imagepicker中string文件,另外demo已覆盖英文适配
+3. [优化]多图剪裁已加入demo(AlohaActivity)
+4. [bug修复]长图剪裁崩溃问题
+5. [bug修复]关闭屏幕旋转问题
+6. [新增]新增setDefaultOriginal用于设置此次打开选择器的默认原图开关
+7. [新增]单图剪裁支持保存状态,下次恢复
+8. [新增]录制视频添加最大时长配置
+9. [优化]完全兼容androudQ拍照问题
+10. [新增]UiPickerConfig新增主题色设置
+11. [优化]demo架构调整,使用者参考更清晰
+
 
 ### 下个版本排期
-时间：2020年1月中旬
+时间：暂定2020年3月中旬
  1. [剪裁支持输出大小](https://github.com/yangpeixing/YImagePicker/issues/19)
  2. [剪裁支持旋转（尽量)](https://github.com/yangpeixing/YImagePicker/issues/32)
- 3. [自定义所有文本](https://github.com/yangpeixing/YImagePicker/issues/45)
- 4. [视频录制的最大/最小时间](https://github.com/yangpeixing/YImagePicker/issues/43)
- 5. [文件大小加载限制](https://github.com/yangpeixing/YImagePicker/issues/41)
- 6. [原图功能优化](https://github.com/yangpeixing/YImagePicker/issues/38)
- 7. 支持darkmode模式
- 8. 支持activity自定义跳转动画
- 9. 内置新版本微信样式，知乎样式等
- 10. 支持切换视频底层框架（吐槽：官方videoView太难用了~~/(ㄒoㄒ)/~~）
- 11. **等你来提**
+ 3. [文件大小加载限制](https://github.com/yangpeixing/YImagePicker/issues/41)
+ 4. 支持darkmode模式
+ 5. 支持activity自定义跳转动画
+ 6. 内置新版本微信样式，知乎样式等
+ 7. 支持切换视频底层框架（吐槽：官方videoView太难用了~~/(ㄒoㄒ)/~~）
+ 8. **等你来提**
 
  永不TODO：
  1. 不会支持图片压缩，请使用者自行使用luBan
