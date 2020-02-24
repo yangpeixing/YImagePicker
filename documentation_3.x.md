@@ -37,126 +37,17 @@
 
 <!-- /TOC -->
 ## 自定义IPickerPresenter
-在开启选择器之前，必须实现presenter接口，接口定义如下：
-```java
-public interface IPickerPresenter extends Serializable {
-    /**
-     * 加载列表缩略图
-     *
-     * @param view imageView
-     * @param item 图片信息
-     * @param size 加载尺寸
-     */
-    void displayImage(View view, ImageItem item, int size, boolean isThumbnail);
+详情代码请参阅:[IPickerPresenter](https://github.com/yangpeixing/YImagePicker/blob/master/YPX_ImagePicker_androidx/imagepicker/src/main/java/com/ypx/imagepicker/presenter/IPickerPresenter.java)
 
-    /**
-     * 设置自定义ui显示样式
-     *
-     * @param context 上下文
-     * @return PickerUiConfig
-     */
-    @NonNull
-    PickerUiConfig getUiConfig(@Nullable Context context);
-
-    /**
-     * 动态配置提示文本
-     *
-     * @param context context
-     * @return PickConstants
-     */
-    @NonNull
-    PickConstants getPickConstants(@Nullable Context context);
-
-    /**
-     * 提示
-     *
-     * @param context 上下文
-     * @param msg     提示文本
-     */
-    void tip(@Nullable Context context, String msg);
-
-    /**
-     * 选择超过数量限制提示
-     *
-     * @param context  上下文
-     * @param maxCount 最大数量
-     */
-    void overMaxCountTip(@Nullable Context context, int maxCount);
-
-
-    /**
-     * 显示loading加载框，注意需要调用show方法
-     *
-     * @param activity          启动对话框的activity
-     * @param progressSceneEnum {@link ProgressSceneEnum}
-     *                          </p>
-     *                          当progressSceneEnum==当ProgressSceneEnum.loadMediaItem 时，代表在加载媒体文件时显示加载框
-     *                          目前框架内规定，当文件夹内媒体文件少于1000时，强制不显示加载框，大于1000时才会执行此方法
-     *
-     *                          </p>
-     *                          当progressSceneEnum==当ProgressSceneEnum.crop 时，代表是剪裁页面的加载框
-     * @return DialogInterface 对象，用于关闭加载框，返回null代表不显示加载框
-     */
-    DialogInterface showProgressDialog(@Nullable Activity activity, ProgressSceneEnum progressSceneEnum);
-
-    /**
-     * 拦截选择器完成按钮点击事件
-     *
-     * @param activity     当前选择器activity
-     * @param selectedList 已选中的列表
-     * @return true:则拦截选择器完成回调， false，执行默认的选择器回调
-     */
-    boolean interceptPickerCompleteClick(@Nullable Activity activity,ArrayList<ImageItem> selectedList, BaseSelectConfig selectConfig);
-
-    /**
-     * 拦截选择器取消操作，用于弹出二次确认框
-     *
-     * @param activity     当前选择器页面
-     * @param selectedList 当前已经选择的文件列表
-     * @return true:则拦截选择器取消， false，不处理选择器取消操作
-     */
-    boolean interceptPickerCancel(@Nullable Activity activity, ArrayList<ImageItem> selectedList);
-
-    /**
-     * <p>
-     * 图片点击事件拦截，如果返回true，则不会执行选中操纵，如果要拦截此事件并且要执行选中
-     * 请调用如下代码：
-     * <p>
-     * adapter.preformCheckItem()
-     * <p>
-     * <p>
-     * 此方法可以用来跳转到任意一个页面，比如自定义的预览
-     *
-     * @param activity         上下文
-     * @param imageItem       当前图片
-     * @param selectImageList 当前选中列表
-     * @param allSetImageList 当前文件夹所有图片
-     * @param adapter         当前列表适配器，用于刷新数据
-     * @return 是否拦截
-     */
-    boolean interceptItemClick(@Nullable Activity activity, ImageItem imageItem, ArrayList<ImageItem> selectImageList,
-                               ArrayList<ImageItem> allSetImageList, BaseSelectConfig selectConfig, PickerItemAdapter adapter,
-                               @Nullable IReloadExecutor reloadExecutor);
-
-
-    /**
-     * 拍照点击事件拦截
-     *
-     * @param activity  当前activity
-     * @param takePhoto 拍照接口
-     * @return 是否拦截
-     */
-    boolean interceptCameraClick(@Nullable Activity activity, ICameraExecutor takePhoto);
-}
-
-```
-
+使用方法请参考:[WeChatPresenter](https://github.com/yangpeixing/YImagePicker/blob/master/YPX_ImagePicker_androidx/app/src/main/java/com/ypx/imagepickerdemo/style/WeChatPresenter.java) 
 ## 自定义UI
 该框架支持自定义所有界面的ui样式。通过presenter中 getUiConfig 方法生成一个 PickerUiConfig 对象。该对象包含了全局ui配置和自定义ui配置。全局ui配置通过set方法直接设置，自定义ui需要配置 PickerUiProvider 对象，PickerUiProvider中包含了6组自定义配置。分别为：选择器标题栏/选择器底部栏/选择器item/选择器文件夹item/预览页面/单图剪裁页面
 ### 全局UI设置
 在presenter的getUiConfig方法中添加如下配置：
 ```java
 PickerUiConfig uiConfig = new PickerUiConfig();
+//设置主题色
+uiConfig.setThemeColor(Color.RED);
 //设置是否显示标题栏
 uiConfig.setShowStatusBar(true);
 //设置标题栏颜色
@@ -183,35 +74,44 @@ uiConfig.setGapIconID();
 uiConfig.setFillIconID();
 //设置视频预览暂停图标
 uiConfig.setVideoPauseIconID();
-uiConfig.setPickerUiProvider(new PickerUiProvider(){
+//自定义选择器标题栏，底部栏，item，文件夹列表item，预览页面，剪裁页面
+uiConfig.setPickerUiProvider(new PickerUiProvider() {
+    //定制选择器标题栏，默认实现为 WXTitleBar
     @Override
     public PickerControllerView getTitleBar(Context context) {
         return super.getTitleBar(context);
     }
 
+    //定制选择器底部栏，返回null即代表没有底部栏，默认实现为 WXBottomBar
     @Override
     public PickerControllerView getBottomBar(Context context) {
         return super.getBottomBar(context);
-    }
+     }
 
+    //定制选择器item,默认实现为 WXItemView
     @Override
     public PickerItemView getItemView(Context context) {
-        return super.getItemView(context);
+        WXItemView itemView = (WXItemView) super.getItemView(context);
+        itemView.setBackgroundColor(Color.parseColor("#303030"));
+        return itemView;
     }
 
+    //定制选择器文件夹列表item,默认实现为 WXFolderItemView
     @Override
     public PickerFolderItemView getFolderItemView(Context context) {
         return super.getFolderItemView(context);
     }
 
+    //定制选择器预览页面,默认实现为 WXPreviewControllerView
     @Override
     public PreviewControllerView getPreviewControllerView(Context context) {
-        return super.getPreviewControllerView(context);
+         return super.getPreviewControllerView(context);
     }
 
+    //定制选择器单图剪裁页面,默认实现为 WXSingleCropControllerView
     @Override
     public SingleCropControllerView getSingleCropControllerView(Context context) {
-        return super.getSingleCropControllerView(context);
+         return super.getSingleCropControllerView(context);
     }
 });
 ```
@@ -450,6 +350,8 @@ ImagePicker.preview(this, new WeChatPresenter(), allPreviewImageList, defaultPos
 ### 拍照并剪裁
 ```java
 CropConfig cropConfig = new CropConfig();
+//设置上一次剪裁矩阵位置信息,用于恢复上一次剪裁,Info类型从imageitem或者cropimageview中取,可为null
+cropConfig.setCropRestoreInfo(new Info());
  //设置剪裁比例
 cropConfig.setCropRatio(1, 1);
 //设置剪裁框间距，单位px
@@ -474,6 +376,8 @@ ImagePicker.takePhotoAndCrop(this, new WXImgPickerPresenter(), cropConfig,
 需要指定剪裁的原图完整路径
 ```java
 CropConfig cropConfig = new CropConfig();
+//设置上一次剪裁矩阵位置信息,用于恢复上一次剪裁,Info类型从imageitem或者cropimageview中取,可为null
+cropConfig.setCropRestoreInfo(new Info());
  //设置剪裁比例
 cropConfig.setCropRatio(1, 1);
 //设置剪裁框间距，单位px
@@ -501,9 +405,14 @@ ImagePicker.crop(this, new WXImgPickerPresenter(), cropConfig, needCropImageUrl�
 支持直接调用手机摄像头
 
 ### 拍照
-拍照保存路径不需要精确到文件名，文件名会自定生成。默认以jpg格式保存，如果不指定拍照路径，则默认照片/视频存放在 DCIM/Camera 下
+支持直接打开摄像头拍照，3.1版本去除了原有的拍照保存路径,新增了isCopyInDCIM入参,代表是否将拍照的图片copy一份到外部DCIM目录中
+因为安卓Q禁止直接写入文件到系统DCIM文件下，所以拍照入参必须是私有目录路径.所以废弃掉原有的imagepath入参
+如果想让拍摄的照片写入外部存储中，则需要copy一份文件到DCIM目录中并刷新媒体库
+示例如下：
 ```java
-ImagePicker.takePhoto(this, "拍照保存路径", new OnImagePickCompleteListener() {
+String name="图片名称,不要加后缀";//可为null
+boolean isCopyInDCIM=true;//copy一份保存到系统相册文件
+ImagePicker.takePhoto(this,name,isCopyInDCIM, new OnImagePickCompleteListener() {
         @Override
         public void onImagePickComplete(ArrayList<ImageItem> items) {
             //拍照回调，主线程
@@ -512,12 +421,15 @@ ImagePicker.takePhoto(this, "拍照保存路径", new OnImagePickCompleteListene
 ```
 
 ### 拍视频
-拍视频保存路径不需要精确到文件名，文件名会自定生成。默认以mp4格式保存，如果不指定视频路径，则默认照片/视频存放在 DCIM/Camera 下
+支持直接打开摄像头拍视频，3.1已变更,变更理由参考拍照 示例如下：
 ```java
-ImagePicker.takeVideo(this, "视频保存路径", new OnImagePickCompleteListener() {
+String name="视频名称,不要加后缀";//可为null
+long maxDuration=10000l;//可录制的最大时常,单位毫秒ms
+boolean isCopyInDCIM=true;//copy一份保存到系统相册文件
+ImagePicker.takeVideo(this,name,maxDuration, isCopyInDCIM,new OnImagePickCompleteListener() {
         @Override
         public void onImagePickComplete(ArrayList<ImageItem> items) {
-            //拍照回调，主线程
+            //视频回调，主线程
         }
     });
 ```
@@ -659,58 +571,77 @@ ImagePicker.withMulti(new WXImgPickerPresenter())
 ```
 
 ## 全局常量配置
-支持更改选择器中string文件中某些常量。需要在presenter中getPickConstants方法里返回新的PickConstants对象
+支持更改选择器中string文件中所有常量。需要在主项目中的string文件中复写选择器框架中的某个string常量
+
+若要实现国际化,则参考demo中[values-en](https://github.com/yangpeixing/YImagePicker/blob/master/YPX_ImagePicker_androidx/app/src/main/res/values-en/strings.xml)
 示例如下：
 ```java
-@NonNull
-@Override
-public PickConstants getPickConstants(Context context) {
-    PickConstants pickConstants=new PickConstants(context);
-    pickConstants.picker_str_only_select_image="我是自定义文本";
-    //以下省略若干常量配置
-    //...
-    return pickConstants;
-}
+    <string name="picker_str_title_all">在string中修改文本</string>
+    <string name="picker_str_title_right">下一步</string>
 ```
 ### 全部常量：
-为了修改的统一，这里的常量命名严格按照string中字符串的命名来取，详见PickConstants类
+查看[string](https://github.com/yangpeixing/YImagePicker/blob/master/YPX_ImagePicker_androidx/imagepicker/src/main/res/values/strings.xml)
 ```java
-//拍照权限话术
-public String picker_str_camera_permission;
-//存储权限话术
-public String picker_str_storage_permission;
-//图片和视频
-public String picker_str_multi_title;
-//视频选择
-public String picker_str_multi_title_video;
-//图片选择
-public String picker_str_multi_title_image;
-//图片剪裁
-public String picker_str_crop_title;
-//充满
-public String picker_str_full;
-//留白
-public String picker_str_gap;
-//该文件已选过或无法选择
-public String picker_str_shield;
-//图片未加载完成，请稍候!
-public String picker_str_wait_for_load;
-//资源加载中,请稍后…
-public String picker_str_loading;
-//该视频文件路径无效或已损坏!
-public String picker_str_video_error;
-//暂未发现媒体文件
-public String picker_str_media_not_found;
-//只能选择图片!
-public String picker_str_only_select_image;
-//只能选择视频!
-public String picker_str_only_select_video;
-//视频时长不得超过
-public String picker_str_video_over_max_duration;
-//视频时长不得少于
-public String picker_str_video_less_min_duration;
-//拍摄视频
-public String picker_str_take_video;
-//拍摄照片
-public String picker_str_take_photo;
+
+    <!--  title of activity -->
+    <string name="picker_str_title_all">图片和视频</string>
+    <string name="picker_str_title_video">视频选择</string>
+    <string name="picker_str_title_image">图片选择</string>
+    <string name="picker_str_title_right">完成</string>
+
+    <!--  title of crop activity -->
+    <string name="picker_str_title_crop">图片剪裁</string>
+    <string name="picker_str_title_crop_right">确定</string>
+
+    <!--  state of multiCrop activity -->
+    <string name="picker_str_redBook_full">充满</string>
+    <string name="picker_str_redBook_gap">留白</string>
+
+    <!--  bottom of activity -->
+    <string name="picker_str_bottom_preview">预览</string>
+    <string name="picker_str_bottom_original">原图</string>
+    <string name="picker_str_bottom_choose">选择</string>
+
+    <!--  folder item text -->
+    <string name="picker_str_folder_item_all">图片和视频</string>
+    <string name="picker_str_folder_item_video">所有视频</string>
+    <string name="picker_str_folder_item_image">所有图片</string>
+    <string name="picker_str_folder_image_unit">张</string>
+
+    <!--  camera item text -->
+    <string name="picker_str_item_take_video">拍摄视频</string>
+    <string name="picker_str_item_take_photo">拍摄照片</string>
+
+    <!--  permission -->
+    <string name="picker_str_camera_permission">您拒绝了拍照权限，如拒绝设置会导致该功能无法使用!是否前去设置？</string>
+    <string name="picker_str_storage_permission">您拒绝了存储权限，如拒绝设置会导致该功能无法使用!是否前去设置？</string>
+    <string name="picker_str_permission_refuse_setting">拒绝设置</string>
+    <string name="picker_str_permission_go_setting">前去设置</string>
+
+    <!--  tip -->
+    <string name="picker_str_tip_mimeTypes_empty">请至少选择一种文件加载类型!</string>
+    <string name="picker_str_tip_singleCrop_error">剪裁异常，已为您重置图片，请重试！</string>
+    <string name="picker_str_tip_shield">该文件已选过或无法选择!</string>
+    <string name="picker_str_tip_media_empty">暂未发现媒体文件</string>
+    <string name="picker_str_tip_only_select_image">只能选择图片!</string>
+    <string name="picker_str_tip_only_select_video">只能选择视频!</string>
+    <string name="picker_str_str_video_over_max_duration">视频时长不得超过</string>
+    <string name="picker_str_tip_video_less_min_duration">视频时长不得少于</string>
+    <string name="picker_str_tip_cant_preview_video">不支持预览视频！</string>
+    <string name="picker_str_tip_only_select_one_video">只能选择一个视频!</string>
+    <string name="picker_str_tip_action_frequently">请勿操作过快!</string>
+
+    <!--  time format -->
+    <string name="picker_str_today">今天</string>
+    <string name="picker_str_this_week">本周</string>
+    <string name="picker_str_this_months">这个月</string>
+    <string name="picker_str_time_format">yyyy年mm月</string>
+    <string name="picker_str_day">天</string>
+    <string name="picker_str_hour">小时</string>
+    <string name="picker_str_minute">分钟</string>
+    <string name="picker_str_second">秒</string>
+    <string name="picker_str_milli">毫秒</string>
+    <string name="picker_str_preview_empty">预览数据为空！</string>
+
+
 ```
