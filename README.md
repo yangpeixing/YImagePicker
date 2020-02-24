@@ -107,10 +107,10 @@ ImagePicker.withMulti(new WeChatPresenter())//指定presenter
         .setSinglePickImageOrVideoType(true) 
         //当单选或者视频单选时，点击item直接回调，无需点击完成按钮          
         .setSinglePickWithAutoComplete(false)
-		//显示原图  
+        //显示原图  
         .setOriginal(true)  
-		//显示原图时默认原图选项开关  
-		.setDefaultOriginal(false)
+        //显示原图时默认原图选项开关  
+        .setDefaultOriginal(false)
         //设置单选模式，当maxCount==1时，可执行单选（下次选中会取消上一次选中）
         .setSelectMode(SelectMode.MODE_SINGLE)   
         //设置视频可选取的最大时长,同时也是视频可录制的最大时长
