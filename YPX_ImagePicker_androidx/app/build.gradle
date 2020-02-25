@@ -36,9 +36,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    //implementation project(path: ':imagepicker')
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-3'
-    implementation project(path: ':imagePicker')
     implementation 'androidx.cardview:cardview:1.0.0'
-    //implementation 'com.ypx.yimagepicker:androidx:3.0.1'
+
+    //implementation 'com.ypx.yimagepicker:androidx:3.1'
+    implementation project(path: ':imagepicker')
 }
