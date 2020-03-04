@@ -1,7 +1,7 @@
 ### 关于YImagePicker 
 [点击查看2.x版本readme](https://github.com/yangpeixing/YImagePicker/blob/master/README_2_x.md)
 
-本文档更新于:2020/2/24 上午10点12分
+本文档更新于:2020/3/04 上午10点37分
 
 [ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=3.1) ](https://bintray.com/yangpeixing/yimagepicker/androidx/3.1/link)
  - 支持小红书多图剪裁、微信多图选择、单图剪裁、多图批量剪裁、大图预览
@@ -32,11 +32,11 @@
 **androidx版本：**
 
 ```java
-implementation 'com.ypx.yimagepicker:androidx:3.1'
+implementation 'com.ypx.yimagepicker:androidx:3.1.1'
 ```
 **support版本：后期可能不再维护，请使用者尽早切换androidx** （support依赖最高兼容28）
 ```java
-implementation 'com.ypx.yimagepicker:support:3.0'
+implementation 'com.ypx.yimagepicker:support:3.1.1'
 ```
 
 ### 核心原理
