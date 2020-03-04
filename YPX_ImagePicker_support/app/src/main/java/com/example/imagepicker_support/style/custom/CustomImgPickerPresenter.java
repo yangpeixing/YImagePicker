@@ -5,11 +5,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
@@ -17,7 +17,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.imagepicker_support.R;
 import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.PickConstants;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.data.ICameraExecutor;
 import com.ypx.imagepicker.data.IReloadExecutor;
@@ -45,11 +44,14 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
 
     @Override
     public void displayImage(View view, ImageItem item, int size, boolean isThumbnail) {
-        if (isThumbnail) {
-            Glide.with(view.getContext()).load(item.path).override(size).into((ImageView) view);
+        if (item.getUri() != null) {
+            Glide.with(view.getContext()).load(item.getUri()).apply(new RequestOptions()
+                    .format(isThumbnail ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888))
+                    .into((ImageView) view);
         } else {
             Glide.with(view.getContext()).load(item.path).apply(new RequestOptions()
-                    .format(DecodeFormat.PREFER_ARGB_8888)).into((ImageView) view);
+                    .format(isThumbnail ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888))
+                    .into((ImageView) view);
         }
     }
 
@@ -59,11 +61,7 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
         PickerUiConfig uiConfig = new PickerUiConfig();
         uiConfig.setShowStatusBar(true);
         uiConfig.setStatusBarColor(Color.parseColor("#F5F5F5"));
-
-        // uiConfig.setPreviewBackgroundColor(Color.BLACK);
         uiConfig.setPickerBackgroundColor(Color.WHITE);
-        // uiConfig.setCropViewBackgroundColor(Color.WHITE);
-
         uiConfig.setFolderListOpenDirection(PickerUiConfig.DIRECTION_TOP);
         uiConfig.setFolderListOpenMaxMargin(0);
 
@@ -73,7 +71,8 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
                 WXTitleBar titleBar = (WXTitleBar) super.getTitleBar(context);
                 titleBar.setCompleteText("下一步");
                 titleBar.setCompleteBackground(null, null);
-                titleBar.setCompleteTextColor(Color.parseColor("#859D7B"), Color.parseColor("#50859D7B"));
+                titleBar.setCompleteTextColor(Color.parseColor("#859D7B"),
+                        Color.parseColor("#50859D7B"));
                 titleBar.centerTitle();
                 titleBar.setShowArrow(true);
                 titleBar.setCanToggleFolderList(true);
@@ -109,12 +108,6 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
             }
         });
         return uiConfig;
-    }
-
-    @NonNull
-    @Override
-    public PickConstants getPickConstants(Context context) {
-        return new PickConstants(context);
     }
 
     @Override

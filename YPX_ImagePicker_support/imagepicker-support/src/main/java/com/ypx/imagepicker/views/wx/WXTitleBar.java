@@ -61,13 +61,15 @@ public class WXTitleBar extends PickerControllerView {
         setShowArrow(false);
         setBackgroundColor(getResources().getColor(R.color.white_F5));
         setImageSetArrowIconID(R.mipmap.picker_arrow_down);
-        completeText = "完成";
-        selectDrawable = PCornerUtils.cornerDrawable(getResources().getColor(R.color.wx), dp(2));
-        unSelectDrawable = PCornerUtils.cornerDrawable(getResources().getColor(R.color.wx_half), dp(2));
+        completeText = getContext().getString(R.string.picker_str_title_right);
+        selectDrawable = PCornerUtils.cornerDrawable(getThemeColor(), dp(2));
+        int halfColor = Color.argb(100, Color.red(getThemeColor()), Color.green(getThemeColor()),
+                Color.blue(getThemeColor()));
+        unSelectDrawable = PCornerUtils.cornerDrawable(halfColor, dp(2));
         unSelectColor = Color.WHITE;
         selectColor = Color.WHITE;
 
-        ivBack.setOnClickListener(new OnClickListener() {
+        ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();

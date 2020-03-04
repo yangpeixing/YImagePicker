@@ -2,7 +2,6 @@ package com.ypx.imagepicker.views.base;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -11,6 +10,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
+import android.support.annotation.Nullable;
+
+import com.ypx.imagepicker.ImagePicker;
 
 /**
  * Time: 2019/11/11 14:33
@@ -69,5 +71,9 @@ public abstract class PBaseLayout extends LinearLayout {
         if (getContext() instanceof Activity) {
             ((Activity) getContext()).onBackPressed();
         }
+    }
+
+    protected int getThemeColor() {
+        return ImagePicker.getThemeColor();
     }
 }

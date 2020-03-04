@@ -10,6 +10,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 import android.util.LongSparseArray;
 
+
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
@@ -117,11 +118,11 @@ public class MediaSetsLoader extends CursorLoader {
 
         String name = "";
         if (isLoadImage && isLoadVideo) {
-            name = getContext().getResources().getString(R.string.picker_str_all);
+            name = getContext().getString(R.string.picker_str_folder_item_all);
         } else if (isLoadImage) {
-            name = getContext().getResources().getString(R.string.picker_str_all_image);
+            name = getContext().getString(R.string.picker_str_folder_item_image);
         } else if (isLoadVideo) {
-            name = getContext().getResources().getString(R.string.picker_str_all_video);
+            name = getContext().getString(R.string.picker_str_folder_item_video);
         }
 
         allAlbum.addRow(new String[]{ImageSet.ID_ALL_MEDIA, ImageSet.ID_ALL_MEDIA, name,

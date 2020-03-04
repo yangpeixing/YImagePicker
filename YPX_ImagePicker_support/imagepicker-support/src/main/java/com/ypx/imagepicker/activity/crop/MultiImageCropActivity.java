@@ -3,11 +3,11 @@ package com.ypx.imagepicker.activity.crop;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Window;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.view.Window;
-
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
@@ -30,7 +30,7 @@ import java.util.ArrayList;
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/21
- * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x
  */
 public class MultiImageCropActivity extends FragmentActivity {
     public static final String INTENT_KEY_DATA_PRESENTER = "ICropPickerBindPresenter";

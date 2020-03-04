@@ -1,13 +1,7 @@
 package com.ypx.imagepicker.activity.multi;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +9,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
@@ -46,7 +46,7 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/21
- * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x
  */
 public class MultiImagePickerFragment extends PBaseLoaderFragment implements View.OnClickListener,
         PickerItemAdapter.OnActionResult, IReloadExecutor {
@@ -71,7 +71,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.picker_activity_images_grid, container, false);
+        view = inflater.inflate(R.layout.picker_activity_multipick, container, false);
         return view;
     }
 
@@ -104,7 +104,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         super.onViewCreated(view, savedInstanceState);
         mContext = getActivity();
         if (isIntentDataValid()) {
-            ImagePicker.isOriginalImage = false;
+            ImagePicker.isOriginalImage = selectConfig.isDefaultOriginal();
             uiConfig = presenter.getUiConfig(getWeakActivity());
             setStatusBar();
             findView();
@@ -223,7 +223,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
      *
      * @param position 位置
      */
-    private void selectImageFromSet(int position, boolean isTransit) {
+    private void selectImageFromSet(final int position, boolean isTransit) {
         currentImageSet = imageSets.get(position);
         if (isTransit) {
             toggleFolderList();
@@ -271,7 +271,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     protected void loadMediaSetsComplete(@Nullable List<ImageSet> imageSetList) {
         if (imageSetList == null || imageSetList.size() == 0 ||
                 (imageSetList.size() == 1 && imageSetList.get(0).count == 0)) {
-            tip(getPickConstants().picker_str_media_not_found);
+            tip(getString(R.string.picker_str_tip_media_empty));
             return;
         }
         this.imageSets = imageSetList;
@@ -280,13 +280,10 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     }
 
     @Override
-    protected synchronized void loadMediaItemsComplete(ImageSet set) {
-        if (currentImageSet == null || set.id.equals(currentImageSet.id)) {
-            this.imageItems.clear();
-            this.imageItems.addAll(set.imageItems);
-            controllerViewOnImageSetSelected(set);
-            mAdapter.refreshData(imageItems);
-        }
+    protected void loadMediaItemsComplete(ImageSet set) {
+        this.imageItems = set.imageItems;
+        controllerViewOnImageSetSelected(set);
+        mAdapter.refreshData(imageItems);
     }
 
     @Override
@@ -303,7 +300,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     public void onTakePhotoResult(@NonNull ImageItem imageItem) {
         //剪裁模式下，直接跳转剪裁页面
         if (selectConfig.getSelectMode() == SelectMode.MODE_CROP) {
-            intentCrop(imageItem.path);
+            intentCrop(imageItem);
             return;
         }
         //单选模式下，直接回调出去
@@ -355,7 +352,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
             if (item.isGif() || item.isVideo()) {
                 notifyOnSingleImagePickComplete(item);
             } else {
-                intentCrop(item.path);
+                intentCrop(item);
             }
             return;
         }
@@ -380,7 +377,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
 
         //如果当前是视频，且不支持视频预览，则拦截掉点击
         if (item.isVideo() && !selectConfig.isCanPreviewVideo()) {
-            tip(getString(R.string.str_cant_preview_video));
+            tip(getActivity().getString(R.string.picker_str_tip_cant_preview_video));
             return;
         }
 
@@ -421,10 +418,10 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
     /**
      * 跳转剪裁页面
      *
-     * @param path 图片路径
+     * @param imageItem 图片信息
      */
-    private void intentCrop(String path) {
-        ImagePicker.crop(getActivity(), presenter, selectConfig, path, new OnImagePickCompleteListener() {
+    private void intentCrop(ImageItem imageItem) {
+        ImagePicker.crop(getActivity(), presenter, selectConfig, imageItem, new OnImagePickCompleteListener() {
             @Override
             public void onImagePickComplete(ArrayList<ImageItem> items) {
                 selectList.clear();
@@ -470,6 +467,9 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
             return;
         }
         if (onImagePickCompleteListener != null) {
+            for (ImageItem imageItem : selectList) {
+                imageItem.isOriginalImage = ImagePicker.isOriginalImage;
+            }
             onImagePickCompleteListener.onImagePickComplete(selectList);
         }
     }

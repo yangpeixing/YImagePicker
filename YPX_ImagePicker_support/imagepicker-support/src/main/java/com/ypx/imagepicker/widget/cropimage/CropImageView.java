@@ -21,13 +21,10 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
@@ -35,7 +32,6 @@ import android.widget.OverScroller;
 import android.widget.Scroller;
 
 import com.ypx.imagepicker.utils.PBitmapUtils;
-import com.ypx.imagepicker.utils.PViewSizeUtils;
 
 /**
  * Description: 剪裁ImageView
@@ -48,6 +44,7 @@ public class CropImageView extends ImageView {
     private final static int MIN_ROTATE = 35;
     private final static int ANIM_DURING = 340;
     private final static float MAX_SCALE = 2.5f;
+    private static int loadMaxSize = 0;
 
     private int mMinRotate;
     private int mAnimDuring;
@@ -106,6 +103,8 @@ public class CropImageView extends ImageView {
 
     private OnLongClickListener mLongClick;
 
+    private boolean isShowCropRect = true;
+
     public CropImageView(Context context) {
         super(context);
         init();
@@ -151,10 +150,7 @@ public class CropImageView extends ImageView {
 
         if (scaleType != mScaleType) {
             mScaleType = scaleType;
-
-            if (hasDrawable) {
-                initBase();
-            }
+            initBase();
         }
     }
 
@@ -199,19 +195,28 @@ public class CropImageView extends ImageView {
         return originalBitmap;
     }
 
+    private void getCanLoadMaxSize() {
+        loadMaxSize = 10000;
+    }
+
+
     @Override
     public void setImageBitmap(Bitmap bm) {
         if (bm == null || bm.getWidth() == 0 || bm.getHeight() == 0) {
             return;
         }
 
-        float ratio = bm.getWidth() * 1.00f / bm.getHeight() * 1.00f;
-        if (bm.getWidth() > 5000) {
-            bm = Bitmap.createScaledBitmap(bm, 5000, (int) (5000f / ratio), false);
+        if (loadMaxSize == 0) {
+            getCanLoadMaxSize();
         }
 
-        if (bm.getHeight() > 10000) {
-            bm = Bitmap.createScaledBitmap(bm, (int) (10000f * ratio), 10000, false);
+        float ratio = bm.getWidth() * 1.00f / bm.getHeight() * 1.00f;
+        if (bm.getWidth() > loadMaxSize) {
+            bm = Bitmap.createScaledBitmap(bm, loadMaxSize, (int) (loadMaxSize / ratio), false);
+        }
+
+        if (bm.getHeight() > loadMaxSize) {
+            bm = Bitmap.createScaledBitmap(bm, (int) (loadMaxSize * ratio), loadMaxSize, false);
         }
         super.setImageBitmap(bm);
     }
@@ -224,9 +229,9 @@ public class CropImageView extends ImageView {
             hasDrawable = false;
             return;
         }
-
-        if (!hasSize(drawable))
+        if (!hasSize(drawable)) {
             return;
+        }
 
         hasDrawable = true;
         if (drawable instanceof BitmapDrawable) {
@@ -245,8 +250,7 @@ public class CropImageView extends ImageView {
         }
 
         if (restoreInfo != null) {
-            mScaleType = ScaleType.CENTER_CROP;
-            mScaleType = restoreInfo.mScaleType;
+            mScaleType = restoreInfo.getScaleType();
             mCropRect = restoreInfo.mWidgetRect;
             aspectX = (int) restoreInfo.mCropX;
             aspectY = (int) restoreInfo.mCropY;
@@ -277,8 +281,8 @@ public class CropImageView extends ImageView {
         mTranslateX = 0;
         mTranslateY = 0;
 
-        float tcx = info.mRect.left + info.mRect.width() / 2;
-        float tcy = info.mRect.top + info.mRect.height() / 2;
+        float tcx = info.mImgRect.left + info.mImgRect.width() / 2;
+        float tcy = info.mImgRect.top + info.mImgRect.height() / 2;
 
         mScaleCenter.set(mImgRect.left + mImgRect.width() / 2, mImgRect.top + mImgRect.height() / 2);
         mRotateCenter.set(mScaleCenter);
@@ -408,42 +412,44 @@ public class CropImageView extends ImageView {
     }
 
     private void initCenter() {
-        if (mImgRect.width() > mCropRect.width() || mImgRect.height() > mCropRect.height()) {
-            float scaleX = mImgRect.width() / mImgRect.width();
-            float scaleY = mImgRect.height() / mImgRect.height();
-            mScale = scaleX > scaleY ? scaleX : scaleY;
-            mAnimMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
-            executeTranslate();
-            resetBase();
-        }
+        mAnimMatrix.postScale(1, 1, mScreenCenter.x, mScreenCenter.y);
+        executeTranslate();
+        resetBase();
     }
 
     private void initCenterCrop() {
-        float scaleX = mCropRect.width() / mImgRect.width();
-        float scaleY = mCropRect.height() / mImgRect.height();
-        mScale = scaleX > scaleY ? scaleX : scaleY;
+        float widthScale = mCropRect.width() / mImgRect.width();
+        float heightScale = mCropRect.height() / mImgRect.height();
+        mScale = Math.max(widthScale, heightScale);
         mAnimMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
         executeTranslate();
         resetBase();
     }
 
     private void initCenterInside() {
+        //控件大于图片，即可完全显示图片，相当于Center，反之，相当于FitCenter
+        if (mCropRect.width() > mImgRect.width()) {
+            initCenter();
+        } else {
+            initFitCenter();
+        }
         float widthScale = mCropRect.width() / mImgRect.width();
-        float heightScale = mCropRect.height() / mImgRect.height();
-        mScale = Math.min(widthScale, heightScale);
         if (widthScale > mMaxScale) {
             mMaxScale = widthScale;
         }
-        mAnimMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
-        executeTranslate();
-        resetBase();
     }
 
     private void initFitCenter() {
-        mScale = Math.max(mCropRect.width() / mImgRect.width(), mCropRect.height() / mImgRect.height());
+        float widthScale = mCropRect.width() / mImgRect.width();
+        float heightScale = mCropRect.height() / mImgRect.height();
+        mScale = Math.min(widthScale, heightScale);
         mAnimMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y);
         executeTranslate();
         resetBase();
+
+        if (widthScale > mMaxScale) {
+            mMaxScale = widthScale;
+        }
     }
 
     private void initFitStart() {
@@ -465,17 +471,16 @@ public class CropImageView extends ImageView {
     }
 
     private void initFitXY() {
-        float scaleX = mCropRect.width() / mImgRect.width();
-        float scaleY = mCropRect.height() / mImgRect.height();
-        mAnimMatrix.postScale(scaleX, scaleY, mScreenCenter.x, mScreenCenter.y);
+        float widthScale = mCropRect.width() / mImgRect.width();
+        float heightScale = mCropRect.height() / mImgRect.height();
+        mAnimMatrix.postScale(widthScale, heightScale, mScreenCenter.x, mScreenCenter.y);
         executeTranslate();
         resetBase();
     }
 
     private void resetBase() {
         Drawable img = getDrawable();
-        mBaseRect.set(0, 0, getDrawableWidth(img),
-                getDrawableHeight(img));
+        mBaseRect.set(0, 0, getDrawableWidth(img), getDrawableHeight(img));
         mBaseMatrix.set(mSynthesisMatrix);
         mBaseMatrix.mapRect(mBaseRect);
         mScale = 1;
@@ -560,68 +565,16 @@ public class CropImageView extends ImageView {
             anim(left, top, right, bottom);
         } else {
             mCropRect.set(left, top, right, bottom);
-            if (getDrawable() != null) {
-                initBase();
-            }
-        }
-    }
-
-    private ValueAnimator cropAnim;
-
-    private void anim(float left, float top, float right, float bottom) {
-        final float oldLeft = mCropRect.left;
-        final float oldTop = mCropRect.top;
-        final float oldRight = mCropRect.right;
-        final float oldBottom = mCropRect.bottom;
-        final float finalLeft = left;
-        final float finalTop = top;
-        final float finalRight = right;
-        final float finalBottom = bottom;
-
-        if ((oldRight == 0 || oldBottom == 0) || (oldLeft == left && oldBottom == bottom
-                && oldRight == right && oldTop == top)) {
-            mCropRect.set(finalLeft, finalTop, finalRight, finalBottom);
             initBase();
-            invalidate();
-            return;
         }
-
-        if (cropAnim == null) {
-            cropAnim = ObjectAnimator.ofFloat(0.0F, 1.0F).setDuration(400);
-            cropAnim.setInterpolator(new DecelerateInterpolator());
-        }
-        cropAnim.removeAllUpdateListeners();
-        cropAnim.removeAllListeners();
-        cropAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (float) animation.getAnimatedValue();
-                mCropRect.left = (finalLeft - oldLeft) * value + oldLeft;
-                mCropRect.top = (finalTop - oldTop) * value + oldTop;
-                mCropRect.right = (finalRight - oldRight) * value + oldRight;
-                mCropRect.bottom = (finalBottom - oldBottom) * value + oldBottom;
-                isShowLine = value < 1.0f;
-                initBase();
-                invalidate();
-            }
-        });
-        cropAnim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                initBase();
-                invalidate();
-            }
-        });
-        cropAnim.start();
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        resetCropSize(w, h);
-        mScreenCenter.set(w / 2.0f, h / 2.0f);
         isKnowSize = true;
+        mScreenCenter.set(w / 2.0f, h / 2.0f);
+        resetCropSize(w, h);
         setImageDrawable(getDrawable());
     }
 
@@ -630,7 +583,6 @@ public class CropImageView extends ImageView {
     }
 
     private boolean isShowLine = false;
-
     private Paint cropRectPaint;
     private Paint maskPaint;
     private Paint cropStrokePaint;
@@ -705,7 +657,6 @@ public class CropImageView extends ImageView {
         invalidate();
     }
 
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -730,7 +681,7 @@ public class CropImageView extends ImageView {
             canvas.drawLine(left, top + h * 2 / 3.0f, left + w, top + h * 2 / 3.0f, linePaint);
         }
 
-        if (aspectY <= 0 || aspectX <= 0) {
+        if (!isShowCropRect || aspectY <= 0 || aspectX <= 0) {
             return;
         }
 
@@ -783,7 +734,7 @@ public class CropImageView extends ImageView {
     }
 
     private void onUp() {
-        if (mTranslate.isRuning)
+        if (mTranslate.isRunning)
             return;
 
         if (canRotate || mDegrees % 90 != 0) {
@@ -818,7 +769,6 @@ public class CropImageView extends ImageView {
         }
 
         mScaleCenter.set(cx, cy);
-        Log.e("CropImageView", "onUp: " + mImgRect.toShortString() + "   x= " + mScaleCenter.x + " " + mScaleCenter.y);
         mTranslateX = 0;
         mTranslateY = 0;
 
@@ -915,9 +865,9 @@ public class CropImageView extends ImageView {
             if (Float.isNaN(scaleFactor) || Float.isInfinite(scaleFactor))
                 return false;
 
-//            if (mScale > mMaxScale) {
-//                return true;
-//            }
+            if (mScale > mMaxScale) {
+                return true;
+            }
 
             mScale *= scaleFactor;
             mScaleCenter.set(detector.getFocusX(), detector.getFocusY());
@@ -1003,7 +953,7 @@ public class CropImageView extends ImageView {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             if (hasMultiTouch) return false;
             if (!imgLargeWidth && !imgLargeHeight) return false;
-            if (mTranslate.isRuning) return false;
+            if (mTranslate.isRunning) return false;
 
             float vx = velocityX;
             float vy = velocityY;
@@ -1035,10 +985,9 @@ public class CropImageView extends ImageView {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (mTranslate.isRuning) {
+            if (mTranslate.isRunning) {
                 mTranslate.stop();
             }
-
             if (canScrollHorizontallySelf(distanceX)) {
                 if (distanceX < 0 && mImgRect.left - distanceX > mCropRect.left)
                     distanceX = mImgRect.left;
@@ -1151,12 +1100,18 @@ public class CropImageView extends ImageView {
 
     @Override
     public boolean canScrollHorizontally(int direction) {
+        if (!isEnable) {
+            return super.canScrollHorizontally(direction);
+        }
         if (hasMultiTouch) return true;
         return canScrollHorizontallySelf(direction);
     }
 
     @Override
     public boolean canScrollVertically(int direction) {
+        if (!isEnable) {
+            return super.canScrollVertically(direction);
+        }
         if (hasMultiTouch) return true;
         return canScrollVerticallySelf(direction);
     }
@@ -1184,7 +1139,7 @@ public class CropImageView extends ImageView {
 
     private class Transform implements Runnable {
 
-        boolean isRuning;
+        boolean isRunning;
 
         OverScroller mTranslateScroller;
         OverScroller mFlingScroller;
@@ -1266,7 +1221,7 @@ public class CropImageView extends ImageView {
         }
 
         void start() {
-            isRuning = true;
+            isRunning = true;
             postExecute();
         }
 
@@ -1276,12 +1231,12 @@ public class CropImageView extends ImageView {
             mScaleScroller.abortAnimation();
             mFlingScroller.abortAnimation();
             mRotateScroller.abortAnimation();
-            isRuning = false;
+            isRunning = false;
         }
 
         @Override
         public void run() {
-            if (!isRuning) return;
+            if (!isRunning) return;
 
             boolean endAnim = true;
 
@@ -1339,7 +1294,7 @@ public class CropImageView extends ImageView {
                 applyAnim();
                 postExecute();
             } else {
-                isRuning = false;
+                isRunning = false;
                 if (aspectX > 0 && aspectY > 0) {
                     return;
                 }
@@ -1387,40 +1342,12 @@ public class CropImageView extends ImageView {
         }
 
         private void postExecute() {
-            if (isRuning) post(this);
+            if (isRunning) post(this);
         }
     }
 
     public Info getInfo() {
-        RectF rect = new RectF();
-        int[] p = new int[2];
-        getLocation(this, p);
-        rect.set(p[0] + mImgRect.left, p[1] + mImgRect.top, p[0] + mImgRect.right, p[1] + mImgRect.bottom);
-        return new Info(rect, mImgRect, mCropRect, mBaseRect, mScreenCenter, getScale(), mDegrees,
-                mScaleType, aspectX, aspectY, getTranslateX(), getTranslateY());
-    }
-
-    private static void getLocation(View target, int[] position) {
-        position[0] += target.getLeft();
-        position[1] += target.getTop();
-
-        ViewParent viewParent = target.getParent();
-        while (viewParent instanceof View) {
-            final View view = (View) viewParent;
-
-            if (view.getId() == android.R.id.content) return;
-
-            position[0] -= view.getScrollX();
-            position[1] -= view.getScrollY();
-
-            position[0] += view.getLeft();
-            position[1] += view.getTop();
-
-            viewParent = view.getParent();
-        }
-
-        position[0] = (int) (position[0] + 0.5f);
-        position[1] = (int) (position[1] + 0.5f);
+        return new Info(mImgRect, mCropRect, mDegrees, mScaleType.name(), aspectX, aspectY);
     }
 
     public interface ClipCalculate {
@@ -1438,8 +1365,7 @@ public class CropImageView extends ImageView {
 
     public Bitmap generateCropBitmapFromView(final int backgroundColor) {
         setShowImageRectLine(false);
-        aspectX = 0;
-        aspectY = 0;
+        isShowCropRect = false;
         invalidate();
 
         Bitmap bitmap = PBitmapUtils.getViewBitmap(CropImageView.this);
@@ -1512,7 +1438,7 @@ public class CropImageView extends ImageView {
             }
         }
 
-        Bitmap bitmap1 = null;
+        Bitmap bitmap1;
         try {
             bitmap1 = Bitmap.createBitmap(originalBitmap, (int) endX, (int) endY, (int) endW, (int) endH);
             if (isCircle) {
@@ -1568,10 +1494,61 @@ public class CropImageView extends ImageView {
         return (int) (dp * density + 0.5);
     }
 
+
+    private ValueAnimator cropAnim;
+
+    private void anim(float left, float top, float right, float bottom) {
+        final float oldLeft = mCropRect.left;
+        final float oldTop = mCropRect.top;
+        final float oldRight = mCropRect.right;
+        final float oldBottom = mCropRect.bottom;
+        final float finalLeft = left;
+        final float finalTop = top;
+        final float finalRight = right;
+        final float finalBottom = bottom;
+
+        if ((oldRight == 0 || oldBottom == 0) || (oldLeft == left && oldBottom == bottom
+                && oldRight == right && oldTop == top)) {
+            mCropRect.set(finalLeft, finalTop, finalRight, finalBottom);
+            initBase();
+            invalidate();
+            return;
+        }
+
+        if (cropAnim == null) {
+            cropAnim = ObjectAnimator.ofFloat(0.0F, 1.0F).setDuration(400);
+            cropAnim.setInterpolator(new DecelerateInterpolator());
+        }
+        cropAnim.removeAllUpdateListeners();
+        cropAnim.removeAllListeners();
+        cropAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+                mCropRect.left = (finalLeft - oldLeft) * value + oldLeft;
+                mCropRect.top = (finalTop - oldTop) * value + oldTop;
+                mCropRect.right = (finalRight - oldRight) * value + oldRight;
+                mCropRect.bottom = (finalBottom - oldBottom) * value + oldBottom;
+                isShowLine = value < 1.0f;
+                initBase();
+                invalidate();
+            }
+        });
+        cropAnim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                initBase();
+                invalidate();
+            }
+        });
+        cropAnim.start();
+    }
+
     public void changeSize(boolean isAnim, final int endWidth, final int endHeight) {
         if (isAnim) {
-            final int startWidth = PViewSizeUtils.getViewWidth(this);
-            final int startHeight = PViewSizeUtils.getViewHeight(this);
+            final int startWidth = getWidth();
+            final int startHeight = getHeight();
             ValueAnimator anim = ValueAnimator.ofFloat(0.0f, 1.0f).setDuration(200);
             anim.setInterpolator(new DecelerateInterpolator());
             anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {

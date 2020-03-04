@@ -1,9 +1,10 @@
 package com.ypx.imagepicker.views.base;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+
+import android.support.annotation.Nullable;
 
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
 

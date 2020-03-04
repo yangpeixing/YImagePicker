@@ -2,11 +2,6 @@ package com.ypx.imagepicker.activity.crop;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
@@ -54,7 +54,7 @@ import static com.ypx.imagepicker.activity.crop.MultiImageCropActivity.INTENT_KE
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/21
- * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x
  */
 public class MultiImageCropFragment extends PBaseLoaderFragment implements View.OnClickListener,
         PickerFolderAdapter.FolderSelectResult,
@@ -108,7 +108,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
     @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @NonNull Bundle savedInstanceState) {
-        mContentView = inflater.inflate(R.layout.picker_activity_selectpicandcrop, container, false);
+        mContentView = inflater.inflate(R.layout.picker_activity_multi_crop, container, false);
         return mContentView;
     }
 
@@ -184,7 +184,6 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
                 .setTopView(topView)
                 .setMaskView(maskView)
                 .setCanScrollHeight(mCropSize)
-                .setStickHeight(dp(55))
                 .build();
         //剪裁控件辅助类
         cropViewContainerHelper = new CropViewContainerHelper(mCropContainer);
@@ -247,7 +246,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
             return;
         }
         if (onDoubleClick()) {
-            tip(getString(R.string.str_action_frequently));
+            tip(getActivity().getString(R.string.picker_str_tip_action_frequently));
             return;
         }
         if (view == stateBtn) {
@@ -599,7 +598,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
      * 留白情况下，显示充满状态
      */
     private void gapState() {
-        mTvFullOrGap.setText(getPickConstants().picker_str_full);
+        mTvFullOrGap.setText(getString(R.string.picker_str_redBook_full));
         mCropView.setBackgroundColor(Color.WHITE);
         mTvFullOrGap.setCompoundDrawablesWithIntrinsicBounds(getResources().
                 getDrawable(uiConfig.getFillIconID()), null, null, null);
@@ -609,7 +608,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
      * 充满情况下，显示留白状态
      */
     private void fullState() {
-        mTvFullOrGap.setText(getPickConstants().picker_str_gap);
+        mTvFullOrGap.setText(getString(R.string.picker_str_redBook_gap));
         mCropView.setBackgroundColor(Color.TRANSPARENT);
         mTvFullOrGap.setCompoundDrawablesWithIntrinsicBounds(getResources().
                 getDrawable(uiConfig.getGapIconID()), null, null, null);
@@ -633,7 +632,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
                     && (mCropView.getDrawable() == null ||
                     mCropView.getDrawable().getIntrinsicHeight() == 0 ||
                     mCropView.getDrawable().getIntrinsicWidth() == 0)) {
-                tip(getPickConstants().picker_str_wait_for_load);
+                tip(getString(R.string.picker_str_tip_shield));
                 return;
             }
             selectList = cropViewContainerHelper.generateCropUrls(selectList, cropMode);
@@ -697,7 +696,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
     protected void loadMediaSetsComplete(@Nullable List<ImageSet> imageSetList) {
         if (imageSetList == null || imageSetList.size() == 0 ||
                 (imageSetList.size() == 1 && imageSetList.get(0).count == 0)) {
-            tip(getPickConstants().picker_str_media_not_found);
+            tip(getString(R.string.picker_str_tip_media_empty));
             return;
         }
         this.imageSets = imageSetList;

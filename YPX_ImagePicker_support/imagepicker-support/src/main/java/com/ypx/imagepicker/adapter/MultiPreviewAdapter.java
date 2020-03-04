@@ -1,13 +1,14 @@
 package com.ypx.imagepicker.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.activity.preview.MultiImagePreviewActivity;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.helper.recyclerviewitemhelper.ItemTouchHelperAdapter;
@@ -57,7 +58,7 @@ public class MultiPreviewAdapter extends RecyclerView.Adapter<MultiPreviewAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         final ImageItem imageItem = previewList.get(position);
         boolean isSelect = previewImageItem != null && previewImageItem.equals(imageItem);
-        holder.imageView.setSelect(isSelect, Color.parseColor("#09C768"));
+        holder.imageView.setSelect(isSelect, ImagePicker.getThemeColor());
         holder.imageView.setTypeFromImage(imageItem);
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override

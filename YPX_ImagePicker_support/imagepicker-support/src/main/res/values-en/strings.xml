@@ -1,0 +1,63 @@
+<resources>
+
+    <!--  title of activity -->
+    <string name="picker_str_title_all">VideoAndPicture</string>
+    <string name="picker_str_title_video">VideoSelect</string>
+    <string name="picker_str_title_image">PictureSelect</string>
+    <string name="picker_str_title_right">Complete</string>
+
+    <!--  title of crop activity -->
+    <string name="picker_str_title_crop">PictureCrop</string>
+    <string name="picker_str_title_crop_right">Sure</string>
+
+    <!--  state of multiCrop activity -->
+    <string name="picker_str_redBook_full">Full</string>
+    <string name="picker_str_redBook_gap">Gap</string>
+
+    <!--  bottom of activity -->
+    <string name="picker_str_bottom_preview">Preview</string>
+    <string name="picker_str_bottom_original">Original</string>
+    <string name="picker_str_bottom_choose">Choose</string>
+
+    <!--  folder item text -->
+    <string name="picker_str_folder_item_all">AllMedias</string>
+    <string name="picker_str_folder_item_video">AllVideo</string>
+    <string name="picker_str_folder_item_image">AllPicture</string>
+    <string name="picker_str_folder_image_unit"> </string>
+
+    <!--  camera item text -->
+    <string name="picker_str_item_take_video">TakeVideo</string>
+    <string name="picker_str_item_take_photo">TakePhoto</string>
+
+    <!--  permission -->
+    <string name="picker_str_camera_permission">You have denied the permission to take photos. If you refuse to set this function, it will not work! Do you want to set it up?</string>
+    <string name="picker_str_storage_permission">You have denied the storage permission. If you refuse to set, the function will be unavailable! Do you want to set it up?</string>
+    <string name="picker_str_permission_refuse_setting">I refuse</string>
+    <string name="picker_str_permission_go_setting">OK,I go</string>
+
+    <!--  tip -->
+    <string name="picker_str_tip_mimeTypes_empty">Please select at least one file loading type!</string>
+    <string name="picker_str_tip_singleCrop_error">Clipping is abnormal. The picture has been reset for you. Please try again!</string>
+    <string name="picker_str_tip_shield">This file has been selected or cannot be selected!</string>
+    <string name="picker_str_tip_media_empty">No media files found</string>
+    <string name="picker_str_tip_only_select_image">Only pictures can be selected!</string>
+    <string name="picker_str_tip_only_select_video">Only video can be selected!</string>
+    <string name="picker_str_str_video_over_max_duration">Video duration shall not exceed </string>
+    <string name="picker_str_tip_video_less_min_duration">Video duration shall not be less than </string>
+    <string name="picker_str_tip_cant_preview_video">Preview video not supported！</string>
+    <string name="picker_str_tip_only_select_one_video">Only select one video!</string>
+    <string name="picker_str_tip_action_frequently">Do not operate too fast!</string>
+
+    <!--  time format -->
+    <string name="picker_str_today">Today</string>
+    <string name="picker_str_this_week">This week</string>
+    <string name="picker_str_this_months">This months</string>
+    <string name="picker_str_time_format">yyyy-MM</string>
+    <string name="picker_str_day">Date</string>
+    <string name="picker_str_hour">h</string>
+    <string name="picker_str_minute">min</string>
+    <string name="picker_str_second">s</string>
+    <string name="picker_str_milli">ms</string>
+    <string name="picker_str_preview_empty">preview list isEmpty!</string>
+
+</resources>

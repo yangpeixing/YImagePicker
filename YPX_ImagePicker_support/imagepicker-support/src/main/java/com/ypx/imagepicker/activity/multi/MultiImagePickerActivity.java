@@ -3,10 +3,10 @@ package com.ypx.imagepicker.activity.multi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/21
- * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x
  */
 public class MultiImagePickerActivity extends FragmentActivity {
     public static final String INTENT_KEY_SELECT_CONFIG = "MultiSelectConfig";

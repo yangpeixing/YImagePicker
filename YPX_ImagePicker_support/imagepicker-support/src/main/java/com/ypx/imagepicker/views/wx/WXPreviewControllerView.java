@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +13,8 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
@@ -53,7 +53,7 @@ public class WXPreviewControllerView extends PreviewControllerView {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.picker_wx_preview;
+        return R.layout.picker_wx_preview_bottombar;
     }
 
 
@@ -67,6 +67,9 @@ public class WXPreviewControllerView extends PreviewControllerView {
         mBottomBar.setClickable(true);
         setOriginalCheckBoxDrawable(R.mipmap.picker_wechat_unselect, R.mipmap.picker_wechat_select);
         setSelectCheckBoxDrawable(R.mipmap.picker_wechat_unselect, R.mipmap.picker_wechat_select);
+        mOriginalCheckBox.setText(getContext().getString(R.string.picker_str_bottom_original));
+        mSelectCheckBox.setText(getContext().getString(R.string.picker_str_bottom_choose));
+
     }
 
     @Override
@@ -194,9 +197,7 @@ public class WXPreviewControllerView extends PreviewControllerView {
 
         if (!imageItem.isVideo() && isShowOriginal) {
             mOriginalCheckBox.setVisibility(VISIBLE);
-            if (ImagePicker.isOriginalImage) {
-                mOriginalCheckBox.setChecked(true);
-            }
+            mOriginalCheckBox.setChecked(ImagePicker.isOriginalImage);
         } else {
             mOriginalCheckBox.setVisibility(GONE);
         }

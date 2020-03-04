@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.ypx.imagepicker.widget.TouchRecyclerView
+        android:id="@+id/mRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingStart="1dp"
+        android:paddingEnd="1dp" />
+
+    <RelativeLayout
+        android:id="@+id/topView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/mCropLayout"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:paddingBottom="2dp">
+
+            <LinearLayout
+                android:id="@+id/mInvisibleContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F0F0F0"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="invisible" />
+
+            <FrameLayout
+                android:id="@+id/mCroupContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F0F0F0"
+                android:gravity="center"
+                android:orientation="vertical" />
+
+            <ImageButton
+                android:id="@+id/stateBtn"
+                android:layout_width="27dp"
+                android:layout_height="27dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="15dp"
+                android:background="@null"
+                android:scaleType="fitXY"
+                android:src="@mipmap/picker_icon_fit"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/mTvFullOrGap"
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="15dp"
+                android:background="#50000000"
+                android:drawableStart="@mipmap/picker_icon_haswhite"
+                android:drawablePadding="5dp"
+                android:gravity="center"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="留白"
+                android:textColor="#E0E0E0"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <View
+                android:id="@+id/v_mask"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#80000000"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+
+        <FrameLayout
+            android:id="@+id/titleBarContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/mImageSetMasker"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#a0000000"
+        android:visibility="gone" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mImageSetRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/titleBarContainer2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white" />
+
+    <FrameLayout
+        android:id="@+id/bottomBarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

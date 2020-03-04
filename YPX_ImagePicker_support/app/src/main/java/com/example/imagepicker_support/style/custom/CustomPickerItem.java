@@ -14,7 +14,6 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
-import com.ypx.imagepicker.utils.PConstantsUtil;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.views.base.PickerItemView;
@@ -55,11 +54,12 @@ public class CustomPickerItem extends PickerItemView {
 
     @Override
     public View getCameraView(BaseSelectConfig selectConfig, IPickerPresenter presenter) {
-        View view = LayoutInflater.from(getContext()).inflate(com.ypx.imagepicker.R.layout.picker_grid_item_camera, null);
+        @SuppressLint("InflateParams")
+        View view = LayoutInflater.from(getContext()).inflate(com.ypx.imagepicker.R.layout.picker_item_camera, null);
         TextView mTvvCamera = view.findViewById(com.ypx.imagepicker.R.id.tv_camera);
         mTvvCamera.setText(selectConfig.isOnlyShowVideo() ?
-                PConstantsUtil.getString(getContext(), presenter).picker_str_take_video :
-                PConstantsUtil.getString(getContext(), presenter).picker_str_take_photo);
+                getContext().getString(R.string.picker_str_item_take_video) :
+                getContext().getString(R.string.picker_str_item_take_photo));
         return view;
     }
 

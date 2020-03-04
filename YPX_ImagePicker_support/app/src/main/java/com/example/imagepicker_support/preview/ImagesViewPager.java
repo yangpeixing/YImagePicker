@@ -1,11 +1,9 @@
-package com.example.imagepicker_support;
+package com.example.imagepicker_support.preview;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -14,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
 
 import com.example.imagepicker_support.style.RedBookPresenter;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -117,6 +117,7 @@ public class ImagesViewPager extends RelativeLayout {
             CropImageView imageView = new CropImageView(getContext());
             imageView.setLayoutParams(params);
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            imageView.setTag(entity);
             imageView.enable();
             imageView.setRotateEnable(true);
             imageView.setBounceEnable(true);

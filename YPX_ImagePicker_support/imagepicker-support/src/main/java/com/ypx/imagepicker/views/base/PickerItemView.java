@@ -1,11 +1,11 @@
 package com.ypx.imagepicker.views.base;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;

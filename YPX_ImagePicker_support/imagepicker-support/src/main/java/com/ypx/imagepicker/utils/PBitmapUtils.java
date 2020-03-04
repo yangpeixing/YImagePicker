@@ -1,11 +1,11 @@
 package com.ypx.imagepicker.utils;
 
-import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
@@ -17,12 +17,16 @@ import android.provider.MediaStore;
 import android.view.View;
 
 import com.ypx.imagepicker.ImagePicker;
+import com.ypx.imagepicker.bean.MimeType;
+import com.ypx.imagepicker.bean.UriPathInfo;
 
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
 /**
  * Time: 2019/7/17 14:16
@@ -112,9 +116,7 @@ public class PBitmapUtils {
     public static File getDCIMDirectory() {
         File dcim = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
         if (!dcim.exists()) {
-            if (dcim.mkdir()) {
-                return dcim;
-            }
+            dcim = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         }
         return dcim;
     }
@@ -151,43 +153,22 @@ public class PBitmapUtils {
         }
     }
 
-    /**
-     * androidQ方式保存一张bitmap到DCIM根目录下
-     *
-     * @param context        当前context
-     * @param bitmap         当前要生成的bitmap
-     * @param fileName       图片名称
-     * @param compressFormat 图片格式
-     * @return 此图片的Uri
-     */
-    public static Uri saveBitmapToDICM(Context context,
+    public static Uri saveBitmapToDCIM(Context context,
                                        Bitmap bitmap,
                                        String fileName,
                                        Bitmap.CompressFormat compressFormat) {
-
-        //设置保存参数到ContentValues中
         ContentValues contentValues = new ContentValues();
-        //兼容Android Q和以下版本
-        if (Build.VERSION.SDK_INT >= 29) {
-            //android Q中不再使用DATA字段，而用RELATIVE_PATH代替
-            //RELATIVE_PATH是相对路径不是绝对路径
-            //DCIM是系统文件夹，关于系统文件夹可以到系统自带的文件管理器中查看，不可以写没存在的名字
-            //设置文件名
-            contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
-            contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_DCIM +
-                    File.separator + ImagePicker.DEFAULT_FILE_NAME);
-        } else {
-            File outputFolder = getDCIMDirectory();
-            String suffix = "." + compressFormat.toString().toLowerCase();
-            //设置文件名
-            contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
-            contentValues.put(MediaStore.Images.Media.DATA, outputFolder.getAbsolutePath()
-                    + File.separator + fileName + suffix);
-        }
-        //设置文件类型
+        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
         contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/" + compressFormat.toString());
         contentValues.put(MediaStore.Files.FileColumns.WIDTH, bitmap.getWidth());
         contentValues.put(MediaStore.Files.FileColumns.HEIGHT, bitmap.getHeight());
+        String suffix = "." + compressFormat.toString().toLowerCase();
+        String path = getDCIMDirectory().getAbsolutePath() + File.separator + fileName + suffix;
+        try {
+            contentValues.put(MediaStore.Images.Media.DATA, path);
+        } catch (Exception ignored) {
+
+        }
         //执行insert操作，向系统文件夹中添加文件
         //EXTERNAL_CONTENT_URI代表外部存储器，该值不变
         Uri uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
@@ -211,6 +192,109 @@ public class PBitmapUtils {
         return uri;
     }
 
+    /**
+     * androidQ方式保存一张bitmap到DCIM根目录下
+     *
+     * @param context        当前context
+     * @param sourceFilePath 当前要生成的bitmap
+     * @param fileName       图片名称
+     * @param mimeType       图片格式
+     * @return 此图片的Uri
+     */
+    public static UriPathInfo copyFileToDCIM(Context context, String sourceFilePath,
+                                             String fileName, MimeType mimeType) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
+        contentValues.put(MediaStore.Images.Media.MIME_TYPE, mimeType.toString());
+        if (Build.VERSION.SDK_INT >= 29) {
+            contentValues.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+        }
+        boolean isImage = MimeType.isImage(mimeType.toString());
+        if (isImage) {
+            int[] size = getImageWidthHeight(sourceFilePath);
+            contentValues.put(MediaStore.Files.FileColumns.WIDTH, size[0]);
+            contentValues.put(MediaStore.Files.FileColumns.HEIGHT, size[1]);
+        }else {
+            long duration = PBitmapUtils.getLocalVideoDuration(sourceFilePath);
+            contentValues.put("duration", duration);
+        }
+        String suffix = "." + mimeType.getSuffix();
+        String path = getDCIMDirectory().getAbsolutePath() + File.separator + fileName + suffix;
+        try {
+            contentValues.put(MediaStore.Images.Media.DATA, path);
+        } catch (Exception ignored) {
+
+        }
+        //执行insert操作，向系统文件夹中添加文件
+        //EXTERNAL_CONTENT_URI代表外部存储器，该值不变
+        Uri uri = context.getContentResolver().insert(isImage ? MediaStore.Images.Media.EXTERNAL_CONTENT_URI :
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues);
+        copyFile(context, sourceFilePath, uri);
+        return new UriPathInfo(uri, path);
+    }
+
+    private static boolean copyFile(Context context, String sourceFilePath, final Uri insertUri) {
+        if (insertUri == null) {
+            return false;
+        }
+        ContentResolver resolver = context.getContentResolver();
+        InputStream is = null;//输入流
+        OutputStream os = null;//输出流
+        try {
+            os = resolver.openOutputStream(insertUri);
+            if (os == null) {
+                return false;
+            }
+            File sourceFile = new File(sourceFilePath);
+            if (sourceFile.exists()) { // 文件存在时
+                is = new FileInputStream(sourceFile); // 读入原文件
+                //输入流读取文件，输出流写入指定目录
+                return copyFileWithStream(os, is);
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+                if (os != null) {
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static boolean copyFileWithStream(OutputStream os, InputStream is) {
+        if (os == null || is == null) {
+            return false;
+        }
+        int read = 0;
+        while (true) {
+            try {
+                byte[] buffer = new byte[1444];
+                while ((read = is.read(buffer)) != -1) {
+                    os.write(buffer, 0, read);
+                    os.flush();
+                }
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            } finally {
+                try {
+                    os.close();
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     /**
      * @return view的截图，在InVisible时也可以获取到bitmap
@@ -237,7 +321,7 @@ public class PBitmapUtils {
     /**
      * 获取视频时长
      */
-    public static int getLocalVideoDuration(String videoPath) {
+    public static long getLocalVideoDuration(String videoPath) {
         int duration;
         try {
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
@@ -254,53 +338,69 @@ public class PBitmapUtils {
     /**
      * 刷新相册
      */
-    public static void refreshGalleryAddPic(Context context, String path) {
+    public static void refreshGalleryAddPic(Context context, Uri uri) {
         if (context == null) {
             return;
         }
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(path);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
+        mediaScanIntent.setData(uri);
         context.sendBroadcast(mediaScanIntent);
     }
 
-    public static Intent getTakePhotoIntent(Activity activity, String savePath) {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            Uri imageUri = PickerFileProvider.getUriForFile(activity, new File(savePath));
-            if (Build.VERSION.SDK_INT < 21) {
-                List<ResolveInfo> resInfoList = activity.getPackageManager()
-                        .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-                for (ResolveInfo resolveInfo : resInfoList) {
-                    String packageName = resolveInfo.activityInfo.packageName;
-                    activity.grantUriPermission(packageName, imageUri,
-                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                }
+
+    public static Uri getImageContentUri(Context context, String path) {
+        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                new String[]{MediaStore.Images.Media._ID}, MediaStore.Images.Media.DATA + "=? ",
+                new String[]{path}, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            Uri baseUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            cursor.close();
+            return Uri.withAppendedPath(baseUri, "" + id);
+        } else {
+            if (new File(path).exists()) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DATA, path);
+                return context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            } else {
+                return null;
             }
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
-        return intent;
     }
 
-    public static Intent getTakeVideoIntent(Activity activity, String savePath) {
-        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            Uri imageUri = PickerFileProvider.getUriForFile(activity, new File(savePath));
-            if (Build.VERSION.SDK_INT < 21) {
-                List<ResolveInfo> resInfoList = activity.getPackageManager()
-                        .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-                for (ResolveInfo resolveInfo : resInfoList) {
-                    String packageName = resolveInfo.activityInfo.packageName;
-                    activity.grantUriPermission(packageName, imageUri,
-                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                }
+    public static Uri getVideoContentUri(Context context, String path) {
+        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                new String[]{MediaStore.Images.Media._ID}, MediaStore.Images.Media.DATA + "=? ",
+                new String[]{path}, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            Uri baseUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+            cursor.close();
+            return Uri.withAppendedPath(baseUri, "" + id);
+        } else {
+            if (new File(path).exists()) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Video.Media.DATA, path);
+                return context.getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+            } else {
+                return null;
             }
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
-        return intent;
+    }
+
+    public static Uri getContentUri(String mimeType, long id) {
+        if (id <= 0) {
+            return null;
+        }
+        Uri contentUri;
+        if (MimeType.isImage(mimeType)) {
+            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        } else if (MimeType.isVideo(mimeType)) {
+            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        } else {
+            contentUri = MediaStore.Files.getContentUri("external");
+        }
+        return ContentUris.withAppendedId(contentUri, id);
     }
 
 }

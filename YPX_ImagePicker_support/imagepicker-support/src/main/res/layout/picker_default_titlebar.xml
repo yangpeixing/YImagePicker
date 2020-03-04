@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/top_bar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content">
 
 
     <LinearLayout
@@ -23,7 +23,7 @@
             android:gravity="center_vertical"
             android:maxWidth="165dp"
             android:maxLines="1"
-            android:text="图片预览"
+            tools:text="图片预览"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
 
@@ -58,7 +58,7 @@
             android:gravity="center"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:text="确定"
+            tools:text="确定"
             android:textColor="#ffffff"
             android:textSize="14sp" />
     </FrameLayout>

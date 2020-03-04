@@ -3,6 +3,8 @@ package com.ypx.imagepicker.views.wx;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -15,7 +17,6 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
-import com.ypx.imagepicker.utils.PConstantsUtil;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.views.base.PickerItemView;
 import com.ypx.imagepicker.widget.ShowTypeImageView;
@@ -53,17 +54,19 @@ public class WXItemView extends PickerItemView {
         mVideoLayout = view.findViewById(R.id.mVideoLayout);
 
         mCheckBox.setClickable(false);
-        setCheckBoxDrawable(R.mipmap.picker_wechat_unselect, R.mipmap.picker_wechat_select);
+        Drawable unSelectDrawable = getResources().getDrawable(R.mipmap.picker_wechat_unselect);
+        unSelectDrawable.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        setCheckBoxDrawable(unSelectDrawable, getResources().getDrawable(R.mipmap.picker_wechat_select));
     }
 
     @SuppressLint("InflateParams")
     @Override
     public View getCameraView(BaseSelectConfig selectConfig, IPickerPresenter presenter) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.picker_grid_item_camera, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.picker_item_camera, null);
         TextView mTvvCamera = view.findViewById(R.id.tv_camera);
         mTvvCamera.setText(selectConfig.isOnlyShowVideo() ?
-                PConstantsUtil.getString(getContext(), presenter).picker_str_take_video :
-                PConstantsUtil.getString(getContext(), presenter).picker_str_take_photo);
+                getContext().getString(R.string.picker_str_item_take_video) :
+                getContext().getString(R.string.picker_str_item_take_photo));
         return view;
     }
 
@@ -118,5 +121,9 @@ public class WXItemView extends PickerItemView {
 
     public void setCheckBoxDrawable(int unCheckDrawableID, int checkedDrawableID) {
         PCornerUtils.setCheckBoxDrawable(mCheckBox, checkedDrawableID, unCheckDrawableID);
+    }
+
+    public void setCheckBoxDrawable(Drawable unCheckDrawable, Drawable checkedDrawable) {
+        PCornerUtils.setCheckBoxDrawable(mCheckBox, checkedDrawable, unCheckDrawable);
     }
 }

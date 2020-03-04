@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/mTitleBar"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:orientation="vertical">
+    android:layout_height="50dp">
 
     <ImageView
         android:id="@+id/iv_back"
@@ -21,7 +20,7 @@
         android:gravity="center_vertical"
         android:maxWidth="165dp"
         android:maxLines="1"
-        android:text="图片剪裁"
+        android:text="@string/picker_str_title_crop"
         android:textColor="@android:color/black"
         android:textSize="16sp" />
 
@@ -39,7 +38,7 @@
         android:gravity="center"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:text="确定"
+        android:text="@string/picker_str_title_crop_right"
         android:textColor="#ffffff"
         android:textSize="14sp" />
 </RelativeLayout>

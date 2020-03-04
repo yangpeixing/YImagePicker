@@ -2,9 +2,9 @@ package com.ypx.imagepicker.utils;
 
 import android.app.Activity;
 import android.net.Uri;
+
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
-
 
 import java.io.File;
 
@@ -21,7 +21,8 @@ public class PickerFileProvider extends FileProvider {
         if (android.os.Build.VERSION.SDK_INT < 24) {
             uri = Uri.fromFile(file);
         } else {
-            uri = getUriForFile(context, context.getApplication().getPackageName() + ".picker.fileprovider", file);
+            uri = getUriForFile(context, context.getApplication().getPackageName()
+                    + ".picker.fileprovider", file);
         }
 
         return uri;

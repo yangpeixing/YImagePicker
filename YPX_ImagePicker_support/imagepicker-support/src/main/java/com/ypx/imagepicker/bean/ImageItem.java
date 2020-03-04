@@ -1,10 +1,12 @@
 package com.ypx.imagepicker.bean;
 
-import android.content.ContentUris;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.provider.MediaStore;
+
+import com.ypx.imagepicker.utils.PBitmapUtils;
+import com.ypx.imagepicker.widget.cropimage.Info;
 
 import java.io.Serializable;
 
@@ -35,6 +37,8 @@ public class ImageItem implements Serializable, Parcelable {
     public String durationFormat;
     //是否是视频文件
     private boolean isVideo = false;
+    //是否是原图
+    public boolean isOriginalImage = true;
 
     //视频缩略图地址，默认是null，并没有扫描视频缩略图，这里提供此变量便于使用者自己塞入使用
     private String videoImageUri;
@@ -49,13 +53,38 @@ public class ImageItem implements Serializable, Parcelable {
     // 剪裁后的图片绝对地址（从imageFilterPath 计算出来，已经带了滤镜）
     private String cropUrl;
 
+
     //以下是UI上用到的临时变量
     private boolean isSelect = false;
     private boolean isPress = false;
     private int selectIndex = -1;
     private int cropMode = ImageCropMode.ImageScale_FILL;
 
+    private Info cropRestoreInfo;
+
     public ImageItem() {
+    }
+
+    public static ImageItem withPath(Context context, String path) {
+        ImageItem imageItem = new ImageItem();
+        imageItem.path = path;
+        if (imageItem.isUriPath()) {
+            Uri uri = Uri.parse(path);
+            imageItem.setUriPath(uri.toString());
+            int[] size = PBitmapUtils.getImageWidthHeight(context, uri);
+            imageItem.width = size[0];
+            imageItem.height = size[1];
+        } else {
+            Uri uri = PBitmapUtils.getImageContentUri(context, path);
+            if (uri != null) {
+                imageItem.setUriPath(uri.toString());
+            }
+            int[] size = PBitmapUtils.getImageWidthHeight(path);
+            imageItem.width = size[0];
+            imageItem.height = size[1];
+        }
+        imageItem.setVideo(false);
+        return imageItem;
     }
 
 
@@ -64,19 +93,51 @@ public class ImageItem implements Serializable, Parcelable {
         width = in.readInt();
         height = in.readInt();
         time = in.readLong();
+        duration = in.readLong();
         mimeType = in.readString();
         timeFormat = in.readString();
-        duration = in.readLong();
         durationFormat = in.readString();
+        isVideo = in.readByte() != 0;
         videoImageUri = in.readString();
         imageFilterPath = in.readString();
         path = in.readString();
+        uriPath = in.readString();
         cropUrl = in.readString();
-        isVideo = in.readByte() != 0;
         isSelect = in.readByte() != 0;
         isPress = in.readByte() != 0;
         selectIndex = in.readInt();
         cropMode = in.readInt();
+        cropRestoreInfo = in.readParcelable(Info.class.getClassLoader());
+        isOriginalImage = in.readByte() != 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeInt(width);
+        dest.writeInt(height);
+        dest.writeLong(time);
+        dest.writeLong(duration);
+        dest.writeString(mimeType);
+        dest.writeString(timeFormat);
+        dest.writeString(durationFormat);
+        dest.writeByte((byte) (isVideo ? 1 : 0));
+        dest.writeString(videoImageUri);
+        dest.writeString(imageFilterPath);
+        dest.writeString(path);
+        dest.writeString(uriPath);
+        dest.writeString(cropUrl);
+        dest.writeByte((byte) (isSelect ? 1 : 0));
+        dest.writeByte((byte) (isPress ? 1 : 0));
+        dest.writeInt(selectIndex);
+        dest.writeInt(cropMode);
+        dest.writeParcelable(cropRestoreInfo, flags);
+        dest.writeByte((byte) (isOriginalImage ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<ImageItem> CREATOR = new Creator<ImageItem>() {
@@ -91,11 +152,23 @@ public class ImageItem implements Serializable, Parcelable {
         }
     };
 
+    public Info getCropRestoreInfo() {
+        return cropRestoreInfo;
+    }
+
+    public void setCropRestoreInfo(Info cropRestoreInfo) {
+        this.cropRestoreInfo = cropRestoreInfo;
+    }
+
     public String getVideoImageUri() {
         if (videoImageUri == null || videoImageUri.length() == 0) {
             return path;
         }
         return videoImageUri;
+    }
+
+    public void setVideoImageUri(String videoImageUri) {
+        this.videoImageUri = videoImageUri;
     }
 
     public String getImageFilterPath() {
@@ -107,6 +180,14 @@ public class ImageItem implements Serializable, Parcelable {
 
     public void setImageFilterPath(String imageFilterPath) {
         this.imageFilterPath = imageFilterPath;
+    }
+
+    public boolean isOriginalImage() {
+        return isOriginalImage;
+    }
+
+    public void setOriginalImage(boolean originalImage) {
+        isOriginalImage = originalImage;
     }
 
     public String getLastImageFilterPath() {
@@ -226,17 +307,7 @@ public class ImageItem implements Serializable, Parcelable {
             return Uri.parse(path);
         }
 
-        Uri contentUri;
-        if (MimeType.isImage(mimeType)) {
-            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        } else if (MimeType.isVideo(mimeType)) {
-            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-        } else {
-            contentUri = MediaStore.Files.getContentUri("external");
-        }
-        contentUri = ContentUris.withAppendedId(contentUri, id);
-        uriPath = contentUri.toString();
-        return contentUri;
+        return PBitmapUtils.getContentUri(mimeType, id);
     }
 
 
@@ -281,6 +352,10 @@ public class ImageItem implements Serializable, Parcelable {
         return super.equals(o);
     }
 
+    public void setUriPath(String uriPath) {
+        this.uriPath = uriPath;
+    }
+
     public ImageItem copy() {
         ImageItem newItem = new ImageItem();
         newItem.path = this.path;
@@ -294,32 +369,14 @@ public class ImageItem implements Serializable, Parcelable {
         newItem.id = this.id;
         newItem.isPress = false;
         newItem.isSelect = false;
+        newItem.cropRestoreInfo = cropRestoreInfo;
+        newItem.isOriginalImage = isOriginalImage;
         return newItem;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public boolean isEmpty() {
+        return (path == null || path.length() == 0)
+                && (uriPath == null || uriPath.length() == 0);
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeInt(width);
-        dest.writeInt(height);
-        dest.writeLong(time);
-        dest.writeString(mimeType);
-        dest.writeString(timeFormat);
-        dest.writeLong(duration);
-        dest.writeString(durationFormat);
-        dest.writeString(videoImageUri);
-        dest.writeString(imageFilterPath);
-        dest.writeString(path);
-        dest.writeString(cropUrl);
-        dest.writeByte((byte) (isVideo ? 1 : 0));
-        dest.writeByte((byte) (isSelect ? 1 : 0));
-        dest.writeByte((byte) (isPress ? 1 : 0));
-        dest.writeInt(selectIndex);
-        dest.writeInt(cropMode);
-    }
 }

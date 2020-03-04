@@ -3,17 +3,18 @@ package com.ypx.imagepicker.helper;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.widget.ImageView;
 
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PBitmapUtils;
-import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 public class DetailImageLoadHelper {
 
-    public static void displayDetailImage(final Activity activity, final CropImageView imageView,
+    public static void displayDetailImage(final Activity activity, final ImageView imageView,
                                           final IPickerPresenter presenter, final ImageItem imageItem) {
-        if (imageItem.isLongImage()) {
+        if (imageItem.width == 0 || imageItem.height == 0 ||
+                imageItem.isLongImage()) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -23,6 +24,7 @@ public class DetailImageLoadHelper {
                     } else {
                         bitmap = BitmapFactory.decodeFile(imageItem.path);
                     }
+
                     final Bitmap finalBitmap = bitmap;
                     activity.runOnUiThread(new Runnable() {
                         @Override
@@ -32,6 +34,8 @@ public class DetailImageLoadHelper {
                                     presenter.displayImage(imageView, imageItem, imageView.getWidth(), false);
                                 }
                             } else {
+                                imageItem.width = finalBitmap.getWidth();
+                                imageItem.height = finalBitmap.getHeight();
                                 imageView.setImageBitmap(finalBitmap);
                             }
                         }

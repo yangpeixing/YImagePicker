@@ -1,6 +1,9 @@
 package com.ypx.imagepicker.bean.selectconfig;
 
 import android.graphics.Color;
+import android.util.Size;
+
+import com.ypx.imagepicker.widget.cropimage.Info;
 
 /**
  * Time: 2019/10/27 18:53
@@ -21,8 +24,42 @@ public class CropConfig extends BaseSelectConfig {
 
     private boolean saveInDCIM = false;
 
-    //private String cropSaveFilePath = ImagePicker.cropPicSaveFilePath;
+    private Size outPutSize;
+    private long maxOutPutByte;
+    private boolean isLessOriginalByte;
+    private Info cropRestoreInfo;
 
+    public Size getOutPutSize() {
+        return outPutSize;
+    }
+
+    public void setOutPutSize(Size outPutSize) {
+        this.outPutSize = outPutSize;
+    }
+
+    public long getMaxOutPutByte() {
+        return maxOutPutByte;
+    }
+
+    public void setMaxOutPutByte(long maxOutPutByte) {
+        this.maxOutPutByte = maxOutPutByte;
+    }
+
+    public boolean isLessOriginalByte() {
+        return isLessOriginalByte;
+    }
+
+    public void setLessOriginalByte(boolean lessOriginalByte) {
+        isLessOriginalByte = lessOriginalByte;
+    }
+
+    public Info getCropRestoreInfo() {
+        return cropRestoreInfo;
+    }
+
+    public void setCropRestoreInfo(Info cropRestoreInfo) {
+        this.cropRestoreInfo = cropRestoreInfo;
+    }
 
     public boolean isSaveInDCIM() {
         return saveInDCIM;
@@ -65,14 +102,6 @@ public class CropConfig extends BaseSelectConfig {
         this.cropRectMargin = cropRectMargin;
     }
 
-//    public String getCropSaveFilePath() {
-//        return cropSaveFilePath;
-//    }
-//
-//    public void setCropSaveFilePath(String cropSaveFilePath) {
-//        this.cropSaveFilePath = cropSaveFilePath;
-//    }
-
     public int getCropRatioX() {
         if (isCircle) {
             return 1;
@@ -98,5 +127,19 @@ public class CropConfig extends BaseSelectConfig {
 
     public boolean isNeedPng() {
         return isCircle || getCropGapBackgroundColor() == Color.TRANSPARENT;
+    }
+
+    public CropConfigParcelable getCropInfo() {
+        CropConfigParcelable parcelable = new CropConfigParcelable();
+        parcelable.setCircle(isCircle);
+        parcelable.setCropGapBackgroundColor(getCropGapBackgroundColor());
+        parcelable.setCropRatio(getCropRatioX(), getCropRatioY());
+        parcelable.setCropRectMargin(getCropRectMargin());
+        parcelable.setCropRestoreInfo(getCropRestoreInfo());
+        parcelable.setCropStyle(getCropStyle());
+        parcelable.setLessOriginalByte(isLessOriginalByte());
+        parcelable.setMaxOutPutByte(getMaxOutPutByte());
+        parcelable.saveInDCIM(isSaveInDCIM());
+        return parcelable;
     }
 }

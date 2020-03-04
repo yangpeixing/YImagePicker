@@ -3,10 +3,10 @@ package com.ypx.imagepicker.helper.launcher;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-
 
 /**
  * Activity跳转封装类，把OnActivityResult方式改为Callback方式

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/titleBar"
     android:layout_width="match_parent"
-    android:layout_height="55dp"
-    android:orientation="horizontal">
+    android:layout_height="55dp">
 
     <ImageView
         android:id="@+id/mBackImg"
@@ -28,9 +28,9 @@
             android:gravity="center"
             android:maxWidth="150dp"
             android:maxLines="1"
-            android:text="所有文件"
             android:textColor="#1A1A1A"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            tools:text="@string/picker_str_title_all" />
 
         <ImageView
             android:id="@+id/mArrowImg"
@@ -52,9 +52,9 @@
         android:paddingTop="4dp"
         android:paddingEnd="10dp"
         android:paddingBottom="4dp"
-        android:text="下一步"
         android:textColor="#859D7B"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        tools:text="@string/picker_str_redbook_title_right" />
 
     <TextView
         android:id="@+id/mTvSelectNum"

@@ -31,7 +31,7 @@ public class WXFolderItemView extends PickerFolderItemView {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.picker_list_item_folder;
+        return R.layout.picker_folder_item;
     }
 
     @Override
@@ -42,6 +42,7 @@ public class WXFolderItemView extends PickerFolderItemView {
         mIndicator = view.findViewById(R.id.indicator);
         mDivider= view.findViewById(R.id.mDivider);
         setBackground(getResources().getDrawable(R.drawable.picker_selector_list_item_bg));
+        mIndicator.setColorFilter(getThemeColor());
     }
 
     @Override
@@ -51,6 +52,7 @@ public class WXFolderItemView extends PickerFolderItemView {
 
     @Override
     public void displayCoverImage(String coverUrl, IPickerPresenter presenter) {
+        mIndicator.setColorFilter(getThemeColor());
         ImageItem imageItem = new ImageItem();
         imageItem.path = coverUrl;
         presenter.displayImage(mCover, imageItem, mCover.getMeasuredWidth(), true);
@@ -60,7 +62,8 @@ public class WXFolderItemView extends PickerFolderItemView {
     @Override
     public void loadItem(ImageSet imageSet) {
         mName.setText(imageSet.name);
-        mSize.setText(String.format("%d%s", imageSet.count, getResources().getString(R.string.picker_str_piece)));
+        mSize.setText(String.format("%d%s", imageSet.count,
+                getContext().getString(R.string.picker_str_folder_image_unit)));
         if (imageSet.isSelected) {
             mIndicator.setVisibility(View.VISIBLE);
         } else {

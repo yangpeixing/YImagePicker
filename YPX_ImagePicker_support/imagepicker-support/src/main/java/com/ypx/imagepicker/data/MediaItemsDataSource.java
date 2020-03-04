@@ -2,8 +2,10 @@ package com.ypx.imagepicker.data;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -111,7 +113,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                         //androidQ上废弃了DATA绝对路径，需要手动拼凑Uri，这里为了兼容大部分项目还没有适配androidQ的情况
                         //默认path还是先取绝对路径，取不到或者异常才去取Uri路径
                         /*if (MediaStoreConstants.isBeforeAndroidQ()) {
-                            item.path = getString(cursor, MediaStore.Files.FileColumns.DATA);
+                            item.path = getConstants(cursor, MediaStore.Files.FileColumns.DATA);
                         } else {
                             item.path = getUri(item.id, item.mimeType).toString();
                         }*/
@@ -121,14 +123,20 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
 
                         }
 
-                        if (item.path == null || item.path.length() == 0) {
-                            item.path = item.getUri().toString();
+                        Uri urlPath = item.getUri();
+                        if (urlPath != null) {
+                            item.setUriPath(urlPath.toString());
                         }
+
+                        if (item.path == null || item.path.length() == 0) {
+                            item.path = urlPath.toString();
+                        }
+
                         item.width = getInt(cursor, MediaStore.Files.FileColumns.WIDTH);
                         item.height = getInt(cursor, MediaStore.Files.FileColumns.HEIGHT);
                         item.setVideo(MimeType.isVideo(item.mimeType));
                         item.time = getLong(cursor, MediaStore.Files.FileColumns.DATE_MODIFIED);
-                        item.timeFormat = PDateUtil.getStrTime(item.time);
+                        item.timeFormat = PDateUtil.getStrTime(context, item.time);
                     } catch (Exception e) {
                         continue;
                     }
@@ -154,17 +162,16 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                     //图片
                     else {
                         //如果媒体信息中不包含图片的宽高，则手动获取文件宽高
-//                        if (item.width == 0 || item.height == 0) {
-//                            if (!item.isUriPath()) {
-//                                int[] size = PBitmapUtils.getImageWidthHeight(item.path);
-//                                item.width = size[0];
-//                                item.height = size[1];
-//                            }
-//                        }
+                        if (item.width == 0 || item.height == 0) {
+                            if (!item.isUriPath()) {
+                                int[] size = PBitmapUtils.getImageWidthHeight(item.path);
+                                item.width = size[0];
+                                item.height = size[1];
+                            }
+                        }
                     }
-                    //添加到文件列表中国呢
+                    //添加到文件列表中
                     imageItems.add(item);
-                    set.imageItems = new ArrayList<>(imageItems);
                     //回调预加载数据源
                     if (preloadProvider != null && imageItems.size() == preloadSize) {
                         notifyPreloadItem(context, imageItems);
@@ -180,10 +187,8 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                 allVideoSet.cover = allVideoItems.get(0);
                 allVideoSet.count = allVideoItems.size();
                 allVideoSet.imageItems = allVideoItems;
-                allVideoSet.name = context.getResources().getString(R.string.picker_str_all_video);
+                allVideoSet.name = context.getString(R.string.picker_str_folder_item_video);
             }
-
-            set.imageItems = new ArrayList<>(imageItems);
             //回调所有数据
             notifyMediaItem(context, imageItems, allVideoSet);
         }
@@ -202,10 +207,8 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                 if (context.isDestroyed()) {
                     return;
                 }
-                if (preloadProvider != null) {
-                    preloadProvider.providerMediaItems(set);
-                    preloadProvider = null;
-                }
+                preloadProvider.providerMediaItems(imageItems);
+                preloadProvider = null;
             }
         });
     }
@@ -226,7 +229,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                     return;
                 }
                 if (mediaItemProvider != null) {
-                    mediaItemProvider.providerMediaItems(set, allVideoSet);
+                    mediaItemProvider.providerMediaItems(imageItems, allVideoSet);
                 }
 
                 if (mLoaderManager != null) {
@@ -242,7 +245,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
     }
 
     public interface MediaItemProvider {
-        void providerMediaItems(ImageSet imageSet, ImageSet allVideoSet);
+        void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet);
     }
 
     private MediaItemPreloadProvider preloadProvider;
@@ -252,7 +255,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
     }
 
     public interface MediaItemPreloadProvider {
-        void providerMediaItems(ImageSet imageSet);
+        void providerMediaItems(ArrayList<ImageItem> imageItems);
     }
 
     private long getLong(Cursor data, String text) {

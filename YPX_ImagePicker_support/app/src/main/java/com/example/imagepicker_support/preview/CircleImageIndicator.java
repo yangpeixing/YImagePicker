@@ -1,16 +1,16 @@
-package com.example.imagepicker_support;
+package com.example.imagepicker_support.preview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
 
 import java.util.ArrayList;
 import java.util.List;

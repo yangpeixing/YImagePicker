@@ -4,14 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -28,7 +28,7 @@ import java.io.File;
  * Description:单图预览
  */
 public class SinglePreviewFragment extends Fragment {
-    public static final String KEY_URL = "key_url";
+    static final String KEY_URL = "key_url";
     private RelativeLayout layout;
 
     @Override
@@ -44,8 +44,9 @@ public class SinglePreviewFragment extends Fragment {
         }
         layout = new RelativeLayout(getContext());
         final CropImageView imageView = new CropImageView(getActivity());
-        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         // 启用图片缩放功能
+        imageView.setBounceEnable(true);
         imageView.enable();
         imageView.setShowImageRectLine(false);
         imageView.setCanShowTouchLine(false);
@@ -89,11 +90,6 @@ public class SinglePreviewFragment extends Fragment {
 
         DetailImageLoadHelper.displayDetailImage(getActivity(), imageView,
                 ((MultiImagePreviewActivity) getActivity()).getPresenter(), imageItem);
-    }
-
-    private void disPlayImage(ImageView imageView, ImageItem imageItem) {
-        ((MultiImagePreviewActivity) getActivity()).getPresenter()
-                .displayImage(imageView, imageItem, imageView.getWidth(), false);
     }
 
     @Override

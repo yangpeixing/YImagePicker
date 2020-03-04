@@ -1,25 +1,10 @@
-/*
- * Copyright (C) 2014 nohana, Inc.
- * Copyright 2017 Zhihu Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.ypx.imagepicker.bean;
 
 
 
 import android.support.v4.util.ArraySet;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
@@ -57,8 +42,7 @@ public enum MimeType {
             "mpg"
     )),
     MP4("video/mp4", arraySetOf(
-            "mp4",
-            "m4v"
+            "mp4"
     )),
     QUICKTIME("video/quicktime", arraySetOf(
             "mov"
@@ -90,6 +74,14 @@ public enum MimeType {
     MimeType(String mimeTypeName, Set<String> extensions) {
         mMimeTypeName = mimeTypeName;
         mExtensions = extensions;
+    }
+
+    public Set<String> getExtensions() {
+        return mExtensions;
+    }
+
+    public String getSuffix() {
+        return new ArrayList<>(mExtensions).get(0);
     }
 
     public static Set<MimeType> ofAll() {

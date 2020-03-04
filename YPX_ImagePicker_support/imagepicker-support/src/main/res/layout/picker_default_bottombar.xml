@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_alignParentBottom="true"
     android:clickable="true"
     android:focusable="true">
@@ -34,7 +35,7 @@
         android:gravity="center"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
-        android:text="预览"
+        tools:text="预览"
         android:textColor="@android:color/white"
         android:textSize="16sp" />
 
@@ -53,7 +54,7 @@
             android:button="@null"
             android:drawablePadding="5dp"
             android:gravity="center"
-            android:text="原图"
+            tools:text="原图"
             android:textColor="@color/white_F5" />
 
     </FrameLayout>

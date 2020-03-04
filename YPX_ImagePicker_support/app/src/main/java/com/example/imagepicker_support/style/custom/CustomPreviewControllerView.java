@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -14,8 +12,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
-import com.example.imagepicker_support.R;
 import com.ypx.imagepicker.adapter.MultiPreviewAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
@@ -25,6 +24,7 @@ import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.views.base.PreviewControllerView;
+import com.example.imagepicker_support.R;
 
 import java.util.ArrayList;
 

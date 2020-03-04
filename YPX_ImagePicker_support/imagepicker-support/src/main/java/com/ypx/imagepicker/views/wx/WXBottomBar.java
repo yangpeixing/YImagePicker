@@ -3,6 +3,7 @@ package com.ypx.imagepicker.views.wx;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -29,6 +30,7 @@ public class WXBottomBar extends PickerControllerView {
     private Button mDirButton;
     private TextView mPreview;
     private CheckBox mCheckBox;
+    private String previewText;
 
     public WXBottomBar(Context context) {
         super(context);
@@ -57,6 +59,9 @@ public class WXBottomBar extends PickerControllerView {
                 ImagePicker.isOriginalImage = isChecked;
             }
         });
+        previewText = getContext().getString(R.string.picker_str_bottom_preview);
+        mPreview.setText(previewText);
+        mCheckBox.setText(getContext().getString(R.string.picker_str_bottom_original));
     }
 
 
@@ -98,9 +103,7 @@ public class WXBottomBar extends PickerControllerView {
             MultiSelectConfig selectConfig1 = (MultiSelectConfig) selectConfig;
             if (selectConfig1.isShowOriginalCheckBox()) {
                 mCheckBox.setVisibility(View.VISIBLE);
-                if (ImagePicker.isOriginalImage) {
-                    mCheckBox.setChecked(true);
-                }
+                mCheckBox.setChecked(ImagePicker.isOriginalImage);
             } else {
                 mCheckBox.setVisibility(View.GONE);
             }
@@ -111,10 +114,10 @@ public class WXBottomBar extends PickerControllerView {
         }
 
         if (selectedList.size() > 0) {
-            mPreview.setText(String.format("%s(%d)", getResources().getString(R.string.picker_str_preview), selectedList.size()));
+            mPreview.setText(String.format("%s(%d)", previewText, selectedList.size()));
             mPreview.setTextColor(getResources().getColor(R.color.white_F5));
         } else {
-            mPreview.setText(String.format("%s", getResources().getString(R.string.picker_str_preview)));
+            mPreview.setText(String.format("%s", previewText));
             mPreview.setTextColor(Color.parseColor("#50FFFFFF"));
         }
     }
@@ -122,6 +125,10 @@ public class WXBottomBar extends PickerControllerView {
 
     public void setCheckBoxDrawable(int unCheckDrawableID, int checkedDrawableID) {
         PCornerUtils.setCheckBoxDrawable(mCheckBox, checkedDrawableID, unCheckDrawableID);
+    }
+
+    public void setCheckBoxDrawable(Drawable unCheckDrawable, Drawable checkedDrawable) {
+        PCornerUtils.setCheckBoxDrawable(mCheckBox, checkedDrawable, unCheckDrawable);
     }
 
     public void setBottomBarColor(int bottomBarColor) {

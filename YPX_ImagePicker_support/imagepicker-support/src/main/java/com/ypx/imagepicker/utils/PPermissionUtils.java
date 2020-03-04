@@ -2,7 +2,6 @@ package com.ypx.imagepicker.utils;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,12 +10,13 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 
 import com.ypx.imagepicker.BuildConfig;
 import com.ypx.imagepicker.ImagePicker;
-
+import com.ypx.imagepicker.R;
 
 /**
  * Description: 权限工具类
@@ -59,17 +59,17 @@ public class PPermissionUtils {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(msg);
         builder.setCancelable(false);
-        builder.setNegativeButton("拒绝设置",
+        builder.setNegativeButton(context.getString(R.string.picker_str_permission_refuse_setting),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
-                        if (msg.contains("存储")) {
+                        if (msg.equals(context.getString(R.string.picker_str_storage_permission))) {
                             ((Activity) context).finish();
                         }
                     }
                 });
-        builder.setPositiveButton("前去设置",
+        builder.setPositiveButton(context.getString(R.string.picker_str_permission_go_setting),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

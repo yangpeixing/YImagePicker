@@ -4,16 +4,16 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
@@ -42,7 +42,7 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * <p>
  * Author: peixing.yang
  * Date: 2019/2/21
- * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker使用文档
+ * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x
  */
 public class MultiImagePreviewActivity extends FragmentActivity {
     static ImageSet currentImageSet;
@@ -126,7 +126,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
             finish();
         } else {
             PickerActivityManager.addActivity(this);
-            setContentView(R.layout.picker_activity_image_pre);
+            setContentView(R.layout.picker_activity_preview);
             setUI();
             loadMediaPreviewList();
         }
@@ -187,11 +187,11 @@ public class MultiImagePreviewActivity extends FragmentActivity {
                 ImagePicker.provideMediaItemsFromSet(this, currentImageSet, selectConfig.getMimeTypes(),
                         new MediaItemsDataSource.MediaItemProvider() {
                             @Override
-                            public void providerMediaItems(ImageSet imageSet, ImageSet allVideoSet) {
+                            public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
                                 if (dialogInterface != null) {
                                     dialogInterface.dismiss();
                                 }
-                                mImageList = filterVideo(imageSet.imageItems);
+                                mImageList = filterVideo(imageItems);
                                 initViewPager();
                             }
                         });
@@ -235,6 +235,14 @@ public class MultiImagePreviewActivity extends FragmentActivity {
      * 初始化viewpager
      */
     private void initViewPager() {
+        if (mImageList == null || mImageList.size() == 0) {
+            getPresenter().tip(this, getString(R.string.picker_str_preview_empty));
+            finish();
+            return;
+        }
+        if (mCurrentItemPosition < 0) {
+            mCurrentItemPosition = 0;
+        }
         TouchImageAdapter mAdapter = new TouchImageAdapter(this.getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
         mViewPager.setOffscreenPageLimit(1);
