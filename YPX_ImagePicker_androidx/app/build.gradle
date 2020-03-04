@@ -39,6 +39,6 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-3'
     implementation 'androidx.cardview:cardview:1.0.0'
 
-    //implementation 'com.ypx.yimagepicker:androidx:3.1'
+    //implementation 'com.ypx.yimagepicker:androidx:3.1.1'
     implementation project(path: ':imagepicker')
 }

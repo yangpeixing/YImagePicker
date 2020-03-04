@@ -1,11 +1,9 @@
 package com.ypx.imagepicker.bean;
 
-import android.content.ContentUris;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 
 
 import com.ypx.imagepicker.utils.PBitmapUtils;
@@ -168,6 +166,10 @@ public class ImageItem implements Serializable, Parcelable {
             return path;
         }
         return videoImageUri;
+    }
+
+    public void setVideoImageUri(String videoImageUri) {
+        this.videoImageUri = videoImageUri;
     }
 
     public String getImageFilterPath() {

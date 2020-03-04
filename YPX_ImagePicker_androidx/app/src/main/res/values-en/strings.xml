@@ -52,7 +52,7 @@
     <string name="picker_str_today">Today</string>
     <string name="picker_str_this_week">This week</string>
     <string name="picker_str_this_months">This months</string>
-    <string name="picker_str_time_format">yyyy-mm</string>
+    <string name="picker_str_time_format">yyyy-MM</string>
     <string name="picker_str_day">Date</string>
     <string name="picker_str_hour">h</string>
     <string name="picker_str_minute">min</string>
