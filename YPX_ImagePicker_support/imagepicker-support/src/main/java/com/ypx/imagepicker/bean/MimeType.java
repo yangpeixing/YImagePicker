@@ -124,4 +124,22 @@ public enum MimeType {
         return mMimeTypeName;
     }
 
+    public static ArrayList<String> getMimeTypeList(Set<MimeType> mimeTypes) {
+        if (mimeTypes == null) {
+            return new ArrayList<>();
+        }
+        ArrayList<String> mimeList = new ArrayList<>();
+        for (MimeType mimeType : mimeTypes) {
+            if (mimeType.mExtensions != null) {
+                for (String s : mimeType.mExtensions) {
+                    if (MimeType.isImage(String.valueOf(mimeType))) {
+                        mimeList.add("image/" + s);
+                    } else if (MimeType.isVideo(String.valueOf(mimeType))) {
+                        mimeList.add("video/" + s);
+                    }
+                }
+            }
+        }
+        return mimeList;
+    }
 }
