@@ -15,6 +15,7 @@ import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,12 +55,12 @@ public class MediaSetsLoader extends CursorLoader {
     }
 
     public static CursorLoader create(Context context, Set<MimeType> mimeTypeSet, boolean isLoadVideo, boolean isLoadImage) {
-        String[] selectionArgs = new String[mimeTypeSet.size()];
-
         int index = 0;
         String mimeSelection = "";
-        for (MimeType type : mimeTypeSet) {
-            selectionArgs[index] = String.valueOf(type);
+        ArrayList<String> arrayList = MimeType.getMimeTypeList(mimeTypeSet);
+        String[] selectionArgs = new String[arrayList.size()];
+        for (String mimeType : arrayList) {
+            selectionArgs[index] = mimeType;
             mimeSelection = String.format("%s =? OR %s", MIME_TYPE, mimeSelection);
             index++;
         }

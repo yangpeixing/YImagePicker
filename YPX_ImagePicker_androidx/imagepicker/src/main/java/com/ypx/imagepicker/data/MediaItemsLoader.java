@@ -11,6 +11,7 @@ import androidx.loader.content.CursorLoader;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 
@@ -39,17 +40,18 @@ public class MediaItemsLoader extends CursorLoader {
         String albumSelections = "";
         String mimeSelections = "";
         int index = 0;
+        ArrayList<String> arrayList = MimeType.getMimeTypeList(mimeTypeSet);
         if (album.isAllMedia() || album.isAllVideo()) {
-            selectionsArgs = new String[mimeTypeSet.size()];
+            selectionsArgs = new String[arrayList.size()];
         } else {
-            selectionsArgs = new String[mimeTypeSet.size() + 1];
+            selectionsArgs = new String[arrayList.size() + 1];
             selectionsArgs[0] = album.id;
             index = 1;
             albumSelections = " bucket_id=? AND ";
         }
 
-        for (MimeType type : mimeTypeSet) {
-            selectionsArgs[index] = String.valueOf(type);
+        for (String mimeType : arrayList) {
+            selectionsArgs[index] = mimeType;
             mimeSelections = String.format("%s =? OR %s", MediaStore.Files.FileColumns.MIME_TYPE, mimeSelections);
             index++;
         }

@@ -6,6 +6,7 @@ import androidx.collection.ArraySet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,7 +30,7 @@ public enum MimeType {
             "gif"
     )),
     BMP("image/x-ms-bmp", arraySetOf(
-            "bmp"
+            "bmp", "x-ms-bmp"
     )),
     WEBP("image/webp", arraySetOf(
             "webp"
@@ -61,7 +62,7 @@ public enum MimeType {
             "webm"
     )),
     TS("video/mp2ts", arraySetOf(
-            "ts"
+            "ts","mp2ts"
     )),
     AVI("video/avi", arraySetOf(
             "avi"
@@ -123,4 +124,22 @@ public enum MimeType {
         return mMimeTypeName;
     }
 
+    public static ArrayList<String> getMimeTypeList(Set<MimeType> mimeTypes) {
+        if (mimeTypes == null) {
+            return new ArrayList<>();
+        }
+        ArrayList<String> mimeList = new ArrayList<>();
+        for (MimeType mimeType : mimeTypes) {
+            if (mimeType.mExtensions != null) {
+                for (String s : mimeType.mExtensions) {
+                    if (MimeType.isImage(String.valueOf(mimeType))) {
+                        mimeList.add("image/" + s);
+                    } else if (MimeType.isVideo(String.valueOf(mimeType))) {
+                        mimeList.add("video/" + s);
+                    }
+                }
+            }
+        }
+        return mimeList;
+    }
 }

@@ -1,14 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion = '29.0.2'
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.ypx.imagepickerdemo"
         minSdkVersion 19
-        targetSdkVersion 29
-        versionCode 14
-        versionName "3.1"
+        targetSdkVersion 28
+        versionCode 15
+        versionName "3.1.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
