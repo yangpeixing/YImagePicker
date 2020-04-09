@@ -5,19 +5,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ypx.imagepicker.adapter.MultiPreviewAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
+import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
 import com.ypx.imagepicker.helper.recyclerviewitemhelper.SimpleItemTouchHelperCallback;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PCornerUtils;
@@ -67,6 +71,19 @@ public class CustomPreviewControllerView extends PreviewControllerView {
         mPreviewRecyclerView = view.findViewById(R.id.mPreviewRecyclerView);
     }
 
+    @Override
+    public View getItemView(Fragment fragment, ImageItem imageItem, IPickerPresenter presenter) {
+        if (imageItem.isVideo()) {
+            TextView view = new TextView(fragment.getContext());
+            view.setText("这是视频");
+            view.setTextColor(Color.WHITE);
+            view.setGravity(Gravity.CENTER);
+            view.setBackgroundColor(Color.RED);
+            return view;
+        }
+        return super.getItemView(fragment, imageItem, presenter);
+    }
+
     /**
      * 设置状态栏
      */
@@ -111,6 +128,16 @@ public class CustomPreviewControllerView extends PreviewControllerView {
                     selectedList.remove(currentImageItem);
                 } else {
                     if (selectedList.size() >= selectConfig.getMaxCount()) {
+                        if (selectConfig instanceof MultiSelectConfig) {
+                            boolean isSinglePick = ((MultiSelectConfig) selectConfig).getSelectMode() == SelectMode.MODE_SINGLE;
+                            if (isSinglePick) {
+                                selectedList.clear();
+                                selectedList.add(currentImageItem);
+                                refreshNextBtn();
+                                notifyPreviewList();
+                                return;
+                            }
+                        }
                         presenter.overMaxCountTip(getContext(), selectConfig.getMaxCount());
                         return;
                     } else {
@@ -210,10 +237,12 @@ public class CustomPreviewControllerView extends PreviewControllerView {
         if (selectedList == null || selectedList.size() == 0) {
             mTvNext.setText("下一步");
             mTvNext.setTextColor(Color.parseColor("#999999"));
+            mTvNext.setEnabled(false);
         } else {
             String text = String.format("%s(%d/%d)", "下一步", selectedList.size(), selectConfig.getMaxCount());
             mTvNext.setText(text);
-            mTvNext.setTextColor(Color.parseColor("#859D7B"));
+            mTvNext.setTextColor(getThemeColor());
+            mTvNext.setEnabled(true);
         }
     }
 }

@@ -28,6 +28,15 @@ public class CropConfig extends BaseSelectConfig {
     private long maxOutPutByte;
     private boolean isLessOriginalByte;
     private Info cropRestoreInfo;
+    private boolean isSingleCropCutNeedTop = false;
+
+    public boolean isSingleCropCutNeedTop() {
+        return isSingleCropCutNeedTop;
+    }
+
+    public void setSingleCropCutNeedTop(boolean singleCropCutNeedTop) {
+        isSingleCropCutNeedTop = singleCropCutNeedTop;
+    }
 
     public Size getOutPutSize() {
         return outPutSize;

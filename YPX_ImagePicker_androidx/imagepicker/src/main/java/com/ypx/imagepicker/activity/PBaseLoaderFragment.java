@@ -508,28 +508,6 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
         return !flag;
     }
 
-    protected void traverse(View root) {
-        if (root instanceof ViewGroup) {
-            ViewGroup parent = (ViewGroup) root;
-            final int childCount = parent.getChildCount();
-            for (int i = 0; i < childCount; ++i) {
-                final View child = parent.getChildAt(i);
-                if (child instanceof ViewGroup) {
-                    child.setBackground(null);
-                    traverse(child);
-                } else {
-                    if (child != null) {
-                        child.setBackground(null);
-                    }
-                    if (child instanceof ImageView) {
-                        ((ImageView) child).setImageDrawable(null);
-                    }
-                }
-            }
-            parent.removeAllViews();
-        }
-    }
-
     /**
      * 设置是否显示状态栏
      */

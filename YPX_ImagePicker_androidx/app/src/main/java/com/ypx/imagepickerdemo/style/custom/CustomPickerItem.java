@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -54,13 +55,18 @@ public class CustomPickerItem extends PickerItemView {
 
     @Override
     public View getCameraView(BaseSelectConfig selectConfig, IPickerPresenter presenter) {
-        @SuppressLint("InflateParams")
-        View view = LayoutInflater.from(getContext()).inflate(com.ypx.imagepicker.R.layout.picker_item_camera, null);
-        TextView mTvvCamera = view.findViewById(com.ypx.imagepicker.R.id.tv_camera);
-        mTvvCamera.setText(selectConfig.isOnlyShowVideo() ?
-                getContext().getString(R.string.picker_str_item_take_video) :
-                getContext().getString(R.string.picker_str_item_take_photo));
-        return view;
+        TextView textView = new TextView(getContext());
+        textView.setText("一句成图");
+        textView.setBackgroundColor(Color.WHITE);
+        textView.setGravity(Gravity.CENTER);
+        textView.setTextColor(getThemeColor());
+//        @SuppressLint("InflateParams")
+//        View view = LayoutInflater.from(getContext()).inflate(com.ypx.imagepicker.R.layout.picker_item_camera, null);
+//        TextView mTvvCamera = view.findViewById(com.ypx.imagepicker.R.id.tv_camera);
+//        mTvvCamera.setText(selectConfig.isOnlyShowVideo() ?
+//                getContext().getString(R.string.picker_str_item_take_video) :
+//                getContext().getString(R.string.picker_str_item_take_photo));
+        return textView;
     }
 
     @Override
@@ -114,7 +120,7 @@ public class CustomPickerItem extends PickerItemView {
 
             if (indexOfSelectedList >= 0) {
                 mTvIndex.setText(String.format("%d", indexOfSelectedList + 1));
-                mTvIndex.setBackground(PCornerUtils.cornerDrawableAndStroke(Color.parseColor("#859D7B"), dp(12), dp(1), Color.WHITE));
+                mTvIndex.setBackground(PCornerUtils.cornerDrawableAndStroke(getThemeColor(), dp(12), dp(1), Color.WHITE));
             } else {
                 mTvIndex.setBackground(getResources().getDrawable(com.ypx.imagepicker.R.mipmap.picker_icon_unselect));
                 mTvIndex.setText("");
@@ -123,7 +129,7 @@ public class CustomPickerItem extends PickerItemView {
 
         if (imageItem.isPress()) {
             mVMask.setVisibility(View.VISIBLE);
-            int themeColor = Color.RED;
+            int themeColor = getThemeColor();
             int halfColor = Color.argb(100, Color.red(themeColor), Color.green(themeColor), Color.blue(themeColor));
             Drawable maskDrawable = PCornerUtils.cornerDrawableAndStroke(halfColor, 0, dp(2), themeColor);
             mVMask.setBackground(maskDrawable);

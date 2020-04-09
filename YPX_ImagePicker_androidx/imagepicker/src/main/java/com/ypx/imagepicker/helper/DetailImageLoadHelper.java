@@ -1,52 +1,24 @@
 package com.ypx.imagepicker.helper;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
+import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
-import com.ypx.imagepicker.utils.PBitmapUtils;
-import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 public class DetailImageLoadHelper {
 
-    public static void displayDetailImage(final Activity activity, final ImageView imageView,
+    public static void displayDetailImage(boolean isCrop, final ImageView imageView,
                                           final IPickerPresenter presenter, final ImageItem imageItem) {
-        if (imageItem.width == 0 || imageItem.height == 0 ||
-                imageItem.isLongImage()) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Bitmap bitmap = null;
-                    if (imageItem.isUriPath()) {
-                        bitmap = PBitmapUtils.getBitmapFromUri(activity, imageItem.getUri());
-                    } else {
-                        bitmap = BitmapFactory.decodeFile(imageItem.path);
-                    }
-
-                    final Bitmap finalBitmap = bitmap;
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (finalBitmap == null) {
-                                if (presenter != null) {
-                                    presenter.displayImage(imageView, imageItem, imageView.getWidth(), false);
-                                }
-                            } else {
-                                imageItem.width = finalBitmap.getWidth();
-                                imageItem.height = finalBitmap.getHeight();
-                                imageView.setImageBitmap(finalBitmap);
-                            }
-                        }
-                    });
-                }
-            }).start();
-        } else {
-            if (presenter != null) {
+        if (presenter != null) {
+            //剪裁不压缩，大图预览尺寸超过2K的图片需要压缩，不能使用ARGB-8888加载，滑动会卡顿，并且浪费内存，
+            // 其实最好的做法是分段加载，但是cropImageView在支持剪裁的基础上不能支持分段加载
+            if (isCrop || ImagePicker.isPreviewWithHighQuality()) {
                 presenter.displayImage(imageView, imageItem, imageView.getWidth(), false);
+            } else {
+                presenter.displayImage(imageView, imageItem, imageView.getWidth(), imageItem.isOver2KImage());
             }
+
         }
     }
 }

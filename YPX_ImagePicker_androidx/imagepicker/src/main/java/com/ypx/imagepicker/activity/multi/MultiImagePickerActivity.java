@@ -98,14 +98,12 @@ public class MultiImagePickerActivity extends FragmentActivity {
                     @Override
                     public void onPickFailed(PickerError error) {
                         PickerErrorExecutor.executeError(MultiImagePickerActivity.this, error.getCode());
+                        PickerActivityManager.clear();
                     }
 
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {
-                        Intent intent = new Intent();
-                        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, items);
-                        setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
-                        finish();
+                        ImagePicker.closePickerWithCallback(items);
                     }
                 });
         getSupportFragmentManager()
@@ -120,12 +118,5 @@ public class MultiImagePickerActivity extends FragmentActivity {
             return;
         }
         super.onBackPressed();
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        PickerActivityManager.clear();
     }
 }

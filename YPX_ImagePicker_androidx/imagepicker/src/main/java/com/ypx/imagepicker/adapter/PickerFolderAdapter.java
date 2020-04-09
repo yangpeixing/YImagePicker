@@ -55,7 +55,7 @@ public class PickerFolderAdapter extends RecyclerView.Adapter<PickerFolderAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         ImageSet imageSet = getItem(position);
         PickerFolderItemView pickerFolderItemView = holder.pickerFolderItemView;
-        pickerFolderItemView.displayCoverImage(imageSet.coverPath, presenter);
+        pickerFolderItemView.displayCoverImage(imageSet, presenter);
         pickerFolderItemView.loadItem(imageSet);
         pickerFolderItemView.setOnClickListener(new View.OnClickListener() {
             @Override

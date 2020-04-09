@@ -126,7 +126,7 @@ public class ImagesViewPager extends RelativeLayout {
             if (entity.getCropUrl() != null && entity.getCropUrl().length() > 0) {
                 entity.path = entity.getCropUrl();
             }
-            DetailImageLoadHelper.displayDetailImage((Activity) getContext(), imageView, new RedBookPresenter(), entity);
+            //DetailImageLoadHelper.displayDetailImage(false, imageView, new RedBookPresenter(), entity);
             viewList.add(imageView);
         }
         setViewList(viewList);

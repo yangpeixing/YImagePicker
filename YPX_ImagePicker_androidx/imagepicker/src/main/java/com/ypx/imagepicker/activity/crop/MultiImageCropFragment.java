@@ -293,7 +293,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
         }
 
         //是否拦截当前item的点击事件
-        if (isInterceptItemClick(imageItem)) {
+        if (isInterceptItemClick(imageItem, false)) {
             return;
         }
 
@@ -302,9 +302,9 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
     }
 
 
-    private boolean isInterceptItemClick(ImageItem imageItem) {
-        return presenter.interceptItemClick(getWeakActivity(), imageItem, selectList,
-                (ArrayList<ImageItem>) imageItems, selectConfig, imageGridAdapter,
+    private boolean isInterceptItemClick(ImageItem imageItem, boolean isClickCheckbox) {
+        return !imageGridAdapter.isPreformClick() && presenter.interceptItemClick(getWeakActivity(), imageItem, selectList,
+                (ArrayList<ImageItem>) imageItems, selectConfig, imageGridAdapter, isClickCheckbox,
                 null);
     }
 
@@ -355,15 +355,18 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
             return;
         }
 
+        //是否拦截当前item的点击事件
+        if (isInterceptItemClick(imageItem, true)) {
+            return;
+        }
+
         //如果当前选中列表已经包含了此item，则移除并刷新
         if (selectList.contains(imageItem)) {
             removeImageItemFromCropViewList(imageItem);
             checkStateBtn();
         } else {
-            if (!isInterceptItemClick(imageItem)) {
-                onPressImage(imageItem, false);
-                addImageItemToCropViewList(imageItem);
-            }
+            onPressImage(imageItem, false);
+            addImageItemToCropViewList(imageItem);
         }
         imageGridAdapter.notifyDataSetChanged();
     }
@@ -792,7 +795,6 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         //将VideoView所占用的资源释放掉
         if (videoViewContainerHelper != null) {
             videoViewContainerHelper.onDestroy();
@@ -800,8 +802,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
         uiConfig.setPickerUiProvider(null);
         uiConfig = null;
         presenter = null;
-        traverse(mContentView);
-
+        super.onDestroy();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.ypx.imagepickerdemo;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView.
                 .setDefaultOriginal(false)
                 .setPreviewVideo(isCanPreviewVideo)
                 .showCamera(isShowCamera)//显示拍照
+                .showCameraOnlyInAllMediaSet(true)
                 .setPreview(isPreviewEnable)//是否开启预览
                 .setVideoSinglePick(isVideoSinglePick)//设置视频单选
                 .setSinglePickWithAutoComplete(isSinglePickWithAutoComplete)
@@ -143,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView.
                 .setColumnCount(4)//设置列数
                 .mimeTypes(mimeTypes)//设置要加载的文件类型，可指定单一类型
                 // .filterMimeType(MimeType.GIF)//设置需要过滤掉加载的文件类型
+                .setSingleCropCutNeedTop(true)
                 .showCamera(isShowCamera)//显示拍照
                 .cropSaveInDCIM(false)
                 .cropRectMinMargin(minMarginProgress)
@@ -219,6 +222,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView.
         int cropRatioX = mainActivityView.getCropRatioX();
         int cropRatioY = mainActivityView.getCropRatioY();
         boolean isNeedCircle = mainActivityView.isNeedCircle();
+        boolean isCustom = mainActivityView.isCustom();
 
         //配置剪裁属性
         CropConfig cropConfig = new CropConfig();
@@ -227,7 +231,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityView.
         cropConfig.setCircle(isNeedCircle);//是否圆形剪裁
         cropConfig.setCropStyle(isGap ? CropConfig.STYLE_GAP : CropConfig.STYLE_FILL);
         cropConfig.setCropGapBackgroundColor(cropGapBackgroundColor);
-        ImagePicker.takePhotoAndCrop(this, new WeChatPresenter(), cropConfig, new OnImagePickCompleteListener() {
+
+        IPickerPresenter presenter = isCustom ? customImgPickerPresenter : weChatPresenter;
+        ImagePicker.takePhotoAndCrop(this, presenter, cropConfig, new OnImagePickCompleteListener() {
             @Override
             public void onImagePickComplete(ArrayList<ImageItem> items) {
                 //剪裁回调，主线程

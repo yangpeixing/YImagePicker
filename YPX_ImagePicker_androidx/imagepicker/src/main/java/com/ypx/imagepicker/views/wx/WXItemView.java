@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -78,7 +79,7 @@ public class WXItemView extends PickerItemView {
     @Override
     public void initItem(ImageItem imageItem, IPickerPresenter presenter, BaseSelectConfig selectConfig) {
         this.selectConfig = selectConfig;
-        presenter.displayImage(mImageView, imageItem, 0, true);
+        presenter.displayImage(mImageView, imageItem, mImageView.getWidth(), true);
     }
 
     @Override

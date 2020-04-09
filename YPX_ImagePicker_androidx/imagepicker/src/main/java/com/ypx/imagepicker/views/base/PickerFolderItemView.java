@@ -23,10 +23,10 @@ public abstract class PickerFolderItemView extends PBaseLayout {
     /**
      * 加载文件夹缩略图
      *
-     * @param coverUrl  缩略图Uri
+     * @param imageSet  文件夹
      * @param presenter presenter
      */
-    public abstract void displayCoverImage(String coverUrl, IPickerPresenter presenter);
+    public abstract void displayCoverImage(ImageSet imageSet, IPickerPresenter presenter);
 
     /**
      * 加载item

@@ -147,6 +147,14 @@ public class MultiPickerBuilder {
     }
 
     /**
+     * 只在全部媒体相册里展示拍照
+     */
+    public MultiPickerBuilder showCameraOnlyInAllMediaSet(boolean showCamera) {
+        selectConfig.setShowCameraInAllMedia(showCamera);
+        return this;
+    }
+
+    /**
      * @param isSinglePickImageOrVideoType 是否只能选择视频或图片
      */
     public MultiPickerBuilder setSinglePickImageOrVideoType(boolean isSinglePickImageOrVideoType) {
@@ -284,6 +292,16 @@ public class MultiPickerBuilder {
      */
     public MultiPickerBuilder cropSaveInDCIM(boolean isSaveInDCIM) {
         selectConfig.saveInDCIM(isSaveInDCIM);
+        return this;
+    }
+
+    /**
+     * 单图剪裁页面，剪裁框是否在最上层
+     *
+     * @param singleCropCutNeedTop 剪裁框是否在activity最顶层（会盖住所有的view）
+     */
+    public MultiPickerBuilder setSingleCropCutNeedTop(boolean singleCropCutNeedTop) {
+        selectConfig.setSingleCropCutNeedTop(singleCropCutNeedTop);
         return this;
     }
 

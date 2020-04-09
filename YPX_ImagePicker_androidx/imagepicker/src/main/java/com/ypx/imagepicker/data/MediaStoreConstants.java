@@ -11,8 +11,13 @@ import android.provider.MediaStore;
 class MediaStoreConstants {
     static final String MIME_TYPE = MediaStore.MediaColumns.MIME_TYPE;
     static final String MEDIA_TYPE = MediaStore.Files.FileColumns.MEDIA_TYPE;
+    static final String DISPLAY_NAME = MediaStore.Files.FileColumns.DISPLAY_NAME;
     static final int MEDIA_TYPE_VIDEO = MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
     static final int MEDIA_TYPE_IMAGE = MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+    static final String WIDTH = MediaStore.Files.FileColumns.WIDTH;
+    static final String HEIGHT = MediaStore.Files.FileColumns.HEIGHT;
+    static final String DATE_MODIFIED = MediaStore.Files.FileColumns.DATE_MODIFIED;
+    static final String DURATION = MediaStore.MediaColumns.DURATION;
     static final String SIZE = MediaStore.MediaColumns.SIZE;
     static final String _ID = MediaStore.Files.FileColumns._ID;
     static final String COLUMN_BUCKET_ID = "bucket_id";

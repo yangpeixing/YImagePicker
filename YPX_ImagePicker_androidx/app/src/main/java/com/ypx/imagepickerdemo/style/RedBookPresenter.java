@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,7 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.request.RequestOptions;
-import com.ypx.imagepicker.ImagePicker;
+import com.bumptech.glide.request.target.Target;
 import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -28,7 +27,6 @@ import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.views.redbook.RedBookUiProvider;
 import com.ypx.imagepickerdemo.R;
-import com.ypx.imagepickerdemo.preview.PreviewResultListActivity;
 
 import java.util.ArrayList;
 
@@ -40,15 +38,12 @@ public class RedBookPresenter implements IPickerPresenter {
 
     @Override
     public void displayImage(View view, ImageItem item, int size, boolean isThumbnail) {
-        if (item.getUri() != null) {
-            Glide.with(view.getContext()).load(item.getUri()).apply(new RequestOptions()
-                    .format(isThumbnail ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888))
-                    .into((ImageView) view);
-        } else {
-            Glide.with(view.getContext()).load(item.path).apply(new RequestOptions()
-                    .format(isThumbnail ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888))
-                    .into((ImageView) view);
-        }
+        Object object = item.getUri() != null ? item.getUri() : item.path;
+
+        Glide.with(view.getContext()).load(object).apply(new RequestOptions()
+                .format(isThumbnail ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888))
+                .override(isThumbnail ? size : Target.SIZE_ORIGINAL)
+                .into((ImageView) view);
     }
     /**
      * @param context 上下文
@@ -146,13 +141,29 @@ public class RedBookPresenter implements IPickerPresenter {
         return true;
     }
 
+    /**
+     * <p>
+     * 图片点击事件拦截，如果返回true，则不会执行选中操纵，如果要拦截此事件并且要执行选中
+     * 请调用如下代码：
+     * <p>
+     * adapter.preformCheckItem()
+     * <p>
+     * <p>
+     * 此方法可以用来跳转到任意一个页面，比如自定义的预览
+     *
+     * @param activity        上下文
+     * @param imageItem       当前图片
+     * @param selectImageList 当前选中列表
+     * @param allSetImageList 当前文件夹所有图片
+     * @param selectConfig    选择器配置项，如果是微信样式，则selectConfig继承自MultiSelectConfig
+     *                        如果是小红书剪裁样式，则继承自CropSelectConfig
+     * @param adapter         当前列表适配器，用于刷新数据
+     * @param isClickCheckBox 是否点击item右上角的选中框
+     * @param reloadExecutor  刷新器
+     * @return 是否拦截
+     */
     @Override
-    public boolean interceptItemClick(@Nullable Activity activity, ImageItem imageItem,
-                                      ArrayList<ImageItem> selectImageList,
-                                      ArrayList<ImageItem> allSetImageList,
-                                      BaseSelectConfig selectConfig,
-                                      PickerItemAdapter adapter,
-                                      @Nullable IReloadExecutor reloadExecutor) {
+    public boolean interceptItemClick(@Nullable Activity activity, ImageItem imageItem, ArrayList<ImageItem> selectImageList, ArrayList<ImageItem> allSetImageList, BaseSelectConfig selectConfig, PickerItemAdapter adapter,boolean isClickCheckBox, @Nullable IReloadExecutor reloadExecutor) {
         return false;
     }
 

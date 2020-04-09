@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -44,7 +46,7 @@ import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT
  * Date: 2019/2/21
  * 使用文档 ：https://github.com/yangpeixing/YImagePicker/wiki/Documentation_3.x
  */
-public class MultiImagePreviewActivity extends FragmentActivity {
+public class MultiImagePreviewActivity extends FragmentActivity implements MediaItemsDataSource.MediaItemProvider {
     static ImageSet currentImageSet;
     public static final String INTENT_KEY_SELECT_LIST = "selectList";
     private ViewPager mViewPager;
@@ -55,12 +57,33 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     private IPickerPresenter presenter;
     private PickerUiConfig uiConfig;
     private WeakReference<Activity> activityWeakReference;
+    private DialogInterface dialogInterface;
+    private PreviewControllerView controllerView;
 
+    /**
+     * 预览回调
+     */
+    public interface PreviewResult {
+        void onResult(ArrayList<ImageItem> imageItems, boolean isCancel);
+    }
+
+    /**
+     * 跳转预览
+     *
+     * @param activity     当前activity
+     * @param imageSet     当前预览的文件夹信息
+     * @param selectList   选中列表
+     * @param selectConfig 配置信息
+     * @param presenter    presenter
+     * @param position     默认选中项
+     * @param result       预览回调
+     */
     public static void intent(Activity activity, ImageSet imageSet,
-                              final ArrayList<ImageItem> selectList,
+                              ArrayList<ImageItem> selectList,
                               MultiSelectConfig selectConfig,
                               IPickerPresenter presenter,
-                              int position, final PreviewResult result) {
+                              int position,
+                              final PreviewResult result) {
         if (activity == null || selectList == null || selectConfig == null
                 || presenter == null || result == null) {
             return;
@@ -86,6 +109,89 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         });
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        activityWeakReference = new WeakReference<Activity>(this);
+        if (isIntentDataFailed()) {
+            finish();
+            return;
+        }
+        PickerActivityManager.addActivity(this);
+        setContentView(R.layout.picker_activity_preview);
+        setUI();
+        loadMediaPreviewList();
+    }
+
+    /**
+     * @return 跳转数据是否合法
+     */
+    private boolean isIntentDataFailed() {
+        if (getIntent() == null || !getIntent().hasExtra(INTENT_KEY_SELECT_CONFIG)
+                || !getIntent().hasExtra(INTENT_KEY_PRESENTER)) {
+            return true;
+        }
+        selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
+        presenter = (IPickerPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
+        mCurrentItemPosition = getIntent().getIntExtra(INTENT_KEY_CURRENT_INDEX, 0);
+        ArrayList list = (ArrayList) getIntent().getSerializableExtra(INTENT_KEY_SELECT_LIST);
+        if (list == null || presenter == null) {
+            return true;
+        }
+        mSelectList = new ArrayList<ImageItem>(list);
+        uiConfig = presenter.getUiConfig(activityWeakReference.get());
+        return false;
+    }
+
+    /**
+     * 执行返回回调
+     *
+     * @param isClickComplete 是否是选中
+     */
+    private void notifyCallBack(boolean isClickComplete) {
+        Intent intent = new Intent();
+        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, mSelectList);
+        setResult(isClickComplete ? ImagePicker.REQ_PICKER_RESULT_CODE : RESULT_CANCELED, intent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        notifyCallBack(false);
+    }
+
+    /**
+     * 加载媒体文件夹
+     */
+    private void loadMediaPreviewList() {
+        if (currentImageSet == null) {
+            initViewPager(mSelectList);
+        } else if (currentImageSet.imageItems != null
+                && currentImageSet.imageItems.size() > 0
+                && currentImageSet.imageItems.size() >= currentImageSet.count) {
+            initViewPager(currentImageSet.imageItems);
+        } else {
+            //从媒体库重新扫描
+            dialogInterface = getPresenter().showProgressDialog(this, ProgressSceneEnum.loadMediaItem);
+            ImagePicker.provideMediaItemsFromSet(this, currentImageSet,
+                    selectConfig.getMimeTypes(), this);
+        }
+    }
+
+    @Override
+    public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
+        if (dialogInterface != null) {
+            dialogInterface.dismiss();
+        }
+        initViewPager(imageItems);
+    }
+
+    /**
+     * 过滤掉视频
+     *
+     * @param list 所有数据源
+     * @return 过滤后的数据源
+     */
     private ArrayList<ImageItem> filterVideo(ArrayList<ImageItem> list) {
         if (selectConfig.isCanPreviewVideo()) {
             mImageList = new ArrayList<>(list);
@@ -110,106 +216,12 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         return mImageList;
     }
 
-
-    /**
-     * 预览回调
-     */
-    public interface PreviewResult {
-        void onResult(ArrayList<ImageItem> imageItems, boolean isCancel);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        activityWeakReference = new WeakReference<Activity>(this);
-        if (isIntentDataFailed()) {
-            finish();
-        } else {
-            PickerActivityManager.addActivity(this);
-            setContentView(R.layout.picker_activity_preview);
-            setUI();
-            loadMediaPreviewList();
-        }
-    }
-
-    /**
-     * 执行返回回调
-     *
-     * @param isClickComplete 是否是选中
-     */
-    private void notifyCallBack(boolean isClickComplete) {
-        Intent intent = new Intent();
-        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, mSelectList);
-        setResult(isClickComplete ? ImagePicker.REQ_PICKER_RESULT_CODE : RESULT_CANCELED, intent);
-        finish();
-    }
-
-    @Override
-    public void onBackPressed() {
-        notifyCallBack(false);
-    }
-
-    /**
-     * @return 跳转数据是否合法
-     */
-    private boolean isIntentDataFailed() {
-        if (getIntent() == null || !getIntent().hasExtra(INTENT_KEY_SELECT_CONFIG)
-                || !getIntent().hasExtra(INTENT_KEY_PRESENTER)) {
-            return true;
-        }
-        selectConfig = (MultiSelectConfig) getIntent().getSerializableExtra(INTENT_KEY_SELECT_CONFIG);
-        presenter = (IPickerPresenter) getIntent().getSerializableExtra(INTENT_KEY_PRESENTER);
-        mCurrentItemPosition = getIntent().getIntExtra(INTENT_KEY_CURRENT_INDEX, 0);
-        ArrayList list = (ArrayList) getIntent().getSerializableExtra(INTENT_KEY_SELECT_LIST);
-        if (list == null || presenter == null) {
-            return true;
-        }
-        mSelectList = new ArrayList<>(list);
-        uiConfig = presenter.getUiConfig(activityWeakReference.get());
-        return false;
-    }
-
-    /**
-     * 加载媒体文件夹
-     */
-    private void loadMediaPreviewList() {
-        if (currentImageSet == null) {
-            mImageList = filterVideo(mSelectList);
-            initViewPager();
-        } else {
-            if (currentImageSet.imageItems != null && currentImageSet.imageItems.size() > 0
-                    && currentImageSet.imageItems.size() >= currentImageSet.count) {
-                mImageList = filterVideo(currentImageSet.imageItems);
-                initViewPager();
-            } else {
-                final DialogInterface dialogInterface = getPresenter().
-                        showProgressDialog(this, ProgressSceneEnum.loadMediaItem);
-                ImagePicker.provideMediaItemsFromSet(this, currentImageSet, selectConfig.getMimeTypes(),
-                        new MediaItemsDataSource.MediaItemProvider() {
-                            @Override
-                            public void providerMediaItems(ArrayList<ImageItem> imageItems, ImageSet allVideoSet) {
-                                if (dialogInterface != null) {
-                                    dialogInterface.dismiss();
-                                }
-                                mImageList = filterVideo(imageItems);
-                                initViewPager();
-                            }
-                        });
-            }
-        }
-    }
-
-
-    private PreviewControllerView controllerView;
-
     /**
      * 初始化标题栏
      */
     private void setUI() {
         mViewPager = findViewById(R.id.viewpager);
         mViewPager.setBackgroundColor(uiConfig.getPreviewBackgroundColor());
-        FrameLayout mPreviewPanel = findViewById(R.id.mPreviewPanel);
-
         controllerView = uiConfig.getPickerUiProvider().getPreviewControllerView(activityWeakReference.get());
         if (controllerView == null) {
             controllerView = new WXPreviewControllerView(this);
@@ -227,6 +239,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
                 }
             });
         }
+        FrameLayout mPreviewPanel = findViewById(R.id.mPreviewPanel);
         mPreviewPanel.addView(controllerView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
     }
@@ -234,7 +247,8 @@ public class MultiImagePreviewActivity extends FragmentActivity {
     /**
      * 初始化viewpager
      */
-    private void initViewPager() {
+    private void initViewPager(ArrayList<ImageItem> sourceList) {
+        mImageList = filterVideo(sourceList);
         if (mImageList == null || mImageList.size() == 0) {
             getPresenter().tip(this, getString(R.string.picker_str_preview_empty));
             finish();
@@ -243,7 +257,7 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         if (mCurrentItemPosition < 0) {
             mCurrentItemPosition = 0;
         }
-        TouchImageAdapter mAdapter = new TouchImageAdapter(this.getSupportFragmentManager());
+        TouchImageAdapter mAdapter = new TouchImageAdapter(getSupportFragmentManager(), mImageList);
         mViewPager.setAdapter(mAdapter);
         mViewPager.setOffscreenPageLimit(1);
         mViewPager.setCurrentItem(mCurrentItemPosition, false);
@@ -276,48 +290,81 @@ public class MultiImagePreviewActivity extends FragmentActivity {
         mViewPager.setCurrentItem(mImageList.indexOf(imageItem), false);
     }
 
-    /**
-     * 单击图片
-     */
-    public void onImageSingleTap() {
-        controllerView.singleTap();
-    }
-
     public IPickerPresenter getPresenter() {
         return presenter;
     }
 
-    class TouchImageAdapter extends FragmentStatePagerAdapter {
-        TouchImageAdapter(FragmentManager fm) {
+    public PreviewControllerView getControllerView() {
+        return controllerView;
+    }
+
+    static class TouchImageAdapter extends FragmentStatePagerAdapter {
+        private ArrayList<ImageItem> imageItems;
+
+        TouchImageAdapter(FragmentManager fm, ArrayList<ImageItem> imageItems) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-            if (mImageList == null) {
-                mImageList = new ArrayList<>();
+            this.imageItems = imageItems;
+            if (this.imageItems == null) {
+                this.imageItems = new ArrayList<>();
             }
         }
 
         @Override
         public int getCount() {
-            return mImageList.size();
+            return imageItems.size();
         }
 
         @NonNull
         @Override
         public Fragment getItem(int position) {
-            SinglePreviewFragment fragment = new SinglePreviewFragment();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(SinglePreviewFragment.KEY_URL, mImageList.get(position));
-            fragment.setArguments(bundle);
-            return fragment;
+            return SinglePreviewFragment.newInstance(imageItems.get(position));
         }
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void finish() {
+        super.finish();
         PickerActivityManager.removeActivity(this);
         if (currentImageSet != null && currentImageSet.imageItems != null) {
             currentImageSet.imageItems.clear();
             currentImageSet = null;
+        }
+    }
+
+    public static class SinglePreviewFragment extends Fragment {
+        static final String KEY_URL = "key_url";
+        private ImageItem imageItem;
+
+        static SinglePreviewFragment newInstance(ImageItem imageItem) {
+            SinglePreviewFragment fragment = new SinglePreviewFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(SinglePreviewFragment.KEY_URL, imageItem);
+            fragment.setArguments(bundle);
+            return fragment;
+        }
+
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            Bundle bundle = getArguments();
+            if (bundle == null) {
+                return;
+            }
+            imageItem = (ImageItem) bundle.getSerializable(KEY_URL);
+        }
+
+        PreviewControllerView getControllerView() {
+            return ((MultiImagePreviewActivity) getActivity()).getControllerView();
+        }
+
+        IPickerPresenter getPresenter() {
+            return ((MultiImagePreviewActivity) getActivity()).getPresenter();
+        }
+
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            return getControllerView().getItemView(this, imageItem, getPresenter());
         }
     }
 }

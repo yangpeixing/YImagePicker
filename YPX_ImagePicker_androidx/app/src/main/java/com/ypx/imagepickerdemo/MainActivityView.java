@@ -105,6 +105,9 @@ public class MainActivityView {
     private CheckBox mCbGapBackground;
     private CheckBox mCbAutoJumpAloha;
 
+    public CheckBox getmCbBMP() {
+        return mCbBMP;
+    }
 
     private WeakReference<Activity> activityWeakReference;
 

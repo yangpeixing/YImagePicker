@@ -201,4 +201,9 @@ public class WXTitleBar extends PickerControllerView {
     public void setShowArrow(boolean isShow) {
         mSetArrowImg.setVisibility(isShow ? VISIBLE : GONE);
     }
+
+    public void setTitleTextColor(int color) {
+        mTvTitle.setTextColor(color);
+        mSetArrowImg.setColorFilter(color);
+    }
 }

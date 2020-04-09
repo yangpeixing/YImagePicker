@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -22,6 +22,15 @@ import com.ypx.imagepicker.utils.PDateUtil;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Set;
+
+import static android.provider.ContactsContract.Intents.Insert.DATA;
+import static com.ypx.imagepicker.data.MediaStoreConstants.DATE_MODIFIED;
+import static com.ypx.imagepicker.data.MediaStoreConstants.DISPLAY_NAME;
+import static com.ypx.imagepicker.data.MediaStoreConstants.DURATION;
+import static com.ypx.imagepicker.data.MediaStoreConstants.HEIGHT;
+import static com.ypx.imagepicker.data.MediaStoreConstants.MIME_TYPE;
+import static com.ypx.imagepicker.data.MediaStoreConstants.WIDTH;
+import static com.ypx.imagepicker.data.MediaStoreConstants._ID;
 
 
 /**
@@ -108,8 +117,9 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                 do {
                     ImageItem item = new ImageItem();
                     try {
-                        item.id = getLong(cursor, MediaStore.Files.FileColumns._ID);
-                        item.mimeType = getString(cursor, MediaStore.MediaColumns.MIME_TYPE);
+                        item.id = getLong(cursor, _ID);
+                        item.mimeType = getString(cursor, MIME_TYPE);
+                        item.displayName = getString(cursor, DISPLAY_NAME);
                         //androidQ上废弃了DATA绝对路径，需要手动拼凑Uri，这里为了兼容大部分项目还没有适配androidQ的情况
                         //默认path还是先取绝对路径，取不到或者异常才去取Uri路径
                         /*if (MediaStoreConstants.isBeforeAndroidQ()) {
@@ -118,7 +128,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                             item.path = getUri(item.id, item.mimeType).toString();
                         }*/
                         try {
-                            item.path = getString(cursor, MediaStore.Files.FileColumns.DATA);
+                            item.path = getString(cursor, DATA);
                         } catch (Exception ignored) {
 
                         }
@@ -132,10 +142,10 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
                             item.path = urlPath.toString();
                         }
 
-                        item.width = getInt(cursor, MediaStore.Files.FileColumns.WIDTH);
-                        item.height = getInt(cursor, MediaStore.Files.FileColumns.HEIGHT);
+                        item.width = getInt(cursor, WIDTH);
+                        item.height = getInt(cursor, HEIGHT);
                         item.setVideo(MimeType.isVideo(item.mimeType));
-                        item.time = getLong(cursor, MediaStore.Files.FileColumns.DATE_MODIFIED);
+                        item.time = getLong(cursor, DATE_MODIFIED);
                         item.timeFormat = PDateUtil.getStrTime(context, item.time);
                     } catch (Exception e) {
                         continue;
@@ -148,7 +158,7 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
 
                     //视频
                     if (item.isVideo()) {
-                        item.duration = getLong(cursor, "duration");
+                        item.duration = getLong(cursor, DURATION);
                         if (item.duration == 0) {
                             continue;
                         }
@@ -286,7 +296,10 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
     }
 
     private int hasColumn(Cursor data, String id) {
-        return data.getColumnIndex(id);
+        try {
+            return data.getColumnIndexOrThrow(id);
+        } catch (Exception e) {
+            return -1;
+        }
     }
-
 }
