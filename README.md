@@ -1,7 +1,7 @@
 ### 关于YImagePicker 
 [点击查看2.x版本readme](https://github.com/yangpeixing/YImagePicker/blob/master/README_2_x.md)
 
-本文档更新于:2020/3/11 上午11点37分
+本文档更新于:2020/4/09 下午6点00分
 
 [ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=3.1.2) ](https://bintray.com/yangpeixing/yimagepicker/androidx/3.1.2/link)
 
@@ -33,7 +33,7 @@
 **androidx版本：**
 
 ```java
-implementation 'com.ypx.yimagepicker:androidx:3.1.2'
+implementation 'com.ypx.yimagepicker:androidx:3.1.3'
 ```
 **support版本：后期可能不再维护，请使用者尽早切换androidx** （support依赖最高兼容28）
 ```java
@@ -351,6 +351,18 @@ ImagePicker.provideMediaItemsFromSetWithPreload(this, imageSet, mimeTypes, prelo
 ### 版本记录
 [查看详细版本记录](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker版本记录)
 
+#### 3.1.3版本 [2020.04.09]
+1. 修复安卓10上全部视频文件夹缩略图不展示 
+2. 修复安卓10上部分手机上部分图片无法展示问题 
+3. 修复大图预览放大缩小卡顿问题 
+4. 彻底修复toolarge闪退 
+5. 优化了图片剪裁预览质量 
+6. 修复预览界面无法预览视频问题 
+7. 预览支持自定义预览item，可根据图片还是视频动态显示布局 
+8. presenter的interceptItemClick方法新增isClickCheckBox入参，代表拦截的对象是否是点击右上角checkbox 
+9. 新增showCameraOnlyInAllMediaSet方法代表是否只在全部文件夹里才展示拍照item，其他文件夹不展示 
+10. imageitem新增displayName字段代表文件名称 
+11. 其他更多细节优化
 
 #### 3.1版本 [2020.02.24]
 1. [优化]isOriginalImage加入到imageitem里
