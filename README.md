@@ -3,7 +3,7 @@
 
 本文档更新于:2020/4/09 下午6点00分
 
-[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=3.1.2) ](https://bintray.com/yangpeixing/yimagepicker/androidx/3.1.2/link)
+[ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=3.1.4) ](https://bintray.com/yangpeixing/yimagepicker/androidx/3.1.4/link)
 
  - 支持小红书多图剪裁、微信多图选择、单图剪裁、多图批量剪裁、大图预览
  - 支持自定义所有UI，包括标题栏、底部栏、列表item、文件夹item、剪裁页面、预览页面等
@@ -33,7 +33,7 @@
 **androidx版本：**
 
 ```java
-implementation 'com.ypx.yimagepicker:androidx:3.1.3'
+implementation 'com.ypx.yimagepicker:androidx:3.1.4'
 ```
 **support版本：后期可能不再维护，请使用者尽早切换androidx** （support依赖最高兼容28）
 ```java
@@ -350,6 +350,10 @@ ImagePicker.provideMediaItemsFromSetWithPreload(this, imageSet, mimeTypes, prelo
 
 ### 版本记录
 [查看详细版本记录](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker版本记录)
+
+#### 3.1.4版本 [2020.04.09]
+1. 修复3.1.3版本path取不到绝对路径问题
+2. 修复quicktime类型视频无法过滤的问题
 
 #### 3.1.3版本 [2020.04.09]
 1. 修复安卓10上全部视频文件夹缩略图不展示 
