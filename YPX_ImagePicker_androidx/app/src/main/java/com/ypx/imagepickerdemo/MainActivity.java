@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView.
                 .setSinglePickImageOrVideoType(isSinglePickImageOrVideoType)//设置图片和视频单一类型选择
                 .setMaxVideoDuration(120000L)//设置视频可选取的最大时长
                 .setMinVideoDuration(5000L)
+                .setSingleCropCutNeedTop(true)
                 //设置上一次操作的图片列表，下次选择时默认恢复上一次选择的状态
                 .setLastImageList(isCheckLastImageList ? resultList : null)
                 //设置需要屏蔽掉的图片列表，下次选择时已屏蔽的文件不可选择

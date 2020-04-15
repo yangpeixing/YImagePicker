@@ -45,7 +45,7 @@ public enum MimeType {
             "mp4"
     )),
     QUICKTIME("video/quicktime", arraySetOf(
-            "mov"
+            "mov","quicktime"
     )),
     THREEGPP("video/3gpp", arraySetOf(
             "3gp",
@@ -56,7 +56,7 @@ public enum MimeType {
             "3gpp2"
     )),
     MKV("video/x-matroska", arraySetOf(
-            "mkv"
+            "mkv","x-matroska"
     )),
     WEBM("video/webm", arraySetOf(
             "webm"

@@ -23,7 +23,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Set;
 
-import static android.provider.ContactsContract.Intents.Insert.DATA;
+
+import static com.ypx.imagepicker.data.MediaStoreConstants.DATA;
 import static com.ypx.imagepicker.data.MediaStoreConstants.DATE_MODIFIED;
 import static com.ypx.imagepicker.data.MediaStoreConstants.DISPLAY_NAME;
 import static com.ypx.imagepicker.data.MediaStoreConstants.DURATION;
