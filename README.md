@@ -1,7 +1,7 @@
 ### 关于YImagePicker 
 [点击查看2.x版本readme](https://github.com/yangpeixing/YImagePicker/blob/master/README_2_x.md)
 
-本文档更新于:2020/4/09 下午6点00分
+本文档更新于:2020/4/15 上午10点36分
 
 [ ![Download](https://api.bintray.com/packages/yangpeixing/yimagepicker/androidx/images/download.svg?version=3.1.4) ](https://bintray.com/yangpeixing/yimagepicker/androidx/3.1.4/link)
 
