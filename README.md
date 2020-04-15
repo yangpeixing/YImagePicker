@@ -351,7 +351,7 @@ ImagePicker.provideMediaItemsFromSetWithPreload(this, imageSet, mimeTypes, prelo
 ### 版本记录
 [查看详细版本记录](https://github.com/yangpeixing/YImagePicker/wiki/YImagePicker版本记录)
 
-#### 3.1.4版本 [2020.04.09]
+#### 3.1.4版本 [2020.04.15]
 1. 修复3.1.3版本path取不到绝对路径问题
 2. 修复quicktime类型视频无法过滤的问题
 
@@ -383,7 +383,7 @@ ImagePicker.provideMediaItemsFromSetWithPreload(this, imageSet, mimeTypes, prelo
 
 
 ### 下个版本排期
-时间：暂定2020年3月中旬
+时间：暂定2020年5月中旬
  1. [剪裁支持输出大小](https://github.com/yangpeixing/YImagePicker/issues/19)
  2. [剪裁支持旋转（尽量)](https://github.com/yangpeixing/YImagePicker/issues/32)
  3. [文件大小加载限制](https://github.com/yangpeixing/YImagePicker/issues/41)
