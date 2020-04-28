@@ -1,7 +1,9 @@
 package com.ypx.imagepicker.views.base;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -17,10 +19,12 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.helper.DetailImageLoadHelper;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
+import com.ypx.imagepicker.utils.PickerFileProvider;
 import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -81,16 +85,15 @@ public abstract class PreviewControllerView extends PBaseLayout {
     /**
      * 获取预览的fragment里的布局
      *
-     * @param fragment 当前加载的fragment，可以使用以下方式来绑定生命周期
-     * <p>
-     *         fragment.getLifecycle().addObserver(new ILifeCycleCallBack() {
-     *             public void onResume() {}
-     *             public void onPause() {}
-     *             public void onDestroy() {}
-     *         });
-     *</p>
-     *
-     * @param imageItem  当前加载imageitem
+     * @param fragment  当前加载的fragment，可以使用以下方式来绑定生命周期
+     *                  <p>
+     *                  fragment.getLifecycle().addObserver(new ILifeCycleCallBack() {
+     *                  public void onResume() {}
+     *                  public void onPause() {}
+     *                  public void onDestroy() {}
+     *                  });
+     *                  </p>
+     * @param imageItem 当前加载imageitem
      * @param presenter presenter
      * @return 预览的布局
      */
@@ -133,7 +136,11 @@ public abstract class PreviewControllerView extends PBaseLayout {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    intent.setDataAndType(imageItem.getUri(), "video/*");
+                    Uri uri = imageItem.getUri();
+                    if (uri == null) {
+                        uri = PickerFileProvider.getUriForFile((Activity) getContext(), new File(imageItem.path));
+                    }
+                    intent.setDataAndType(uri, "video/*");
                     getContext().startActivity(intent);
                     return;
                 }

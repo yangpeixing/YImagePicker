@@ -40,7 +40,9 @@ public class ImageSet implements Serializable {
         imageSet.cover = this.cover;
         imageSet.isSelected = this.isSelected;
         imageSet.imageItems = new ArrayList<>();
-        imageSet.imageItems.addAll(this.imageItems);
+        if (this.imageItems != null) {
+            imageSet.imageItems.addAll(this.imageItems);
+        }
         return imageSet;
     }
 

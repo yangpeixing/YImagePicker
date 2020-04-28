@@ -197,6 +197,31 @@ public class PBitmapUtils {
     }
 
     /**
+     * Uri路径转绝对路径
+     *
+     * @param context 上下文，用于提供getContentResolver
+     * @param uri     要查询的uri
+     * @return 绝对路径
+     */
+    public static String getPathFromUri(Context context, Uri uri) {
+        String path = "";
+        String DATA = android.os.Build.VERSION.SDK_INT < 29 ?
+                MediaStore.Images.ImageColumns.DATA
+                : MediaStore.Images.ImageColumns.RELATIVE_PATH;
+        Cursor cursor = context.getContentResolver().query(uri, new String[]{DATA},
+                null, null, null);
+        if (null != cursor) {
+            if (cursor.moveToFirst()) {
+                int index = cursor.getColumnIndex(DATA);
+                if (index > -1)
+                    path = cursor.getString(index);
+            }
+            cursor.close();
+        }
+        return path;
+    }
+
+    /**
      * androidQ方式保存一张bitmap到DCIM根目录下
      *
      * @param context        当前context

@@ -136,6 +136,9 @@ public class MediaSetsDataSource implements LoaderManager.LoaderCallbacks<Cursor
     }
 
     private int hasColumn(Cursor data, String id) {
+        if (data.isClosed()) {
+            return -1;
+        }
         try {
             return data.getColumnIndexOrThrow(id);
         } catch (Exception e) {

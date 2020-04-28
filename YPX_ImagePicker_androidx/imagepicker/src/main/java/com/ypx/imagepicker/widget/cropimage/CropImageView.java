@@ -1378,9 +1378,14 @@ public class CropImageView extends ImageView {
     }
 
     public Bitmap generateCropBitmapFromView(final int backgroundColor) {
-        setShowImageRectLine(false);
-        isShowCropRect = false;
-        invalidate();
+        ((Activity) getContext()).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setShowImageRectLine(false);
+                isShowCropRect = false;
+                invalidate();
+            }
+        });
 
         Bitmap bitmap = PBitmapUtils.getViewBitmap(CropImageView.this);
         try {
@@ -1464,6 +1469,10 @@ public class CropImageView extends ImageView {
         return bitmap1;
     }
 
+    public void setShowCropRect(boolean showCropRect) {
+        isShowCropRect = showCropRect;
+        invalidate();
+    }
 
     private Bitmap createCircleBitmap(Bitmap resource, int backgroundColor) {
         int width = resource.getWidth();

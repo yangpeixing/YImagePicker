@@ -21,6 +21,7 @@ import com.ypx.imagepicker.builder.CropPickerBuilder;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.data.MediaSetsDataSource;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
 import com.ypx.imagepicker.helper.CameraCompat;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.builder.MultiPickerBuilder;
@@ -218,7 +219,11 @@ public class ImagePicker {
                     @Override
                     public void onResult(ArrayList<ImageItem> imageItems, boolean isCancel) {
                         if (listener != null) {
-                            listener.onImagePickComplete(imageItems);
+                            if (isCancel && listener instanceof OnImagePickCompleteListener2) {
+                                ((OnImagePickCompleteListener2) listener).onPickFailed(PickerError.CANCEL);
+                            } else {
+                                listener.onImagePickComplete(imageItems);
+                            }
                         }
                     }
                 });
@@ -229,7 +234,7 @@ public class ImagePicker {
      * @param <T>       ImageItem or String
      * @return 转化后可识别的item列表
      */
-    private static <T> ArrayList<ImageItem> transitArray(Activity activity, ArrayList<T> imageList) {
+    public static <T> ArrayList<ImageItem> transitArray(Activity activity, ArrayList<T> imageList) {
         ArrayList<ImageItem> items = new ArrayList<>();
         for (T t : imageList) {
             if (t instanceof String) {

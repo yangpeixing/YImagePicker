@@ -23,7 +23,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Set;
 
-
 import static com.ypx.imagepicker.data.MediaStoreConstants.DATA;
 import static com.ypx.imagepicker.data.MediaStoreConstants.DATE_MODIFIED;
 import static com.ypx.imagepicker.data.MediaStoreConstants.DISPLAY_NAME;
@@ -297,6 +296,9 @@ public class MediaItemsDataSource implements LoaderManager.LoaderCallbacks<Curso
     }
 
     private int hasColumn(Cursor data, String id) {
+        if (data.isClosed()) {
+            return -1;
+        }
         try {
             return data.getColumnIndexOrThrow(id);
         } catch (Exception e) {

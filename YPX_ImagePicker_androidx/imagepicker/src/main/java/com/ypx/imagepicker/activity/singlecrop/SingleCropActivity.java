@@ -113,7 +113,7 @@ public class SingleCropActivity extends FragmentActivity {
         //初始化剪裁view
         cropView = findViewById(R.id.cropView);
         cropView.setMaxScale(7.0f);
-        cropView.setRotateEnable(false);
+        cropView.setRotateEnable(true);
         cropView.enable();
         cropView.setBounceEnable(!cropConfig.isGap());
         cropView.setCropMargin(cropConfig.getCropRectMargin());
@@ -194,6 +194,7 @@ public class SingleCropActivity extends FragmentActivity {
         if (cropConfig.isGap() && !cropConfig.isCircle()) {
             cropView.setBackgroundColor(cropConfig.getCropGapBackgroundColor());
         }
+        currentImageItem.displayName = fileName;
         new Thread(new Runnable() {
             @Override
             public void run() {
