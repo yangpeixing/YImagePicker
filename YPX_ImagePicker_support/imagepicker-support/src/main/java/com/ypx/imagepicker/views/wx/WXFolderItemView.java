@@ -40,7 +40,7 @@ public class WXFolderItemView extends PickerFolderItemView {
         mName = view.findViewById(R.id.name);
         mSize = view.findViewById(R.id.size);
         mIndicator = view.findViewById(R.id.indicator);
-        mDivider= view.findViewById(R.id.mDivider);
+        mDivider = view.findViewById(R.id.mDivider);
         setBackground(getResources().getDrawable(R.drawable.picker_selector_list_item_bg));
         mIndicator.setColorFilter(getThemeColor());
     }
@@ -51,11 +51,16 @@ public class WXFolderItemView extends PickerFolderItemView {
     }
 
     @Override
-    public void displayCoverImage(String coverUrl, IPickerPresenter presenter) {
+    public void displayCoverImage(ImageSet imageSet, IPickerPresenter presenter) {
         mIndicator.setColorFilter(getThemeColor());
-        ImageItem imageItem = new ImageItem();
-        imageItem.path = coverUrl;
-        presenter.displayImage(mCover, imageItem, mCover.getMeasuredWidth(), true);
+        if (imageSet.cover != null) {
+            presenter.displayImage(mCover, imageSet.cover, mCover.getMeasuredWidth(), true);
+        } else {
+            ImageItem imageItem = new ImageItem();
+            imageItem.path = imageSet.coverPath;
+            imageItem.setUriPath(imageSet.coverPath);
+            presenter.displayImage(mCover, imageItem, mCover.getMeasuredWidth(), true);
+        }
     }
 
     @SuppressLint("DefaultLocale")

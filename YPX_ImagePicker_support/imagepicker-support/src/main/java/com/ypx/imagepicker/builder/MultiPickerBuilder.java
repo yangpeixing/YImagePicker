@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
+import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
 
 /**
  * Description: 多选选择器构造类
@@ -143,6 +143,14 @@ public class MultiPickerBuilder {
      */
     public MultiPickerBuilder showCamera(boolean showCamera) {
         selectConfig.setShowCamera(showCamera);
+        return this;
+    }
+
+    /**
+     * 只在全部媒体相册里展示拍照
+     */
+    public MultiPickerBuilder showCameraOnlyInAllMediaSet(boolean showCamera) {
+        selectConfig.setShowCameraInAllMedia(showCamera);
         return this;
     }
 
@@ -284,6 +292,16 @@ public class MultiPickerBuilder {
      */
     public MultiPickerBuilder cropSaveInDCIM(boolean isSaveInDCIM) {
         selectConfig.saveInDCIM(isSaveInDCIM);
+        return this;
+    }
+
+    /**
+     * 单图剪裁页面，剪裁框是否在最上层
+     *
+     * @param singleCropCutNeedTop 剪裁框是否在activity最顶层（会盖住所有的view）
+     */
+    public MultiPickerBuilder setSingleCropCutNeedTop(boolean singleCropCutNeedTop) {
+        selectConfig.setSingleCropCutNeedTop(singleCropCutNeedTop);
         return this;
     }
 

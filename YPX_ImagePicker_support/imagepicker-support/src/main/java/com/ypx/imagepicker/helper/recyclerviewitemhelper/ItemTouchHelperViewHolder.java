@@ -19,7 +19,7 @@ package com.ypx.imagepicker.helper.recyclerviewitemhelper;
 
 /**
  * Interface to notify an item ViewHolder of relevant callbacks from {@link
- * android.support.v7.widget.ItemTouchHelper.Callback}.
+ * androidx.recyclerview.widget.ItemTouchHelper.Callback}.
  *
  * @author Paul Burke (ipaulpro)
  */

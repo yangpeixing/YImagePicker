@@ -2,6 +2,7 @@ package com.ypx.imagepicker.views.base;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -10,7 +11,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 
 import com.ypx.imagepicker.ImagePicker;
 
@@ -37,7 +38,7 @@ public abstract class PBaseLayout extends LinearLayout {
         init();
     }
 
-    public PBaseLayout(Context context, @Nullable AttributeSet attrs) {
+    public PBaseLayout(Context context, @org.jetbrains.annotations.Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }

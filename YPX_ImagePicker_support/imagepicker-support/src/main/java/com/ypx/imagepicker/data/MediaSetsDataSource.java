@@ -9,9 +9,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
+import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
-import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -117,15 +117,6 @@ public class MediaSetsDataSource implements LoaderManager.LoaderCallbacks<Cursor
         void providerMediaSets(ArrayList<ImageSet> imageSets);
     }
 
-    private long getLong(Cursor data, String text) {
-        int index = hasColumn(data, text);
-        if (index != -1) {
-            return data.getLong(index);
-        } else {
-            return 0;
-        }
-    }
-
     private int getInt(Cursor data, String text) {
         int index = hasColumn(data, text);
         if (index != -1) {
@@ -145,6 +136,10 @@ public class MediaSetsDataSource implements LoaderManager.LoaderCallbacks<Cursor
     }
 
     private int hasColumn(Cursor data, String id) {
-        return data.getColumnIndex(id);
+        try {
+            return data.getColumnIndexOrThrow(id);
+        } catch (Exception e) {
+            return -1;
+        }
     }
 }

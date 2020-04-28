@@ -3,22 +3,21 @@ package com.ypx.imagepicker.activity.crop;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Window;
-
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.view.Window;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PickerActivityManager;
-import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.PickerError;
-import com.ypx.imagepicker.bean.selectconfig.CropSelectConfig;
-import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
 import com.ypx.imagepicker.data.PickerActivityCallBack;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
+import com.ypx.imagepicker.bean.selectconfig.CropSelectConfig;
+import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.PickerError;
+import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
@@ -96,14 +95,12 @@ public class MultiImageCropActivity extends FragmentActivity {
                     @Override
                     public void onPickFailed(PickerError error) {
                         PickerErrorExecutor.executeError(MultiImageCropActivity.this, error.getCode());
+                        PickerActivityManager.clear();
                     }
 
                     @Override
                     public void onImagePickComplete(ArrayList<ImageItem> items) {
-                        Intent intent = new Intent();
-                        intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, items);
-                        setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
-                        finish();
+                        ImagePicker.closePickerWithCallback(items);
                     }
                 });
         getSupportFragmentManager()
@@ -118,12 +115,5 @@ public class MultiImageCropActivity extends FragmentActivity {
             return;
         }
         super.onBackPressed();
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        PickerActivityManager.clear();
     }
 }

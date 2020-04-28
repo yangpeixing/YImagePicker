@@ -23,11 +23,11 @@ import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
 import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
+import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.helper.recyclerviewitemhelper.SimpleItemTouchHelperCallback;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PStatusBarUtil;
-import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.views.base.PickerControllerView;
 import com.ypx.imagepicker.views.base.PreviewControllerView;
 
@@ -46,6 +46,10 @@ public class WXPreviewControllerView extends PreviewControllerView {
     private ArrayList<ImageItem> selectedList;
     private FrameLayout mTitleContainer;
     private boolean isShowOriginal = false;
+    private int titleBarColor;
+    private int bottomBarColor;
+    private boolean isShowBottomBar = true;
+    private boolean isShowCompleteBtn = true;
 
     public WXPreviewControllerView(Context context) {
         super(context);
@@ -69,13 +73,24 @@ public class WXPreviewControllerView extends PreviewControllerView {
         setSelectCheckBoxDrawable(R.mipmap.picker_wechat_unselect, R.mipmap.picker_wechat_select);
         mOriginalCheckBox.setText(getContext().getString(R.string.picker_str_bottom_original));
         mSelectCheckBox.setText(getContext().getString(R.string.picker_str_bottom_choose));
-
     }
 
     @Override
     public void setStatusBar() {
-        setTitleBarColor(getResources().getColor(R.color.white_F5));
-        setBottomBarColor(Color.parseColor("#f0303030"));
+        if (titleBarColor == 0) {
+            titleBarColor = getResources().getColor(R.color.white_F5);
+        }
+
+        mTitleContainer.setBackgroundColor(titleBarColor);
+        mTitleContainer.setPadding(0, PStatusBarUtil.getStatusBarHeight(getContext()), 0, 0);
+        PStatusBarUtil.setStatusBar((Activity) getContext(), Color.TRANSPARENT, true,
+                PStatusBarUtil.isDarkColor(titleBarColor));
+
+        if (bottomBarColor == 0) {
+            bottomBarColor = Color.parseColor("#f0303030");
+        }
+        mBottomBar.setBackgroundColor(bottomBarColor);
+        mPreviewRecyclerView.setBackgroundColor(bottomBarColor);
     }
 
     @Override
@@ -87,6 +102,17 @@ public class WXPreviewControllerView extends PreviewControllerView {
         isShowOriginal = (selectConfig instanceof MultiSelectConfig && ((MultiSelectConfig) selectConfig).isShowOriginalCheckBox());
         initUI();
         initPreviewList();
+        if (isShowBottomBar) {
+            mBottomBar.setVisibility(View.VISIBLE);
+            mPreviewRecyclerView.setVisibility(View.VISIBLE);
+        } else {
+            mBottomBar.setVisibility(View.GONE);
+            mPreviewRecyclerView.setVisibility(View.GONE);
+        }
+
+        if (!isShowCompleteBtn && titleBar.getCanClickToCompleteView() != null) {
+            titleBar.getCanClickToCompleteView().setVisibility(GONE);
+        }
     }
 
     private void initUI() {
@@ -169,18 +195,22 @@ public class WXPreviewControllerView extends PreviewControllerView {
     public void singleTap() {
         if (mTitleContainer.getVisibility() == View.VISIBLE) {
             mTitleContainer.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picker_top_out));
-            mBottomBar.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picker_fade_out));
-            mPreviewRecyclerView.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picker_fade_out));
             mTitleContainer.setVisibility(View.GONE);
-            mBottomBar.setVisibility(View.GONE);
-            mPreviewRecyclerView.setVisibility(View.GONE);
+            if (isShowBottomBar) {
+                mBottomBar.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picker_fade_out));
+                mBottomBar.setVisibility(View.GONE);
+                mPreviewRecyclerView.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picker_fade_out));
+                mPreviewRecyclerView.setVisibility(View.GONE);
+            }
         } else {
             mTitleContainer.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picker_top_in));
-            mBottomBar.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picker_fade_in));
-            mPreviewRecyclerView.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picker_fade_in));
             mTitleContainer.setVisibility(View.VISIBLE);
-            mBottomBar.setVisibility(View.VISIBLE);
-            mPreviewRecyclerView.setVisibility(View.VISIBLE);
+            if (isShowBottomBar) {
+                mBottomBar.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picker_fade_in));
+                mBottomBar.setVisibility(View.VISIBLE);
+                mPreviewRecyclerView.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picker_fade_in));
+                mPreviewRecyclerView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -212,14 +242,18 @@ public class WXPreviewControllerView extends PreviewControllerView {
     }
 
     public void setTitleBarColor(int titleBarColor) {
-        mTitleContainer.setBackgroundColor(titleBarColor);
-        mTitleContainer.setPadding(0, PStatusBarUtil.getStatusBarHeight(getContext()), 0, 0);
-        PStatusBarUtil.setStatusBar((Activity) getContext(), Color.TRANSPARENT, true,
-                PStatusBarUtil.isDarkColor(titleBarColor));
+        this.titleBarColor = titleBarColor;
     }
 
     public void setBottomBarColor(int bottomBarColor) {
-        mBottomBar.setBackgroundColor(bottomBarColor);
-        mPreviewRecyclerView.setBackgroundColor(bottomBarColor);
+        this.bottomBarColor = bottomBarColor;
+    }
+
+    public void hideBottomBar() {
+        isShowBottomBar = false;
+    }
+
+    public void hideCompleteBtn() {
+        isShowCompleteBtn = false;
     }
 }

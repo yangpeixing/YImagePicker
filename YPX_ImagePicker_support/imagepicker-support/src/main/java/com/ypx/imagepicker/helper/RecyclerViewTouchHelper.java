@@ -1,12 +1,13 @@
 package com.ypx.imagepicker.helper;
 
 import android.animation.ValueAnimator;
-import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.widget.TouchRecyclerView;

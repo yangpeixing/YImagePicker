@@ -1,7 +1,11 @@
 package com.ypx.imagepicker.data;
 
 
+import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.PickerError;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Description: 图片选择器回调

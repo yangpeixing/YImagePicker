@@ -69,7 +69,7 @@ public class WXTitleBar extends PickerControllerView {
         unSelectColor = Color.WHITE;
         selectColor = Color.WHITE;
 
-        ivBack.setOnClickListener(new View.OnClickListener() {
+        ivBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
@@ -200,5 +200,10 @@ public class WXTitleBar extends PickerControllerView {
      */
     public void setShowArrow(boolean isShow) {
         mSetArrowImg.setVisibility(isShow ? VISIBLE : GONE);
+    }
+
+    public void setTitleTextColor(int color) {
+        mTvTitle.setTextColor(color);
+        mSetArrowImg.setColorFilter(color);
     }
 }

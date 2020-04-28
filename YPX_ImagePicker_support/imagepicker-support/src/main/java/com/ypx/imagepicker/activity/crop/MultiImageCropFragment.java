@@ -2,6 +2,7 @@ package com.ypx.imagepicker.activity.crop;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,24 +25,24 @@ import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PBaseLoaderFragment;
 import com.ypx.imagepicker.adapter.PickerFolderAdapter;
 import com.ypx.imagepicker.adapter.PickerItemAdapter;
+import com.ypx.imagepicker.bean.PickerItemDisableCode;
+import com.ypx.imagepicker.views.PickerUiConfig;
+import com.ypx.imagepicker.helper.PickerErrorExecutor;
+import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
+import com.ypx.imagepicker.bean.selectconfig.CropSelectConfig;
 import com.ypx.imagepicker.bean.ImageCropMode;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.PickerError;
-import com.ypx.imagepicker.bean.PickerItemDisableCode;
-import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
-import com.ypx.imagepicker.bean.selectconfig.CropSelectConfig;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.CropViewContainerHelper;
-import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.RecyclerViewTouchHelper;
 import com.ypx.imagepicker.helper.VideoViewContainerHelper;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PCornerUtils;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
-import com.ypx.imagepicker.views.PickerUiConfig;
-import com.ypx.imagepicker.widget.TouchRecyclerView;
 import com.ypx.imagepicker.widget.cropimage.CropImageView;
+import com.ypx.imagepicker.widget.TouchRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -293,7 +294,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
         }
 
         //是否拦截当前item的点击事件
-        if (isInterceptItemClick(imageItem)) {
+        if (isInterceptItemClick(imageItem, false)) {
             return;
         }
 
@@ -302,9 +303,9 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
     }
 
 
-    private boolean isInterceptItemClick(ImageItem imageItem) {
-        return presenter.interceptItemClick(getWeakActivity(), imageItem, selectList,
-                (ArrayList<ImageItem>) imageItems, selectConfig, imageGridAdapter,
+    private boolean isInterceptItemClick(ImageItem imageItem, boolean isClickCheckbox) {
+        return !imageGridAdapter.isPreformClick() && presenter.interceptItemClick(getWeakActivity(), imageItem, selectList,
+                (ArrayList<ImageItem>) imageItems, selectConfig, imageGridAdapter, isClickCheckbox,
                 null);
     }
 
@@ -355,15 +356,18 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
             return;
         }
 
+        //是否拦截当前item的点击事件
+        if (isInterceptItemClick(imageItem, true)) {
+            return;
+        }
+
         //如果当前选中列表已经包含了此item，则移除并刷新
         if (selectList.contains(imageItem)) {
             removeImageItemFromCropViewList(imageItem);
             checkStateBtn();
         } else {
-            if (!isInterceptItemClick(imageItem)) {
-                onPressImage(imageItem, false);
-                addImageItemToCropViewList(imageItem);
-            }
+            onPressImage(imageItem, false);
+            addImageItemToCropViewList(imageItem);
         }
         imageGridAdapter.notifyDataSetChanged();
     }
@@ -792,7 +796,6 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         //将VideoView所占用的资源释放掉
         if (videoViewContainerHelper != null) {
             videoViewContainerHelper.onDestroy();
@@ -800,8 +803,7 @@ public class MultiImageCropFragment extends PBaseLoaderFragment implements View.
         uiConfig.setPickerUiProvider(null);
         uiConfig = null;
         presenter = null;
-        traverse(mContentView);
-
+        super.onDestroy();
     }
 
     @Override

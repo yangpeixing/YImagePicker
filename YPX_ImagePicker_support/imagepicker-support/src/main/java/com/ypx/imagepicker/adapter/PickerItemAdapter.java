@@ -14,11 +14,11 @@ import android.support.v7.widget.RecyclerView;
 
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
+import com.ypx.imagepicker.bean.PickerItemDisableCode;
+import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PViewSizeUtils;
-import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.views.base.PickerItemView;
 
 import java.util.ArrayList;
@@ -39,6 +39,7 @@ public class PickerItemAdapter extends RecyclerView.Adapter<PickerItemAdapter.It
     private BaseSelectConfig selectConfig;
     private IPickerPresenter presenter;
     private PickerUiConfig uiConfig;
+    private boolean isPreformClick = false;
 
     public PickerItemAdapter(ArrayList<ImageItem> selectList,
                              List<ImageItem> images,
@@ -59,6 +60,7 @@ public class PickerItemAdapter extends RecyclerView.Adapter<PickerItemAdapter.It
      */
     public void preformCheckItem(ImageItem imageItem) {
         if (onActionResult != null) {
+            isPreformClick = true;
             onActionResult.onCheckItem(imageItem, PickerItemDisableCode.NORMAL);
         }
     }
@@ -71,6 +73,7 @@ public class PickerItemAdapter extends RecyclerView.Adapter<PickerItemAdapter.It
      */
     public void preformClickItem(ImageItem imageItem, int position) {
         if (onActionResult != null) {
+            isPreformClick = true;
             onActionResult.onClickItem(imageItem, position, PickerItemDisableCode.NORMAL);
         }
     }
@@ -113,6 +116,7 @@ public class PickerItemAdapter extends RecyclerView.Adapter<PickerItemAdapter.It
                 @Override
                 public void onClick(View view) {
                     if (onActionResult != null) {
+                        isPreformClick = false;
                         onActionResult.onCheckItem(imageItem, finalDisableCode);
                     }
                 }
@@ -123,6 +127,7 @@ public class PickerItemAdapter extends RecyclerView.Adapter<PickerItemAdapter.It
             @Override
             public void onClick(View view) {
                 if (onActionResult != null) {
+                    isPreformClick = false;
                     onActionResult.onClickItem(imageItem, position, finalDisableCode);
                 }
             }
@@ -208,6 +213,10 @@ public class PickerItemAdapter extends RecyclerView.Adapter<PickerItemAdapter.It
             return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                     (float) dp, context.getResources().getDisplayMetrics());
         }
+    }
+
+    public boolean isPreformClick() {
+        return isPreformClick;
     }
 
     private OnActionResult onActionResult;

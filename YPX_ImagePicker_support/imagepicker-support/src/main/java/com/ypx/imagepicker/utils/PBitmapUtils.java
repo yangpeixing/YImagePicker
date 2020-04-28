@@ -1,5 +1,6 @@
 package com.ypx.imagepicker.utils;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -16,6 +17,7 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.view.View;
 
+
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.UriPathInfo;
@@ -27,6 +29,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.FileNameMap;
+import java.net.URLConnection;
 
 /**
  * Time: 2019/7/17 14:16
@@ -214,7 +218,7 @@ public class PBitmapUtils {
             int[] size = getImageWidthHeight(sourceFilePath);
             contentValues.put(MediaStore.Files.FileColumns.WIDTH, size[0]);
             contentValues.put(MediaStore.Files.FileColumns.HEIGHT, size[1]);
-        }else {
+        } else {
             long duration = PBitmapUtils.getLocalVideoDuration(sourceFilePath);
             contentValues.put("duration", duration);
         }
@@ -347,6 +351,16 @@ public class PBitmapUtils {
         context.sendBroadcast(mediaScanIntent);
     }
 
+    public static String getMimeTypeFromUri(Activity context, Uri uri) {
+        ContentResolver resolver = context.getContentResolver();
+        return resolver.getType(uri);
+    }
+
+    public static String getMimeTypeFromPath(String path) {
+        FileNameMap fileNameMap = URLConnection.getFileNameMap();
+        return fileNameMap.getContentTypeFor(new File(path).getName());
+    }
+
 
     public static Uri getImageContentUri(Context context, String path) {
         Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -358,13 +372,7 @@ public class PBitmapUtils {
             cursor.close();
             return Uri.withAppendedPath(baseUri, "" + id);
         } else {
-            if (new File(path).exists()) {
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.Images.Media.DATA, path);
-                return context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-            } else {
-                return null;
-            }
+            return null;
         }
     }
 
@@ -378,13 +386,7 @@ public class PBitmapUtils {
             cursor.close();
             return Uri.withAppendedPath(baseUri, "" + id);
         } else {
-            if (new File(path).exists()) {
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.Video.Media.DATA, path);
-                return context.getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
-            } else {
-                return null;
-            }
+            return null;
         }
     }
 

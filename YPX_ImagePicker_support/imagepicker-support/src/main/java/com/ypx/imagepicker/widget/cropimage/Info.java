@@ -23,34 +23,38 @@ public class Info implements Parcelable, Serializable {
     public float mCropY;
     public String mScaleType;
 
+    public float transitX;
+    public float transitY;
+    public float mScale;
+
     public ImageView.ScaleType getScaleType() {
         return ImageView.ScaleType.valueOf(mScaleType);
     }
 
-    public Info(RectF img, RectF widget, float degrees, String scaleType) {
-        mImgRect.set(img);
-        mWidgetRect.set(widget);
-        mScaleType = scaleType;
-        mDegrees = degrees;
-    }
 
-    public Info(RectF img, RectF widget, float degrees,String scaleType, float mCropX,
-                float mCropY) {
+    public Info(RectF img, RectF widget, float degrees, String scaleType, float mCropX,
+                float mCropY, float transitX, float transitY, float mScale) {
         mImgRect.set(img);
         mWidgetRect.set(widget);
         mScaleType = scaleType;
         mDegrees = degrees;
         this.mCropX = mCropX;
         this.mCropY = mCropY;
+        this.transitX = transitX;
+        this.transitY = transitY;
+        this.mScale = mScale;
     }
 
     protected Info(Parcel in) {
         mImgRect = in.readParcelable(RectF.class.getClassLoader());
         mWidgetRect = in.readParcelable(RectF.class.getClassLoader());
-        mScaleType=in.readString();
+        mScaleType = in.readString();
         mDegrees = in.readFloat();
         mCropX = in.readFloat();
         mCropY = in.readFloat();
+        this.transitX = in.readFloat();;
+        this.transitY = in.readFloat();;
+        this.mScale = in.readFloat();;
     }
 
     public static final Creator<Info> CREATOR = new Creator<Info>() {
@@ -95,5 +99,8 @@ public class Info implements Parcelable, Serializable {
         dest.writeFloat(mDegrees);
         dest.writeFloat(mCropX);
         dest.writeFloat(mCropY);
+        dest.writeFloat(transitX);
+        dest.writeFloat(transitY);
+        dest.writeFloat(mScale);
     }
 }

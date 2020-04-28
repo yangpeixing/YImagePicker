@@ -7,6 +7,7 @@ import android.support.v4.util.ArraySet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -30,7 +31,7 @@ public enum MimeType {
             "gif"
     )),
     BMP("image/x-ms-bmp", arraySetOf(
-            "bmp"
+            "bmp", "x-ms-bmp"
     )),
     WEBP("image/webp", arraySetOf(
             "webp"
@@ -45,7 +46,7 @@ public enum MimeType {
             "mp4"
     )),
     QUICKTIME("video/quicktime", arraySetOf(
-            "mov"
+            "mov","quicktime"
     )),
     THREEGPP("video/3gpp", arraySetOf(
             "3gp",
@@ -56,13 +57,13 @@ public enum MimeType {
             "3gpp2"
     )),
     MKV("video/x-matroska", arraySetOf(
-            "mkv"
+            "mkv","x-matroska"
     )),
     WEBM("video/webm", arraySetOf(
             "webm"
     )),
     TS("video/mp2ts", arraySetOf(
-            "ts"
+            "ts","mp2ts"
     )),
     AVI("video/avi", arraySetOf(
             "avi"

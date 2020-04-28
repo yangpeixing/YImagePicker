@@ -3,6 +3,7 @@ package com.ypx.imagepicker.utils;
 import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.util.Log;
 
 /**
  * @author yangpeixing
@@ -37,7 +38,7 @@ public class PSingleMediaScanner implements MediaScannerConnection.MediaScannerC
         }
     }
 
-    public static void refresh(Context context, String path, PSingleMediaScanner.ScanListener scanListener) {
+    public static void refresh(Context context, String path, ScanListener scanListener) {
         new PSingleMediaScanner(context.getApplicationContext(), path, scanListener);
     }
 }

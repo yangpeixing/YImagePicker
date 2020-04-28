@@ -15,14 +15,14 @@ import android.support.v4.app.FragmentActivity;
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PickerActivityManager;
+import com.ypx.imagepicker.bean.selectconfig.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
-import com.ypx.imagepicker.bean.selectconfig.CropConfig;
 import com.ypx.imagepicker.bean.selectconfig.CropConfigParcelable;
+import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.data.PickerActivityCallBack;
-import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.helper.DetailImageLoadHelper;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
 import com.ypx.imagepicker.helper.launcher.PLauncher;
@@ -35,8 +35,8 @@ import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 import java.util.ArrayList;
 
-import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
+import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
 
 
 /**
@@ -107,7 +107,8 @@ public class SingleCropActivity extends FragmentActivity {
         }
 
         PickerActivityManager.addActivity(this);
-        setContentView(R.layout.picker_activity_crop);
+        setContentView(cropConfig.isSingleCropCutNeedTop() ?
+                R.layout.picker_activity_crop_cover : R.layout.picker_activity_crop);
 
         //初始化剪裁view
         cropView = findViewById(R.id.cropView);
@@ -125,7 +126,7 @@ public class SingleCropActivity extends FragmentActivity {
         }
 
         //加载图片
-        DetailImageLoadHelper.displayDetailImage(this, cropView, presenter, currentImageItem);
+        DetailImageLoadHelper.displayDetailImage(true, cropView, presenter, currentImageItem);
         setControllerView();
     }
 
@@ -166,7 +167,7 @@ public class SingleCropActivity extends FragmentActivity {
         }
         //剪裁异常
         if (cropUrl == null || cropUrl.length() == 0 || cropUrl.startsWith("Exception:")) {
-            presenter.tip(this,getString(R.string.picker_str_tip_singleCrop_error));
+            presenter.tip(this, getString(R.string.picker_str_tip_singleCrop_error));
             cropView.setCropRatio(cropConfig.getCropRatioX(), cropConfig.getCropRatioY());
             return;
         }
@@ -249,8 +250,8 @@ public class SingleCropActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void finish() {
+        super.finish();
         if (dialogInterface != null) {
             dialogInterface.dismiss();
         }

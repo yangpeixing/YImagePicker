@@ -2,10 +2,6 @@ package com.ypx.imagepicker.views;
 
 import android.content.Context;
 
-import com.ypx.imagepicker.views.base.PickerControllerView;
-import com.ypx.imagepicker.views.base.PickerFolderItemView;
-import com.ypx.imagepicker.views.base.PickerItemView;
-import com.ypx.imagepicker.views.base.PreviewControllerView;
 import com.ypx.imagepicker.views.base.SingleCropControllerView;
 import com.ypx.imagepicker.views.wx.WXBottomBar;
 import com.ypx.imagepicker.views.wx.WXFolderItemView;
@@ -13,6 +9,10 @@ import com.ypx.imagepicker.views.wx.WXItemView;
 import com.ypx.imagepicker.views.wx.WXPreviewControllerView;
 import com.ypx.imagepicker.views.wx.WXSingleCropControllerView;
 import com.ypx.imagepicker.views.wx.WXTitleBar;
+import com.ypx.imagepicker.views.base.PickerControllerView;
+import com.ypx.imagepicker.views.base.PickerFolderItemView;
+import com.ypx.imagepicker.views.base.PickerItemView;
+import com.ypx.imagepicker.views.base.PreviewControllerView;
 
 
 /**

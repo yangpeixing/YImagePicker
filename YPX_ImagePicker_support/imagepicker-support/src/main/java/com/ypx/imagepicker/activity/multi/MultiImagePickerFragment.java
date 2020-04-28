@@ -1,7 +1,10 @@
 package com.ypx.imagepicker.activity.multi;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.SimpleItemAnimator;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,36 +13,36 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.activity.PBaseLoaderFragment;
 import com.ypx.imagepicker.activity.preview.MultiImagePreviewActivity;
 import com.ypx.imagepicker.adapter.PickerFolderAdapter;
-import com.ypx.imagepicker.adapter.PickerItemAdapter;
-import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.bean.PickerError;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
-import com.ypx.imagepicker.bean.SelectMode;
-import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
-import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
 import com.ypx.imagepicker.data.IReloadExecutor;
-import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.helper.PickerErrorExecutor;
-import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.views.PickerUiConfig;
+import com.ypx.imagepicker.helper.PickerErrorExecutor;
+import com.ypx.imagepicker.adapter.PickerItemAdapter;
+import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
+import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.PickerError;
+import com.ypx.imagepicker.bean.SelectMode;
+import com.ypx.imagepicker.bean.ImageSet;
+import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
+import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.presenter.IPickerPresenter;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
 import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_SELECT_CONFIG;
+import static com.ypx.imagepicker.activity.multi.MultiImagePickerActivity.INTENT_KEY_PRESENTER;
 
 /**
  * Description: 多选页
@@ -233,6 +236,15 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         }
         currentImageSet.isSelected = true;
         mImageSetAdapter.notifyDataSetChanged();
+        if(currentImageSet.isAllMedia()){
+            if(selectConfig.isShowCameraInAllMedia()){
+                selectConfig.setShowCamera(true);
+            }
+        }else {
+            if(selectConfig.isShowCameraInAllMedia()){
+                selectConfig.setShowCamera(false);
+            }
+        }
         loadMediaItemsFromSet(currentImageSet);
     }
 
@@ -358,8 +370,8 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         }
 
         //检测是否拦截了item点击
-        if (presenter.interceptItemClick(getWeakActivity(), item, selectList, imageItems,
-                selectConfig, mAdapter, this)) {
+        if (!mAdapter.isPreformClick() && presenter.interceptItemClick(getWeakActivity(), item, selectList, imageItems,
+                selectConfig, mAdapter, false, this)) {
             return;
         }
 
@@ -401,6 +413,12 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
         } else {
             //当前选中item是否不可以点击
             if (interceptClickDisableItem(disableItemCode, true)) {
+                return;
+            }
+
+            //检测是否拦截了item点击
+            if (!mAdapter.isPreformClick() && presenter.interceptItemClick(getWeakActivity(), imageItem, selectList, imageItems,
+                    selectConfig, mAdapter, true, this)) {
                 return;
             }
 
@@ -463,7 +481,7 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
      */
     @Override
     protected void notifyPickerComplete() {
-        if (presenter.interceptPickerCompleteClick(getWeakActivity(), selectList, selectConfig)) {
+        if (presenter == null||presenter.interceptPickerCompleteClick(getWeakActivity(), selectList, selectConfig)) {
             return;
         }
         if (onImagePickCompleteListener != null) {
@@ -491,11 +509,10 @@ public class MultiImagePickerFragment extends PBaseLoaderFragment implements Vie
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         uiConfig.setPickerUiProvider(null);
         uiConfig = null;
         presenter = null;
-        traverse(view);
+        super.onDestroy();
     }
 
     @Override

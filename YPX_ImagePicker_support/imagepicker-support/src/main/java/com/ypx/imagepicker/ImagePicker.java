@@ -11,20 +11,22 @@ import android.support.v4.app.FragmentActivity;
 import com.ypx.imagepicker.activity.PickerActivityManager;
 import com.ypx.imagepicker.activity.preview.MultiImagePreviewActivity;
 import com.ypx.imagepicker.activity.singlecrop.SingleCropActivity;
+import com.ypx.imagepicker.bean.selectconfig.CropConfig;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
-import com.ypx.imagepicker.bean.selectconfig.CropConfig;
 import com.ypx.imagepicker.bean.selectconfig.MultiSelectConfig;
 import com.ypx.imagepicker.builder.CropPickerBuilder;
-import com.ypx.imagepicker.builder.MultiPickerBuilder;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.data.MediaSetsDataSource;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
+import com.ypx.imagepicker.data.OnImagePickCompleteListener2;
 import com.ypx.imagepicker.helper.CameraCompat;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
+import com.ypx.imagepicker.builder.MultiPickerBuilder;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
+import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.utils.PPermissionUtils;
 
 import java.util.ArrayList;
@@ -54,6 +56,19 @@ public class ImagePicker {
     public static boolean isOriginalImage = false;
 
     private static int themeColor = Color.RED;
+
+    private static boolean previewWithHighQuality = false;
+
+    /**
+     * @param previewWithHighQuality 预览是否极致高清，true会导致放大后滑动卡顿，false在加载超过3K图片时，放大后部分像素丢失
+     */
+    public static void setPreviewWithHighQuality(boolean previewWithHighQuality) {
+        ImagePicker.previewWithHighQuality = previewWithHighQuality;
+    }
+
+    public static boolean isPreviewWithHighQuality() {
+        return previewWithHighQuality;
+    }
 
     /**
      * 小红书样式剪裁activity形式
@@ -199,12 +214,16 @@ public class ImagePicker {
         }
         MultiSelectConfig selectConfig = new MultiSelectConfig();
         selectConfig.setMaxCount(imageList.size());
-        MultiImagePreviewActivity.intent(context, null, transitArray(imageList),
+        MultiImagePreviewActivity.intent(context, null, transitArray(context, imageList),
                 selectConfig, presenter, pos, new MultiImagePreviewActivity.PreviewResult() {
                     @Override
                     public void onResult(ArrayList<ImageItem> imageItems, boolean isCancel) {
                         if (listener != null) {
-                            listener.onImagePickComplete(imageItems);
+                            if (isCancel && listener instanceof OnImagePickCompleteListener2) {
+                                ((OnImagePickCompleteListener2) listener).onPickFailed(PickerError.CANCEL);
+                            } else {
+                                listener.onImagePickComplete(imageItems);
+                            }
                         }
                     }
                 });
@@ -215,12 +234,11 @@ public class ImagePicker {
      * @param <T>       ImageItem or String
      * @return 转化后可识别的item列表
      */
-    private static <T> ArrayList<ImageItem> transitArray(ArrayList<T> imageList) {
+    public static <T> ArrayList<ImageItem> transitArray(Activity activity, ArrayList<T> imageList) {
         ArrayList<ImageItem> items = new ArrayList<>();
         for (T t : imageList) {
             if (t instanceof String) {
-                ImageItem imageItem = new ImageItem();
-                imageItem.path = (String) t;
+                ImageItem imageItem = ImageItem.withPath(activity, (String) t);
                 items.add(imageItem);
             } else if (t instanceof ImageItem) {
                 items.add((ImageItem) t);
@@ -228,6 +246,8 @@ public class ImagePicker {
                 Uri uri = (Uri) t;
                 ImageItem imageItem = new ImageItem();
                 imageItem.path = uri.toString();
+                imageItem.mimeType = PBitmapUtils.getMimeTypeFromUri(activity, uri);
+                imageItem.setVideo(MimeType.isVideo(imageItem.mimeType));
                 imageItem.setUriPath(uri.toString());
                 items.add(imageItem);
             } else {
@@ -333,6 +353,7 @@ public class ImagePicker {
         intent.putExtra(ImagePicker.INTENT_KEY_PICKER_RESULT, list);
         activity.setResult(ImagePicker.REQ_PICKER_RESULT_CODE, intent);
         activity.finish();
+        PickerActivityManager.clear();
     }
 
     /**

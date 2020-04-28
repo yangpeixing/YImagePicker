@@ -1,9 +1,11 @@
 package com.ypx.imagepicker.bean;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 
 import com.ypx.imagepicker.utils.PBitmapUtils;
 import com.ypx.imagepicker.widget.cropimage.Info;
@@ -39,6 +41,8 @@ public class ImageItem implements Serializable, Parcelable {
     private boolean isVideo = false;
     //是否是原图
     public boolean isOriginalImage = true;
+    //文件名
+    public String displayName;
 
     //视频缩略图地址，默认是null，并没有扫描视频缩略图，这里提供此变量便于使用者自己塞入使用
     private String videoImageUri;
@@ -71,19 +75,35 @@ public class ImageItem implements Serializable, Parcelable {
         if (imageItem.isUriPath()) {
             Uri uri = Uri.parse(path);
             imageItem.setUriPath(uri.toString());
-            int[] size = PBitmapUtils.getImageWidthHeight(context, uri);
-            imageItem.width = size[0];
-            imageItem.height = size[1];
-        } else {
-            Uri uri = PBitmapUtils.getImageContentUri(context, path);
-            if (uri != null) {
-                imageItem.setUriPath(uri.toString());
+            imageItem.mimeType = PBitmapUtils.getMimeTypeFromUri((Activity) context, uri);
+            if (imageItem.mimeType != null && imageItem.isImage()) {
+                imageItem.setVideo(MimeType.isVideo(imageItem.mimeType));
+                if(imageItem.isImage()) {
+                    int[] size = PBitmapUtils.getImageWidthHeight(context, uri);
+                    imageItem.width = size[0];
+                    imageItem.height = size[1];
+                }
             }
-            int[] size = PBitmapUtils.getImageWidthHeight(path);
-            imageItem.width = size[0];
-            imageItem.height = size[1];
+        } else {
+            imageItem.mimeType = PBitmapUtils.getMimeTypeFromPath(imageItem.path);
+            if (imageItem.mimeType != null) {
+                imageItem.setVideo(MimeType.isVideo(imageItem.mimeType));
+                Uri uri;
+                if (imageItem.isImage()) {
+                    uri = PBitmapUtils.getImageContentUri(context, path);
+                    int[] size = PBitmapUtils.getImageWidthHeight(path);
+                    imageItem.width = size[0];
+                    imageItem.height = size[1];
+                } else {
+                    uri = PBitmapUtils.getVideoContentUri(context, path);
+                    imageItem.duration = PBitmapUtils.getLocalVideoDuration(path);
+                }
+                if (uri != null) {
+                    imageItem.setUriPath(uri.toString());
+                }
+            }
         }
-        imageItem.setVideo(false);
+
         return imageItem;
     }
 
@@ -295,7 +315,7 @@ public class ImageItem implements Serializable, Parcelable {
     }
 
     public boolean isUriPath() {
-        return path.contains("content://");
+        return path != null && path.contains("content://");
     }
 
     public Uri getUri() {
@@ -372,6 +392,10 @@ public class ImageItem implements Serializable, Parcelable {
         newItem.cropRestoreInfo = cropRestoreInfo;
         newItem.isOriginalImage = isOriginalImage;
         return newItem;
+    }
+
+    public boolean isOver2KImage() {
+        return width > 3000 || height > 3000;
     }
 
     public boolean isEmpty() {

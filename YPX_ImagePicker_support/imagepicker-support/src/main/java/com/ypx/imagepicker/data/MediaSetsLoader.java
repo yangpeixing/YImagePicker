@@ -10,7 +10,6 @@ import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 import android.util.LongSparseArray;
 
-
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.MimeType;
@@ -20,8 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.ypx.imagepicker.data.MediaStoreConstants.BUCKET_ORDER_BY;
-import static com.ypx.imagepicker.data.MediaStoreConstants.COLUMN_BUCKET_DISPLAY_NAME;
 import static com.ypx.imagepicker.data.MediaStoreConstants.COLUMN_BUCKET_ID;
+import static com.ypx.imagepicker.data.MediaStoreConstants.COLUMN_BUCKET_DISPLAY_NAME;
 import static com.ypx.imagepicker.data.MediaStoreConstants.COLUMN_COUNT;
 import static com.ypx.imagepicker.data.MediaStoreConstants.COLUMN_URI;
 import static com.ypx.imagepicker.data.MediaStoreConstants.MEDIA_TYPE;

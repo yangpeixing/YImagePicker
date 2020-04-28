@@ -3,17 +3,17 @@ package com.ypx.imagepicker.presenter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.ypx.imagepicker.adapter.PickerItemAdapter;
-import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
+import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.data.ICameraExecutor;
 import com.ypx.imagepicker.data.IReloadExecutor;
-import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.views.PickerUiConfig;
 
 import java.io.Serializable;
@@ -144,11 +144,16 @@ public interface IPickerPresenter extends Serializable {
      * @param imageItem       当前图片
      * @param selectImageList 当前选中列表
      * @param allSetImageList 当前文件夹所有图片
+     * @param selectConfig    选择器配置项，如果是微信样式，则selectConfig继承自MultiSelectConfig
+     *                        如果是小红书剪裁样式，则继承自CropSelectConfig
      * @param adapter         当前列表适配器，用于刷新数据
+     * @param isClickCheckBox 是否点击item右上角的选中框
+     * @param reloadExecutor  刷新器
      * @return 是否拦截
      */
     boolean interceptItemClick(@Nullable Activity activity, ImageItem imageItem, ArrayList<ImageItem> selectImageList,
                                ArrayList<ImageItem> allSetImageList, BaseSelectConfig selectConfig, PickerItemAdapter adapter,
+                               boolean isClickCheckBox,
                                @Nullable IReloadExecutor reloadExecutor);
 
     /**

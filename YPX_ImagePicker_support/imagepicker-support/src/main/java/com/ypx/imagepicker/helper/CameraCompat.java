@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
-
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
@@ -56,8 +55,7 @@ public class CameraCompat {
                 }
                 UriPathInfo uriPathInfo;
                 if (isCopyInDCIM) {
-                    uriPathInfo = PBitmapUtils.copyFileToDCIM(activity, path,
-                            imageName, MimeType.JPEG);
+                    uriPathInfo = PBitmapUtils.copyFileToDCIM(activity, path, imageName, MimeType.JPEG);
                     PSingleMediaScanner.refresh(activity, uriPathInfo.absolutePath, null);
                 } else {
                     uriPathInfo = new UriPathInfo(imageUri, path);
@@ -109,8 +107,7 @@ public class CameraCompat {
                 }
                 UriPathInfo uriPathInfo;
                 if (isCopyInDCIM) {
-                    uriPathInfo = PBitmapUtils.copyFileToDCIM(activity, path,
-                            videoName, MimeType.MP4);
+                    uriPathInfo = PBitmapUtils.copyFileToDCIM(activity, path, videoName, MimeType.MP4);
                     PSingleMediaScanner.refresh(activity, uriPathInfo.absolutePath, null);
                 } else {
                     uriPathInfo = new UriPathInfo(videoUri, path);
@@ -164,7 +161,7 @@ public class CameraCompat {
             }
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             if (maxDuration > 1) {
-                intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, maxDuration / 1000);
+                intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, maxDuration / 1000L);
             }
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }

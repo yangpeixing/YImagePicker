@@ -5,6 +5,7 @@ import com.ypx.imagepicker.bean.ImageItem;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Description: 图片选择器回调

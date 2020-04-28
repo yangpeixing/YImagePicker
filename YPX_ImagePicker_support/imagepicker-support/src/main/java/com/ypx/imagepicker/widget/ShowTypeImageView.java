@@ -14,7 +14,6 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.WindowManager;
 import android.widget.ImageView;
-
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 

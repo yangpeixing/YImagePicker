@@ -3,12 +3,13 @@ package com.ypx.imagepicker.views.redbook;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;

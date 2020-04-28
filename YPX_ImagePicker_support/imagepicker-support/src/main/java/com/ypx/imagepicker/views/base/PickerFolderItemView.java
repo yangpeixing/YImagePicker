@@ -3,10 +3,12 @@ package com.ypx.imagepicker.views.base;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 
 import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Time: 2019/11/13 14:39
@@ -23,10 +25,10 @@ public abstract class PickerFolderItemView extends PBaseLayout {
     /**
      * 加载文件夹缩略图
      *
-     * @param coverUrl  缩略图Uri
+     * @param imageSet  文件夹
      * @param presenter presenter
      */
-    public abstract void displayCoverImage(String coverUrl, IPickerPresenter presenter);
+    public abstract void displayCoverImage(ImageSet imageSet, IPickerPresenter presenter);
 
     /**
      * 加载item

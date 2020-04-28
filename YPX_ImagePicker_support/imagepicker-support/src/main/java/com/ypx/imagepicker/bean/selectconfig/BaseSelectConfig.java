@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.MimeType;
+import com.ypx.imagepicker.bean.SelectMode;
 import com.ypx.imagepicker.utils.PDateUtil;
 
 import java.io.Serializable;
@@ -22,6 +23,7 @@ public class BaseSelectConfig implements Serializable {
     private long maxVideoDuration = 1200000000L;
     private int columnCount = 4;
     private boolean isShowCamera;
+    private boolean isShowCameraInAllMedia;
     private boolean isVideoSinglePick = true;
     private boolean isShowVideo = true;
     private boolean isShowImage = true;
@@ -35,6 +37,14 @@ public class BaseSelectConfig implements Serializable {
     private boolean isSinglePickImageOrVideoType = false;
     private Set<MimeType> mimeTypes = MimeType.ofAll();
     private ArrayList<ImageItem> shieldImageList = new ArrayList<>();
+
+    public boolean isShowCameraInAllMedia() {
+        return isShowCameraInAllMedia;
+    }
+
+    public void setShowCameraInAllMedia(boolean showCameraInAllMedia) {
+        isShowCameraInAllMedia = showCameraInAllMedia;
+    }
 
     public ArrayList<ImageItem> getShieldImageList() {
         return shieldImageList;
@@ -73,11 +83,11 @@ public class BaseSelectConfig implements Serializable {
     }
 
     public String getMaxVideoDurationFormat(Context context) {
-        return PDateUtil.formatTime(context,maxVideoDuration);
+        return PDateUtil.formatTime(context, maxVideoDuration);
     }
 
     public String getMinVideoDurationFormat(Context context) {
-        return PDateUtil.formatTime(context,minVideoDuration);
+        return PDateUtil.formatTime(context, minVideoDuration);
     }
 
     public void setMaxVideoDuration(long maxVideoDuration) {

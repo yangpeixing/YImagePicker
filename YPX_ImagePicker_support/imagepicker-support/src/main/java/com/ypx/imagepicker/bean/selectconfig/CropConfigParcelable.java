@@ -3,6 +3,7 @@ package com.ypx.imagepicker.bean.selectconfig;
 import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Size;
 
 import com.ypx.imagepicker.widget.cropimage.Info;
 
@@ -29,6 +30,15 @@ public class CropConfigParcelable implements Parcelable {
     private long maxOutPutByte;
     private boolean isLessOriginalByte;
     private Info cropRestoreInfo;
+    private boolean isSingleCropCutNeedTop = false;
+
+    public boolean isSingleCropCutNeedTop() {
+        return isSingleCropCutNeedTop;
+    }
+
+    public void setSingleCropCutNeedTop(boolean singleCropCutNeedTop) {
+        isSingleCropCutNeedTop = singleCropCutNeedTop;
+    }
 
     protected CropConfigParcelable() {
 
@@ -45,6 +55,7 @@ public class CropConfigParcelable implements Parcelable {
         maxOutPutByte = in.readLong();
         isLessOriginalByte = in.readByte() != 0;
         cropRestoreInfo = in.readParcelable(Info.class.getClassLoader());
+        isSingleCropCutNeedTop=in.readByte() != 0;
     }
 
     public static final Creator<CropConfigParcelable> CREATOR = new Creator<CropConfigParcelable>() {
@@ -186,5 +197,6 @@ public class CropConfigParcelable implements Parcelable {
         dest.writeLong(maxOutPutByte);
         dest.writeByte((byte) (isLessOriginalByte ? 1 : 0));
         dest.writeParcelable(cropRestoreInfo, flags);
+        dest.writeByte((byte) (isSingleCropCutNeedTop ? 1 : 0));
     }
 }

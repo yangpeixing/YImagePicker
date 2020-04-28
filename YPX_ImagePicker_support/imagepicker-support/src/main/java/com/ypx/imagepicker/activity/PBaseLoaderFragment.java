@@ -4,32 +4,31 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
 import com.ypx.imagepicker.ImagePicker;
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.bean.PickerItemDisableCode;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
+import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.ImageSet;
 import com.ypx.imagepicker.data.ICameraExecutor;
+import com.ypx.imagepicker.data.ProgressSceneEnum;
+import com.ypx.imagepicker.utils.PStatusBarUtil;
+import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.data.MediaItemsDataSource;
 import com.ypx.imagepicker.data.MediaSetsDataSource;
 import com.ypx.imagepicker.data.OnImagePickCompleteListener;
-import com.ypx.imagepicker.data.ProgressSceneEnum;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.utils.PPermissionUtils;
-import com.ypx.imagepicker.utils.PStatusBarUtil;
-import com.ypx.imagepicker.views.PickerUiConfig;
 import com.ypx.imagepicker.views.PickerUiProvider;
 import com.ypx.imagepicker.views.base.PickerControllerView;
 
@@ -506,28 +505,6 @@ public abstract class PBaseLoaderFragment extends Fragment implements ICameraExe
         }
         lastTime = System.currentTimeMillis();
         return !flag;
-    }
-
-    protected void traverse(View root) {
-        if (root instanceof ViewGroup) {
-            ViewGroup parent = (ViewGroup) root;
-            final int childCount = parent.getChildCount();
-            for (int i = 0; i < childCount; ++i) {
-                final View child = parent.getChildAt(i);
-                if (child instanceof ViewGroup) {
-                    child.setBackground(null);
-                    traverse(child);
-                } else {
-                    if (child != null) {
-                        child.setBackground(null);
-                    }
-                    if (child instanceof ImageView) {
-                        ((ImageView) child).setImageDrawable(null);
-                    }
-                }
-            }
-            parent.removeAllViews();
-        }
     }
 
     /**

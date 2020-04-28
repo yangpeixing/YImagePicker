@@ -10,10 +10,10 @@ import android.support.v7.widget.RecyclerView;
 
 import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageSet;
-import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.views.PickerUiConfig;
-import com.ypx.imagepicker.views.base.PickerFolderItemView;
+import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.views.wx.WXFolderItemView;
+import com.ypx.imagepicker.views.base.PickerFolderItemView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ public class PickerFolderAdapter extends RecyclerView.Adapter<PickerFolderAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         ImageSet imageSet = getItem(position);
         PickerFolderItemView pickerFolderItemView = holder.pickerFolderItemView;
-        pickerFolderItemView.displayCoverImage(imageSet.coverPath, presenter);
+        pickerFolderItemView.displayCoverImage(imageSet, presenter);
         pickerFolderItemView.loadItem(imageSet);
         pickerFolderItemView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,7 +36,7 @@ public class WXSingleCropControllerView extends SingleCropControllerView {
         mCompleteBtn = view.findViewById(R.id.tv_rightBtn);
         mTitleBar.setBackgroundColor(Color.WHITE);
         mCompleteBtn.setBackground(PCornerUtils.cornerDrawable(ImagePicker.getThemeColor(), dp(2)));
-        mIvBack.setOnClickListener(new View.OnClickListener() {
+        mIvBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
@@ -58,7 +57,7 @@ public class WXSingleCropControllerView extends SingleCropControllerView {
     }
 
     @Override
-    public void setCropViewParams(CropImageView cropImageView, ViewGroup.MarginLayoutParams params) {
+    public void setCropViewParams(CropImageView cropImageView, MarginLayoutParams params) {
         params.topMargin = dp(50);
         cropImageView.setLayoutParams(params);
     }

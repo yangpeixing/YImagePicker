@@ -5,8 +5,10 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -31,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
+import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.utils.PBitmapUtils;
 
 /**
@@ -195,19 +198,16 @@ public class CropImageView extends ImageView {
         return originalBitmap;
     }
 
-    private void getCanLoadMaxSize() {
-        loadMaxSize = 10000;
-    }
-
-
     @Override
     public void setImageBitmap(Bitmap bm) {
         if (bm == null || bm.getWidth() == 0 || bm.getHeight() == 0) {
             return;
         }
 
+        originalBitmap = bm;
+
         if (loadMaxSize == 0) {
-            getCanLoadMaxSize();
+            loadMaxSize = Math.max(bm.getWidth(), bm.getHeight());
         }
 
         float ratio = bm.getWidth() * 1.00f / bm.getHeight() * 1.00f;
@@ -218,6 +218,7 @@ public class CropImageView extends ImageView {
         if (bm.getHeight() > loadMaxSize) {
             bm = Bitmap.createScaledBitmap(bm, (int) (loadMaxSize * ratio), loadMaxSize, false);
         }
+
         super.setImageBitmap(bm);
     }
 
@@ -234,13 +235,15 @@ public class CropImageView extends ImageView {
         }
 
         hasDrawable = true;
-        if (drawable instanceof BitmapDrawable) {
-            originalBitmap = ((BitmapDrawable) drawable).getBitmap();
-        } else if (drawable instanceof AnimationDrawable) {
-            AnimationDrawable drawable1 = (AnimationDrawable) drawable;
-            Drawable drawable2 = drawable1.getFrame(0);
-            if (drawable2 instanceof BitmapDrawable) {
-                originalBitmap = ((BitmapDrawable) drawable2).getBitmap();
+        if (originalBitmap == null) {
+            if (drawable instanceof BitmapDrawable) {
+                originalBitmap = ((BitmapDrawable) drawable).getBitmap();
+            } else if (drawable instanceof AnimationDrawable) {
+                AnimationDrawable drawable1 = (AnimationDrawable) drawable;
+                Drawable drawable2 = drawable1.getFrame(0);
+                if (drawable2 instanceof BitmapDrawable) {
+                    originalBitmap = ((BitmapDrawable) drawable2).getBitmap();
+                }
             }
         }
 
@@ -280,6 +283,10 @@ public class CropImageView extends ImageView {
 
         mTranslateX = 0;
         mTranslateY = 0;
+
+        if (info == null || info.mImgRect == null) {
+            return;
+        }
 
         float tcx = info.mImgRect.left + info.mImgRect.width() / 2;
         float tcy = info.mImgRect.top + info.mImgRect.height() / 2;
@@ -659,7 +666,14 @@ public class CropImageView extends ImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+        try {
+            super.onDraw(canvas);
+        } catch (Exception ignored) {
+            loadMaxSize = (int) (loadMaxSize * 0.8);
+            setImageBitmap(originalBitmap);
+            return;
+        }
+
         if (isShowLine && canShowTouchLine && !isCircle) {
             int left, top, right, bottom, w, h;
             if (isShowImageRectLine) {
@@ -1347,7 +1361,7 @@ public class CropImageView extends ImageView {
     }
 
     public Info getInfo() {
-        return new Info(mImgRect, mCropRect, mDegrees, mScaleType.name(), aspectX, aspectY);
+        return new Info(mImgRect, mCropRect, mDegrees, mScaleType.name(), aspectX, aspectY, getTranslateX(), getTranslateY(), getScale());
     }
 
     public interface ClipCalculate {
@@ -1364,9 +1378,14 @@ public class CropImageView extends ImageView {
     }
 
     public Bitmap generateCropBitmapFromView(final int backgroundColor) {
-        setShowImageRectLine(false);
-        isShowCropRect = false;
-        invalidate();
+        ((Activity) getContext()).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setShowImageRectLine(false);
+                isShowCropRect = false;
+                invalidate();
+            }
+        });
 
         Bitmap bitmap = PBitmapUtils.getViewBitmap(CropImageView.this);
         try {
@@ -1450,6 +1469,10 @@ public class CropImageView extends ImageView {
         return bitmap1;
     }
 
+    public void setShowCropRect(boolean showCropRect) {
+        isShowCropRect = showCropRect;
+        invalidate();
+    }
 
     private Bitmap createCircleBitmap(Bitmap resource, int backgroundColor) {
         int width = resource.getWidth();

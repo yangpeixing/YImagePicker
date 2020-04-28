@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.example.imagepicker_support.R;
 import com.ypx.imagepicker.adapter.PickerItemAdapter;
 import com.ypx.imagepicker.bean.ImageItem;
@@ -44,15 +45,12 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
 
     @Override
     public void displayImage(View view, ImageItem item, int size, boolean isThumbnail) {
-        if (item.getUri() != null) {
-            Glide.with(view.getContext()).load(item.getUri()).apply(new RequestOptions()
-                    .format(isThumbnail ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888))
-                    .into((ImageView) view);
-        } else {
-            Glide.with(view.getContext()).load(item.path).apply(new RequestOptions()
-                    .format(isThumbnail ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888))
-                    .into((ImageView) view);
-        }
+        Object object = item.getUri() != null ? item.getUri() : item.path;
+
+        Glide.with(view.getContext()).load(object).apply(new RequestOptions()
+                .format(isThumbnail ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888))
+                .override(isThumbnail ? size : Target.SIZE_ORIGINAL)
+                .into((ImageView) view);
     }
 
     @NonNull
@@ -133,12 +131,29 @@ public class CustomImgPickerPresenter implements IPickerPresenter {
         return false;
     }
 
+    /**
+     * <p>
+     * 图片点击事件拦截，如果返回true，则不会执行选中操纵，如果要拦截此事件并且要执行选中
+     * 请调用如下代码：
+     * <p>
+     * adapter.preformCheckItem()
+     * <p>
+     * <p>
+     * 此方法可以用来跳转到任意一个页面，比如自定义的预览
+     *
+     * @param activity        上下文
+     * @param imageItem       当前图片
+     * @param selectImageList 当前选中列表
+     * @param allSetImageList 当前文件夹所有图片
+     * @param selectConfig    选择器配置项，如果是微信样式，则selectConfig继承自MultiSelectConfig
+     *                        如果是小红书剪裁样式，则继承自CropSelectConfig
+     * @param adapter         当前列表适配器，用于刷新数据
+     * @param isClickCheckBox 是否点击item右上角的选中框
+     * @param reloadExecutor  刷新器
+     * @return 是否拦截
+     */
     @Override
-    public boolean interceptItemClick(@Nullable Activity activity, ImageItem imageItem,
-                                      ArrayList<ImageItem> selectImageList,
-                                      ArrayList<ImageItem> allSetImageList,
-                                      BaseSelectConfig selectConfig, PickerItemAdapter adapter,
-                                      @Nullable IReloadExecutor reloadExecutor) {
+    public boolean interceptItemClick(@Nullable Activity activity, ImageItem imageItem, ArrayList<ImageItem> selectImageList, ArrayList<ImageItem> allSetImageList, BaseSelectConfig selectConfig, PickerItemAdapter adapter, boolean isClickCheckBox, @Nullable IReloadExecutor reloadExecutor) {
         return false;
     }
 

@@ -1,15 +1,26 @@
 package com.ypx.imagepicker.views.base;
 
 import android.content.Context;
-import android.util.AttributeSet;
-import android.view.View;
-
+import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+
+import com.ypx.imagepicker.R;
 import com.ypx.imagepicker.bean.ImageItem;
 import com.ypx.imagepicker.bean.selectconfig.BaseSelectConfig;
-import com.ypx.imagepicker.presenter.IPickerPresenter;
+import com.ypx.imagepicker.helper.DetailImageLoadHelper;
+import com.ypx.imagepicker.utils.PViewSizeUtils;
 import com.ypx.imagepicker.views.PickerUiConfig;
+import com.ypx.imagepicker.presenter.IPickerPresenter;
+import com.ypx.imagepicker.widget.cropimage.CropImageView;
 
 import java.util.ArrayList;
 
@@ -55,6 +66,7 @@ public abstract class PreviewControllerView extends PBaseLayout {
      */
     public abstract void onPageSelected(int position, ImageItem imageItem, int totalPreviewCount);
 
+
     public PreviewControllerView(Context context) {
         super(context);
     }
@@ -65,5 +77,71 @@ public abstract class PreviewControllerView extends PBaseLayout {
 
     public PreviewControllerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    /**
+     * 获取预览的fragment里的布局
+     *
+     * @param fragment 当前加载的fragment，可以使用以下方式来绑定生命周期
+     * <p>
+     *         fragment.getLifecycle().addObserver(new ILifeCycleCallBack() {
+     *             public void onResume() {}
+     *             public void onPause() {}
+     *             public void onDestroy() {}
+     *         });
+     *</p>
+     *
+     * @param imageItem  当前加载imageitem
+     * @param presenter presenter
+     * @return 预览的布局
+     */
+    public View getItemView(Fragment fragment, final ImageItem imageItem, IPickerPresenter presenter) {
+        if (imageItem == null) {
+            return new View(fragment.getContext());
+        }
+
+        RelativeLayout layout = new RelativeLayout(getContext());
+        final CropImageView imageView = new CropImageView(getContext());
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        // 启用图片缩放功能
+        imageView.setBounceEnable(true);
+        imageView.enable();
+        imageView.setShowImageRectLine(false);
+        imageView.setCanShowTouchLine(false);
+        imageView.setMaxScale(7.0f);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        imageView.setLayoutParams(params);
+        layout.setLayoutParams(params);
+        layout.addView(imageView);
+
+        ImageView mVideoImg = new ImageView(getContext());
+        mVideoImg.setImageDrawable(getResources().getDrawable(R.mipmap.picker_icon_video));
+        RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(PViewSizeUtils.dp(getContext(), 80), PViewSizeUtils.dp(getContext(), 80));
+        mVideoImg.setLayoutParams(params1);
+        params1.addRule(RelativeLayout.CENTER_IN_PARENT);
+        layout.addView(mVideoImg, params1);
+
+        if (imageItem.isVideo()) {
+            mVideoImg.setVisibility(View.VISIBLE);
+        } else {
+            mVideoImg.setVisibility(View.GONE);
+        }
+
+        imageView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (imageItem.isVideo()) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    intent.setDataAndType(imageItem.getUri(), "video/*");
+                    getContext().startActivity(intent);
+                    return;
+                }
+                singleTap();
+            }
+        });
+        DetailImageLoadHelper.displayDetailImage(false, imageView, presenter, imageItem);
+        return layout;
     }
 }

@@ -17,9 +17,9 @@ public class MultiSelectConfig extends CropConfig {
     private boolean isCanEditPic;
     private boolean isCanPreviewVideo = true;
     private boolean isPreview = true;
+
     private int selectMode = SelectMode.MODE_MULTI;
     private ArrayList<ImageItem> lastImageList = new ArrayList<>();
-
 
     public boolean isPreview() {
         return isPreview;

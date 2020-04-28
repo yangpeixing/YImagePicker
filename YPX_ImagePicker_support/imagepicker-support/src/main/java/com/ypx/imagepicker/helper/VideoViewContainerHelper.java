@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.VideoView;
 
 import com.ypx.imagepicker.bean.ImageItem;
-import com.ypx.imagepicker.presenter.IPickerPresenter;
 import com.ypx.imagepicker.views.PickerUiConfig;
+import com.ypx.imagepicker.presenter.IPickerPresenter;
 
 /**
  * Time: 2019/9/30 9:45

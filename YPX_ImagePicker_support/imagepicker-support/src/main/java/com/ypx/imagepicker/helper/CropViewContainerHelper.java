@@ -79,7 +79,8 @@ public class CropViewContainerHelper {
                 });
             }
 
-            DetailImageLoadHelper.displayDetailImage(activity, mCropView, presenter, imageItem);
+
+            DetailImageLoadHelper.displayDetailImage(true, mCropView, presenter, imageItem);
         }
 
         if (getParent() != null) {

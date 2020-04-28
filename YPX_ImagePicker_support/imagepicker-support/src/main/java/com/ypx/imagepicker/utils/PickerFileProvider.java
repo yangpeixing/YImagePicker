@@ -1,6 +1,7 @@
 package com.ypx.imagepicker.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 
 import android.support.annotation.NonNull;

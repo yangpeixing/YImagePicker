@@ -4,15 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.ypx.imagepicker.R;
-import com.ypx.imagepicker.activity.crop.MultiImageCropActivity;
-import com.ypx.imagepicker.activity.crop.MultiImageCropFragment;
-import com.ypx.imagepicker.bean.ImageCropMode;
-import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.bean.selectconfig.CropSelectConfig;
 import com.ypx.imagepicker.bean.MimeType;
 import com.ypx.imagepicker.bean.PickerError;
-import com.ypx.imagepicker.bean.selectconfig.CropSelectConfig;
-import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.helper.PickerErrorExecutor;
+import com.ypx.imagepicker.bean.ImageCropMode;
+import com.ypx.imagepicker.activity.crop.MultiImageCropActivity;
+import com.ypx.imagepicker.activity.crop.MultiImageCropFragment;
+import com.ypx.imagepicker.bean.ImageItem;
+import com.ypx.imagepicker.data.OnImagePickCompleteListener;
 import com.ypx.imagepicker.presenter.IPickerPresenter;
 
 import java.util.Arrays;
