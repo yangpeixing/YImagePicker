@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/YImagePicker-YPX_ImagePicker_androidx.iml" filepath="$PROJECT_DIR$/YImagePicker-YPX_ImagePicker_androidx.iml" group="YPX_ImagePicker_androidx" />
       <module fileurl="file://$PROJECT_DIR$/YPX_ImagePicker_androidx.iml" filepath="$PROJECT_DIR$/YPX_ImagePicker_androidx.iml" group="YPX_ImagePicker_androidx" />
+      <module fileurl="file://$PROJECT_DIR$/app/YPX_ImagePicker_androidx-app.iml" filepath="$PROJECT_DIR$/app/YPX_ImagePicker_androidx-app.iml" group="YPX_ImagePicker_androidx/app" />
+      <module fileurl="file://$PROJECT_DIR$/imagepicker/YPX_ImagePicker_androidx-imagepicker.iml" filepath="$PROJECT_DIR$/imagepicker/YPX_ImagePicker_androidx-imagepicker.iml" group="YPX_ImagePicker_androidx/imagepicker" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="YPX_ImagePicker_androidx/app" />
       <module fileurl="file://$PROJECT_DIR$/imagepicker/imagepicker.iml" filepath="$PROJECT_DIR$/imagepicker/imagepicker.iml" group="YPX_ImagePicker_androidx/imagepicker" />
     </modules>
